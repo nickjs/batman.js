@@ -41,7 +41,7 @@ task 'build', 'compile Batman.js and all the tools', (options) ->
         source = muffin.readFile(matches[0], options).then (source) ->
           compiled = muffin.compileString(source, options)
           compiled = "#!/usr/bin/env node\n\n" + compiled
-          muffin.writeFile "tools/batman", compiled, muffin.extend({}, options, {mode: 0755})
+          muffin.writeFile "tools/batman", compiled, muffin.extend({}, options, {mode: 0o755})
       'src/tools/(.+)\.coffee'   : (matches) -> muffin.compileScript(matches[0], "tools/#{matches[1]}.js", options)
       'tests/run\.coffee'     : (matches) -> muffin.compileScript(matches[0], 'tests/run.js', options)
 

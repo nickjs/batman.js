@@ -1,6 +1,7 @@
 (function() {
-  var coffee, delayCount, exportHelpers, fs, glob, jqueryPath, oldErrorHandler, path, percolate, qqunit, testDir;
-  var __hasProp = Object.prototype.hasOwnProperty, __slice = Array.prototype.slice;
+  var coffee, delayCount, exportHelpers, fs, glob, jqueryPath, oldErrorHandler, path, percolate, qqunit, testDir,
+    __hasProp = {}.hasOwnProperty,
+    __slice = [].slice;
 
   glob = require('glob');
 
@@ -26,11 +27,15 @@
 
   global.delay = function(time, fn) {
     var defer, _ref;
-    if (fn == null) _ref = [15, time], time = _ref[0], fn = _ref[1];
+    if (fn == null) {
+      _ref = [15, time], time = _ref[0], fn = _ref[1];
+    }
     delayCount++;
     defer = function() {
       fn();
-      if (--delayCount === 0) return QUnit.start();
+      if (--delayCount === 0) {
+        return QUnit.start();
+      }
     };
     return setTimeout(defer, time);
   };
@@ -68,7 +73,9 @@
         }]));
       } else {
         return percolate.generate.apply(percolate, [__dirname].concat(__slice.call(docs), [function(error, stats, output) {
-          if (error) throw error;
+          if (error) {
+            throw error;
+          }
           if (!(stats.failed > 0)) {
             fs.writeFileSync(path.join(__dirname, 'batman.html'), output);
             console.log("Docs written.");

@@ -69,7 +69,7 @@ cli.main (args, options) ->
     if path.existsSync(destinationPath)
       @fatal 'Destination already exists!'
     else
-      fs.mkdirSync(destinationPath, 0755)
+      fs.mkdirSync(destinationPath, 0o755)
   else
     # Assume we are in the project directory
     destinationPath = process.cwd()
@@ -125,7 +125,7 @@ cli.main (args, options) ->
       if stat.isDirectory()
         dir = path.join(destinationPath, aPath, resultName)
         if !path.existsSync(dir)
-          fs.mkdirSync(dir, 0755)
+          fs.mkdirSync(dir, 0o755)
         # Descend into this sub dir in the template directory.
         walk path.join(aPath, file)
 

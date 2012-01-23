@@ -80,7 +80,7 @@ exports.CoffeeCompiler = (options) ->
             if err
               next err
             else
-              mkdir_p path.dirname(dest), 0755, (err) ->
+              mkdir_p path.dirname(dest), 0o755, (err) ->
                 if err
                   next err
                 else

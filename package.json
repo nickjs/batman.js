@@ -23,14 +23,14 @@
   },
   "dependencies": {
     "connect": "~1.8.5",
-    "coffee-script": "1.1.3"
+    "coffee-script": "1.3.0"
   },
   "devDependencies": {
     "daemon": "~0.3.0",
     "docco": "~0.3.0",
     "glob": "~>3.0.1",
     "q": "~>0.6.0",
-    "muffin": "0.2.7",
+    "muffin": "0.3.0",
     "uglify-js": "1.2.5",
     "temp": "~>0.2.0",
     "qqunit": "0.1.3",

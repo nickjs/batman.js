@@ -1,3 +1,4 @@
+(function() {
 
   $(document).ready(function() {
     var $sidebar, setSidebarPos;
@@ -46,7 +47,11 @@
       }
     });
     $('#table_of_contents ul').each(function() {
-      if ($(this).children().size() === 0) return $(this).remove();
+      if ($(this).children().size() === 0) {
+        return $(this).remove();
+      }
     });
     return $("#quick-search").quicksearch('.searchable');
   });
+
+}).call(this);

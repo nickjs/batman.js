@@ -1,6 +1,6 @@
 (function() {
-  var glob, path, qqunit;
-  var __hasProp = Object.prototype.hasOwnProperty;
+  var glob, path, qqunit,
+    __hasProp = {}.hasOwnProperty;
 
   glob = require('glob');
 
@@ -12,6 +12,8 @@
     var File, Helper, k, tests, v;
     global.jQuery = jQuery;
     global.File = window.File = File = (function() {
+
+      File.name = 'File';
 
       function File() {}
 

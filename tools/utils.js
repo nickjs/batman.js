@@ -52,7 +52,9 @@
     destDir = options.dest || srcDir;
     return function(req, res, next) {
       var compile, compiler, dest, pathname, send, src;
-      if ("GET" !== req.method) return next();
+      if ("GET" !== req.method) {
+        return next();
+      }
       pathname = parse(req.url).pathname;
       compiler = {
         match: /\.js$/,
@@ -76,7 +78,7 @@
               if (err) {
                 return next(err);
               } else {
-                return mkdir_p(path.dirname(dest), 0755, function(err) {
+                return mkdir_p(path.dirname(dest), 0x1ed, function(err) {
                   if (err) {
                     return next(err);
                   } else {
@@ -97,7 +99,7 @@
           if (err != null) {
             return next(err);
           } else {
-            return connect.static.send(req, res, next, {
+            return connect["static"].send(req, res, next, {
               path: dest
             });
           }
