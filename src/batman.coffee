@@ -1616,9 +1616,9 @@ class Batman.StateMachine extends Batman.Object
 
     @isTransitioning = true
     @fire "exit:#{previousState}"
+    @set('_state', nextState)
     @fire "#{previousState}->#{nextState}"
     @fire event
-    @set('_state', nextState)
     @fire "enter:#{nextState}"
     @isTransitioning = false
 

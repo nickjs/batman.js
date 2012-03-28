@@ -46,13 +46,13 @@ test "should allow observing state exit", 2, ->
 test "should allow observing events", 2, ->
   @sm.on 'switch', =>
     ok true, 'callback is called'
-    equal @sm.get('state'), 'on', 'State should not have changed when callback fires'
+    equal @sm.get('state'), 'off', 'State should have changed when callback fires'
   @sm.switch()
 
 test "should allow observing state transition", 2, ->
   @sm.onTransition 'on', 'off', =>
     ok true, 'callback is called'
-    equal @sm.get('state'), 'on', 'State should not have changed when callback fires'
+    equal @sm.get('state'), 'off', 'State should have changed when callback fires'
   @sm.switch()
 
 test "should allow transitioning into the same state", 3, ->
