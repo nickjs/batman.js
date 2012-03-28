@@ -1618,8 +1618,8 @@ class Batman.StateMachine extends Batman.Object
     @fire "exit #{previousState}"
     @set('_state', nextState)
     @fire "#{previousState}->#{nextState}"
-    @fire event
     @fire "enter #{nextState}"
+    @fire event
     @isTransitioning = false
 
     if @nextEvents.length > 0
@@ -1628,6 +1628,16 @@ class Batman.StateMachine extends Batman.Object
 
   canDo: (event, fromState = @get('state')) -> !!@nextStateOnEvent(event, fromState)
   nextStateOnEvent: (event, fromState = @get('state')) -> @transitionTable[event]?[fromState]
+
+class Batman.DelegatingStateMachine extends Batman.StateMachine
+  constructor: (startState, @base) ->
+    super(startState)
+
+  fire: ->
+    result = super
+    @base.fire(arguments...)
+    result
+
 # App, Requests, and Routing
 # --------------------------
 
@@ -2614,7 +2624,7 @@ class Batman.Model extends Batman.Object
             keys: keys
             validator: new validator(matches)
 
-  class Model.LifecycleStateMachine extends Batman.StateMachine
+  class Model.LifecycleStateMachine extends Batman.DelegatingStateMachine
     @transitions
       load: {empty: 'loading', loaded: 'loading', loading: 'loading'}
       loaded: {loading: 'loaded'}
@@ -2622,7 +2632,7 @@ class Batman.Model extends Batman.Object
 
   @classAccessor 'lifecycle', ->
     @_batman.check(@)
-    @_batman.lifecycle ||= new Model.LifecycleStateMachine('empty')
+    @_batman.lifecycle ||= new Model.LifecycleStateMachine('empty', @)
 
   @urlNestsUnder: (key) ->
     parent = Batman.helpers.pluralize(key)
@@ -2725,7 +2735,7 @@ class Batman.Model extends Batman.Object
   # record is at in it's lifetime, which can often be during a save or load operation.
 
   # Define the various states for the model to use.
-  class Model.InstanceLifecycleStateMachine extends Batman.StateMachine
+  class Model.InstanceLifecycleStateMachine extends Batman.DelegatingStateMachine
     @transitions
       load:
         from: ['dirty', 'clean']
@@ -2784,7 +2794,7 @@ class Batman.Model extends Batman.Object
       else
         @set(pk, v)
 
-  @accessor 'lifecycle', -> @lifecycle ||= new Batman.Model.InstanceLifecycleStateMachine('clean')
+  @accessor 'lifecycle', -> @lifecycle ||= new Batman.Model.InstanceLifecycleStateMachine('clean', @)
   @accessor 'attributes', -> @attributes ||= new Batman.Hash
   @accessor 'dirtyKeys', -> @dirtyKeys ||= new Batman.Hash
   @accessor 'errors', -> @errors ||= new Batman.ErrorsSet
