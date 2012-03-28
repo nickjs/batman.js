@@ -1600,8 +1600,8 @@ class Batman.StateMachine extends Batman.Object
   transitionTable: {}
 
   onTransition: (from, into, callback) -> @on("#{from}->#{into}", callback)
-  onEnter: (into, callback) -> @on("enter:#{into}", callback)
-  onExit: (from, callback) -> @on("exit:#{from}", callback)
+  onEnter: (into, callback) -> @on("enter #{into}", callback)
+  onExit: (from, callback) -> @on("exit #{from}", callback)
 
   do: (event) ->
     if @isTransitioning
@@ -1615,11 +1615,11 @@ class Batman.StateMachine extends Batman.Object
       return false
 
     @isTransitioning = true
-    @fire "exit:#{previousState}"
+    @fire "exit #{previousState}"
     @set('_state', nextState)
     @fire "#{previousState}->#{nextState}"
     @fire event
-    @fire "enter:#{nextState}"
+    @fire "enter #{nextState}"
     @isTransitioning = false
 
     if @nextEvents.length > 0
