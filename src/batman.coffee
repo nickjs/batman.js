@@ -2579,20 +2579,27 @@ class Batman.Model extends Batman.Object
             keys: keys
             validator: new validator(matches)
 
-  @urlNestsUnder: (key) ->
-    parent = Batman.helpers.pluralize(key)
+  @urlNestsUnder: (keys...) ->
+    parents = {}
+    for key in keys
+      parents[key] = Batman.helpers.pluralize(key)
     children = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
 
     @url = (options) ->
-      parentID = options.data[key + '_id']
-      delete options.data[key + '_id']
-      "#{parent}/#{parentID}/#{children}"
+      for key, plural of parents
+        parentID = options.data[key + '_id']
+        if parentID
+          delete options.data[key + '_id']
+          return "#{plural}/#{parentID}/#{children}"
 
     @::url = ->
-      url = "#{parent}/#{@get(key + '_id')}/#{children}"
-      if id = @get('id')
-        url += '/' + id
-      url
+      for key, plural of parents
+        parentID = @get(key + '_id')
+        if parentID
+          url = "#{plural}/#{parentID}/#{children}"
+          if id = @get('id')
+            url += '/' + id
+          return url
 
   # ### Query methods
   @classAccessor 'all',
