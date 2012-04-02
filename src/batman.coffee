@@ -1497,7 +1497,17 @@ class Batman.UniqueSetIndex extends Batman.SetIndex
     else
       @_uniqueIndex.set(key, resultSet.toArray()[0])
 
-class Batman.BinarySetOperation extends Batman.Set
+class Batman.MergeableSet extends Batman.Set
+  merge: (others...) ->
+    merged = new Batman.Set
+    others.unshift(@)
+    for set in others
+      set.forEach (v) -> merged.add v
+    merged
+
+  filter: Batman.SetProxy::filter
+
+class Batman.BinarySetOperation extends Batman.MergeableSet
   constructor: (@left, @right) ->
     super()
     @_setup @left, @right
@@ -1510,14 +1520,19 @@ class Batman.BinarySetOperation extends Batman.Set
       @_itemsWereRemovedFromSource(set, opposite, items...)
     @_itemsWereAddedToSource set, opposite, set.toArray()...
 
-  merge: (others...) ->
-    merged = new Batman.Set
-    others.unshift(@)
-    for set in others
-      set.forEach (v) -> merged.add v
-    merged
-
-  filter: Batman.SetProxy::filter
+class Batman.SetOperation extends Batman.MergeableSet
+  constructor: (@left, @right) ->
+    super()
+    @left.on 'itemsWereAdded', (items...) =>
+      @_itemsWereAddedToLeftSource(@left, @right, items...)
+    @left.on 'itemsWereRemoved', (items...) =>
+      @_itemsWereRemovedFromLeftSource(@left, @right, items...)
+    @right.on 'itemsWereAdded', (items...) =>
+      @_itemsWereAddedToRightSource(@right, @left, items...)
+    @right.on 'itemsWereRemoved', (items...) =>
+      @_itemsWereRemovedFromRightSource(@right, @left, items...)
+    @_itemsWereAddedToLeftSource @left, @right, @left.toArray()...
+    @_itemsWereAddedToRightSource @right, @left, @right.toArray()...
 
 class Batman.SetUnion extends Batman.BinarySetOperation
   _itemsWereAddedToSource: (source, opposite, items...) ->  @add items...
@@ -1530,6 +1545,19 @@ class Batman.SetIntersection extends Batman.BinarySetOperation
     itemsToAdd = (item for item in items when opposite.has(item))
     @add itemsToAdd...
   _itemsWereRemovedFromSource: (source, opposite, items...) -> @remove items...
+
+class Batman.SetComplement extends Batman.SetOperation
+  _itemsWereAddedToLeftSource: (source, opposite, items...) ->
+    itemsToAdd = (item for item in items when not opposite.has(item))
+    @add itemsToAdd...
+  _itemsWereRemovedFromLeftSource: (source, opposite, items...) ->
+    @remove items...
+  _itemsWereAddedToRightSource: (source, opposite, items...) ->
+    itemsToRemove = (item for item in items when opposite.has(item))
+    @remove itemsToRemove...
+  _itemsWereRemovedFromRightSource: (source, opposite, items...) ->
+    itemsToAdd = (item for item in items when opposite.has(item))
+    @add itemsToAdd...
 
 # State Machines
 # --------------
