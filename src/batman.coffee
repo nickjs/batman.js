@@ -2591,6 +2591,7 @@ class Batman.Model extends Batman.Object
         if parentID
           delete options.data[key]
           return "#{plural}/#{parentID}/#{children}"
+      return children
 
     @::url = ->
       for key, plural of parents
@@ -2599,9 +2600,11 @@ class Batman.Model extends Batman.Object
           parentID = @get(key)
         if parentID
           url = "#{plural}/#{parentID}/#{children}"
-          if id = @get('id')
-            url += '/' + id
-          return url
+          break
+      url ||= children
+      if id = @get('id')
+        url += '/' + id
+      url
 
   # ### Query methods
   @classAccessor 'all',
