@@ -107,6 +107,16 @@ asyncTest 'clearing the model should remove instances from the identity map', ->
     equal @Product.get('loaded.length'), 0
     QUnit.start()
 
+asyncTest 'model will reload data from storage after clear', ->
+  @Product.find 1, (e, p) =>
+    equal p.get('cost'), 10
+    @adapter.storage =
+      'products1': {name: "One", cost: 20, id:1}
+    @Product.clear()
+    p.load (e, p) =>
+      equal p.get('cost'), 20
+      QUnit.start()
+
 QUnit.module 'Batman.Model.urlNestsUnder',
   setup: ->
     class @Product extends Batman.Model
