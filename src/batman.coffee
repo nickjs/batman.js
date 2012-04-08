@@ -185,7 +185,11 @@ Batman.get = $get = (base, key) ->
 
 Batman.getPath = $getPath = (base, segments) ->
   for segment in segments
-    return unless base? and (base = $get(base, segment))?
+    if base?
+      base = $get(base, segment)
+      return base unless base?
+    else
+      return undefined
   base
 
 Batman.escapeHTML = $escapeHTML = do ->
@@ -4012,6 +4016,17 @@ class Batman.View extends Batman.Object
         @observe 'node', (node) => @render(node)
 
   @store: new Batman.ViewStore()
+  @option: (keys...) ->
+    keys.forEach (key) =>
+      @accessor @::_argumentBindingKey(key), (bindingKey) ->
+        return unless (node = @get 'node') && (context = @get 'context')
+        keyPath = node.getAttribute "data-view-#{key}".toLowerCase()
+        return unless keyPath?
+        @[bindingKey]?.die()
+        @[bindingKey] = new Batman.DOM.ViewArgumentBinding node, keyPath, context
+
+    @accessor keys..., (key) ->
+      @get(@_argumentBindingKey(key))?.get('filteredValue')
 
   # Set the source attribute to an html file to have that file loaded.
   source: ''
@@ -4061,6 +4076,8 @@ class Batman.View extends Batman.Object
     if node
       @_renderer = new Batman.Renderer(node, null, @context, @)
       @_renderer.on 'rendered', => @fire('ready', node)
+
+  _argumentBindingKey: (key) -> "_#{key}ArgumentBinding"
 
   @::on 'appear', -> @viewDidAppear? arguments...
   @::on 'disappear', -> @viewDidDisappear? arguments...
@@ -4381,13 +4398,6 @@ Batman.DOM = {
     formfor: (node, localName, key, context) ->
       new Batman.DOM.FormBinding(arguments...)
       context.descendWithKey(key, localName)
-
-    view: (node, bindKey, contextKey, context) ->
-      parent = context.contextForKey(contextKey)
-      view = null
-      parent.observeAndFire contextKey, (newValue) ->
-        view ||= Batman.data node, 'view'
-        view?.set bindKey, newValue
   }
 
   # `Batman.DOM.events` contains the helpers used for binding to events. These aren't called by
@@ -4656,28 +4666,25 @@ Batman.DOM.event('bindingAdded')
 # objects is traversed and any observers are properly attached.
 class Batman.DOM.AbstractBinding extends Batman.Object
   # A beastly regular expression for pulling keypaths out of the JSON arguments to a filter.
-  # It makes the following matches:
-  #
-  # + `foo` and `baz.qux` in `foo, "bar", baz.qux`
-  # + `foo.bar.baz` in `true, false, "true", "false", foo.bar.baz`
-  # + `true.bar` in `2, true.bar`
-  # + `truesay` in truesay
-  # + no matches in `"bar", 2, {"x":"y", "Z": foo.bar.baz}, "baz"`
+  # Match either strings, object literals, or keypaths.
   keypath_rx = ///
     (^|,)             # Match either the start of an arguments list or the start of a space inbetween commas.
     \s*               # Be insensitive to whitespace between the comma and the actual arguments.
-    (?!               # Use a lookahead to ensure we aren't matching true or false:
-      (?:true|false)  # Match either true or false ...
-      \s*             # and make sure that there's nothing else that comes after the true or false ...
-      (?:$|,)         # before the end of this argument in the list.
+    (?:
+      (true|false)
+      |
+      ("[^"]*")         # Match string literals
+      |
+      (\{[^\}]*\})      # Match object literals
+      |
+      (
+        [a-zA-Z][\w\-\.]*   # Now that true and false can't be matched, match a dot delimited list of keys.
+        [\?\!]?             # Allow ? and ! at the end of a keypath to support Ruby's methods
+      )
     )
-    (
-      [a-zA-Z][\w-\.]* # Now that true and false can't be matched, match a dot delimited list of keys.
-      [\?\!]?         # Allow ? and ! at the end of a keypath to support Ruby's methods
-    )
-    \s*               # Be insensitive to whitespace before the next comma or end of the filter arguments list.
+    \s*                 # Be insensitive to whitespace before the next comma or end of the filter arguments list.
     (?=$|,)             # Match either the next comma or the end of the filter arguments list.
-    ///g
+  ///g
 
   # A less beastly pair of regular expressions for pulling out the [] syntax `get`s in a binding string, and
   # dotted names that follow them.
@@ -4836,7 +4843,13 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   #  + wrapping the `,` delimited list in square brackets
   #  + and `JSON.parse`ing them as an array.
   parseSegment: (segment) ->
-    JSON.parse( "[" + segment.replace(keypath_rx, "$1{\"_keypath\": \"$2\"}") + "]" )
+    segment = segment.replace keypath_rx, (match, start = '', bool, string, object, keypath, offset) ->
+      replacement = if keypath
+        '{"_keypath": "' + keypath + '"}'
+      else
+        bool || string || object
+      start + replacement
+    JSON.parse("[#{segment}]")
 
 class Batman.DOM.AbstractAttributeBinding extends Batman.DOM.AbstractBinding
   constructor: (node, @attributeName, args...) -> super(node, args...)
@@ -5475,10 +5488,12 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @nodeMap.set(item, newNode)
     newNode
 
+class Batman.DOM.ViewArgumentBinding extends Batman.DOM.AbstractBinding
+
 # Filters
 # -------
 #
-# `Batman.Filters` contains the simple, determininistic tranforms used in view bindings to
+# `Batman.Filters` contains the simple, deterministic transforms used in view bindings to
 # make life a little easier.
 buntUndefined = (f) ->
   (value) ->
