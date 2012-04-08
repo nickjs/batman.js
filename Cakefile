@@ -108,12 +108,13 @@ task 'doc', 'build the Percolate documentation', (options) ->
 task 'test', 'compile Batman.js and the tests and run them on the command line', (options) ->
   running = false
   muffin.run
-    files: glob.sync('./src/**/*.coffee').concat(glob.sync('./tests/**/*.coffee'))
+    files: glob.sync('./src/**/*.coffee').concat(glob.sync('./tests/**/*.coffee')).concat(glob.sync('./docs/**/*.coffee'))
     options: options
     map:
       'src/batman(.node)?.coffee'                : (matches) -> true
       'src/extras/(.+).coffee'                   : (matches) -> true
       'tests/batman/(.+)_(test|helper).coffee'   : (matches) -> true
+      'docs/percolate\.coffee'                   : (matches) -> muffin.compileScript(matches[0], 'docs/percolate.js', options)
       'tests/run.coffee'                         : (matches) -> muffin.compileScript(matches[0], 'tests/run.js', options)
     after: ->
       failFast = (code) ->

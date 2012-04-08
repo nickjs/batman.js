@@ -1,10 +1,11 @@
 class TestStorageAdapter extends Batman.StorageAdapter
+  @autoCreate: true
   constructor: ->
     super
     @counter = 10
     @storage = {}
     @lastQuery = false
-    @create(new @model, {}, ->)
+    @create(new @model, {}, ->) if @constructor.autoCreate
 
   update: (record, options, callback) ->
     id = record.get('id')

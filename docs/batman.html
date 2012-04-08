@@ -304,9 +304,9 @@
 </li>
   <li class="searchable"><a href="#batman-model-validate" class="class-function">@validate(keys...[, options])</a>
 </li>
-  <li class="searchable"><a href="#batman-model-all" class="class-function">@all</a>
-</li>
   <li class="searchable"><a href="#batman-model-loaded" class="class-function">@loaded</a>
+</li>
+  <li class="searchable"><a href="#batman-model-all" class="class-function">@all</a>
 </li>
   <li class="searchable"><a href="#batman-model-clear" class="class-function">@clear()</a>
 </li>
@@ -2978,7 +2978,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
       <span class="nx">Shop</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="nx">Shop</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">);</span>
+    <span class="nx">Shop</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">TestStorageAdapter</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="nx">Shop</span><span class="p">;</span>
 
@@ -3000,7 +3000,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
       <span class="nx">Shop</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="nx">adapter</span> <span class="o">=</span> <span class="nx">Shop</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">);</span>
+    <span class="nx">adapter</span> <span class="o">=</span> <span class="nx">Shop</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">TestStorageAdapter</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="nx">Shop</span><span class="p">;</span>
 
@@ -3345,11 +3345,157 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <li><code>key</code>: the key to which the validation has been attached</li>
 <li><code>callback</code>: a function to call once validation has been complete. Calling this function is ++mandatory++.</li>
 </ul>
-<h3 id="batman-model-all">@all : Set</h3>
+<p>See <code>Model::validate</code> for information on how to get a particular record&#39;s validity.
+
+</p>
 <h3 id="batman-model-loaded">@loaded : Set</h3>
+<p>The <code>loaded</code> set is available on every model class and holds every model instance seen by the system in order to function as an identity map. Successful loading or saving individual records or batches of records will result in those records being added to the <code>loaded</code> set. Destroying instances will remove records from the identity set.
+
+</p>
+<div class="console-session">
+  <h4>the loaded set stores all records seen</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Post</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Post</span><span class="p">,</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Post</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">Post</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">Post</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">TestStorageAdapter</span><span class="p">);</span>
+
+    <span class="nx">Post</span><span class="p">.</span><span class="nx">encode</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">Post</span><span class="p">;</span>
+
+  <span class="p">})()</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;loaded&#39;</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;loaded.length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">0</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">post</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">()</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">post</span><span class="p">.</span><span class="nx">save</span><span class="p">()</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;loaded.length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>the loaded adds new records caused by loads and removes records caused by destroys</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Post</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Post</span><span class="p">,</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Post</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">Post</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">Post</span><span class="p">.</span><span class="nx">encode</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">Post</span><span class="p">;</span>
+
+  <span class="p">})()</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TestStorageAdapter</span><span class="p">(</span><span class="nx">Post</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">adapter</span><span class="p">.</span><span class="nx">storage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;posts1&#39;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;One&quot;</span><span class="p">,</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;posts2&#39;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Two&quot;</span><span class="p">,</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">adapter</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">load</span><span class="p">()</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;loaded.length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">2</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">post</span> <span class="o">=</span> <span class="kc">false</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">post</span> <span class="o">=</span> <span class="nx">result</span><span class="p">;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">post</span><span class="p">.</span><span class="nx">destroy</span><span class="p">()</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;loaded.length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<h3 id="batman-model-all">@all : Set</h3>
+<p>The <code>all</code> set is an alias to the <code>loaded</code> set with an added implicit load on the model. <code>Model.get(&#39;all&#39;)</code> will synchronously return the <code>loaded</code> set and trigger an implicit asynchronous call of <code>Model.load()</code> without options to load a batch of records, which will eventually populate the <code>loaded</code> set with the records returned by the server. Note that <code>all</code> is relative only to the client: it completely depends on the storage adapter in use and any backends which they may contact to determine what comes back during a <code>Model.load</code>.
+
+</p>
+<p><code>all</code> is useful for listing every instance of a model in a view, and since the <code>loaded</code> set will change when the <code>load</code> returns, it can be safely bound to.
+
+</p>
+<div class="console-session">
+  <h4>the all set asynchronously fetches records when gotten</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Post</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Post</span><span class="p">,</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Post</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">Post</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">Post</span><span class="p">.</span><span class="nx">encode</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">Post</span><span class="p">;</span>
+
+  <span class="p">})()</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AsyncTestStorageAdapter</span><span class="p">(</span><span class="nx">Post</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">adapter</span><span class="p">.</span><span class="nx">storage</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;posts1&#39;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;One&quot;</span><span class="p">,</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;posts2&#39;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Two&quot;</span><span class="p">,</span>
+      <span class="nx">id</span><span class="o">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">adapter</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;all.length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">0</span> <span class="c1">// The synchronously returned set is empty</span>
+</pre></div></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">...</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;all.length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">2</span> <span class="c1">// After the async load the set is populated</span>
+</pre></div></div></code>
+  </pre>
+</div>
 <h3 id="batman-model-clear">@clear() : Set</h3>
+<p><code>Model.clear()</code> empties the identity map. This is useful for tests and other unnatural situations where records new to the system are guaranteed to be as such.
+
+</p>
 <h3 id="batman-model-find">@find(id, callback : Function) : Model</h3>
+<p><code>Model.find()</code> asks a model to call a given <code>callback</code> with the record with the given <code>id</code>. 
+
+</p>
 <h3 id="batman-model-load">@load(options = {}, callback)</h3>
+<div class="console-session">
+  <h4>@load calls back with an error and some models</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Post</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Post</span><span class="p">,</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Post</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">Post</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">Post</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">TestStorageAdapter</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">Post</span><span class="p">;</span>
+
+  <span class="p">})()</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">posts</span> <span class="o">=</span> <span class="kc">false</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">posts</span> <span class="o">=</span> <span class="nx">result</span><span class="p">;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">...</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">posts</span><span class="p">.</span><span class="nx">length</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">0</span>
+</pre></div></div></code>
+  </pre>
+</div>
 <h3 id="batman-model-create">@create(attributes = {}, callback) : Model</h3>
 <h3 id="batman-model-findorcreate">@findOrCreate(attributes = {}, callback) : Model</h3>
 <h3 id="batman-model-id">id : value</h3>
