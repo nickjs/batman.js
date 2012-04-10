@@ -28,6 +28,10 @@ pipedExec = do ->
         running = false
         callback(code)
 
+unless require('coffee-script').VERSION == '1.3.0'
+  console.error "Please `npm update`, your packages are out of date."
+  process.exit 1
+
 task 'build', 'compile Batman.js and all the tools', (options) ->
   files = glob.sync('./src/**/*').concat(glob.sync('./tests/lib/*'))
   muffin.run
