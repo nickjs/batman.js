@@ -22,7 +22,6 @@ body { background: #eee url(../img/bg-texture.png); }
 }
 
 .container {
-  background: url(../img/faux-column.jpg) 0 0 repeat-y;
   margin: 0 0 50px 0;
   width: 80.0%;
   box-shadow: 0 0 15px rgba(0,0,0,.1);  
@@ -76,6 +75,7 @@ p { margin: 0 0 .5em 0; }
  * Left Column */
 
 .sidebar{
+  background: url(../img/faux-column.jpg) 0 0 repeat-y;
   width: 280px;
   height: 100%;
   font-size: 13px;
