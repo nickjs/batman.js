@@ -75,17 +75,16 @@ asyncTest 'it binds options created by a foreach and remains consistent when the
   context = Batman
     heroes: new Batman.Set(leo, mikey).sortedBy('id')
     selected: mikey
-    showBox: false
 
   helpers.render  '<select data-bind="selected.id">' +
                     '<option data-foreach-hero="heroes" data-bind-value="hero.id" data-bind="hero.name" />' +
                   '</selected>', context, (node) ->
-    equal node[0].childNodes[0].innerHTML, 'leo'
-    equal node[0].childNodes[1].innerHTML, 'mikey'
+    deepEqual getContents(node), ['leo', 'mikey']
+    equal node[0].value, mikey.get('id')
     context.set 'heroes', new Batman.Set(leo, mikey).sortedBy('id')
     delay ->
-      equal node[0].childNodes[0].innerHTML, 'leo'
-      equal node[0].childNodes[1].innerHTML, 'mikey'
+      deepEqual getContents(node), ['leo', 'mikey']
+      equal node[0].value, mikey.get('id')
 
 asyncTest 'it binds the value of a multi-select box and updates the options when the bound value changes', ->
   context = new Batman.Object
@@ -138,6 +137,7 @@ asyncTest 'it binds the value of a multi-select box and updates the value when t
     selected: 'crono'
     mario: new Batman.Object(selected: null)
     crono: new Batman.Object(selected: null)
+
   helpers.render '<select multiple="multiple" data-bind="selected"><option value="mario" data-bind-selected="mario.selected"></option><option value="crono" data-bind-selected="crono.selected"></option></select>', context, (node) ->
     equal node[0].value, 'crono', 'node value is crono'
     equal context.get('selected'), 'crono', 'selected is crono'
@@ -151,6 +151,26 @@ asyncTest 'it binds the value of a multi-select box and updates the value when t
     for opt in node[0].children
       ok opt.selected, "#{opt.value} option is selected"
     QUnit.start()
+
+asyncTest 'it binds multiple select options created by a foreach and remains consistent when the set instance iterated over swaps', 4, ->
+  context = new Batman.Object
+    mario: mario = new Batman.Object(selected: false, name: 'mario')
+    crono: crono = new Batman.Object(selected: true, name: 'crono')
+    heros: new Batman.Set(mario, crono).sortedBy('name')
+
+  source = '''
+    <select multiple="multiple">
+      <option data-foreach-hero="heros" data-bind-selected="hero.selected" data-bind="hero.name" data-bind-value="hero.name"></option>
+    </select>
+  '''
+
+  helpers.render source, context, (node) ->
+    deepEqual getContents(node), ['crono', 'mario']
+    deepEqual getSelections(node), [true, false]
+    context.set 'heros', new Batman.Set(context.get('crono'), context.get('mario')).sortedBy('name')
+    delay ->
+      deepEqual getContents(node), ['crono', 'mario']
+      deepEqual getSelections(node), [true, false]
 
 asyncTest 'should be able to remove bound select nodes', 2, ->
   context = new Batman.Object selected: "foo"
