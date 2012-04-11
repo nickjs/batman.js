@@ -1,7 +1,7 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
 oldDeferEvery = Batman.DOM.IteratorBinding::deferEvery
-getSelections = (node) -> (c.selected for c in node[0].children when c.nodeType is window.Node.ELEMENT_NODE)
+getSelections = (node) -> node.find('option').map((i, node) -> !!node.selected).toArray()
 getContents = (node) -> node.find('option').map((i, node) -> node.innerHTML).toArray()
 
 QUnit.module 'Batman.View select bindings'
@@ -68,23 +68,25 @@ asyncTest 'it binds the options of a select box and updates when the select\'s v
 
     QUnit.start()
 
-asyncTest 'it binds options created by a foreach and remains consistent when the set instance iterated over swaps', 4, ->
-  leo = new Batman.Object ({name: 'leo', id: 1})
-  mikey = new Batman.Object ({name: 'mikey', id: 2})
+asyncTest 'it binds options created by a foreach and remains consistent when the set instance iterated over swaps', ->
+  leo = Batman name: 'leo', id: 1
+  mikey = Batman name: 'mikey', id: 2
 
   context = Batman
     heroes: new Batman.Set(leo, mikey).sortedBy('id')
-    selected: mikey
+    selected: 1
 
-  helpers.render  '<select data-bind="selected.id">' +
+  helpers.render  '<select data-bind="selected">' +
                     '<option data-foreach-hero="heroes" data-bind-value="hero.id" data-bind="hero.name" />' +
                   '</selected>', context, (node) ->
-    deepEqual getContents(node), ['leo', 'mikey']
-    equal node[0].value, mikey.get('id')
-    context.set 'heroes', new Batman.Set(leo, mikey).sortedBy('id')
     delay ->
       deepEqual getContents(node), ['leo', 'mikey']
-      equal node[0].value, mikey.get('id')
+      equal node[0].value, "1"
+
+      context.set 'heroes', new Batman.Set(leo, mikey).sortedBy('id')
+      delay ->
+        deepEqual getContents(node), ['leo', 'mikey']
+        equal node[0].value, "1"
 
 asyncTest 'it binds the value of a multi-select box and updates the options when the bound value changes', ->
   context = new Batman.Object
@@ -112,8 +114,6 @@ asyncTest 'it binds the value of a multi-select box and updates the options when
   '''
 
   helpers.render source, context, (node) ->
-    getSelections = -> (c.selected for c in node[0].children when c.nodeType is window.Node.ELEMENT_NODE)
-
     deepEqual context.get('selected.names'), ['crono', 'link']
     deepEqual getSelections(node), []
     deepEqual getContents(node), []
