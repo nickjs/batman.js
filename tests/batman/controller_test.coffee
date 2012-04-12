@@ -222,3 +222,46 @@ test '[before/after]Filter', 3, ->
 
   controller.dispatch 'withoutBefore'
   controller.dispatch 'withBefore'
+
+test 'actions executed by other actions implicitly render', ->
+  mockClassDuring Batman ,'View', MockView, (mockClass) =>
+    @controller.test = ->
+      @render false
+      @executeAction 'show'
+
+    @controller.dispatch 'test'
+
+    view = mockClass.lastInstance # instantiated by the show implicit render
+    equal view.constructorArguments[0].source, 'test/show', "The action is correctly different inside the inner execution"
+
+test 'actions executed by other actions have their filters run', ->
+  beforeSpy = createSpy()
+  afterSpy = createSpy()
+  class TestController extends @controller.constructor
+    @beforeFilter 'show', beforeSpy
+    @afterFilter 'show', afterSpy
+
+    show: -> @render false
+    test: ->
+      @render false
+      @executeAction 'show'
+
+  @controller = new TestController
+  @controller.dispatch 'test'
+  ok beforeSpy.called
+  ok afterSpy.called
+
+test 'actions executed by other actions prevent yields from being cleared at the end of dispatch', ->
+  spyOnDuring Batman.DOM.Yield.withName('sidebar'), 'clear', (sidebarClearSpy) =>
+    spyOnDuring Batman.DOM.Yield.withName('main'), 'clear', (mainClearSpy) =>
+      mockClassDuring Batman ,'View', MockView, (mockClass) =>
+        @controller.show = ->
+          @executeAction 'index'
+          @render {into: 'main'}
+        @controller.index = ->
+          @render {into: 'sidebar'}
+
+        @controller.dispatch 'show'
+
+        equal mainClearSpy.callCount, 0
+        equal sidebarClearSpy.callCount, 0
