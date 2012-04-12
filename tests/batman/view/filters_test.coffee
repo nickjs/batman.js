@@ -181,6 +181,39 @@ asyncTest 'not', 1, ->
     equals node[0].checked, false
     QUnit.start()
 
+asyncTest 'and', 4, ->
+  context = Batman
+    pieuvre: true
+    jambon: false
+
+  source =  '<input type="checkbox" data-bind="pieuvre | and pieuvre"/>' +
+            '<input type="checkbox" data-bind="pieuvre | and jambon"/>' +
+            '<input type="checkbox" data-bind="jambon | and pieuvre"/>' +
+            '<input type="checkbox" data-bind="jambon | and jambon"/>'
+
+  helpers.render source, context, (node) ->
+    equals node[0].checked, true
+    equals node[1].checked, false
+    equals node[2].checked, false
+    equals node[3].checked, false
+    QUnit.start()
+
+asyncTest 'or', 4, ->
+  context = Batman
+    hotdog: true
+    mushroom: false
+
+  source =  '<input type="checkbox" data-bind="hotdog | or hotdog"/>' +
+            '<input type="checkbox" data-bind="hotdog | or mushroom"/>' +
+            '<input type="checkbox" data-bind="mushroom | or hotdog"/>' +
+            '<input type="checkbox" data-bind="mushroom | or mushroom"/>'
+
+  helpers.render source, context, (node) ->
+    equals node[0].checked, true
+    equals node[1].checked, true
+    equals node[2].checked, true
+    equals node[3].checked, false
+    QUnit.start()
 
 asyncTest 'map', 1, ->
   helpers.render '<div data-bind="posts | map \'name\' | join \', \'"></div>',
@@ -361,6 +394,18 @@ asyncTest "it should interpolate strings with counts", ->
       equal node.childNodes[0].innerHTML, "3 pamplemouses"
       QUnit.start()
 
+asyncTest 'should render a user defined filter', 4, ->
+  Batman.Filters['test'] = spy = createSpy().whichReturns("testValue")
+  ctx = Batman
+    foo: 'bar'
+    bar: 'baz'
+  helpers.render '<div data-bind="foo | test 1, \'baz\'"></div>', ctx, (node) ->
+    equals node.html(), "testValue"
+    equal Batman._functionName(spy.lastCallContext.constructor), 'RenderContext'
+    deepEqual spy.lastCallArguments.slice(0,3), ['bar', 1, 'baz']
+    ok spy.lastCallArguments[3] instanceof Batman.DOM.AbstractBinding
+    delete Batman.Filters.test
+    QUnit.start()
 
 QUnit.module "Batman.View user defined filter execution"
 
@@ -376,4 +421,5 @@ asyncTest 'should render a user defined filter', 4, ->
     ok spy.lastCallArguments[3] instanceof Batman.DOM.AbstractBinding
     delete Batman.Filters.test
     QUnit.start()
+
 

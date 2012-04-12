@@ -5504,6 +5504,12 @@ Batman.Filters =
   equals: buntUndefined (lhs, rhs, binding) ->
     lhs is rhs
 
+  and: (lhs, rhs) ->
+    !!lhs && !!rhs
+
+  or: (lhs, rhs) ->
+    !!lhs || !!rhs
+
   not: (value, binding) ->
     ! !!value
 
