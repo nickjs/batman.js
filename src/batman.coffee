@@ -1474,6 +1474,9 @@ class Batman.SetIndex extends Batman.Object
     (newValue, oldValue) =>
       @_removeItemFromKey(item, oldValue)
       @_addItemToKey(item, newValue)
+  forEach: (iterator, ctx) ->
+    @_storage.forEach (key, set) =>
+      iterator.call(ctx, key, set, this) if set.length > 0
   _addItem: (item) -> @_addItemToKey(item, @_keyForItem(item))
   _addItemToKey: (item, key) ->
     @_resultSetForKey(key).add item
@@ -1483,7 +1486,6 @@ class Batman.SetIndex extends Batman.Object
     @_storage.getOrSet(key, -> new Batman.Set)
   _keyForItem: (item) ->
     Batman.Keypath.forBaseAndKey(item, @key).getValue()
-
 class Batman.UniqueSetIndex extends Batman.SetIndex
   constructor: ->
     @_uniqueIndex = new Batman.Hash

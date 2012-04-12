@@ -131,6 +131,33 @@ test "setting a new value of the indexed property on an item which has been remo
 
   equal allByMary.has(@byFred), false
 
+test "forEach(iterator) calls the iterator with each non-empty set", ->
+  calls = {}
+  @authorNameIndex.forEach (key, set) -> calls[key] ||= set
+
+  equal calls['Fred'].length, 2
+  equal calls['Mary'].length, 1
+  equal calls['Zeke'].length, 1
+
+  @base.add @byJill
+  calls = {}
+  @authorNameIndex.forEach (key, set) -> calls[key] ||= set
+
+  equal calls['Fred'].length, 2
+  equal calls['Mary'].length, 1
+  equal calls['Zeke'].length, 1
+  equal calls['Jill'].length, 1
+
+  @base.remove @byJill
+  calls = {}
+  @authorNameIndex.forEach (key, set) -> calls[key] ||= set
+
+  equal calls['Fred'].length, 2
+  equal calls['Mary'].length, 1
+  equal calls['Zeke'].length, 1
+  equal typeof calls['Jill'], 'undefined'
+
+
 test "items with undefined values for the indexed key are grouped together as with any other value, and don't collide with null values", ->
   noAuthor = Batman()
   anotherNoAuthor = Batman()
