@@ -2367,14 +2367,14 @@ class Batman.RenderCache extends Batman.Hash
     @keyQueue = []
 
   viewForOptions: (options) ->
-    @getOrSet options, => @_newViewFromOptions(options)
+    @getOrSet options, =>
+      @_newViewFromOptions($mixin {}, options)
 
   _newViewFromOptions: (options) -> new options.viewClass(options)
 
   @wrapAccessor (core) ->
     cacheable: false
     get: (key) ->
-      key = $mixin {}, key
       result = core.get.call(@, key)
       # Bubble the result up to the top of the queue
       @_addOrBubbleKey(key) if result

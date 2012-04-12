@@ -87,15 +87,39 @@ test 'it should render a Batman.View subclass with the ControllerAction name on 
     deepEqual view.get.lastCallArguments, ['node']
     deepEqual replace.lastCallArguments, ['view contents']
 
-test 'it should cache the rendered Batman.View subclass with the ControllerAction name on the current app if it exists', ->
+test 'it should cache the rendered Batman.Views if rendered from different action', ->
   Batman.currentApp = mockApp = Batman _renderContext: Batman.RenderContext.base
-  mockApp.TestShowView = MockView
+  @controller.actionA = ->
+    @render viewClass: MockView, source: 'foo'
+  @controller.actionB = ->
+    @render viewClass: MockView, source: 'foo'
 
-  @controller.dispatch 'show'
+  @controller.dispatch 'actionA'
   view = MockView.lastInstance
 
-  @controller.dispatch 'show'
+  @controller.dispatch 'actionB'
   equal MockView.lastInstance, view, "No new instance has been made"
+
+asyncTest 'it should cache the rendered Batman.Views if rendered from different actions into different yields', ->
+  Batman.currentApp = mockApp = Batman _renderContext: Batman.RenderContext.base
+  mainContainer = $('<div>')[0]
+  detailContainer = $('<div>')[0]
+  Batman.DOM.Yield.withName('main').set 'containerNode', mainContainer
+  Batman.DOM.Yield.withName('detail').set 'containerNode', detailContainer
+
+  @controller.index = ->
+    @render viewClass: Batman.View, html: 'foo', into: 'main', source: 'a'
+
+  @controller.show = ->
+    @index()
+    @render viewClass: Batman.View, html: 'bar', into: 'detail', source: 'b'
+
+  @controller.dispatch 'index'
+  delay =>
+    mainView = Batman._data mainContainer.childNodes[0], 'view'
+    @controller.dispatch 'show'
+    delay ->
+      equal Batman._data(mainContainer.childNodes[0], 'view'), mainView, "The same view was used in the second dispatch"
 
 test 'it should render views if given in the options', ->
   testView = new MockView
