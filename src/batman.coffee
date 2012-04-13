@@ -1453,10 +1453,12 @@ class Batman.SetSort extends Batman.SetProxy
     @set('_storage', newOrder)
 
 class Batman.SetIndex extends Batman.Object
+  $mixin @::, Batman.Enumerable
   propertyClass: Batman.Property
+  @accessor 'toArray', -> @toArray()
   constructor: (@base, @key) ->
     super()
-    @_storage = new Batman.SimpleHash
+    @_storage = new Batman.Hash
     if @base.isEventEmitter
       @_setObserver = new Batman.SetObserver(@base)
       @_setObserver.observedItemKeys = [@key]
@@ -1477,6 +1479,10 @@ class Batman.SetIndex extends Batman.Object
   forEach: (iterator, ctx) ->
     @_storage.forEach (key, set) =>
       iterator.call(ctx, key, set, this) if set.length > 0
+  toArray: ->
+    results = []
+    @_storage.forEach (key, set) -> results.push(key) if set.get('length') > 0
+    results
   _addItem: (item) -> @_addItemToKey(item, @_keyForItem(item))
   _addItemToKey: (item, key) ->
     @_resultSetForKey(key).add item

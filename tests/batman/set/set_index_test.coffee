@@ -157,6 +157,17 @@ test "forEach(iterator) calls the iterator with each non-empty set", ->
   equal calls['Zeke'].length, 1
   equal typeof calls['Jill'], 'undefined'
 
+test "toArray returns an array of keys", ->
+  deepEqual @authorNameIndex.toArray().sort(), ['Fred', 'Mary', 'Zeke']
+
+test "toArray can be observed", ->
+  @authorNameIndex.observe 'toArray', spy = createSpy()
+
+  @base.add @byJill
+  deepEqual spy.lastCallArguments[0].sort(), ['Fred', 'Jill', 'Mary', 'Zeke']
+  @base.remove @byJill
+  deepEqual spy.lastCallArguments[0].sort(), ['Fred', 'Mary', 'Zeke']
+
 
 test "items with undefined values for the indexed key are grouped together as with any other value, and don't collide with null values", ->
   noAuthor = Batman()
