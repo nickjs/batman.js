@@ -1588,7 +1588,7 @@ class Batman.StateMachine extends Batman.Object
     @::transitionTable = $mixin {}, @::transitionTable, table
     for k, transitions of @::transitionTable when !@::[k]
       do (k) =>
-        @::[k] = -> @do(k)
+        @::[k] = -> @startTransition(k)
     @
 
   constructor: (startState) ->
@@ -1603,13 +1603,13 @@ class Batman.StateMachine extends Batman.Object
   onEnter: (into, callback) -> @on("enter #{into}", callback)
   onExit: (from, callback) -> @on("exit #{from}", callback)
 
-  do: (event) ->
+  startTransition: (event) ->
     if @isTransitioning
       @nextEvents.push event
       return
 
     previousState = @get('state')
-    nextState = @nextStateOnEvent(event)
+    nextState = @nextStateForEvent(event)
 
     if !nextState
       return false
@@ -1623,11 +1623,11 @@ class Batman.StateMachine extends Batman.Object
     @isTransitioning = false
 
     if @nextEvents.length > 0
-      @do @nextEvents.shift()
+      @startTransition @nextEvents.shift()
     true
 
-  canDo: (event, fromState = @get('state')) -> !!@nextStateOnEvent(event, fromState)
-  nextStateOnEvent: (event, fromState = @get('state')) -> @transitionTable[event]?[fromState]
+  canStartTransition: (event, fromState = @get('state')) -> !!@nextStateForEvent(event, fromState)
+  nextStateForEvent: (event, fromState = @get('state')) -> @transitionTable[event]?[fromState]
 
 class Batman.DelegatingStateMachine extends Batman.StateMachine
   constructor: (startState, @base) ->
@@ -2912,7 +2912,7 @@ class Batman.Model extends Batman.Object
         return
       creating = @isNew()
 
-      if @get('lifecycle').do startState
+      if @get('lifecycle').startTransition startState
 
         associations = @constructor._batman.get('associations')
         # Save belongsTo models immediately since we don't need this model's id
@@ -2927,7 +2927,7 @@ class Batman.Model extends Batman.Object
               associations.getByType('hasOne')?.forEach (association, label) -> association.apply(err, record)
               associations.getByType('hasMany')?.forEach (association, label) -> association.apply(err, record)
             record = @constructor._mapIdentity(record)
-            @get('lifecycle').do endState
+            @get('lifecycle').startTransition endState
           else
             @get('lifecycle').error()
           callback?(err, record)
@@ -2987,7 +2987,7 @@ class Batman.Model extends Batman.Object
 
   _willSet: (key) ->
     return true if @_pauseDirtyTracking
-    if @get('lifecycle').do 'set'
+    if @get('lifecycle').startTransition 'set'
       @getOrSet("dirtyKeys.#{key}", => @get(key))
       true
     else
@@ -3159,7 +3159,7 @@ class Batman.AssociationCurator extends Batman.SimpleHash
 
   _markDirtyAttribute: (key, oldValue) ->
     unless @lifecycle.get('state') in ['loading', 'creating', 'saving', 'saved']
-      if @lifecycle.keySet()
+      if @lifecycle.startTransition 'set'
         @dirtyKeys.set(key, oldValue)
       else
         throw new Batman.StateMachine.InvalidTransitionError("Can't set while in state #{@lifecycle.get('state')}")

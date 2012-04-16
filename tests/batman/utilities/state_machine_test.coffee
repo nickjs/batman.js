@@ -16,19 +16,19 @@ test "should accept a transition table in the constructor", ->
   equal @sm.get('state'), 'off'
   @sm.switch()
   equal @sm.get('state'), 'on'
-  @sm.do('switch') # transitions can be called using strings as well
+  @sm.startTransition('switch') # transitions can be called using strings as well
   equal @sm.get('state'), 'off'
 
-  ok @sm.canDo('switch')
-  ok @sm.canDo('switchOn')
+  ok @sm.canStartTransition('switch')
+  ok @sm.canStartTransition('switchOn')
 
 test "should not allow transitions which aren't in the table", ->
   equal @sm.get('state'), 'on'
   equal @sm.switchOn(), false
   equal @sm.get('state'), 'on'
 
-  ok !@sm.canDo('switchOn')
-  ok !@sm.canDo('nonExistant'), "Non existant events can't be done"
+  ok !@sm.canStartTransition('switchOn')
+  ok !@sm.canStartTransition('nonExistant'), "Non existant events can't be done"
 
 test "should allow observing state entry", 2, ->
   @sm.onEnter 'off', =>
