@@ -1030,6 +1030,16 @@ Batman.Enumerable =
       r = [] unless r.push
       wrap = (r, e) -> r.push(e) if f(e); r
     @reduce wrap, r
+  inGroupsOf: (n) ->
+    r = []
+    current = false
+    i = 0
+    @forEach (x) ->
+      if i++ % n == 0
+        current = []
+        r.push current
+      current.push x
+    r
 
 # Provide this simple mixin ability so that during bootstrapping we don't have to use `$mixin`. `$mixin`
 # will correctly attempt to use `set` on the mixinee, which ends up requiring the definition of
@@ -1453,7 +1463,7 @@ class Batman.SetSort extends Batman.SetProxy
     @set('_storage', newOrder)
 
 class Batman.SetIndex extends Batman.Object
-  $mixin @::, Batman.Enumerable
+  $extendsEnumerable(@::)
   propertyClass: Batman.Property
   @accessor 'toArray', -> @toArray()
   constructor: (@base, @key) ->

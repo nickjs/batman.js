@@ -130,3 +130,15 @@ test "reduce should return a value", ->
   @enumerable = getEnumerable(@array)
   f = (x, acc) -> acc + x
   deepEqual @enumerable.reduce(f), @array.reduce(f)
+
+test "inGroupsOf(1) should return an array with each item in an array", ->
+  @enumerable = getEnumerable([1,2,3])
+  deepEqual @enumerable.inGroupsOf(1), [[1],[2],[3]]
+
+test "inGroupsOf(2) should return an array with two items in each array", ->
+  @enumerable = getEnumerable([1,2,3,4])
+  deepEqual @enumerable.inGroupsOf(2), [[1,2],[3,4]]
+
+test "inGroupsOf(n) can return an incomplete array as the last array", ->
+  @enumerable = getEnumerable([1,2,3,4])
+  deepEqual @enumerable.inGroupsOf(3), [[1,2,3], [4]]
