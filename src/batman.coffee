@@ -2765,12 +2765,27 @@ class Batman.Model extends Batman.Object
       super()
       @set('id', idOrAttributes)
 
+  @accessor 'lifecycle', -> @lifecycle ||= new Batman.Model.InstanceLifecycleStateMachine('clean', @)
+  @accessor 'attributes', -> @attributes ||= new Batman.Hash
+  @accessor 'dirtyKeys', -> @dirtyKeys ||= new Batman.Hash
+  @accessor 'errors', -> @errors ||= new Batman.ErrorsSet
+
+  # Default accessor implementing the latching draft behaviour
+  @accessor Model.defaultAccessor =
+    get: (k) -> $getPath @, ['attributes', k]
+    set: (k, v) ->
+      if @_willSet(k)
+        @get('attributes').set(k, v)
+      else
+        $getPath @, ['attributes', k]
+    unset: (k) -> @get('attributes').unset(k)
+
   # Add a universally accessible accessor for retrieving the primrary key, regardless of which key its stored under.
-  @accessor 'id',
+  @wrapAccessor 'id', (core) ->
     get: ->
       primaryKey = @constructor.primaryKey
       if primaryKey == 'id'
-        @id
+        core.get.apply(@, arguments)
       else
         @get(primaryKey)
     set: (k, v) ->
@@ -2781,24 +2796,9 @@ class Batman.Model extends Batman.Object
       primaryKey = @constructor.primaryKey
       if primaryKey == 'id'
         @_willSet(k)
-        @id = v
+        core.set.apply(@, arguments)
       else
         @set(primaryKey, v)
-
-  @accessor 'lifecycle', -> @lifecycle ||= new Batman.Model.InstanceLifecycleStateMachine('clean', @)
-  @accessor 'attributes', -> @attributes ||= new Batman.Hash
-  @accessor 'dirtyKeys', -> @dirtyKeys ||= new Batman.Hash
-  @accessor 'errors', -> @errors ||= new Batman.ErrorsSet
-
-  # Default accessor implementing the latching draft behaviour
-  @accessor Model.defaultAccessor =
-    get: (k) -> @get("attributes.#{k}")
-    set: (k, v) ->
-      if @_willSet(k)
-        @set("attributes.#{k}", v)
-      else
-        @get("attributes.#{k}")
-    unset: (k) -> @unset("attributes.#{k}")
 
   isNew: -> typeof @get('id') is 'undefined'
 

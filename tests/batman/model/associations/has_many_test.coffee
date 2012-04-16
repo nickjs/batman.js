@@ -138,19 +138,19 @@ asyncTest "hasMany associations are saved via the parent model", 5, ->
   store.save (err, record) =>
     throw err if err
     equal storeSaveSpy.callCount, 1
-    equal product1.get('store_id'), record.id
-    equal product2.get('store_id'), record.id
+    equal product1.get('store_id'), record.get('id')
+    equal product2.get('store_id'), record.get('id')
 
-    @Store.find record.id, (err, store2) =>
+    @Store.find record.get('id'), (err, store2) =>
       throw err if err
-      storedJSON = @storeAdapter.storage["stores#{record.id}"]
+      storedJSON = @storeAdapter.storage["stores#{record.get('id')}"]
       deepEqual store2.toJSON(), storedJSON
       # hasMany saves inline by default
       sorter = generateSorterOnProperty('name')
 
       deepEqual sorter(storedJSON.products), sorter([
-        {name: "Gizmo", store_id: record.id, productVariants: []}
-        {name: "Gadget", store_id: record.id, productVariants: []}
+        {name: "Gizmo", store_id: record.get('id'), productVariants: []}
+        {name: "Gadget", store_id: record.get('id'), productVariants: []}
       ])
       QUnit.start()
 
@@ -160,7 +160,7 @@ asyncTest "hasMany associations are saved via the child model", 2, ->
     product = new @Product name: 'Gizmo'
     product.set 'store', store
     product.save (err, savedProduct) ->
-      equal savedProduct.get('store_id'), store.id
+      equal savedProduct.get('store_id'), store.get('id')
       products = store.get('products')
       ok products.has(savedProduct)
       QUnit.start()
@@ -332,7 +332,7 @@ asyncTest "hasMany associations render", 4, ->
         equal node.children().get(1)?.innerHTML, 'Product Two'
         equal node.children().get(2)?.innerHTML, 'Product Three'
 
-        addedProduct = new @Product(name: 'Product Four', store_id: store.id)
+        addedProduct = new @Product(name: 'Product Four', store_id: store.get('id'))
         addedProduct.save (err, savedProduct) ->
           delay ->
             equal node.children().get(3)?.innerHTML, 'Product Four'
@@ -341,7 +341,7 @@ asyncTest "hasMany associations render", 4, ->
 asyncTest "hasMany adds new related model instances to its set", ->
   @Store.find 1, (err, store) =>
     throw err if err
-    addedProduct = new @Product(name: 'Product Four', store_id: store.id)
+    addedProduct = new @Product(name: 'Product Four', store_id: store.get('id'))
     addedProduct.save (err, savedProduct) =>
       ok store.get('products').has(savedProduct)
       QUnit.start()
