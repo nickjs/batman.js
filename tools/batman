@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+(function() {
 
   (function() {
     var Batman, Commands, cli, noCommandGiven, oldFatal;
@@ -32,3 +33,5 @@
         return require('./generator');
     }
   })();
+
+}).call(this);

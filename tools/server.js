@@ -15,14 +15,14 @@
 
   getServer = function(options) {
     var server;
-    server = connect.createServer(connect.favicon(), connect.logger(), connect.static(process.cwd()), connect.directory(process.cwd()));
+    server = connect.createServer(connect.favicon(), connect.logger(), connect["static"](process.cwd()), connect.directory(process.cwd()));
     if (options.build) {
       server.use(utils.CoffeeCompiler({
         src: process.cwd(),
         dest: path.join(process.cwd(), options.buildDir)
       }));
     }
-    server.use('/batman', connect.static(path.join(__dirname, '..', 'lib')));
+    server.use('/batman', connect["static"](path.join(__dirname, '..', 'lib')));
     server.listen(options.port, options.host);
     return server;
   };
@@ -41,7 +41,9 @@
       options.buildDir || (options.buildDir = './build');
       server = getServer(options);
       info = "Batman is waiting at http://" + options.host + ":" + options.port;
-      if (options.build) info += ", and building to " + options.buildDir + ".";
+      if (options.build) {
+        info += ", and building to " + options.buildDir + ".";
+      }
       return this.ok(info);
     });
   } else {

@@ -14,6 +14,24 @@ option '-d', '--dist',   'compile minified versions of the platform dependent co
 option '-m', '--compare', 'compare to git refs (stat task only)'
 option '-s', '--coverage', 'run jscoverage during tests and report coverage (test task only)'
 
+pipedExec = do ->
+  running = false
+  pipedExec = (args..., callback) ->
+    if !running
+      running = true
+      child = spawn 'node', args
+      process.on 'exit', exitListener = -> child.kill()
+      child.stdout.on 'data', (data) -> process.stdout.write data
+      child.stderr.on 'data', (data) -> process.stderr.write data
+      child.on 'exit', (code) ->
+        process.removeListener 'exit', exitListener
+        running = false
+        callback(code)
+
+unless require('coffee-script').VERSION == '1.3.0'
+  console.error "Please `npm update`, your packages are out of date."
+  process.exit 1
+
 task 'build', 'compile Batman.js and all the tools', (options) ->
   files = glob.sync('./src/**/*').concat(glob.sync('./tests/lib/*'))
   muffin.run
@@ -27,7 +45,7 @@ task 'build', 'compile Batman.js and all the tools', (options) ->
         source = muffin.readFile(matches[0], options).then (source) ->
           compiled = muffin.compileString(source, options)
           compiled = "#!/usr/bin/env node\n\n" + compiled
-          muffin.writeFile "tools/batman", compiled, muffin.extend({}, options, {mode: 0755})
+          muffin.writeFile "tools/batman", compiled, muffin.extend({}, options, {mode: 0o755})
       'src/tools/(.+)\.coffee'   : (matches) -> muffin.compileScript(matches[0], "tools/#{matches[1]}.js", options)
       'tests/run\.coffee'     : (matches) -> muffin.compileScript(matches[0], 'tests/run.js', options)
 
@@ -79,39 +97,59 @@ task 'build', 'compile Batman.js and all the tools', (options) ->
           console.warn done
           done
 
-task 'doc', 'build the Docco documentation', (options) ->
+task 'doc', 'build the Percolate documentation', (options) ->
   muffin.run
-    files: './src/**/*'
+    files: './docs/**/*'
     options: options
     map:
-      'src/batman.coffee': (matches) -> muffin.doccoFile(matches[0], options)
+      'docs/percolate\.coffee'  : (matches) -> muffin.compileScript(matches[0], 'docs/percolate.js', options)
+      'docs/js/docs.coffee'     : (matches) -> muffin.compileScript(matches[0], 'docs/js/docs.js', options)
+      '(.+).percolate'          : -> true
+    after: ->
+      pipedExec 'docs/percolate.js', options, (code) ->
+        process.exit(code) unless options.watch
 
 task 'test', 'compile Batman.js and the tests and run them on the command line', (options) ->
   running = false
   muffin.run
-    files: glob.sync('./src/**/*.coffee').concat(glob.sync('./tests/**/*.coffee'))
+    files: glob.sync('./src/**/*.coffee').concat(glob.sync('./tests/**/*.coffee')).concat(glob.sync('./docs/**/*.coffee'))
     options: options
     map:
       'src/batman(.node)?.coffee'                : (matches) -> true
       'src/extras/(.+).coffee'                   : (matches) -> true
       'tests/batman/(.+)_(test|helper).coffee'   : (matches) -> true
+      'docs/percolate\.coffee'                   : (matches) -> muffin.compileScript(matches[0], 'docs/percolate.js', options)
       'tests/run.coffee'                         : (matches) -> muffin.compileScript(matches[0], 'tests/run.js', options)
     after: ->
-      # Spawn a run of the tests in a separate process so if watch mode is enabled the globals used by the runner
-      # don't leak over.
-      runPath = path.join(__dirname, 'tests/run.js')
-      if !running
-        running = true
-        child = spawn 'node', ['tests/run.js']
-        process.on 'exit', exitListener = ->
-          child.kill()
-        child.stdout.on 'data', (data) -> process.stdout.write data
-        child.stderr.on 'data', (data) -> process.stderr.write data
-        child.on 'exit', (code) ->
-          process.removeListener 'exit', exitListener
-          running = false
-          if !options.watch
-            process.exit code
+      failFast = (code) ->
+        if !options.watch
+          process.exit code if code != 0
+
+      pipedExec 'tests/run.js', (code) ->
+        failFast(code)
+        pipedExec 'docs/percolate.js', '--test-only', (code) ->
+          failFast(code)
 
 task 'stats', 'compile the files and report on their final size', (options) ->
   muffin.statFiles(glob.sync('./src/**/*.coffee').concat(glob.sync('./lib/**/*.js')), options)
+
+task 'build:site', (options) ->
+  temp    = require 'temp'
+  tmpdir = temp.mkdirSync()
+  docFiles = ["docs/css/**/*.css", "docs/css/fonts/*", "docs/img/**/*", "docs/js/**/*.js", "docs/batman.html"]
+    .reduce( ((a, b) -> a.concat(glob.sync b)) , [] )
+    .map((f) -> path.join(__dirname, f))
+  console.warn docFiles
+  console.warn tmpdir
+  cmd = " #{("mkdir -p #{path.dirname(file.replace __dirname, tmpdir)} && cp #{file} #{file.replace __dirname, tmpdir}" for file in docFiles).join ' && '}
+          && git checkout gh-pages
+          && rm -rf docs
+          && cp -r #{tmpdir}/docs docs
+          && git add docs
+          && git commit -m 'Add new docs.'
+          && git checkout master"
+
+  exec cmd, (error, stdout, stderr) ->
+    console.warn stdout.toString()
+    console.warn stderr.toString()
+    throw error if error

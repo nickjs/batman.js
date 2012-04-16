@@ -10,7 +10,7 @@
 Batman = (mixins...) ->
   new Batman.Object mixins...
 
-Batman.version = '0.8.0'
+Batman.version = '0.9.0'
 
 Batman.config =
   pathPrefix: '/'
@@ -81,10 +81,6 @@ Batman._functionName = $functionName = (f) ->
   return f.name if f.name
   f.toString().match(/\W*function\s+([\w\$]+)\(/)?[1]
 
-# `$preventDefault` checks for preventDefault, since it's not
-# always available across all browsers
-Batman._preventDefault = $preventDefault = (e) ->
-  if typeof e.preventDefault is "function" then e.preventDefault() else e.returnValue = false
 
 Batman._isChildOf = $isChildOf = (parentNode, childNode) ->
   node = childNode.parentNode
@@ -186,6 +182,15 @@ Batman.get = $get = (base, key) ->
     base.get(key)
   else
     Batman.Property.forBaseAndKey(base, key).getValue()
+
+Batman.getPath = $getPath = (base, segments) ->
+  for segment in segments
+    if base?
+      base = $get(base, segment)
+      return base unless base?
+    else
+      return undefined
+  base
 
 Batman.escapeHTML = $escapeHTML = do ->
   replacements =
@@ -720,20 +725,12 @@ class Batman.Keypath extends Batman.Property
       @segments = [key]
       @depth = 1
     super
-  slice: (begin, end=@depth) ->
-    base = @base
-    for segment in @segments.slice(0, begin)
-      return unless base? and base = $get(base, segment)
-    propertyClass = base.propertyClass or Batman.Keypath
-    remainingSegments = @segments.slice(begin, end)
-    remainingPath = remainingSegments.join('.')
-    if propertyClass is Batman.Keypath or remainingSegments.length is 1
-      Batman.Keypath.forBaseAndKey(base, remainingPath)
-    else
-      new Batman.Keypath(base, remainingPath)
-  terminalProperty: -> @slice -1
+  terminalProperty: ->
+    base = $getPath(@base, @segments.slice(0, -1))
+    return unless base?
+    Batman.Keypath.forBaseAndKey(base, @segments[@depth-1])
   valueFromAccessor: ->
-    if @depth is 1 then super else @terminalProperty()?.getValue()
+    if @depth is 1 then super else $getPath(@base, @segments)
   setValue: (val) -> if @depth is 1 then super else @terminalProperty()?.setValue(val)
   unsetValue: -> if @depth is 1 then super else @terminalProperty()?.unsetValue()
 
@@ -775,14 +772,8 @@ Batman.Observable =
       @_batman.properties?.forEach (key, property) -> property.forget()
     @
 
-# `fire` tells any observers attached to a key to fire, manually.
-# `prevent` stops of a given binding from firing. `prevent` calls can be repeated such that
-# the same number of calls to allow are needed before observers can be fired.
-# `allow` unblocks a property for firing observers. Every call to prevent
-# must have a matching call to allow later if observers are to be fired.
-# `observe` takes a key and a callback. Whenever the value for that key changes, your
-# callback will be called in the context of the original object.
-
+  # `observe` takes a key and a callback. Whenever the value for that key changes, your
+  # callback will be called in the context of the original object.
   observe: (key, args...) ->
     @property(key).observe(args...)
     @
@@ -906,9 +897,6 @@ Batman._Batman = class _Batman
 class BatmanObject extends Object
   Batman.initializeObject(this)
   Batman.initializeObject(@prototype)
-  # Setting `isGlobal` to true will cause the class name to be defined on the
-  # global object. For example, Batman.Model will be aliased to window.Model.
-  # This should be used sparingly; it's mostly useful for debugging.
   @global: (isGlobal) ->
     return if isGlobal is false
     Batman.container[$functionName(@)] = @
@@ -936,26 +924,6 @@ class BatmanObject extends Object
       obj[key] = if value?.toJSON then value.toJSON() else value
     obj
 
-
-  # Accessor implementation. Accessors are used to create properties on a class or prototype which can be fetched
-  # with get, but are computed instead of just stored. This is a batman and old browser friendly version of
-  # `defineProperty` without as much goodness.
-  #
-  # Accessors track which other properties they rely on for computation, and when those other properties change,
-  # an accessor will recalculate its value and notifiy its observers. This way, when a source value is changed,
-  # any dependent accessors will automatically update any bindings to them with a new value. Accessors accomplish
-  # this feat by tracking `get` calls, do be sure to use `get` to retrieve properties inside accessors.
-  #
-  # `@accessor` or `@classAccessor` can be called with zero, one, or many keys to attach the accessor to. This
-  # has the following effects:
-  #
-  #   * zero: create a `defaultAccessor`, which will be called when no other properties or accessors on an object
-  #   match a keypath. This is similar to `method_missing` in Ruby or `#doesNotUnderstand` in Smalltalk.
-  #   * one: create a `keyAccessor` at the given key, which will only be called when that key is `get`ed.
-  #   * many: create `keyAccessors` for each given key, which will then be called whenever each key is `get`ed.
-  #
-  # Note: This function gets called in all sorts of different contexts by various
-  # other pointers to it, but it acts the same way on `this` in all cases.
   getAccessorObject = (base, accessor) ->
     if typeof accessor is 'function'
       accessor = {get: accessor}
@@ -1062,6 +1030,16 @@ Batman.Enumerable =
       r = [] unless r.push
       wrap = (r, e) -> r.push(e) if f(e); r
     @reduce wrap, r
+  inGroupsOf: (n) ->
+    r = []
+    current = false
+    i = 0
+    @forEach (x) ->
+      if i++ % n == 0
+        current = []
+        r.push current
+      current.push x
+    r
 
 # Provide this simple mixin ability so that during bootstrapping we don't have to use `$mixin`. `$mixin`
 # will correctly attempt to use `set` on the mixinee, which ends up requiring the definition of
@@ -1284,7 +1262,6 @@ class Batman.SimpleSet
       @fire('itemsWereRemoved', removedItems...)
     removedItems
   find: (f) ->
-    index = @_storage.indexOf(item)
     for item in @_storage
       return item if f(item)
     undefined
@@ -1332,10 +1309,25 @@ class Batman.Set extends Batman.Object
 
   $extendsEnumerable(@::)
 
-  for k in ['add', 'remove', 'find', 'clear', 'replace', 'indexedBy', 'indexedByUnique', 'sortedBy']
+  @_applySetAccessors = (klass) ->
+    klass.accessor 'first', -> @toArray()[0]
+    klass.accessor 'last',  -> @toArray()[@length - 1]
+    klass.accessor 'indexedBy',          -> new Batman.TerminalAccessible (key) => @indexedBy(key)
+    klass.accessor 'indexedByUnique',    -> new Batman.TerminalAccessible (key) => @indexedByUnique(key)
+    klass.accessor 'sortedBy',           -> new Batman.TerminalAccessible (key) => @sortedBy(key)
+    klass.accessor 'sortedByDescending', -> new Batman.TerminalAccessible (key) => @sortedBy(key, 'desc')
+    klass.accessor 'isEmpty', -> @isEmpty()
+    klass.accessor 'toArray', -> @toArray()
+    klass.accessor 'length',  ->
+      @registerAsMutableSource()
+      @length
+
+  @_applySetAccessors(@)
+
+  for k in ['add', 'remove', 'clear', 'replace', 'indexedBy', 'indexedByUnique', 'sortedBy']
     @::[k] = Batman.SimpleSet::[k]
 
-  for k in ['merge', 'forEach', 'toArray', 'isEmpty', 'has']
+  for k in ['find', 'merge', 'forEach', 'toArray', 'isEmpty', 'has']
     proto = @prototype
     do (k) ->
       proto[k] = ->
@@ -1343,21 +1335,6 @@ class Batman.Set extends Batman.Object
         Batman.SimpleSet::[k].apply(@, arguments)
 
   toJSON: @::toArray
-
-applySetAccessors = (klass) ->
-  klass.accessor 'first', -> @toArray()[0]
-  klass.accessor 'last',  -> @toArray()[@length - 1]
-  klass.accessor 'indexedBy',          -> new Batman.TerminalAccessible (key) => @indexedBy(key)
-  klass.accessor 'indexedByUnique',    -> new Batman.TerminalAccessible (key) => @indexedByUnique(key)
-  klass.accessor 'sortedBy',           -> new Batman.TerminalAccessible (key) => @sortedBy(key)
-  klass.accessor 'sortedByDescending', -> new Batman.TerminalAccessible (key) => @sortedBy(key, 'desc')
-  klass.accessor 'isEmpty', -> @isEmpty()
-  klass.accessor 'toArray', -> @toArray()
-  klass.accessor 'length',  ->
-    @registerAsMutableSource()
-    @length
-
-applySetAccessors(Batman.Set)
 
 class Batman.SetObserver extends Batman.Object
   constructor: (@base) ->
@@ -1426,7 +1403,7 @@ class Batman.SetProxy extends Batman.Object
     do (k) =>
       @::[k] = -> @base[k](arguments...)
 
-  applySetAccessors(@)
+  Batman.Set._applySetAccessors(@)
 
   @accessor 'length',
     get: ->
@@ -1486,10 +1463,12 @@ class Batman.SetSort extends Batman.SetProxy
     @set('_storage', newOrder)
 
 class Batman.SetIndex extends Batman.Object
+  $extendsEnumerable(@::)
   propertyClass: Batman.Property
+  @accessor 'toArray', -> @toArray()
   constructor: (@base, @key) ->
     super()
-    @_storage = new Batman.SimpleHash
+    @_storage = new Batman.Hash
     if @base.isEventEmitter
       @_setObserver = new Batman.SetObserver(@base)
       @_setObserver.observedItemKeys = [@key]
@@ -1507,6 +1486,13 @@ class Batman.SetIndex extends Batman.Object
     (newValue, oldValue) =>
       @_removeItemFromKey(item, oldValue)
       @_addItemToKey(item, newValue)
+  forEach: (iterator, ctx) ->
+    @_storage.forEach (key, set) =>
+      iterator.call(ctx, key, set, this) if set.get('length') > 0
+  toArray: ->
+    results = []
+    @_storage.forEach (key, set) -> results.push(key) if set.get('length') > 0
+    results
   _addItem: (item) -> @_addItemToKey(item, @_keyForItem(item))
   _addItemToKey: (item, key) ->
     @_resultSetForKey(key).add item
@@ -1516,7 +1502,6 @@ class Batman.SetIndex extends Batman.Object
     @_storage.getOrSet(key, -> new Batman.Set)
   _keyForItem: (item) ->
     Batman.Keypath.forBaseAndKey(item, @key).getValue()
-
 class Batman.UniqueSetIndex extends Batman.SetIndex
   constructor: ->
     @_uniqueIndex = new Batman.Hash
@@ -1845,7 +1830,7 @@ class Batman.Dispatcher extends Batman.Object
 
   @paramsFromArgument: (argument) ->
     resourceNameFromModel = (model) ->
-      helpers.underscore(helpers.pluralize($functionName(model)))
+      helpers.camelize(helpers.pluralize($functionName(model)), true)
 
     return argument unless @canInferRoute(argument)
 
@@ -2058,7 +2043,8 @@ class Batman.RouteMapBuilder
       delete options.only
 
     for resourceName in resourceNames
-      controller = resourceRoot = helpers.pluralize(resourceName)
+      resourceRoot = helpers.pluralize(resourceName)
+      controller = helpers.camelize(resourceRoot, true)
       childBuilder = @_childBuilder({controller})
 
       # Call the callback so that routes defined within it are matched
@@ -2571,8 +2557,8 @@ class Batman.Model extends Batman.Object
       when 'Function'
         encoder.encode = encoderOrLastKey
       else
-        encoder.encode = encoderOrLastKey.encode
-        encoder.decode = encoderOrLastKey.decode
+        encoder.encode = encoderOrLastKey.encode if encoderOrLastKey.encode?
+        encoder.decode = encoderOrLastKey.decode if encoderOrLastKey.decode?
 
     encoder = $mixin {}, @defaultEncoder, encoder
 
@@ -2583,7 +2569,7 @@ class Batman.Model extends Batman.Object
           hash.set(key, encoder[operation])
         else
           hash.unset(key)
-    #true
+    return
 
   # Set up the unit functions as the default for both
   @defaultEncoder:
@@ -2595,14 +2581,6 @@ class Batman.Model extends Batman.Object
     @encode oldPrimaryKey, {encode: false, decode: false} # Remove encoding for the previous primary key
     @encode newPrimaryKey, {encode: false, decode: @defaultEncoder.decode}
 
-  # Validations allow a model to be marked as 'valid' or 'invalid' based on a set of programmatic rules.
-  # By validating our data before it gets to the server we can provide immediate feedback to the user about
-  # what they have entered and forgo waiting on a round trip to the server.
-  # `validate` allows the attachment of validations to the model on particular keys, where the validation is
-  # either a built in one (by use of options to pass to them) or a custom one (by use of a custom function as
-  # the second argument). Custom validators should have the signature `(errors, record, key, callback)`. They
-  # should add strings to the `errors` set based on the record (maybe depending on the `key` they were attached
-  # to) and then always call the callback. Again: the callback must always be called.
   @validate: (keys..., optionsOrFunction) ->
     Batman.initializeObject @prototype
     validators = @::_batman.validators ||= []
@@ -2634,17 +2612,29 @@ class Batman.Model extends Batman.Object
     @_batman.check(@)
     @_batman.lifecycle ||= new @LifecycleStateMachine('empty', @)
 
-  @urlNestsUnder: (key) ->
-    parent = Batman.helpers.pluralize(key)
+  @urlNestsUnder: (keys...) ->
+    parents = {}
+    for key in keys
+      parents[key + '_id'] = Batman.helpers.pluralize(key)
     children = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
 
     @url = (options) ->
-      parentID = options.data[key + '_id']
-      delete options.data[key + '_id']
-      "#{parent}/#{parentID}/#{children}"
+      for key, plural of parents
+        parentID = options.data[key]
+        if parentID
+          delete options.data[key]
+          return "#{plural}/#{parentID}/#{children}"
+      return children
 
     @::url = ->
-      url = "#{parent}/#{@get(key + '_id')}/#{children}"
+      for key, plural of parents
+        parentID = @dirtyKeys.get(key)
+        if parentID is undefined
+          parentID = @get(key)
+        if parentID
+          url = "#{plural}/#{parentID}/#{children}"
+          break
+      url ||= children
       if id = @get('id')
         url += '/' + id
       url
@@ -2674,9 +2664,8 @@ class Batman.Model extends Batman.Object
     developer.assert callback, "Must call find with a callback!"
     record = new @()
     record.set 'id', id
-    newRecord = @_mapIdentity(record)
-    newRecord.load callback
-    return newRecord
+    record.load callback
+    return record
 
   # `load` fetches records from all sources possible
   @load: (options, callback) ->
@@ -2716,6 +2705,8 @@ class Batman.Model extends Batman.Object
     else
       foundRecord = @_mapIdentity(record)
       callback(undefined, foundRecord)
+
+    record
 
   @_mapIdentity: (record) ->
     if typeof (id = record.get('id')) == 'undefined' || id == ''
@@ -2942,7 +2933,7 @@ class Batman.Model extends Batman.Object
     if @get('lifecycle').destroy()
       @_doStorageOperation 'destroy', options, (err, record) =>
         unless err
-          @constructor.get('all').remove(@)
+          @constructor.get('loaded').remove(@)
           @get('lifecycle').destroyed()
         else
           @get('lifecycle').error()
@@ -3477,7 +3468,6 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       encode: (relationSet, _, __, record) ->
         return if association._beingEncoded
         association._beingEncoded = true
-
         return unless association.options.saveInline
         if relationSet?
           jsonArray = []
@@ -3507,6 +3497,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
 
             record = relatedModel._mapIdentity(record)
             existingRelations.add record
+          existingRelations.set 'loaded', true
         else
           developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"
         existingRelations
@@ -3559,12 +3550,13 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
     encoder
 
 # ### Model Associations API
-for k in Batman.AssociationCurator.availableAssociations
-  do (k) =>
-    Batman.Model[k] = (label, scope) ->
-      Batman.initializeObject(@)
-      collection = @_batman.associations ||= new Batman.AssociationCurator(@)
-      collection.add new Batman["#{helpers.capitalize(k)}Association"](@, label, scope)
+do ->
+  for k in Batman.AssociationCurator.availableAssociations
+    do (k) =>
+      Batman.Model[k] = (label, scope) ->
+        Batman.initializeObject(@)
+        collection = @_batman.associations ||= new Batman.AssociationCurator(@)
+        collection.add new Batman["#{helpers.capitalize(k)}Association"](@, label, scope)
 
 class Batman.ValidationError extends Batman.Object
   constructor: (attribute, message) -> super({attribute, message})
@@ -4065,6 +4057,17 @@ class Batman.View extends Batman.Object
         @observe 'node', (node) => @render(node)
 
   @store: new Batman.ViewStore()
+  @option: (keys...) ->
+    keys.forEach (key) =>
+      @accessor @::_argumentBindingKey(key), (bindingKey) ->
+        return unless (node = @get 'node') && (context = @get 'context')
+        keyPath = node.getAttribute "data-view-#{key}".toLowerCase()
+        return unless keyPath?
+        @[bindingKey]?.die()
+        @[bindingKey] = new Batman.DOM.ViewArgumentBinding node, keyPath, context
+
+    @accessor keys..., (key) ->
+      @get(@_argumentBindingKey(key))?.get('filteredValue')
 
   # Set the source attribute to an html file to have that file loaded.
   source: ''
@@ -4114,6 +4117,8 @@ class Batman.View extends Batman.Object
     if node
       @_renderer = new Batman.Renderer(node, null, @context, @)
       @_renderer.on 'rendered', => @fire('ready', node)
+
+  _argumentBindingKey: (key) -> "_#{key}ArgumentBinding"
 
   @::on 'appear', -> @viewDidAppear? arguments...
   @::on 'disappear', -> @viewDidDisappear? arguments...
@@ -4190,7 +4195,7 @@ class Batman.Renderer extends Batman.Object
         name = attribute.nodeName.match(bindingRegexp)?[1]
         continue if not name
         bindings.push if (names = name.split('-')).length > 1
-          [names[0], names[1], attribute.value]
+          [names[0], names[1..names.length].join('-'), attribute.value]
         else
           [name, undefined, attribute.value]
 
@@ -4258,6 +4263,8 @@ class Batman.RenderContext
     [$get(@windowWrapper, key), @windowWrapper]
 
   get: (key) -> @findKey(key)[0]
+
+  contextForKey: (key) -> @findKey(key)[1]
 
   # Below are the three primitives that all the `Batman.DOM` helpers are composed of.
   # `descend` takes an `object`, and optionally a `scopedKey`. It creates a new `RenderContext` leaf node
@@ -4432,13 +4439,6 @@ Batman.DOM = {
     formfor: (node, localName, key, context) ->
       new Batman.DOM.FormBinding(arguments...)
       context.descendWithKey(key, localName)
-
-    view: (node, bindKey, contextKey, context) ->
-      [_, parent] = context.findKey contextKey
-      view = null
-      parent.observeAndFire contextKey, (newValue) ->
-        view ||= Batman.data node, 'view'
-        view?.set bindKey, newValue
   }
 
   # `Batman.DOM.events` contains the helpers used for binding to events. These aren't called by
@@ -4561,9 +4561,24 @@ Batman.DOM = {
       $appendChild(container, child) for child in children
       renderer.allowAndFire 'rendered'
 
+  propagateBindingEvent: $propagateBindingEvent = (binding, node) ->
+    while (current = (current || node).parentNode)
+      parentBindings = Batman._data current, 'bindings'
+      if parentBindings?
+        for parentBinding in parentBindings
+          parentBinding.childBindingAdded?(binding)
+    return
+
+  propagateBindingEvents: $propagateBindingEvents = (newNode) ->
+    $propagateBindingEvents(child) for child in newNode.childNodes
+    if bindings = Batman._data newNode, 'bindings'
+      for binding in bindings
+        $propagateBindingEvent(binding, newNode)
+    return
+
   # Adds a binding or binding-like object to the `bindings` set in a node's
   # data, so that upon node removal we can unset the binding and any other objects
-  # it retains.
+  # it retains. Also notify any parent bindings of the appearance of new bindings underneath
   trackBinding: $trackBinding = (binding, node) ->
     if bindings = Batman._data node, 'bindings'
       bindings.push(binding)
@@ -4571,6 +4586,7 @@ Batman.DOM = {
       Batman._data node, 'bindings', [binding]
 
     Batman.DOM.fire('bindingAdded', binding)
+    $propagateBindingEvent(binding, node)
     true
 
   # Removes listeners and bindings tied to `node`, allowing it to be cleared
@@ -4673,6 +4689,14 @@ Batman.DOM = {
 
   hasAddEventListener: $hasAddEventListener = !!window?.addEventListener
 
+  # `$preventDefault` checks for preventDefault, since it's not
+  # always available across all browsers
+  preventDefault: $preventDefault = (e) ->
+    if typeof e.preventDefault is "function" then e.preventDefault() else e.returnValue = false
+
+  stopPropagation: $stopPropagation = (e) ->
+    if e.stopPropagation then e.stopPropagation() else e.cancelBubble = true
+
   didRemoveNode: (node) ->
     view = Batman.data node, 'view'
     view?.fire 'beforeDisappear', node
@@ -4699,28 +4723,25 @@ Batman.DOM.event('bindingAdded')
 # objects is traversed and any observers are properly attached.
 class Batman.DOM.AbstractBinding extends Batman.Object
   # A beastly regular expression for pulling keypaths out of the JSON arguments to a filter.
-  # It makes the following matches:
-  #
-  # + `foo` and `baz.qux` in `foo, "bar", baz.qux`
-  # + `foo.bar.baz` in `true, false, "true", "false", foo.bar.baz`
-  # + `true.bar` in `2, true.bar`
-  # + `truesay` in truesay
-  # + no matches in `"bar", 2, {"x":"y", "Z": foo.bar.baz}, "baz"`
+  # Match either strings, object literals, or keypaths.
   keypath_rx = ///
     (^|,)             # Match either the start of an arguments list or the start of a space inbetween commas.
     \s*               # Be insensitive to whitespace between the comma and the actual arguments.
-    (?!               # Use a lookahead to ensure we aren't matching true or false:
-      (?:true|false)  # Match either true or false ...
-      \s*             # and make sure that there's nothing else that comes after the true or false ...
-      (?:$|,)         # before the end of this argument in the list.
+    (?:
+      (true|false)
+      |
+      ("[^"]*")         # Match string literals
+      |
+      (\{[^\}]*\})      # Match object literals
+      |
+      (
+        [a-zA-Z][\w\-\.]*   # Now that true and false can't be matched, match a dot delimited list of keys.
+        [\?\!]?             # Allow ? and ! at the end of a keypath to support Ruby's methods
+      )
     )
-    (
-      [a-zA-Z][\w-\.]* # Now that true and false can't be matched, match a dot delimited list of keys.
-      [\?\!]?         # Allow ? and ! at the end of a keypath to support Ruby's methods
-    )
-    \s*               # Be insensitive to whitespace before the next comma or end of the filter arguments list.
+    \s*                 # Be insensitive to whitespace before the next comma or end of the filter arguments list.
     (?=$|,)             # Match either the next comma or the end of the filter arguments list.
-    ///g
+  ///g
 
   # A less beastly pair of regular expressions for pulling out the [] syntax `get`s in a binding string, and
   # dotted names that follow them.
@@ -4763,9 +4784,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
       # If we're working with an `@key` and not an `@value`, find the context the key belongs to so we can
       # hold a reference to it for passing to the `dataChange` and `nodeChange` observers.
       if k = @get('key')
-        if keyContext = @get('keyContext')
-          prop = Batman.Property.forBaseAndKey(keyContext, k)
-          Batman.RenderContext.deProxy(prop.getValue())
+        Batman.RenderContext.deProxy($getPath(this, ['keyContext', k]))
       else
         @get('value')
     set: (_, value) ->
@@ -4780,7 +4799,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
 
   # The `keyContext` accessor is
-  @accessor 'keyContext', -> @renderContext.findKey(@key)[1]
+  @accessor 'keyContext', -> @renderContext.contextForKey(@key)
 
   bindImmediately: true
   shouldSet: true
@@ -4816,16 +4835,21 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
   _fireNodeChange: =>
     @shouldSet = false
-    @nodeChange?(@node, @value || @get('keyContext'))
+    val = @value || @get('keyContext')
+    @nodeChange?(@node, val)
+    @fire 'nodeChange', @node, val
     @shouldSet = true
 
   _fireDataChange: (value) =>
     if @shouldSet
       @dataChange?(value, @node)
+      @fire 'dataChange', value, @node
 
   die: ->
     @forget()
     @_batman.properties?.forEach (key, property) -> property.die()
+    @fire('die')
+    return true
 
   parseFilter: ->
     # Store the function which does the filtering and the arguments (all except the actual value to apply the
@@ -4881,7 +4905,13 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   #  + wrapping the `,` delimited list in square brackets
   #  + and `JSON.parse`ing them as an array.
   parseSegment: (segment) ->
-    JSON.parse( "[" + segment.replace(keypath_rx, "$1{\"_keypath\": \"$2\"}") + "]" )
+    segment = segment.replace keypath_rx, (match, start = '', bool, string, object, keypath, offset) ->
+      replacement = if keypath
+        '{"_keypath": "' + keypath + '"}'
+      else
+        bool || string || object
+      start + replacement
+    JSON.parse("[#{segment}]")
 
 class Batman.DOM.AbstractAttributeBinding extends Batman.DOM.AbstractBinding
   constructor: (node, @attributeName, args...) -> super(node, args...)
@@ -4973,16 +5003,6 @@ class Batman.DOM.CheckedBinding extends Batman.DOM.NodeAttributeBinding
   isInputBinding: true
   dataChange: (value) ->
     @node[@attributeName] = !!value
-    # Update the parent's binding if necessary
-    if @node.parentNode
-      Batman._data(@node.parentNode, 'updateBinding')?()
-
-  constructor: ->
-    super
-    # Attach this binding to the node under the attribute name so that parent
-    # bindings can query this binding and modify its state. This is useful
-    # for <options> within a select or radio buttons.
-    Batman._data @node, @attributeName, @
 
 class Batman.DOM.ClassBinding extends Batman.DOM.AbstractCollectionBinding
   dataChange: (value) ->
@@ -5095,64 +5115,77 @@ class Batman.DOM.MixinBinding extends Batman.DOM.AbstractBinding
 
 class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
   isInputBinding: true
-  bindImmediately: false
   firstBind: true
 
   constructor: ->
+    @selectedBindings = new Batman.SimpleSet
     super
-    # wait for the select to render before binding to it
-    @renderer.on 'rendered', =>
-      if @node?
-        Batman._data @node, 'updateBinding', @updateSelectBinding
-        @bind()
+
+  childBindingAdded: (binding) =>
+    if binding instanceof Batman.DOM.CheckedBinding
+      binding.on 'dataChange', dataChangeHandler = => @nodeChange()
+      binding.on 'die', =>
+        binding.forget 'dataChange', dataChangeHandler
+        @selectedBindings.remove(binding)
+
+      @selectedBindings.add(binding)
+    else if binding instanceof Batman.DOM.IteratorBinding
+      binding.on 'nodeAdded', dataChangeHandler = => @_fireDataChange(@get('filteredValue'))
+      binding.on 'nodeRemoved', dataChangeHandler
+      binding.on 'die', =>
+        binding.forget 'nodeAdded', dataChangeHandler
+        binding.forget 'nodeRemoved', dataChangeHandler
+    else
+      return
+
+    @_fireDataChange(@get('filteredValue'))
 
   dataChange: (newValue) =>
     # For multi-select boxes, the `value` property only holds the first
     # selection, so go through the child options and update as necessary.
-    if newValue instanceof Array
+    if newValue?.forEach
       # Use a hash to map values to their nodes to avoid O(n^2).
       valueToChild = {}
       for child in @node.children
         # Clear all options.
         child.selected = false
+
         # Avoid collisions among options with same values.
-        matches = valueToChild[child.value]
-        if matches then matches.push child else matches = [child]
-        valueToChild[child.value] = matches
+        matches = valueToChild[child.value] ||= []
+        matches.push child
+
       # Select options corresponding to the new values
-      for value in newValue
-        for match in valueToChild[value]
-          match.selected = yes
+      newValue.forEach (value) =>
+        if children = valueToChild[value]
+          node.selected = true for node in children
+
     # For a regular select box, update the value.
     else
       if typeof newValue is 'undefined' && @firstBind
-        @firstBind = false
         @set('unfilteredValue', @node.value)
       else
         Batman.DOM.valueForNode(@node, newValue, @escapeValue)
+      @firstBind = false
 
     # Finally, update the options' `selected` bindings
     @updateOptionBindings()
+    return
 
   nodeChange: =>
     if @isTwoWay()
-      @updateSelectBinding()
-      @updateOptionBindings()
+      # Gather the selected options and update the binding
+      selections = if @node.multiple
+        (c.value for c in @node.children when c.selected)
+      else
+        @node.value
+      selections = selections[0] if typeof selections is Array && selections.length == 1
+      @set 'unfilteredValue', selections
 
-  updateSelectBinding: =>
-    # Gather the selected options and update the binding
-    selections = if @node.multiple then (c.value for c in @node.children when c.selected) else @node.value
-    selections = selections[0] if typeof selections is Array && selections.length == 1
-    @set 'unfilteredValue', selections
-    true
+      @updateOptionBindings()
+    return
 
   updateOptionBindings: =>
-    # Go through the option nodes and update their bindings using the
-    # context and key attached to the node via Batman.data
-    for child in @node.children
-      if selectedBinding = Batman._data(child, 'selected')
-        selectedBinding.nodeChange(selectedBinding.node)
-    true
+    @selectedBindings.forEach (binding) -> binding._fireNodeChange()
 
 class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
 
@@ -5188,8 +5221,7 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
       @reapplyOldStyles()
       for own key, keyValue of value
         # Check whether the value is an existing keypath, and if so bind this attribute to it
-        [keypathValue, keypathContext] = @renderContext.findKey(keyValue)
-        if keypathValue
+        if keypathValue = @renderContext.get(keyValue)
           @bindSingleAttribute key, keyValue
           @setStyle key, keypathValue
         else
@@ -5219,7 +5251,8 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
     if @node.nodeName.toUpperCase() is 'A'
       @onATag = true
     super
-    Batman.DOM.events.click @node, =>
+    Batman.DOM.events.click @node, (node, event) =>
+      Batman.DOM.stopPropagation(event)
       params = @pathFromValue(@get('filteredValue'))
       Batman.redirect params if params?
 
@@ -5282,10 +5315,9 @@ class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
     delete @attributeName
 
     Batman.DOM.events.submit @get('node'), (node, e) -> $preventDefault e
-    Batman.DOM.on 'bindingAdded', @bindingWasAdded
     @setupErrorsList()
 
-  bindingWasAdded: (binding) =>
+  childBindingAdded: (binding) =>
     if binding.isInputBinding && $isChildOf(@get('node'), binding.get('node'))
       if ~(index = binding.get('key').indexOf(@contextName)) # If the binding is to a key on the thing passed to formfor
         node = binding.get('node')
@@ -5305,10 +5337,6 @@ class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
       <li data-foreach-error="#{@contextName}.errors" data-bind="error.attribute | append ' ' | append error.message"></li>
     </ul>
     """
-
-  die: ->
-    Batman.DOM.forget 'bindingAdded', @bindingWasAdded
-    super
 
 class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   deferEvery: 50
@@ -5433,6 +5461,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
         hideFunction.call(oldNode)
       else
         $removeNode(oldNode)
+    @fire 'nodeRemoved', oldNode, item if oldNode
 
   removeAll: -> @nodeMap.forEach (item) => @removeItem(item)
 
@@ -5463,10 +5492,11 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
             @fragment.appendChild node
           else
             $insertBefore @parentNode(), node, @siblingNode
+            $propagateBindingEvents node
 
         if addItem = node.getAttribute 'data-additem'
-          [_, context] = @renderer.context.findKey addItem
-          context?[addItem]?(item, node)
+          @renderer.context.contextForKey(addItem)?[addItem]?(item, node)
+        @fire 'nodeAdded', node, item
 
       @actions[options.actionNumber].item = item
     @processActionQueue()
@@ -5510,7 +5540,10 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
             return @processActionQueue()
 
         if @fragment && @rendererMap.length is 0 && @fragment.hasChildNodes()
+          addedNodes = Array::slice.call(@fragment.childNodes)
           $insertBefore @parentNode(), @fragment, @siblingNode
+          $propagateBindingEvents(node) for node in addedNodes
+
           @fragment = document.createDocumentFragment()
 
         if @currentActionNumber == @queuedActionNumber
@@ -5521,10 +5554,12 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @nodeMap.set(item, newNode)
     newNode
 
+class Batman.DOM.ViewArgumentBinding extends Batman.DOM.AbstractBinding
+
 # Filters
 # -------
 #
-# `Batman.Filters` contains the simple, determininistic tranforms used in view bindings to
+# `Batman.Filters` contains the simple, deterministic transforms used in view bindings to
 # make life a little easier.
 buntUndefined = (f) ->
   (value) ->
@@ -5533,7 +5568,10 @@ buntUndefined = (f) ->
     else
       f.apply(@, arguments)
 
-filters = Batman.Filters =
+defaultAndOr = (lhs, rhs) ->
+  lhs || rhs
+
+Batman.Filters =
   raw: buntUndefined (value, binding) ->
     binding.escapeValue = false
     value
@@ -5546,6 +5584,11 @@ filters = Batman.Filters =
 
   equals: buntUndefined (lhs, rhs, binding) ->
     lhs is rhs
+
+  and: (lhs, rhs) ->
+    lhs && rhs
+
+  or: defaultAndOr
 
   not: (value, binding) ->
     ! !!value
@@ -5561,8 +5604,7 @@ filters = Batman.Filters =
       value = value.substr(0, length-end.length) + end
     value
 
-  default: (value, string, binding) ->
-    value || string
+  default: defaultAndOr
 
   prepend: (value, string, binding) ->
     string + value
@@ -5618,7 +5660,7 @@ filters = Batman.Filters =
     return if not string
     values = {}
     for k, v of interpolationKeypaths
-      values[k] = @findKey(v)[0]
+      values[k] = @get(v)
       if !values[k]?
         Batman.developer.warn "Warning! Undefined interpolation key #{k} for interpolation", string
         values[k] = ''
@@ -5637,161 +5679,164 @@ filters = Batman.Filters =
 
   escape: buntUndefined($escapeHTML)
 
-for k in ['capitalize', 'singularize', 'underscore', 'camelize']
-  filters[k] = buntUndefined helpers[k]
+do ->
+  for k in ['capitalize', 'singularize', 'underscore', 'camelize']
+    Batman.Filters[k] = buntUndefined helpers[k]
 
 developer.addFilters()
 
 # Data
 # ----
-$mixin Batman,
-  cache: {}
-  uuid: 0
-  expando: "batman" + Math.random().toString().replace(/\D/g, '')
-  # Test to see if it's possible to delete an expando from an element
-  # Fails in Internet Explorer
-  canDeleteExpando: try
-      div = document.createElement 'div'
-      delete div.test
-    catch e
-      Batman.canDeleteExpando = false
-  noData: # these throw exceptions if you attempt to add expandos to them
-    "embed": true,
-    # Ban all objects except for Flash (which handle expandos)
-    "object": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
-    "applet": true
-
-  hasData: (elem) ->
-    elem = (if elem.nodeType then Batman.cache[elem[Batman.expando]] else elem[Batman.expando])
-    !!elem and !isEmptyDataObject(elem)
-
-  data: (elem, name, data, pvt) -> # pvt is for internal use only
-    return  unless Batman.acceptData(elem)
-    internalKey = Batman.expando
-    getByName = typeof name == "string"
-    cache = Batman.cache
-    # Only defining an ID for JS objects if its cache already exists allows
-    # the code to shortcut on the same path as a DOM node with no cache
-    id = elem[Batman.expando]
-
-    # Avoid doing any more work than we need to when trying to get data on an
-    # object that has no data at all
-    if (not id or (pvt and id and (cache[id] and not cache[id][internalKey]))) and getByName and data == undefined
-      return
-
-    unless id
-      # Also check that it's not a text node; IE can't set expandos on them
-      if elem.nodeType isnt 3
-        elem[Batman.expando] = id = ++Batman.uuid
-      else
-        id = Batman.expando
-
-    cache[id] = {} unless cache[id]
-
-    # An object can be passed to Batman._data instead of a key/value pair; this gets
-    # shallow copied over onto the existing cache
-    if typeof name == "object" or typeof name == "function"
-      if pvt
-        cache[id][internalKey] = $mixin(cache[id][internalKey], name)
-      else
-        cache[id] = $mixin(cache[id], name)
-
-    thisCache = cache[id]
-
-    # Internal Batman data is stored in a separate object inside the object's data
-    # cache in order to avoid key collisions between internal data and user-defined
-    # data
-    if pvt
-      thisCache[internalKey] ||= {}
-      thisCache = thisCache[internalKey]
-
-    if data != undefined
-      thisCache[name] = data
-
-    # Check for both converted-to-camel and non-converted data property names
-    # If a data property was specified
-    if getByName
-      # First try to find as-is property data
-      ret = thisCache[name]
-    else
-      ret = thisCache
-
-    return ret
-
-  removeData: (elem, name, pvt) -> # pvt is for internal use only
-    return unless Batman.acceptData(elem)
-    internalKey = Batman.expando
-    isNode = elem.nodeType
-    # non DOM-nodes have their data attached directly
-    cache = Batman.cache
-    id = elem[Batman.expando]
-
-    # If there is already no cache entry for this object, there is no
-    # purpose in continuing
-    return unless cache[id]
-
-    if name
-      thisCache = if pvt then cache[id][internalKey] else cache[id]
-      if thisCache
-        # Support interoperable removal of hyphenated or camelcased keys
-        delete thisCache[name]
-        # If there is no data left in the cache, we want to continue
-        # and let the cache object itself get destroyed
-        return unless isEmptyDataObject(thisCache)
-
-    if pvt
-      delete cache[id][internalKey]
-      # Don't destroy the parent cache unless the internal data object
-      # had been the only thing left in it
-      return unless isEmptyDataObject(cache[id])
-
-    internalCache = cache[id][internalKey]
-
-    # Browsers that fail expando deletion also refuse to delete expandos on
-    # the window, but it will allow it on all other JS objects; other browsers
-    # don't care
-    # Ensure that `cache` is not a window object
-    if Batman.canDeleteExpando or !cache.setInterval
-      delete cache[id]
-    else
-      cache[id] = null
-
-    # We destroyed the entire user cache at once because it's faster than
-    # iterating through each key, but we need to continue to persist internal
-    # data if it existed
-    if internalCache
-      cache[id] = {}
-      cache[id][internalKey] = internalCache
-    # Otherwise, we need to eliminate the expando on the node to avoid
-    # false lookups in the cache for entries that no longer exist
-    else
-      if Batman.canDeleteExpando
-        delete elem[Batman.expando]
-      else if elem.removeAttribute
-        elem.removeAttribute Batman.expando
-      else
-        elem[Batman.expando] = null
-
-  # For internal use only
-  _data: (elem, name, data) ->
-    Batman.data elem, name, data, true
-
-  # A method for determining if a DOM node can handle the data expando
-  acceptData: (elem) ->
-    if elem.nodeName
-      match = Batman.noData[elem.nodeName.toLowerCase()]
-      if match
-        return !(match == true or elem.getAttribute("classid") != match)
+do ->
+  isEmptyDataObject = (obj) ->
+    for name of obj
+      return false
     return true
 
-isEmptyDataObject = (obj) ->
-  for name of obj
-    return false
-  return true
+  $mixin Batman,
+    cache: {}
+    uuid: 0
+    expando: "batman" + Math.random().toString().replace(/\D/g, '')
+    # Test to see if it's possible to delete an expando from an element
+    # Fails in Internet Explorer
+    canDeleteExpando: do ->
+      try
+        div = document.createElement 'div'
+        delete div.test
+      catch e
+        Batman.canDeleteExpando = false
+    noData: # these throw exceptions if you attempt to add expandos to them
+      "embed": true,
+      # Ban all objects except for Flash (which handle expandos)
+      "object": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
+      "applet": true
+
+    hasData: (elem) ->
+      elem = (if elem.nodeType then Batman.cache[elem[Batman.expando]] else elem[Batman.expando])
+      !!elem and !isEmptyDataObject(elem)
+
+    data: (elem, name, data, pvt) -> # pvt is for internal use only
+      return  unless Batman.acceptData(elem)
+      internalKey = Batman.expando
+      getByName = typeof name == "string"
+      cache = Batman.cache
+      # Only defining an ID for JS objects if its cache already exists allows
+      # the code to shortcut on the same path as a DOM node with no cache
+      id = elem[Batman.expando]
+
+      # Avoid doing any more work than we need to when trying to get data on an
+      # object that has no data at all
+      if (not id or (pvt and id and (cache[id] and not cache[id][internalKey]))) and getByName and data == undefined
+        return
+
+      unless id
+        # Also check that it's not a text node; IE can't set expandos on them
+        if elem.nodeType isnt 3
+          elem[Batman.expando] = id = ++Batman.uuid
+        else
+          id = Batman.expando
+
+      cache[id] = {} unless cache[id]
+
+      # An object can be passed to Batman._data instead of a key/value pair; this gets
+      # shallow copied over onto the existing cache
+      if typeof name == "object" or typeof name == "function"
+        if pvt
+          cache[id][internalKey] = $mixin(cache[id][internalKey], name)
+        else
+          cache[id] = $mixin(cache[id], name)
+
+      thisCache = cache[id]
+
+      # Internal Batman data is stored in a separate object inside the object's data
+      # cache in order to avoid key collisions between internal data and user-defined
+      # data
+      if pvt
+        thisCache[internalKey] ||= {}
+        thisCache = thisCache[internalKey]
+
+      if data != undefined
+        thisCache[name] = data
+
+      # Check for both converted-to-camel and non-converted data property names
+      # If a data property was specified
+      if getByName
+        # First try to find as-is property data
+        ret = thisCache[name]
+      else
+        ret = thisCache
+
+      return ret
+
+    removeData: (elem, name, pvt) -> # pvt is for internal use only
+      return unless Batman.acceptData(elem)
+      internalKey = Batman.expando
+      isNode = elem.nodeType
+      # non DOM-nodes have their data attached directly
+      cache = Batman.cache
+      id = elem[Batman.expando]
+
+      # If there is already no cache entry for this object, there is no
+      # purpose in continuing
+      return unless cache[id]
+
+      if name
+        thisCache = if pvt then cache[id][internalKey] else cache[id]
+        if thisCache
+          # Support interoperable removal of hyphenated or camelcased keys
+          delete thisCache[name]
+          # If there is no data left in the cache, we want to continue
+          # and let the cache object itself get destroyed
+          return unless isEmptyDataObject(thisCache)
+
+      if pvt
+        delete cache[id][internalKey]
+        # Don't destroy the parent cache unless the internal data object
+        # had been the only thing left in it
+        return unless isEmptyDataObject(cache[id])
+
+      internalCache = cache[id][internalKey]
+
+      # Browsers that fail expando deletion also refuse to delete expandos on
+      # the window, but it will allow it on all other JS objects; other browsers
+      # don't care
+      # Ensure that `cache` is not a window object
+      if Batman.canDeleteExpando or !cache.setInterval
+        delete cache[id]
+      else
+        cache[id] = null
+
+      # We destroyed the entire user cache at once because it's faster than
+      # iterating through each key, but we need to continue to persist internal
+      # data if it existed
+      if internalCache
+        cache[id] = {}
+        cache[id][internalKey] = internalCache
+      # Otherwise, we need to eliminate the expando on the node to avoid
+      # false lookups in the cache for entries that no longer exist
+      else
+        if Batman.canDeleteExpando
+          delete elem[Batman.expando]
+        else if elem.removeAttribute
+          elem.removeAttribute Batman.expando
+        else
+          elem[Batman.expando] = null
+
+    # For internal use only
+    _data: (elem, name, data) ->
+      Batman.data elem, name, data, true
+
+    # A method for determining if a DOM node can handle the data expando
+    acceptData: (elem) ->
+      if elem.nodeName
+        match = Batman.noData[elem.nodeName.toLowerCase()]
+        if match
+          return !(match == true or elem.getAttribute("classid") != match)
+      return true
 
 # Mixins
 # ------
-mixins = Batman.mixins = new Batman.Object()
+Batman.mixins = new Batman.Object()
 
 # Encoders
 # ------

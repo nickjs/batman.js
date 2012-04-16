@@ -22,8 +22,8 @@
   });
 
   cli.main(function(args, options) {
-    var TemplateVars, command, count, destinationPath, replaceVars, source, transforms, walk;
-    var _this = this;
+    var TemplateVars, command, count, destinationPath, replaceVars, source, transforms, walk,
+      _this = this;
     options.appName = options.app;
     command = args.shift();
     if (command === 'new') {
@@ -55,7 +55,7 @@
       if (path.existsSync(destinationPath)) {
         this.fatal('Destination already exists!');
       } else {
-        fs.mkdirSync(destinationPath, 0755);
+        fs.mkdirSync(destinationPath, 0x1ed);
       }
     } else {
       destinationPath = process.cwd();
@@ -93,11 +93,15 @@
     count = 0;
     walk = function(aPath) {
       var sourcePath;
-      if (aPath == null) aPath = "/";
+      if (aPath == null) {
+        aPath = "/";
+      }
       sourcePath = path.join(source, aPath);
       return fs.readdirSync(sourcePath).forEach(function(file) {
         var destFile, dir, ext, newFile, oldFile, resultName, sourceFile, stat;
-        if (file === '.gitignore') return;
+        if (file === '.gitignore') {
+          return;
+        }
         resultName = replaceVars(file);
         sourceFile = path.join(sourcePath, file);
         destFile = path.join(destinationPath, aPath, resultName);
@@ -105,23 +109,33 @@
         stat = fs.statSync(sourceFile);
         if (stat.isDirectory()) {
           dir = path.join(destinationPath, aPath, resultName);
-          if (!path.existsSync(dir)) fs.mkdirSync(dir, 0755);
+          if (!path.existsSync(dir)) {
+            fs.mkdirSync(dir, 0x1ed);
+          }
           return walk(path.join(aPath, file));
         } else if (ext === 'png' || ext === 'jpg' || ext === 'gif') {
           newFile = fs.createWriteStream(destFile);
           oldFile = fs.createReadStream(sourceFile);
           _this.info("creating " + destFile);
           return util.pump(oldFile, newFile, function(err) {
-            if (err != null) throw err;
+            if (err != null) {
+              throw err;
+            }
           });
         } else {
-          if (file.charAt(0) === '.') return;
+          if (file.charAt(0) === '.') {
+            return;
+          }
           count++;
           return fs.readFile(sourceFile, 'utf8', function(err, fileContents) {
-            if (err != null) throw err;
+            if (err != null) {
+              throw err;
+            }
             _this.info("creating " + destFile);
             return fs.writeFile(destFile, replaceVars(fileContents), function(err) {
-              if (err != null) throw err;
+              if (err != null) {
+                throw err;
+              }
               if (--count === 0) {
                 return _this.ok("" + options.name + " generated successfully.");
               }

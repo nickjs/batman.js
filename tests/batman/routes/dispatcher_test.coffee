@@ -14,10 +14,15 @@ test "safely gets controllers named app", ->
 test "safely gets nonexistant controllers", ->
   equal typeof @dispatcher.get('controllers.orders'), 'undefined'
 
+test "safely gets multiword controllers", ->
+  @App.SavedSearchesController = new Batman.Object({sharedController: @instance = {}})
+  equal @dispatcher.get('controllers.savedSearches'), @instance
+
 QUnit.module 'Batman.Dispatcher: inferring paths'
   setup: ->
     class @App extends Batman.App
     class @App.Product extends Batman.Model
+    class @App.SavedSearch extends Batman.Model
 
     @routeMap = Batman()
     @dispatcher = new Batman.Dispatcher(@App, @routeMap)
@@ -27,6 +32,12 @@ test "paramsFromArgument gets record params", ->
 
 test "paramsFromArgument gets model params", ->
   deepEqual Batman.Dispatcher.paramsFromArgument(@App.Product), {controller: 'products', action: 'index'}
+
+test "paramsFromArgument gets multiword record params", ->
+  deepEqual Batman.Dispatcher.paramsFromArgument(new @App.SavedSearch(id: 1)), {controller: 'savedSearches', action: 'show', id: 1}
+
+test "paramsFromArgument gets multiword model params", ->
+  deepEqual Batman.Dispatcher.paramsFromArgument(@App.SavedSearch), {controller: 'savedSearches', action: 'index'}
 
 test "paramsFromArgument gets record proxy params", ->
   proxy = new Batman.AssociationProxy({}, @App.Product)
@@ -60,7 +71,7 @@ test "pathFromParams infers arguments before passing to the route to construct a
 
 mockRoute = ->
   return Batman
-    dispatch: createSpy()
+    dispatch: createSpy((path) -> return path)
     pathFromParams: createSpy()
     paramsFromPath: createSpy()
 
@@ -72,6 +83,8 @@ QUnit.module 'Batman.Dispatcher: dispatching routes'
       currentParams: Batman
         clear: @clearSpy = createSpy()
         replace: @replaceSpy = createSpy()
+      currentRoute: null
+      currentURL: null
 
     @routeMap = Batman
       routeForParams: ->
@@ -88,6 +101,20 @@ test "dispatch dispatches a matched route", ->
   @dispatcher.dispatch('/matched/route')
 
   ok route.dispatch.called
+
+test "dispatch updates the currentRoute on the app", ->
+  route = mockRoute()
+  @routeMap.routeForParams = -> route
+
+  @dispatcher.dispatch('/matched/route')
+  equal @App.get('currentRoute'), route
+
+test "dispatch updates the currentURL on the app", ->
+  route = mockRoute()
+  @routeMap.routeForParams = -> route
+
+  @dispatcher.dispatch('/matched/route')
+  equal @App.get('currentURL'), '/matched/route'
 
 test "dispatch redirects to 404 if no route is found", ->
   Batman.redirect = createSpy()

@@ -105,19 +105,42 @@ asyncTest 'clearing the model should remove instances from the identity map', ->
     equal @Product.get('loaded.length'), 0
     QUnit.start()
 
+asyncTest 'model will reload data from storage after clear', ->
+  @Product.find 1, (e, p) =>
+    equal p.get('cost'), 10
+    @adapter.storage =
+      'products1': {name: "One", cost: 20, id:1}
+    @Product.clear()
+    p.load (e, p) =>
+      equal p.get('cost'), 20
+      QUnit.start()
+
 QUnit.module 'Batman.Model.urlNestsUnder',
   setup: ->
     class @Product extends Batman.Model
-      @urlNestsUnder 'shop'
+      @urlNestsUnder 'shop', 'manufacturer'
 
 test 'urlNestsUnder should nest collection URLs', 1, ->
   equal @Product.url(data: shop_id: 1), 'shops/1/products'
+
+test 'urlNestsUnder should nest collection URLs under secondary parents if present', 1, ->
+  equal @Product.url(data: manufacturer_id: 1), 'manufacturers/1/products'
+
+test 'urlNestsUnder should nest collection URLs under the first available parent', 1, ->
+  equal @Product.url(data: manufacturer_id: 1, shop_id: 2), 'shops/2/products'
 
 test 'urlNestsUnder should nest record URLs', 1, ->
   product = new @Product(id: 1, shop_id: 2)
   equal product.url(), 'shops/2/products/1'
 
 test 'urlNestsUnder should nest new record URLs', 1, ->
-  product = new @Product(shop_id: 2)
-  equal product.url(), 'shops/2/products'
+  product = new @Product(shop_id: 1)
+  equal product.url(), 'shops/1/products'
 
+test 'urlNestsUnder should nest record URLs under secondary parents if present', 1, ->
+  product = new @Product(id:1, manufacturer_id: 2)
+  equal product.url(), 'manufacturers/2/products/1'
+
+test 'urlNestsUnder should nest record URLs under the first available parent', 1, ->
+  product = new @Product(id:1, shop_id: 2, manufacturer_id: 3)
+  equal product.url(), 'shops/2/products/1'
