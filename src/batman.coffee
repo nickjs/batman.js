@@ -5520,6 +5520,9 @@ buntUndefined = (f) ->
     else
       f.apply(@, arguments)
 
+defaultAndOr = (lhs, rhs) ->
+  lhs || rhs
+
 Batman.Filters =
   raw: buntUndefined (value, binding) ->
     binding.escapeValue = false
@@ -5533,6 +5536,11 @@ Batman.Filters =
 
   equals: buntUndefined (lhs, rhs, binding) ->
     lhs is rhs
+
+  and: (lhs, rhs) ->
+    lhs && rhs
+
+  or: defaultAndOr
 
   not: (value, binding) ->
     ! !!value
@@ -5548,8 +5556,7 @@ Batman.Filters =
       value = value.substr(0, length-end.length) + end
     value
 
-  default: (value, string, binding) ->
-    value || string
+  default: defaultAndOr
 
   prepend: (value, string, binding) ->
     string + value
