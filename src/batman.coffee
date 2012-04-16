@@ -2632,7 +2632,7 @@ class Batman.Model extends Batman.Object
 
   @classAccessor 'lifecycle', ->
     @_batman.check(@)
-    @_batman.lifecycle ||= new Model.LifecycleStateMachine('empty', @)
+    @_batman.lifecycle ||= new @LifecycleStateMachine('empty', @)
 
   @urlNestsUnder: (key) ->
     parent = Batman.helpers.pluralize(key)
@@ -2777,22 +2777,22 @@ class Batman.Model extends Batman.Object
   # Add a universally accessible accessor for retrieving the primrary key, regardless of which key its stored under.
   @accessor 'id',
     get: ->
-      pk = @constructor.primaryKey
-      if pk == 'id'
+      primaryKey = @constructor.primaryKey
+      if primaryKey == 'id'
         @id
       else
-        @get(pk)
+        @get(primaryKey)
     set: (k, v) ->
       # naively coerce string ids into integers
       if typeof v is "string" and v.match(/[^0-9]/) is null
         v = parseInt(v, 10)
 
-      pk = @constructor.primaryKey
-      if pk == 'id'
+      primaryKey = @constructor.primaryKey
+      if primaryKey == 'id'
         @_willSet(k)
         @id = v
       else
-        @set(pk, v)
+        @set(primaryKey, v)
 
   @accessor 'lifecycle', -> @lifecycle ||= new Batman.Model.InstanceLifecycleStateMachine('clean', @)
   @accessor 'attributes', -> @attributes ||= new Batman.Hash
