@@ -5204,7 +5204,8 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
       @onATag = true
     super
     Batman.DOM.events.click @node, (node, event) =>
-      Batman.DOM.stopPropagation(event)
+      return if event.__batmanActionTaken
+      event.__batmanActionTaken = true
       params = @pathFromValue(@get('filteredValue'))
       Batman.redirect params if params?
 
@@ -5351,8 +5352,12 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       else
         @addOrInsertItem(key) for own key, value of @collection
 
-    else
-      developer.warn "Warning! data-foreach-#{@iteratorName} called with an undefined binding. Key was: #{@key}."
+    developer.do =>
+      @_warningTimeout ||= setTimeout =>
+        unless @collection?
+          developer.warn "Warning! data-foreach-#{@iteratorName} called with an undefined binding. Key was: #{@key}."
+      , 1000
+
     @processActionQueue()
 
   handleItemsWereAdded: (items...) => @addOrInsertItem(item, {fragment: false}) for item in items; return

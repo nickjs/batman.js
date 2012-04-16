@@ -261,3 +261,29 @@ asyncTest 'should allow you to nested elements with route declarations', 6, ->
             $node.remove()
 
   @App.run()
+
+asyncTest 'should not stop events from bubbling', 2, ->
+  @App.resources 'products'
+  @App.root ->
+
+  @App.on 'run', =>
+    source = '''
+      <div class="outer" data-event-click="test">
+        <div class="middle">
+          <a class="inner" data-route="routes.products">products index</a>
+        </div>
+      </div>
+    '''
+
+    context = Batman(test: spy = createSpy())
+    helpers.render source, false, context, (node, view) =>
+      $node = $(node)
+      $node.appendTo($('body'))
+
+      helpers.triggerClick($(".inner", node)[0])
+      delay =>
+        equal spy.callCount, 1
+        deepEqual @redirect.lastCallArguments, ['/products']
+        $node.remove()
+
+  @App.run()
