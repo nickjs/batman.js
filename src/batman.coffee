@@ -5585,7 +5585,11 @@ Batman.Filters =
   upcase: buntUndefined (value) ->
     value.toUpperCase()
 
-  pluralize: buntUndefined (string, count) -> helpers.pluralize(count, string)
+  pluralize: buntUndefined (string, count, binding) ->
+    if binding
+      helpers.pluralize(count, string)
+    else
+      helpers.pluralize(string)
 
   join: buntUndefined (value, withWhat = '', binding) ->
     if !binding

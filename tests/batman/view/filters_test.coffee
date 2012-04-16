@@ -155,6 +155,21 @@ asyncTest 'upcase', 1, ->
     equals node.html(), "BAR"
     QUnit.start()
 
+asyncTest 'pluralize with a count', 1, ->
+  helpers.render '<div data-bind="object | pluralize count"></div>',
+    object: 'foo'
+    count: 2
+  , (node) ->
+    equals node.html(), "2 foos"
+    QUnit.start()
+
+asyncTest 'pluralize without a count', 1, ->
+  helpers.render '<div data-bind="object | pluralize"></div>',
+    object: 'foo'
+  , (node) ->
+    equals node.html(), "foos"
+    QUnit.start()
+
 asyncTest 'join', 2, ->
   helpers.render '<div data-bind="foo | join"></div>',
     foo: ['a', 'b', 'c']
