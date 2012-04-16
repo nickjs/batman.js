@@ -4173,7 +4173,7 @@ class Batman.Renderer extends Batman.Object
       return children[0] if children?.length
 
     sibling = node.nextSibling # Grab the reference before onParseExit may remove the node
-    $onParseExit(node).forEach (callback) -> callback()
+    $onParseExit(node)?.forEach (callback) -> callback()
     $forgetParseExit(node)
     return if @node == node
     return sibling if sibling
@@ -4181,7 +4181,7 @@ class Batman.Renderer extends Batman.Object
     nextParent = node
     while nextParent = nextParent.parentNode
       parentSibling = nextParent.nextSibling
-      $onParseExit(nextParent).forEach (callback) -> callback()
+      $onParseExit(nextParent)?.forEach (callback) -> callback()
       $forgetParseExit(nextParent)
       return if @node == nextParent
       return parentSibling if parentSibling
