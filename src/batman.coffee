@@ -1488,7 +1488,7 @@ class Batman.SetIndex extends Batman.Object
       @_addItemToKey(item, newValue)
   forEach: (iterator, ctx) ->
     @_storage.forEach (key, set) =>
-      iterator.call(ctx, key, set, this) if set.length > 0
+      iterator.call(ctx, key, set, this) if set.get('length') > 0
   toArray: ->
     results = []
     @_storage.forEach (key, set) -> results.push(key) if set.get('length') > 0

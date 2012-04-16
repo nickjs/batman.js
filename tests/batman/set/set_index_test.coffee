@@ -157,6 +157,19 @@ test "forEach(iterator) calls the iterator with each non-empty set", ->
   equal calls['Zeke'].length, 1
   equal typeof calls['Jill'], 'undefined'
 
+test "forEach registers the hash as a source of accessors", ->
+  test = Batman()
+  test.accessor 'foo', =>
+    keys = []
+    @authorNameIndex.forEach (key, set) -> keys.push key
+    keys
+
+  deepEqual test.get('foo').sort(), ['Fred', 'Mary', 'Zeke']
+  @base.add @byJill
+  deepEqual test.get('foo').sort(), ['Fred', 'Jill', 'Mary', 'Zeke']
+  @base.remove @byJill
+  deepEqual test.get('foo').sort(), ['Fred', 'Mary', 'Zeke']
+
 test "toArray returns an array of keys", ->
   deepEqual @authorNameIndex.toArray().sort(), ['Fred', 'Mary', 'Zeke']
 
@@ -167,7 +180,6 @@ test "toArray can be observed", ->
   deepEqual spy.lastCallArguments[0].sort(), ['Fred', 'Jill', 'Mary', 'Zeke']
   @base.remove @byJill
   deepEqual spy.lastCallArguments[0].sort(), ['Fred', 'Mary', 'Zeke']
-
 
 test "items with undefined values for the indexed key are grouped together as with any other value, and don't collide with null values", ->
   noAuthor = Batman()
