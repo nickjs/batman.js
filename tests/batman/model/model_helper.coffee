@@ -6,12 +6,13 @@ class TestStorageAdapter extends Batman.StorageAdapter
     @storage = {}
     @lastQuery = false
     @create(new @model, {}, ->) if @constructor.autoCreate
+    @env = {}
 
   update: (record, options, callback) ->
     id = record.get('id')
     if id
       @storage[@storageKey(record) + id] = record.toJSON()
-      callback(undefined, record)
+      callback(undefined, record, @env)
     else
       callback(new Error("Couldn't get record primary key."))
 
@@ -20,7 +21,7 @@ class TestStorageAdapter extends Batman.StorageAdapter
     if id
       @storage[@storageKey(record) + id] = record.toJSON()
       record.fromJSON {id: id}
-      callback(undefined, record)
+      callback(undefined, record, @env)
     else
       callback(new Error("Couldn't get record primary key."))
 
@@ -30,7 +31,7 @@ class TestStorageAdapter extends Batman.StorageAdapter
       attrs = @storage[@storageKey(record) + id]
       if attrs
         record.fromJSON(attrs)
-        callback(undefined, record)
+        callback(undefined, record, @env)
       else
         callback(new Error("Couldn't find record!"))
     else
@@ -46,7 +47,7 @@ class TestStorageAdapter extends Batman.StorageAdapter
           break
       records.push data if match
 
-    callback(undefined, @getRecordFromData(record) for record in records)
+    callback(undefined, @getRecordFromData(record) for record in records, @env)
 
   destroy: (record, options, callback) ->
     id = record.get('id')
@@ -54,7 +55,7 @@ class TestStorageAdapter extends Batman.StorageAdapter
       key = @storageKey(record) + id
       if @storage[key]
         delete @storage[key]
-        callback(undefined, record)
+        callback(undefined, record, @env)
       else
         callback(new Error("Can't delete nonexistant record!"), record)
     else

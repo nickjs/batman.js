@@ -2657,13 +2657,13 @@ class Batman.Model extends Batman.Object
     developer.assert @::_batman.getAll('storage').length, "Can't load model #{$functionName(@)} without any storage adapters!"
 
     @loading()
-    @::_doStorageOperation 'readAll', options, (err, records) =>
+    @::_doStorageOperation 'readAll', options, (err, records, env) =>
       if err?
         callback?(err, [])
       else
         mappedRecords = (@_mapIdentity(record) for record in records)
         @loaded()
-        callback?(err, mappedRecords)
+        callback?(err, mappedRecords, env)
 
   # `create` takes an attributes hash, creates a record from it, and saves it given the callback.
   @create: (attrs, callback) ->
@@ -2859,11 +2859,11 @@ class Batman.Model extends Batman.Object
       return
 
     @loading()
-    @_doStorageOperation 'read', options, (err, record) =>
+    @_doStorageOperation 'read', options, (err, record, env) =>
       unless err
         @loaded()
         record = @constructor._mapIdentity(record)
-      callback?(err, record)
+      callback?(err, record, env)
 
   # `save` persists a record to all the storage mechanisms added using `@persist`. `save` will only save
   # a model if it is valid.
@@ -2888,7 +2888,7 @@ class Batman.Model extends Batman.Object
       # Save belongsTo models immediately since we don't need this model's id
       associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(@)
 
-      @_doStorageOperation (if creating then 'create' else 'update'), options, (err, record) =>
+      @_doStorageOperation (if creating then 'create' else 'update'), options, (err, record, env) =>
         unless err
           if creating
             do @created
@@ -2899,7 +2899,7 @@ class Batman.Model extends Batman.Object
           associations?.getByType('hasMany')?.forEach (association) -> association.apply(err, record)
 
           record = @constructor._mapIdentity(record)
-        callback?(err, record)
+        callback?(err, record, env)
 
   # `destroy` destroys a record in all the stores.
   destroy: (options, callback) =>
@@ -2907,11 +2907,11 @@ class Batman.Model extends Batman.Object
       [options, callback] = [{}, options]
 
     do @destroying
-    @_doStorageOperation 'destroy', options, (err, record) =>
+    @_doStorageOperation 'destroy', options, (err, record, env) =>
       unless err
         @constructor.get('loaded').remove(@)
         do @destroyed
-      callback?(err)
+      callback?(err, record, env)
 
   # `validate` performs the record level validations determining the record's validity. These may be asynchronous,
   # in which case `validate` has no useful return value. Results from asynchronous validations can be received by
@@ -3762,6 +3762,10 @@ class Batman.LocalStorage extends Batman.StorageAdapter
   @::after 'readAll', @skipIfError (env, next) ->
     env.result = env.records = for recordAttributes in env.recordsAttributes
       @getRecordFromData(recordAttributes, env.proto.constructor)
+    next()
+
+  @::after 'destroy', @skipIfError (env, next) ->
+    env.result = env.record
     next()
 
   read: @skipIfError (env, next) ->

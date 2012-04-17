@@ -13,10 +13,11 @@ QUnit.module "Batman.Model instance loading"
 
 asyncTest "instantiated instances can load their values", ->
   product = new @Product(1)
-  product.load (err, product) =>
+  product.load (err, product, env) =>
     throw err if err
     equal product.get('name'), 'One'
     equal product.get('id'), 1
+    ok env
     QUnit.start()
 
 asyncTest "instantiated instances error upon load if they don't exist", ->
@@ -60,9 +61,10 @@ QUnit.module "Batman.Model instance saving"
 
 test "model instances should save", ->
   product = new @Product()
-  product.save (err, product) =>
+  product.save (err, product, env) =>
     throw err if err?
     ok product.get('id') # We rely on the test storage adapter to add an ID, simulating what might actually happen IRL
+    ok env
 
 test "new instances should be added to the identity map", ->
   product = new @Product()
@@ -94,7 +96,6 @@ test "existing instances should be updated with incoming attributes", ->
   product.load (err, product) =>
     throw err if err
     equal product.get('name'), 'override'
-
 
 test "model instances should accept options for save upon create", 1, ->
   product = new @Product()
@@ -164,8 +165,10 @@ asyncTest "model instances should be destroyable", ->
     throw err if err
     equal @Product.get('all').length, 1
 
-    product.destroy (err) =>
+    product.destroy (err, record, env) =>
       throw err if err
+      equal record, product
+      ok env
       equal @Product.get('all').length, 0, 'instances should be removed from the identity map upon destruction'
       QUnit.start()
 

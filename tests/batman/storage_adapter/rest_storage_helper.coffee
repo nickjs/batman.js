@@ -112,7 +112,39 @@ restStorageTestSuite = ->
       ok record
       QUnit.start()
 
-  asyncTest 'response metadata should be available in the after read callbacks', 3, ->
+  asyncTest 'creating in storage: response metadata should be available in the callbacks', 1, ->
+    product = new @Product(name: "test")
+    MockRequest.expect
+      url: '/products'
+      method: 'POST'
+    ,
+      product:
+        name: 'test'
+        id: 10
+      someMetaData: 'foo'
+
+    @adapter.perform 'create', product, {}, (err, record, env) =>
+      throw err if err
+      equal env.data.someMetaData, "foo"
+      QUnit.start()
+
+  asyncTest 'reading from storage: response metadata should be available in the callbacks', ->
+    MockRequest.expect
+      url: '/products/10'
+      method: 'GET'
+    ,
+      product:
+        name: 'test'
+        id: 10
+      someMetaData: 'foo'
+    product = new @Product(name: "test", id: 10)
+
+    @adapter.perform 'read', product, {}, (err, record, env) =>
+      throw err if err
+      equal env.data.someMetaData, "foo"
+      QUnit.start()
+
+  asyncTest 'reading many from storage: response metadata should be available in the callbacks',  ->
     MockRequest.expect
         url: '/products'
         method: 'GET'
@@ -126,14 +158,41 @@ restStorageTestSuite = ->
           cost: 10
         ]
 
-    @adapter.after 'readAll', (data, next) ->
-      throw data.error if data.error
-      equal data.data.someMetaData, "foo"
-      next()
+    @adapter.perform 'readAll', @Product::, {}, (err, readProducts, env) ->
+      thorow err if err
+      equal env.data.someMetaData, "foo"
+      QUnit.start()
 
-    @adapter.perform 'readAll', @Product::, {}, (err, readProducts) ->
-      ok !err
-      ok readProducts
+  asyncTest 'updating in storage: response metadata should be available in the callbacks', ->
+    MockRequest.expect
+      url: '/products/10'
+      method: 'PUT'
+    ,
+      product:
+        name: 'test'
+        cost: 10
+        id: 10
+      someMetaData: "foo"
+
+    product = new @Product(name: "test", id: 10, cost: 10)
+    @adapter.perform 'update', product, {}, (err, updatedProduct, env) ->
+      throw err if err
+      equal env.data.someMetaData, "foo"
+      QUnit.start()
+
+  asyncTest 'destroying in storage: should succeed if the record exists', 1, ->
+    MockRequest.expect
+      url: '/products/10'
+      method: 'DELETE'
+    ,
+      success: true
+      someMetaData: 'foo'
+
+    product = new @Product(name: "test 12", id: 10)
+
+    @adapter.perform 'destroy', product, {}, (err, record, env) =>
+      throw err if err
+      equal env.data.someMetaData, "foo"
       QUnit.start()
 
   asyncTest 'it should POST JSON instead of serialized parameters when configured to do so', ->

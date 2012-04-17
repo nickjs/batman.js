@@ -17,9 +17,10 @@ test "will error unless a callback is provided", ->
     (message) -> ok message; true
 
 asyncTest "models will find an instance in the store", ->
-  @Product.find 1, (err, product) ->
+  @Product.find 1, (err, product, env) ->
     throw err if err
     equal product.get('name'), 'One'
+    ok env
     QUnit.start()
 
 asyncTest "found models should end up in the loaded set", ->
@@ -112,11 +113,11 @@ QUnit.module "Batman.Model class loading"
     @Product.persist @adapter
 
 asyncTest "models will load all their records", ->
-  @Product.load (err, products) =>
+  @Product.load (err, products, env) =>
     throw err if err
     equal products.length, 2
-
     equal @Product.get('all.length'), 2
+    ok env
     QUnit.start()
 
 asyncTest "Model.all will load all records", ->
