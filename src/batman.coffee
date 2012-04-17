@@ -1557,8 +1557,8 @@ class Batman.SetIntersection extends Batman.BinarySetOperation
 # --------------
 
 class Batman.StateMachine extends Batman.Object
-  @InvalidTransitionError: (@message) ->
-  @InvalidTransitionError:: = Error::
+  @InvalidTransitionError: (@message = "") ->
+  @InvalidTransitionError.prototype = new Error
 
   @transitions: (table) ->
     # Allow a shorthand for specifying a whole bunch of `from` states to go to one `to` state
