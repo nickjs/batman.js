@@ -10,6 +10,12 @@
 # project already uses jQuery. It will map a few
 # batman.js methods to existing jQuery methods.
 
+Batman.Request::_parseResponseHeaders = (xhr) ->
+  headers = xhr.getAllResponseHeaders().split('\n').reduce((acc, header) ->
+    [key, value] = header.split(':')
+    acc[key]
+    acc
+  , {})
 
 Batman.Request::send = (data) ->
   options =
@@ -24,13 +30,19 @@ Batman.Request::send = (data) ->
       @fire 'loading'
 
     success: (response, textStatus, xhr) =>
-      @set 'status', xhr.status
-      @set 'response', response
+      @mixin
+        xhr: xhr
+        status: xhr.status
+        response: response
+        responseHeaders: @_parseResponseHeaders(xhr)
       @fire 'success', response
 
     error: (xhr, status, error) =>
-      @set 'status', xhr.status
-      @set 'response', xhr.responseText
+      @mixin
+        xhr: xhr
+        status: xhr.status
+        response: xhr.responseText
+        responseHeaders: @_parseResponseHeaders(xhr)
       xhr.request = @
       @fire 'error', xhr
 

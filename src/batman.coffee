@@ -3850,10 +3850,10 @@ class Batman.RestStorage extends Batman.StorageAdapter
       success: (data) -> env.data = data
       error: (error) -> env.error = error
       loaded: ->
-        env.response = req.get('response')
+        env.response = env.request.get('response')
         next()
 
-    req = new Batman.Request(options)
+    env.request = new Batman.Request(options)
 
   perform: (key, record, options, callback) ->
     $mixin (options ||= {}), @defaultRequestOptions

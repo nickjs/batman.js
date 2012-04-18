@@ -73,6 +73,8 @@ Batman.mixin Batman.Request::,
         data.push d
 
       response.on 'end', () =>
+        @set 'request', request
+        @set 'responseHeaders', response.headers
         # Join the array and set it as the response
         data = data.join('')
         @set 'response', data

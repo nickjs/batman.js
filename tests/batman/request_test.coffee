@@ -16,7 +16,7 @@ test 'hasFileUploads() returns false when the request data has no file uploads',
     user:
       name: 'Jim'
   equal req.hasFileUploads(), false
- 
+
 test 'hasFileUploads() returns true when the request data has a file upload in a nested object', ->
   req = new Batman.Request data:
     user:

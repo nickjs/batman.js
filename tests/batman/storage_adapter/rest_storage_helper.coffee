@@ -112,7 +112,7 @@ restStorageTestSuite = ->
       ok record
       QUnit.start()
 
-  asyncTest 'creating in storage: response metadata should be available in the callbacks', 1, ->
+  asyncTest 'creating in storage: response metadata should be available in the callbacks', ->
     product = new @Product(name: "test")
     MockRequest.expect
       url: '/products'
@@ -126,6 +126,7 @@ restStorageTestSuite = ->
     @adapter.perform 'create', product, {}, (err, record, env) =>
       throw err if err
       equal env.data.someMetaData, "foo"
+      ok env.request instanceof Batman.Request
       QUnit.start()
 
   asyncTest 'reading from storage: response metadata should be available in the callbacks', ->
@@ -142,6 +143,7 @@ restStorageTestSuite = ->
     @adapter.perform 'read', product, {}, (err, record, env) =>
       throw err if err
       equal env.data.someMetaData, "foo"
+      ok env.request instanceof Batman.Request
       QUnit.start()
 
   asyncTest 'reading many from storage: response metadata should be available in the callbacks',  ->
@@ -161,6 +163,7 @@ restStorageTestSuite = ->
     @adapter.perform 'readAll', @Product::, {}, (err, readProducts, env) ->
       throw err if err
       equal env.data.someMetaData, "foo"
+      ok env.request instanceof Batman.Request
       QUnit.start()
 
   asyncTest 'updating in storage: response metadata should be available in the callbacks', ->
@@ -178,9 +181,10 @@ restStorageTestSuite = ->
     @adapter.perform 'update', product, {}, (err, updatedProduct, env) ->
       throw err if err
       equal env.data.someMetaData, "foo"
+      ok env.request instanceof Batman.Request
       QUnit.start()
 
-  asyncTest 'destroying in storage: should succeed if the record exists', 1, ->
+  asyncTest 'destroying in storage: response metadata should be available in the callbacks', ->
     MockRequest.expect
       url: '/products/10'
       method: 'DELETE'
@@ -193,6 +197,7 @@ restStorageTestSuite = ->
     @adapter.perform 'destroy', product, {}, (err, record, env) =>
       throw err if err
       equal env.data.someMetaData, "foo"
+      ok env.request instanceof Batman.Request
       QUnit.start()
 
   asyncTest 'it should POST JSON instead of serialized parameters when configured to do so', ->

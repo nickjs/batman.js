@@ -424,6 +424,13 @@ buildParams = (prefix, obj, add) ->
   else
     add prefix, obj
 
+Batman.Request::_parseResponseHeaders = (xhr) ->
+  headers = xhr.getAllResponseHeaders().split('\n').reduce((acc, header) ->
+    [key, value] = header.split(':')
+    acc[key]
+    acc
+  , {})
+
 Batman.Request::send = (data) ->
   data ?= @get('data')
   @fire 'loading'
@@ -435,13 +442,21 @@ Batman.Request::send = (data) ->
     headers: @get 'headers'
 
     success: (response) =>
-      @set 'response', response
-      @set 'status', (xhr?.status or 200)
+      @mixin
+        xhr: xhr
+        response: response
+        status: xhr?.status or 200
+        responseHeaders: @_parseResponseHeaders(xhr)
+
       @fire 'success', response
 
     error: (xhr) =>
-      @set 'response', xhr.responseText || xhr.content
-      @set 'status', xhr.status
+      @mixin
+        xhr: xhr
+        response: xhr.responseText || xhr.content
+        status: xhr.status
+        responseHeaders: @_parseResponseHeaders(xhr)
+
       xhr.request = @
       @fire 'error', xhr
 
