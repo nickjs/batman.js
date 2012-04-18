@@ -159,7 +159,7 @@ restStorageTestSuite = ->
         ]
 
     @adapter.perform 'readAll', @Product::, {}, (err, readProducts, env) ->
-      thorow err if err
+      throw err if err
       equal env.data.someMetaData, "foo"
       QUnit.start()
 
