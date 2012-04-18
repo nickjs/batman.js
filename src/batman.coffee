@@ -1320,7 +1320,7 @@ class Batman.Set extends Batman.Object
       indexedByUnique:    -> new Batman.TerminalAccessible (key) => @indexedByUnique(key)
       sortedBy:           -> new Batman.TerminalAccessible (key) => @sortedBy(key)
       sortedByDescending: -> new Batman.TerminalAccessible (key) => @sortedBy(key, 'desc')
-    klass.accessor(key, accessor) for key, accessor in accessors
+    klass.accessor(key, accessor) for key, accessor of accessors
 
   @_applySetAccessors(@)
 
@@ -1653,7 +1653,7 @@ class Batman.Request extends Batman.Object
     false
 
   @wrapAccessor 'method', (core) ->
-    set: (k,val) -> core.set.call(k, val?.toUpperCase?())
+    set: (k,val) -> core.set.call(@, k, val?.toUpperCase?())
 
   url: ''
   data: ''
@@ -5793,7 +5793,9 @@ do ->
 
 # Mixins
 # ------
-Batman.mixins = new Batman.Object()
+Batman.mixins = new Batman.Object
+
+Batman.Encoders = new Batman.Object
 
 # Support AMD loaders
 if typeof define is 'function'
