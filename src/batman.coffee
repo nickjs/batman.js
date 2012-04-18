@@ -1044,14 +1044,14 @@ Batman.Enumerable =
 # Provide this simple mixin ability so that during bootstrapping we don't have to use `$mixin`. `$mixin`
 # will correctly attempt to use `set` on the mixinee, which ends up requiring the definition of
 # `SimpleSet` to be complete during its definition.
-$extendsEnumerable = (onto) -> onto[k] = v for k,v of Batman.Enumerable
+Batman.extendsEnumerable = $extendsEnumerable = (onto) -> onto[k] = v for k,v of Batman.Enumerable
 
 class Batman.SimpleHash
   constructor: (obj) ->
     @_storage = {}
     @length = 0
     @update(obj) if obj?
-  $extendsEnumerable(@::)
+  $extendsEnumerable(@prototype)
   propertyClass: Batman.Property
   hasKey: (key) ->
     if @objectKey(key)
@@ -1169,7 +1169,7 @@ class Batman.Hash extends Batman.Object
     Batman.SimpleHash.apply(@, arguments)
     super
 
-  $extendsEnumerable(@::)
+  $extendsEnumerable(@prototype)
   propertyClass: Batman.Property
 
   @accessor
@@ -1236,7 +1236,7 @@ class Batman.SimpleSet
     @length = 0
     @add.apply @, arguments if arguments.length > 0
 
-  $extendsEnumerable(@::)
+  $extendsEnumerable(@prototype)
 
   has: (item) ->
     !!(~@_storage.indexOf item)
@@ -1307,20 +1307,20 @@ class Batman.Set extends Batman.Object
   constructor: ->
     Batman.SimpleSet.apply @, arguments
 
-  $extendsEnumerable(@::)
+  $extendsEnumerable(@prototype)
 
   @_applySetAccessors = (klass) ->
-    klass.accessor 'first', -> @toArray()[0]
-    klass.accessor 'last',  -> @toArray()[@length - 1]
-    klass.accessor 'indexedBy',          -> new Batman.TerminalAccessible (key) => @indexedBy(key)
-    klass.accessor 'indexedByUnique',    -> new Batman.TerminalAccessible (key) => @indexedByUnique(key)
-    klass.accessor 'sortedBy',           -> new Batman.TerminalAccessible (key) => @sortedBy(key)
-    klass.accessor 'sortedByDescending', -> new Batman.TerminalAccessible (key) => @sortedBy(key, 'desc')
-    klass.accessor 'isEmpty', -> @isEmpty()
-    klass.accessor 'toArray', -> @toArray()
-    klass.accessor 'length',  ->
-      @registerAsMutableSource()
-      @length
+    accessors =
+      first:   -> @toArray()[0]
+      last:    -> @toArray()[@length - 1]
+      isEmpty: -> @isEmpty()
+      toArray: -> @toArray()
+      length:  -> @registerAsMutableSource(); @length
+      indexedBy:          -> new Batman.TerminalAccessible (key) => @indexedBy(key)
+      indexedByUnique:    -> new Batman.TerminalAccessible (key) => @indexedByUnique(key)
+      sortedBy:           -> new Batman.TerminalAccessible (key) => @sortedBy(key)
+      sortedByDescending: -> new Batman.TerminalAccessible (key) => @sortedBy(key, 'desc')
+    klass.accessor(key, accessor) for key, accessor in accessors
 
   @_applySetAccessors(@)
 
@@ -1328,9 +1328,8 @@ class Batman.Set extends Batman.Object
     @::[k] = Batman.SimpleSet::[k]
 
   for k in ['find', 'merge', 'forEach', 'toArray', 'isEmpty', 'has']
-    proto = @prototype
-    do (k) ->
-      proto[k] = ->
+    do (k) =>
+      @::[k] = ->
         @registerAsMutableSource()
         Batman.SimpleSet::[k].apply(@, arguments)
 
@@ -1386,7 +1385,7 @@ class Batman.SetProxy extends Batman.Object
       @set 'length', @base.length
       @fire('itemsWereRemoved', items...)
 
-  $extendsEnumerable(@::)
+  $extendsEnumerable(@prototype)
 
   filter: (f) ->
     r = new Batman.Set()
@@ -1463,9 +1462,9 @@ class Batman.SetSort extends Batman.SetProxy
     @set('_storage', newOrder)
 
 class Batman.SetIndex extends Batman.Object
-  $extendsEnumerable(@::)
-  propertyClass: Batman.Property
   @accessor 'toArray', -> @toArray()
+  $extendsEnumerable(@prototype)
+  propertyClass: Batman.Property
   constructor: (@base, @key) ->
     super()
     @_storage = new Batman.Hash
@@ -1641,10 +1640,6 @@ class Batman.Request extends Batman.Object
       formData.append(key, val)
     formData
 
-  url: ''
-  data: ''
-  method: 'GET'
-
   @dataHasFileUploads = dataHasFileUploads = (data) ->
     return true if data instanceof File
     type = $typeOf(data)
@@ -1657,15 +1652,16 @@ class Batman.Request extends Batman.Object
           return true if dataHasFileUploads(v)
     false
 
+  @wrapAccessor 'method', (core) ->
+    set: (k,val) -> core.set.call(k, val?.toUpperCase?())
+
+  url: ''
+  data: ''
+  method: 'GET'
   hasFileUploads: -> dataHasFileUploads(@data)
   response: null
   status: null
   headers: {}
-
-  @accessor 'method', $mixin {}, Batman.Property.defaultAccessor,
-    set: (k,val) -> @[k] = val?.toUpperCase?()
-
-  # Set the content type explicitly for PUT and POST requests.
   contentType: 'application/x-www-form-urlencoded'
 
   constructor: (options) ->
@@ -1677,9 +1673,6 @@ class Batman.Request extends Batman.Object
     super(options)
     @on k, handler for k, handler of handlers
 
-  # After the URL gets set, we'll try to automatically send
-  # your request after a short period. If this behavior is
-  # not desired, use @cancel() after setting the URL.
   @observeAll 'url', (url) ->
     @_autosendTimeout = $setImmediate =>
       @send()
@@ -1688,8 +1681,7 @@ class Batman.Request extends Batman.Object
   # `Batman.Request` to be useful.
   send: -> developer.error "Please source a dependency file for a request implementation"
 
-  cancel: ->
-    $clearImmediate(@_autosendTimeout) if @_autosendTimeout
+  cancel: -> $clearImmediate(@_autosendTimeout) if @_autosendTimeout
 
 ## Routes
 
@@ -5802,10 +5794,6 @@ do ->
 # Mixins
 # ------
 Batman.mixins = new Batman.Object()
-
-# Encoders
-# ------
-Batman.Encoders = {}
 
 # Support AMD loaders
 if typeof define is 'function'
