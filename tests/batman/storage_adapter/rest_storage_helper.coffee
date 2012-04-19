@@ -71,14 +71,14 @@ restStorageTestSuite = ->
     otherAdapter = new @adapter.constructor(@Product)
     notEqual otherAdapter.defaultRequestOptions, @adapter.defaultRequestOptions
 
-  asyncTest 'can readAll from JSON string', 3, ->
+  asyncTest 'can readAll from JSON string', 2, ->
     MockRequest.expect
       url: '/products'
       method: 'GET'
     , JSON.stringify products: [ name: "test", cost: 20 ]
 
     @adapter.perform 'readAll', @Product, {}, (err, readProducts) ->
-      ok !err
+      throw err if err
       ok readProducts
       equal readProducts[0].get("name"), "test"
       QUnit.start()
@@ -217,6 +217,62 @@ restStorageTestSuite = ->
       QUnit.start()
 
   sharedStorageTestSuite(restStorageTestSuite.sharedSuiteHooks)
+
+  asyncTest 'custom REST actions on storage: records should callback with the response', 4, ->
+    product = new @Product(name: "test", id: 10)
+    counter = 0
+    for method in ['GET', 'POST', 'PUT', 'DELETE']
+      MockRequest.expect
+        url: '/products/10/extra'
+        method: method
+      , foo: 'bar'
+
+      counter += 1
+      @adapter.perform method.toLowerCase(), product, {action: 'extra'}, (err, response) ->
+        throw err if err
+        deepEqual response, {foo: 'bar'}
+        QUnit.start() if --counter == 0
+
+  asyncTest 'custom REST actions on storage: records should callback with the error if given', 4, ->
+    product = new @Product(name: "test", id: 10)
+    counter = 0
+    for method in ['GET', 'POST', 'PUT', 'DELETE']
+      MockRequest.expect
+        url: '/products/10/extra'
+        method: method
+      , error: "Foo!"
+
+      counter += 1
+      @adapter.perform method.toLowerCase(), product, {action: 'extra'}, (err, response) ->
+        ok err
+        QUnit.start() if --counter == 0
+
+  asyncTest 'custom REST actions on storage: models should callback with the response', 4, ->
+    counter = 0
+    for method in ['GET', 'POST', 'PUT', 'DELETE']
+      MockRequest.expect
+        url: '/products/extra'
+        method: method
+      , foo: 'bar'
+
+      counter += 1
+      @adapter.perform method.toLowerCase(), @Product, {action: 'extra'}, (err, response) ->
+        throw err if err
+        deepEqual response, {foo: 'bar'}
+        QUnit.start() if --counter == 0
+
+  asyncTest 'custom REST actions on storage: models should callback with the error if given', 4, ->
+    counter = 0
+    for method in ['GET', 'POST', 'PUT', 'DELETE']
+      MockRequest.expect
+        url: '/products/extra'
+        method: method
+      , error: "Foo!"
+
+      counter += 1
+      @adapter.perform method.toLowerCase(), @Product, {action: 'extra'}, (err, response) ->
+        ok err
+        QUnit.start() if --counter == 0
 
 restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
   test 'string record urls should be gotten in the options', 1, ->

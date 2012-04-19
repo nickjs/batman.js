@@ -3776,8 +3776,13 @@ class Batman.StorageAdapter extends Batman.Object
     actionFilters = @_batman.filters[position][action] || []
     env.action = action
 
-    # Action specific filters execute first, and then the `all` filters.
-    filters = actionFilters.concat(allFilters)
+    filters = if position == 'before'
+      # Action specific filter execute first, and then the `all` filters.
+      actionFilters.concat(allFilters)
+    else
+      # `all` filters execute first, and then the action specific filters
+      allFilters.concat(actionFilters)
+
     next = (newEnv) =>
       env = newEnv if newEnv?
       if (nextFilter = filters.shift())?
@@ -3997,12 +4002,9 @@ class Batman.RestStorage extends Batman.StorageAdapter
       env.error = error
     next()
 
-  #@::before 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
-    #try
-      #env.options.url = @urlForRecord(env.record, env)
-    #catch error
-      #env.error = error
-    #next()
+  @::before 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
+    env.options.method = env.action.toUpperCase()
+    next()
 
   @::before 'create', 'update', @skipIfError (env, next) ->
     json = env.subject.toJSON()
@@ -4022,7 +4024,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     env.options.data = data
     next()
 
-  @::after 'create', 'read', 'update', @skipIfError (env, next) ->
+  @::after 'all', @skipIfError (env, next) ->
     if !env.data?
       return next()
 
@@ -4036,29 +4038,41 @@ class Batman.RestStorage extends Batman.StorageAdapter
     else
       json = env.data
 
-    if json?
+    env.json = json
+    next()
+
+  @::after 'create', 'read', 'update', @skipIfError (env, next) ->
+    if env.json?
       namespace = @recordJsonNamespace(env.subject)
-      json = json[namespace] if namespace && json[namespace]?
+      json = if namespace && env.json[namespace]?
+        env.json[namespace]
+      else
+        env.json
       env.subject.fromJSON(json)
     env.result = env.subject
     next()
 
   @::after 'readAll', @skipIfError (env, next) ->
-    if typeof env.data is 'string'
-      try
-        env.data = JSON.parse(env.data)
-      catch jsonError
-        env.error = jsonError
-        return next()
-
     namespace = @collectionJsonNamespace(env.subject)
-    env.recordsAttributes = if namespace && env.data[namespace]?
-      env.data[namespace]
+    env.recordsAttributes = if namespace && env.json[namespace]?
+      env.json[namespace]
     else
-      env.data
+      env.json
 
     env.result = env.records = for jsonRecordAttributes in env.recordsAttributes
       @getRecordFromData(jsonRecordAttributes, env.subject)
+    next()
+
+  @::after 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
+    json = env.json
+    namespace = if env.subject.prototype
+      @collectionJsonNamespace(env.subject)
+    else
+      @recordJsonNamespace(env.subject)
+    env.result = if namespace && env.json[namespace]?
+      env.json[namespace]
+    else
+      env.json
     next()
 
   @HTTPMethods =
@@ -4071,7 +4085,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
   for key in ['create', 'read', 'update', 'destroy', 'readAll', 'get', 'post', 'put', 'delete']
     do (key) =>
       @::[key] = @skipIfError (env, next) ->
-        env.options.method = @constructor.HTTPMethods[key]
+        env.options.method ||= @constructor.HTTPMethods[key]
         @request(env, next)
 
 # Views
