@@ -67,3 +67,6 @@ test "should find routes when given association proxies", ->
 
 test "should return undefined when given undefined parameters", ->
   equal typeof @query.get('products').get(undefined), 'undefined'
+
+test "should return undefined when given null parameters", ->
+  equal typeof @query.get('products').get(null), 'undefined'
