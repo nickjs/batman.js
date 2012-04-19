@@ -720,6 +720,8 @@ class Batman.Keypath extends Batman.Property
       @segments = [key]
       @depth = 1
     super
+  isCachable: ->
+    if @depth is 1 then super else true
   terminalProperty: ->
     base = $getPath(@base, @segments.slice(0, -1))
     return unless base?
