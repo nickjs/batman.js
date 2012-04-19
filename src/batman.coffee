@@ -2601,6 +2601,7 @@ class Batman.Model extends Batman.Object
   @persist: (mechanism, options) ->
     Batman.initializeObject @prototype
     mechanism = if mechanism.isStorageAdapter then mechanism else new mechanism(@)
+    $mixin mechanism, options if options
     @::_batman.storage = mechanism
     mechanism
 

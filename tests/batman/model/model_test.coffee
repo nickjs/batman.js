@@ -86,7 +86,20 @@ test 'the storage adapter should be returned after persisting with Model.storage
 
   equal Product.storageAdapter().constructor, StorageAdapter
 
+test 'options passed to persist should be mixed in to the storage adapter once instantiated', ->
+  returned = false
+  class StorageAdapter extends Batman.StorageAdapter
+    isTestStorageAdapter: true
 
+  class Product extends Batman.Model
+     @persist StorageAdapter, {foo: 'bar'}
+
+  equal Product.storageAdapter().foo, 'bar'
+
+  class Order extends Batman.Model
+  adapter = new StorageAdapter(Order)
+  Order.persist adapter, {baz: 'qux'}
+  equal adapter.baz, 'qux'
 
 QUnit.module "Batman.Model class clearing"
   setup: ->
