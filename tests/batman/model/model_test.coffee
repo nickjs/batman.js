@@ -76,16 +76,17 @@ test 'the instantiated storage adapter should be returned when persisting', ->
 
   ok returned.isTestStorageAdapter
 
-test 'the array of instantiated storage adapters should be returned when persisting', ->
-  [a, b, c] = [false, false, false]
+test 'the storage adapter should be returned after persisting with Model.storageAdapter()', ->
+  returned = false
   class StorageAdapter extends Batman.StorageAdapter
     isTestStorageAdapter: true
 
   class Product extends Batman.Model
-    [a,b,c] = @persist StorageAdapter, StorageAdapter, StorageAdapter
+     @persist StorageAdapter
 
-  for instance in [a,b,c]
-    ok instance.isTestStorageAdapter
+  equal Product.storageAdapter().constructor, StorageAdapter
+
+
 
 QUnit.module "Batman.Model class clearing"
   setup: ->

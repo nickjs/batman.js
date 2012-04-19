@@ -350,15 +350,15 @@ asyncTest 'it should bind the value of textareas and inputs simulatenously', ->
 unless IN_NODE # jsdom doesn't seem to like input type="file"
 
   getMockModel = ->
-    context = Batman
+    class Model extends Batman.Object
       storageKey: 'one'
       hasStorage: -> true
       fileAttributes: ''
 
-    adapter = new Batman.RestStorage(context)
-    context._batman.storage = [adapter]
+    adapter = new Batman.RestStorage(Model)
+    Model::_batman.storage = adapter
 
-    [context, adapter]
+    [new Model, adapter]
 
   asyncTest 'it should bind the value of file type inputs', 2, ->
     [context, adapter] = getMockModel()

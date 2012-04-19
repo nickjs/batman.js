@@ -2598,17 +2598,15 @@ class Batman.Model extends Batman.Object
 
   # Pick one or many mechanisms with which this model should be persisted. The mechanisms
   # can be already instantiated or just the class defining them.
-  @persist: (mechanisms...) ->
+  @persist: (mechanism, options) ->
     Batman.initializeObject @prototype
-    storage = @::_batman.storage ||= []
-    results = for mechanism in mechanisms
-      mechanism = if mechanism.isStorageAdapter then mechanism else new mechanism(@)
-      storage.push mechanism
-      mechanism
-    if results.length > 1
-      results
-    else
-      results[0]
+    mechanism = if mechanism.isStorageAdapter then mechanism else new mechanism(@)
+    @::_batman.storage = mechanism
+    mechanism
+
+  @storageAdapter: ->
+    Batman.initializeObject @prototype
+    @::_batman.storage
 
   # Encoders are the tiny bits of logic which manage marshalling Batman models to and from their
   # storage representations. Encoders do things like stringifying dates and parsing them back out again,
@@ -2790,9 +2788,8 @@ class Batman.Model extends Batman.Object
 
   @_doStorageOperation: (operation, subject, options, callback) ->
     developer.assert @::hasStorage(), "Can't #{operation} model #{$functionName(@constructor)} without any storage adapters!"
-    adapters = @::_batman.get('storage')
-    for adapter in adapters
-      adapter.perform operation, subject, {data: options}, callback
+    adapter = @::_batman.get('storage')
+    adapter.perform operation, subject, {data: options}, callback
     true
 
   # Each model instance (each record) can be in one of many states throughout its lifetime. Since various
@@ -2927,7 +2924,7 @@ class Batman.Model extends Batman.Object
     # Mixin the buffer object to use optimized and event-preventing sets used by `mixin`.
     @mixin obj
 
-  hasStorage: -> (@_batman.get('storage') || []).length > 0
+  hasStorage: -> @_batman.get('storage')?
 
   # `load` fetches the record from all sources possible
   load: (options, callback) =>
