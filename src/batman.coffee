@@ -3735,8 +3735,8 @@ class Batman.StorageAdapter extends Batman.Object
     model = record?.constructor || @model
     model.get('storageKey') || helpers.pluralize(helpers.underscore($functionName(model)))
 
-  getRecordFromData: (attributes, constructor = @model) ->
-    record = new constructor()
+  getRecordFromData: (attributes, klass = @model) ->
+    record = new klass()
     record.fromJSON(attributes)
     record
 
@@ -3826,13 +3826,13 @@ class Batman.LocalStorage extends Batman.StorageAdapter
       iterator.call(@, key, @storage.getItem(key))
     true
 
-  _storageEntriesMatching: (proto, options) ->
-    re = @storageRegExpForRecord(proto)
+  _storageEntriesMatching: (constructor, options) ->
+    re = @storageRegExpForRecord(constructor.prototype)
     records = []
     @_forAllStorageEntries (storageKey, storageString) ->
       if keyMatches = re.exec(storageKey)
         data = @_jsonToAttributes(storageString)
-        data[proto.constructor.primaryKey] = keyMatches[1]
+        data[constructor.primaryKey] = keyMatches[1]
         records.push data if @_dataMatches(options, data)
     records
 
@@ -3905,9 +3905,9 @@ class Batman.LocalStorage extends Batman.StorageAdapter
     @storage.removeItem(key)
     next()
 
-  readAll: @skipIfError ({proto, options}, next) ->
+  readAll: @skipIfError (env, next) ->
     try
-      arguments[0].recordsAttributes = @_storageEntriesMatching(proto, options.data)
+      arguments[0].recordsAttributes = @_storageEntriesMatching(env.subject, env.options.data)
     catch error
       arguments[0].error = error
     next()
@@ -3925,7 +3925,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
   defaultRequestOptions:
     type: 'json'
-
+  _implicitActionNames: ['create', 'read', 'update', 'destroy', 'readAll']
   serializeAsForm: true
 
   constructor: ->
@@ -3936,7 +3936,11 @@ class Batman.RestStorage extends Batman.StorageAdapter
   collectionJsonNamespace: (proto) -> helpers.pluralize(@storageKey(proto))
 
   _execWithOptions: (object, key, options) -> if typeof object[key] is 'function' then object[key](options) else object[key]
-  _defaultCollectionUrl: (record) -> "/#{@storageKey(record)}"
+  _defaultCollectionUrl: (model) -> "/#{@storageKey(model.prototype)}"
+  _addParams: (url, options) ->
+    if options && options.action && !(options.action in @_implicitActionNames)
+      url += '/' + options.action.toLowerCase()
+    url
 
   urlForRecord: (record, env) ->
     if record.url
@@ -3945,7 +3949,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
       url = if record.constructor.url
         @_execWithOptions(record.constructor, 'url', env.options)
       else
-        @_defaultCollectionUrl(record)
+        @_defaultCollectionUrl(record.constructor)
 
       if env.action != 'create'
         if (id = record.get('id'))?
@@ -3953,13 +3957,17 @@ class Batman.RestStorage extends Batman.StorageAdapter
         else
           throw new @constructor.StorageError("Couldn't get/set record primary key on #{env.action}!")
 
+    url = @_addParams(url, env.options)
+
     @urlPrefix(record, env) + url + @urlSuffix(record, env)
 
   urlForCollection: (model, env) ->
     url = if model.url
       @_execWithOptions(model, 'url', env.options)
     else
-      @_defaultCollectionUrl(model::, env.options)
+      @_defaultCollectionUrl(model, env.options)
+
+    url = @_addParams(url, env.options)
 
     @urlPrefix(model, env) + url + @urlSuffix(model, env)
 

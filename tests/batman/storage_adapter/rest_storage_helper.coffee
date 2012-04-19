@@ -237,7 +237,6 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     product.url = (passedOpts) ->
       equal passedOpts, opts
       '/some/url'
-
     @adapter.urlForRecord product, {options: opts}
 
   test 'string model urls should be gotten in the options', 1, ->
@@ -282,6 +281,26 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     @Product.urlSuffix = '.foo'
     url = @adapter.urlForCollection @Product, {}
     equal url, "/some/url.foo#{urlSuffix}"
+
+  test 'nonstandard actions can be passed to models without url functions defined', 1, ->
+    product = new @Product(id: 1)
+    url = @adapter.urlForRecord product, {options: {action: 'duplicate'}}
+    equal url, "/products/1/duplicate#{urlSuffix}"
+
+  test 'nonstandard actions can be passed to models with url functions defined', 1, ->
+    product = new @Product(id: 1)
+    product.url = '/some/url'
+    url = @adapter.urlForRecord product, {options: {action: 'duplicate'}}
+    equal url, "/some/url/duplicate#{urlSuffix}"
+
+  test 'nonstandard actions can be passed to records without url functions defined', 1, ->
+    url = @adapter.urlForCollection @Product, {options: {action: 'subset'}}
+    equal url, "/products/subset#{urlSuffix}"
+
+  test 'nonstandard actions can be passed to records with url functions defined', 1, ->
+    @Product.url = '/some/url'
+    url = @adapter.urlForCollection @Product, {options: {action: 'subset'}}
+    equal url, "/some/url/subset#{urlSuffix}"
 
 restStorageTestSuite.sharedSuiteHooks =
   'creating in storage: should succeed if the record doesn\'t already exist': ->
