@@ -77,7 +77,7 @@ restStorageTestSuite = ->
       method: 'GET'
     , JSON.stringify products: [ name: "test", cost: 20 ]
 
-    @adapter.perform 'readAll', @Product::, {}, (err, readProducts) ->
+    @adapter.perform 'readAll', @Product, {}, (err, readProducts) ->
       ok !err
       ok readProducts
       equal readProducts[0].get("name"), "test"
@@ -160,7 +160,7 @@ restStorageTestSuite = ->
           cost: 10
         ]
 
-    @adapter.perform 'readAll', @Product::, {}, (err, readProducts, env) ->
+    @adapter.perform 'readAll', @Product, {}, (err, readProducts, env) ->
       throw err if err
       equal env.data.someMetaData, "foo"
       ok env.request instanceof Batman.Request

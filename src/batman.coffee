@@ -2745,7 +2745,7 @@ class Batman.Model extends Batman.Object
 
     lifecycle = @get('lifecycle')
     if lifecycle.load()
-      @::_doStorageOperation 'readAll', options, (err, records, env) =>
+      @_doStorageOperation 'readAll', options, (err, records, env) =>
         if err?
           lifecycle.error()
           callback?(err, [])
@@ -2788,6 +2788,12 @@ class Batman.Model extends Batman.Object
         @get('loaded').add(record)
         return record
 
+  @_doStorageOperation: (operation, subject, options, callback) ->
+    developer.assert @::hasStorage(), "Can't #{operation} model #{$functionName(@constructor)} without any storage adapters!"
+    adapters = @::_batman.get('storage')
+    for adapter in adapters
+      adapter.perform operation, subject, {data: options}, callback
+    true
 
   # Each model instance (each record) can be in one of many states throughout its lifetime. Since various
   # operations on the model are asynchronous, these states are used to indicate exactly what point the
@@ -3789,13 +3795,9 @@ class Batman.StorageAdapter extends Batman.Object
 
   _jsonToAttributes: (json) -> JSON.parse(json)
 
-  perform: (key, recordOrProto, options, callback) ->
+  perform: (key, subject, options, callback) ->
     options ||= {}
-    env = {options}
-    if key == 'readAll'
-      env.proto = recordOrProto
-    else
-      env.record = recordOrProto
+    env = {options, subject}
 
     next = (newEnv) =>
       env = newEnv if newEnv?
@@ -3846,19 +3848,19 @@ class Batman.LocalStorage extends Batman.StorageAdapter
 
   @::before 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
     if env.action == 'create'
-      env.id = env.record.get('id') || env.record.set('id', @nextIdForRecord(env.record))
+      env.id = env.subject.get('id') || env.subject.set('id', @nextIdForRecord(env.subject))
     else
-      env.id = env.record.get('id')
+      env.id = env.subject.get('id')
 
     unless env.id?
       env.error = new @constructor.StorageError("Couldn't get/set record primary key on #{env.action}!")
     else
-      env.key = @storageKey(env.record) + env.id
+      env.key = @storageKey(env.subject) + env.id
 
     next()
 
   @::before 'create', 'update', @skipIfError (env, next) ->
-    env.recordAttributes = JSON.stringify(env.record)
+    env.recordAttributes = JSON.stringify(env.subject)
     next()
 
   @::after 'read', @skipIfError (env, next) ->
@@ -3868,20 +3870,16 @@ class Batman.LocalStorage extends Batman.StorageAdapter
       catch error
         env.error = error
         return next()
-    env.record.fromJSON env.recordAttributes
+    env.subject.fromJSON env.recordAttributes
     next()
 
   @::after 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
-    env.result = env.record
+    env.result = env.subject
     next()
 
   @::after 'readAll', @skipIfError (env, next) ->
     env.result = env.records = for recordAttributes in env.recordsAttributes
-      @getRecordFromData(recordAttributes, env.proto.constructor)
-    next()
-
-  @::after 'destroy', @skipIfError (env, next) ->
-    env.result = env.record
+      @getRecordFromData(recordAttributes, env.subject)
     next()
 
   read: @skipIfError (env, next) ->
@@ -3933,7 +3931,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     @defaultRequestOptions = $mixin {}, @defaultRequestOptions
 
   recordJsonNamespace: (record) -> helpers.singularize(@storageKey(record))
-  collectionJsonNamespace: (proto) -> helpers.pluralize(@storageKey(proto))
+  collectionJsonNamespace: (constructor) -> helpers.pluralize(@storageKey(constructor.prototype))
 
   _execWithOptions: (object, key, options) -> if typeof object[key] is 'function' then object[key](options) else object[key]
   _defaultCollectionUrl: (model) -> "/#{@storageKey(model.prototype)}"
@@ -3991,23 +3989,26 @@ class Batman.RestStorage extends Batman.StorageAdapter
     $mixin (options ||= {}), @defaultRequestOptions
     super
 
-  @::before 'create', 'read', 'update', 'destroy', @skipIfError (env, next) ->
+  @::before 'all', @skipIfError (env, next) ->
     try
-      env.options.url = @urlForRecord(env.record, env)
+      env.options.url = if env.subject.prototype
+        @urlForCollection(env.subject, env)
+      else
+        @urlForRecord(env.subject, env)
     catch error
       env.error = error
     next()
 
-  @::before 'readAll', @skipIfError (env, next) ->
-    try
-      env.options.url = @urlForCollection(env.proto.constructor, env)
-    catch error
-      env.error = error
-    next()
+  #@::before 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
+    #try
+      #env.options.url = @urlForRecord(env.record, env)
+    #catch error
+      #env.error = error
+    #next()
 
   @::before 'create', 'update', @skipIfError (env, next) ->
-    json = env.record.toJSON()
-    if namespace = @recordJsonNamespace(env.record)
+    json = env.subject.toJSON()
+    if namespace = @recordJsonNamespace(env.subject)
       data = {}
       data[namespace] = json
     else
@@ -4038,10 +4039,10 @@ class Batman.RestStorage extends Batman.StorageAdapter
       json = env.data
 
     if json?
-      namespace = @recordJsonNamespace(env.record)
+      namespace = @recordJsonNamespace(env.subject)
       json = json[namespace] if namespace && json[namespace]?
-      env.record.fromJSON(json)
-    env.result = env.record
+      env.subject.fromJSON(json)
+    env.result = env.subject
     next()
 
   @::after 'readAll', @skipIfError (env, next) ->
@@ -4052,14 +4053,14 @@ class Batman.RestStorage extends Batman.StorageAdapter
         env.error = jsonError
         return next()
 
-    namespace = @collectionJsonNamespace(env.proto)
+    namespace = @collectionJsonNamespace(env.subject)
     env.recordsAttributes = if namespace && env.data[namespace]?
       env.data[namespace]
     else
       env.data
 
     env.result = env.records = for jsonRecordAttributes in env.recordsAttributes
-      @getRecordFromData(jsonRecordAttributes, env.proto.constructor)
+      @getRecordFromData(jsonRecordAttributes, env.subject)
     next()
 
   @HTTPMethods =
@@ -4069,7 +4070,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     readAll: 'GET'
     destroy: 'DELETE'
 
-  for key in ['create', 'read', 'update', 'destroy', 'readAll']
+  for key in ['create', 'read', 'update', 'destroy', 'readAll', 'get', 'post', 'put', 'delete']
     do (key) =>
       @::[key] = @skipIfError (env, next) ->
         env.options.method = @constructor.HTTPMethods[key]
