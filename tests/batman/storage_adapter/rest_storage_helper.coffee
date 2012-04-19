@@ -274,6 +274,15 @@ restStorageTestSuite = ->
         ok err
         QUnit.start() if --counter == 0
 
+  test "persisting a model with this adapter should add helpers for making gets, puts, posts, and deletes", ->
+    @adapter.perform = perform = createSpy()
+
+    @product = new @Product(name: "test", id: 10)
+
+    @product.request 'duplicate', {method: 'GET'}, callback = (err, response) ->
+    deepEqual perform.lastCallArguments.slice(0,3), ['get', @product, {method: 'GET', action: 'duplicate'}]
+    equal typeof perform.lastCallArguments[3], 'function'
+
 restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
   test 'string record urls should be gotten in the options', 1, ->
     product = new @Product

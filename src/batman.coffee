@@ -1645,7 +1645,7 @@ class Batman.Request extends Batman.Object
       formData.append(key, val)
     formData
 
-  @dataHasFileUploads = dataHasFileUploads = (data) ->
+  @dataHasFileUploads: dataHasFileUploads = (data) ->
     return true if data instanceof File
     type = $typeOf(data)
     switch type
@@ -2740,11 +2740,9 @@ class Batman.Model extends Batman.Object
       callback = options
       options = {}
 
-    developer.assert @::_batman.getAll('storage').length, "Can't load model #{$functionName(@)} without any storage adapters!"
-
     lifecycle = @get('lifecycle')
     if lifecycle.load()
-      @_doStorageOperation 'readAll', options, (err, records, env) =>
+      @_doStorageOperation 'readAll', {data: options}, (err, records, env) =>
         if err?
           lifecycle.error()
           callback?(err, [])
@@ -2787,10 +2785,10 @@ class Batman.Model extends Batman.Object
         @get('loaded').add(record)
         return record
 
-  @_doStorageOperation: (operation, subject, options, callback) ->
+  @_doStorageOperation: (operation, options, callback) ->
     developer.assert @::hasStorage(), "Can't #{operation} model #{$functionName(@constructor)} without any storage adapters!"
     adapter = @::_batman.get('storage')
-    adapter.perform operation, subject, {data: options}, callback
+    adapter.perform(operation, @, options, callback)
     true
 
   # Each model instance (each record) can be in one of many states throughout its lifetime. Since various
@@ -2941,7 +2939,7 @@ class Batman.Model extends Batman.Object
       callbackQueue.push callback if callback?
       if !hasOptions
         @_currentLoad = callbackQueue
-      @_doStorageOperation 'read', options, (err, record, env) =>
+      @_doStorageOperation 'read', {data: options}, (err, record, env) =>
         unless err
           @get('lifecycle').loaded()
           record = @constructor._mapIdentity(record)
@@ -2983,7 +2981,7 @@ class Batman.Model extends Batman.Object
         associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(@)
         @_pauseDirtyTracking = false
 
-        @_doStorageOperation storageOperation, options, (err, record, env) =>
+        @_doStorageOperation storageOperation, {data: options}, (err, record, env) =>
           unless err
             @get('dirtyKeys').clear()
             if associations
@@ -3003,7 +3001,7 @@ class Batman.Model extends Batman.Object
       [options, callback] = [{}, options]
 
     if @get('lifecycle').destroy()
-      @_doStorageOperation 'destroy', options, (err, record, env) =>
+      @_doStorageOperation 'destroy', {data: options}, (err, record, env) =>
         unless err
           @constructor.get('loaded').remove(@)
           @get('lifecycle').destroyed()
@@ -3058,14 +3056,12 @@ class Batman.Model extends Batman.Object
 
   _doStorageOperation: (operation, options, callback) ->
     developer.assert @hasStorage(), "Can't #{operation} model #{$functionName(@constructor)} without any storage adapters!"
-    adapters = @_batman.get('storage')
-    for adapter in adapters
-      @_pauseDirtyTracking = true
-      adapter.perform operation, @, {data: options}, =>
-        callback(arguments...)
-        @_pauseDirtyTracking = false
-
-    true
+    adapter = @_batman.get('storage')
+    @_pauseDirtyTracking = true
+    adapter.perform operation, @, options, =>
+      callback(arguments...)
+      @_pauseDirtyTracking = false
+    return
 
 # ## Associations
 class Batman.AssociationProxy extends Batman.Object
@@ -3731,7 +3727,11 @@ class Batman.StorageAdapter extends Batman.Object
     constructor: (message) ->
       super(message || "Record couldn't be found in storage!")
 
-  constructor: (model) -> super(model: model)
+  constructor: (model) ->
+    super(model: model)
+    extend = (x, y) -> x[key] = value for key, value of y
+    extend model, @constructor.ModelMixin if @constructor.ModelMixin
+    extend model.prototype, @constructor.RecordMixin if @constructor.RecordMixin
 
   isStorageAdapter: true
 
@@ -3924,6 +3924,46 @@ class Batman.RestStorage extends Batman.StorageAdapter
   @JSONContentType: 'application/json'
   @PostBodyContentType: 'application/x-www-form-urlencoded'
 
+  @BaseMixin =
+    request: (action, options, callback) ->
+      if !callback
+        callback = options
+        options = {}
+      options.method ||= 'GET'
+      options.action = action
+      @_doStorageOperation options.method.toLowerCase(), options, callback
+
+  @ModelMixin: $mixin({}, @BaseMixin,
+    urlNestsUnder: (keys...) ->
+      parents = {}
+      for key in keys
+        parents[key + '_id'] = Batman.helpers.pluralize(key)
+      children = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
+
+      @url = (options) ->
+        for key, plural of parents
+          parentID = options.data[key]
+          if parentID
+            delete options.data[key]
+            return "#{plural}/#{parentID}/#{children}"
+        return children
+
+      @::url = ->
+        for key, plural of parents
+          parentID = @dirtyKeys.get(key)
+          if parentID is undefined
+            parentID = @get(key)
+          if parentID
+            url = "#{plural}/#{parentID}/#{children}"
+            break
+        url ||= children
+        if id = @get('id')
+          url += '/' + id
+        url
+    )
+
+  @RecordMixin: $mixin({}, @BaseMixin)
+
   defaultRequestOptions:
     type: 'json'
   _implicitActionNames: ['create', 'read', 'update', 'destroy', 'readAll']
@@ -3989,8 +4029,9 @@ class Batman.RestStorage extends Batman.StorageAdapter
     env.request = new Batman.Request(options)
 
   perform: (key, record, options, callback) ->
-    $mixin (options ||= {}), @defaultRequestOptions
-    super
+    options ||= {}
+    $mixin options, @defaultRequestOptions
+    super(key, record, options, callback)
 
   @::before 'all', @skipIfError (env, next) ->
     try

@@ -132,6 +132,7 @@ asyncTest 'model will reload data from storage after clear', ->
 QUnit.module 'Batman.Model.urlNestsUnder',
   setup: ->
     class @Product extends Batman.Model
+      @persist Batman.RestStorage
       @urlNestsUnder 'shop', 'manufacturer'
 
 test 'urlNestsUnder should nest collection URLs', 1, ->
