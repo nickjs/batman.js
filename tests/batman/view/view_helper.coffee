@@ -91,8 +91,10 @@ exports.splitAndSortedEquals = (a, b, split = ',') ->
 # Helper function for rendering a view given a context. Optionally returns a jQuery of the nodes,
 # and calls a callback with the same. Beware of the 50ms timeout when rendering views, tests should
 # be async and rely on the view.ready one shot event for running assertions.
+outstandingNodes = []
+
 exports.render = (source, jqueryize = true, context = {}, callback = ->) ->
-  node = document.createElement 'div'
+  node = nodeReference = document.createElement 'div'
   node.innerHTML = source
   unless !!jqueryize == jqueryize
     [context, callback] = [jqueryize, context]
@@ -106,13 +108,15 @@ exports.render = (source, jqueryize = true, context = {}, callback = ->) ->
     node: node
 
   view.on 'ready', ->
+    outstandingNodes.push view.get('node')
     node = if jqueryize then $(view.get('node')).children() else view.get('node')
     Batman.DOM.willInsertNode(view.get('node'))
     Batman.DOM.didInsertNode(view.get('node'))
     callback(node, view)
-    QUnit.moduleDone ->
-      try
-        Batman.DOM.destroyNode(node)
-      catch e
 
   view.get('node')
+
+# Destroy outstanding nodes
+QUnit.testDone ->
+  Batman.DOM.destroyNode(node) for node in outstandingNodes
+  outstandingNodes = []

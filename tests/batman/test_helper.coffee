@@ -8,17 +8,18 @@ else
   exports.IN_NODE = false
 
 originalPathname = window.location.pathname
-__begin = QUnit.begin
-QUnit.begin = ->
+QUnit.begin ->
+  oldRun = Batman.App.run
+  Batman.App.run = ->
+    throw new Error("Ensure test App classes have @layout: null so they don't render the page!") unless @layout == null
+    oldRun.apply(@, arguments...)
+
   Batman.exportGlobals(global) if IN_NODE
-  __begin.apply(@, arguments)
 
 # set Batman.config:
-QUnit.__start = QUnit.start
-QUnit.start = ->
+QUnit.testStart ->
   Batman.config.pathPrefix = originalPathname
   Batman.config.usePushState = true
-  QUnit.__start.apply(this, arguments)
 
 # return clean links (e.g. "Rerun" links):
 QUnit.__url = QUnit.url
@@ -34,6 +35,7 @@ QUnit.reset = ->
   window.location.hash = ""
   if window.history?.pushState? and window.location.href isnt originalHref
     window.history.pushState(null, '', originalHref)
+  Batman.cache = {}
   QUnit.__reset()
 
 if exports.IN_NODE
@@ -245,24 +247,6 @@ mockClassDuring = (namespace, name, mock = MockClass, fn) ->
   result = fn(mock)
   namespace[name] = original
   [mock, result]
-
-# The node-qunit module is a bit busted for the moment; for now,
-# we'll just try to make sure that we have some API compatibility
-# so that our async tests don't die horribly.
-if QUnit.api? and not QUnit.config?
-  oldTest = QUnit.api.test
-  oldModule = QUnit.api.module
-
-  QUnit.config = { current: {} }
-
-  QUnit.api.module = (module, env) ->
-    oldModule(arguments...)
-
-    QUnit.api.test = (testName, expect, fn, async) ->
-      testFn = ->
-        QUnit.config.current = { module, testName }
-        fn(arguments...)
-      oldTest(testName, expect, testFn, async)
 
 # Handy for async tests which usually follow this pattern
 delayCount = 0

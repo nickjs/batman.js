@@ -10,7 +10,7 @@ asyncTest 'it should insert content into yields when the content comes before th
   <div data-yield="baz" id="test">erased</div>
   '''
   node = helpers.render source, {}, (node) ->
-    equals node.children(0).html(), "chunky bacon"
+    equal node.children(0).html(), "chunky bacon"
     QUnit.start()
 
 asyncTest 'it should insert content into yields when the content comes after the yield', 1, ->
@@ -19,7 +19,7 @@ asyncTest 'it should insert content into yields when the content comes after the
   <span data-contentfor="baz">chunky bacon</span>
   '''
   node = helpers.render source, {}, (node) ->
-    equals node.children(0).html(), "chunky bacon"
+    equal node.children(0).html(), "chunky bacon"
     QUnit.start()
 
 asyncTest 'bindings within yielded content should continue to update when the content comes before the yield', 2, ->
@@ -29,9 +29,9 @@ asyncTest 'bindings within yielded content should continue to update when the co
   '''
   context = Batman string: "chunky bacon"
   helpers.render source, context, (node) ->
-    equals node.find('p').html(), "chunky bacon"
+    equal node.find('p').html(), "chunky bacon"
     context.set 'string', 'why so serious'
-    equals node.find('p').html(), "why so serious"
+    equal node.find('p').html(), "why so serious"
     QUnit.start()
 
 asyncTest 'bindings within yielded content should continue to update when the content comes after the yield', 2, ->
@@ -41,9 +41,9 @@ asyncTest 'bindings within yielded content should continue to update when the co
   '''
   context = Batman string: "chunky bacon"
   helpers.render source, context, (node) ->
-    equals node.find('p').html(), "chunky bacon"
+    equal node.find('p').html(), "chunky bacon"
     context.set 'string', 'why so serious'
-    equals node.find('p').html(), "why so serious"
+    equal node.find('p').html(), "why so serious"
     QUnit.start()
 
 asyncTest 'bindings within nested yielded content should continue to update', 2, ->
@@ -56,9 +56,9 @@ asyncTest 'bindings within nested yielded content should continue to update', 2,
   '''
   context = Batman string: "chunky bacon"
   helpers.render source, context, (node) ->
-    equals node.find('p').html(), "chunky bacon"
+    equal node.find('p').html(), "chunky bacon"
     context.set 'string', 'why so serious'
-    equals node.find('p').html(), "why so serious"
+    equal node.find('p').html(), "why so serious"
     QUnit.start()
 
 asyncTest 'event handlers within yielded content should continue to fire when the content comes before the yield', 1, ->
@@ -107,8 +107,8 @@ asyncTest 'it should yield multiple contentfors that render into the same yield'
   <span data-contentfor="mult">spicy sausage</span>
   '''
   node = helpers.render source, {}, (node) ->
-    equals node.children(0).first().html(), "chunky bacon"
-    equals node.children(0).first().next().html(), "spicy sausage"
+    equal node.children(0).first().html(), "chunky bacon"
+    equal node.children(0).first().next().html(), "spicy sausage"
     QUnit.start()
 
 asyncTest 'it shouldn\'t go nuts if the content is already inside the yield', 1, ->
@@ -116,7 +116,7 @@ asyncTest 'it shouldn\'t go nuts if the content is already inside the yield', 1,
               <span data-contentfor="baz">chunky bacon</span>
             </div>'
   node = helpers.render source, {}, (node) ->
-    equals node.children(0).html(), "chunky bacon"
+    equal node.children(0).html(), "chunky bacon"
     QUnit.start()
 
 asyncTest 'it should render content even if the yield doesn\'t exist yet', 1, ->

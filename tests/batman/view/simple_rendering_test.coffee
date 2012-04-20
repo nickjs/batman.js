@@ -21,14 +21,14 @@ asyncTest 'it should allow the inner value to be bound', 1, ->
   helpers.render '<div data-bind="foo"></div>',
     foo: 'bar'
   , (node) =>
-    equals node.html(), "bar"
+    equal node.html(), "bar"
     QUnit.start()
 
 asyncTest 'it should allow the inner value to be bound using content containing html', 1, ->
   helpers.render '<div data-bind="foo"></div>',
     foo: '<p>bar</p>'
   , (node) =>
-    equals node.html(), "&lt;p&gt;bar&lt;/p&gt;"
+    equal node.html(), "&lt;p&gt;bar&lt;/p&gt;"
     QUnit.start()
 
 asyncTest 'it should track added bindings', 2, ->
@@ -38,41 +38,41 @@ asyncTest 'it should track added bindings', 2, ->
   , (node) =>
     ok spy.called
     ok spy.lastCallArguments[0] instanceof Batman.DOM.AbstractBinding
-    Batman.DOM.forget 'bindingAdded', spy
+    Batman.DOM.event('bindingAdded').removeHandler(spy)
     QUnit.start()
 
 asyncTest 'it should bind undefined values as empty strings', 1, ->
   helpers.render '<div data-bind="foo"></div>',
     foo: undefined
   , (node) =>
-    equals node.html(), ""
+    equal node.html(), ""
     QUnit.start()
 
 asyncTest 'it should allow ! and ? at the end of a keypath', 1, ->
   helpers.render '<div data-bind="foo?"></div>',
     'foo?': 'bar'
   , (node) =>
-    equals node.html(), "bar"
+    equal node.html(), "bar"
     QUnit.start()
 
 asyncTest 'it should ignore empty bindings', 1, ->
   helpers.render '<div data-bind=""></div>', Batman(), (node) =>
-    equals node.html(), ""
+    equal node.html(), ""
     QUnit.start()
 
 asyncTest 'it should allow bindings to be defined later', 2, ->
   context = Batman()
   helpers.render '<div data-bind="foo.bar"></div>', context, (node) =>
-    equals node.html(), ""
+    equal node.html(), ""
     context.set 'foo', Batman(bar: "baz")
-    equals node.html(), "baz"
+    equal node.html(), "baz"
     QUnit.start()
 
 asyncTest 'it should allow commenting of bindings', 1, ->
   helpers.render '<div x-data-bind="foo"></div>',
     foo: 'bar'
   , (node) =>
-    equals node.html(), ""
+    equal node.html(), ""
     QUnit.start()
 
 asyncTest 'bindings in lower down scopes should shadow higher ones', 3, ->
@@ -82,11 +82,11 @@ asyncTest 'bindings in lower down scopes should shadow higher ones', 3, ->
     foo: 'outer'
   helpers.render '<div data-context="namespace"><div id="inner" data-bind="foo"></div></div>', context, (node) =>
     node = $('#inner', node)
-    equals node.html(), "inner"
+    equal node.html(), "inner"
     context.set 'foo', "outer changed"
-    equals node.html(), "inner"
+    equal node.html(), "inner"
     context.set 'namespace.foo', 'inner changed'
-    equals node.html(), "inner changed"
+    equal node.html(), "inner changed"
     QUnit.start()
 
 asyncTest 'bindings in lower down scopes should shadow higher ones with shadowing defined as the base of the keypath being defined', 3, ->
@@ -98,11 +98,11 @@ asyncTest 'bindings in lower down scopes should shadow higher ones with shadowin
 
   helpers.render '<div data-context="namespace"><div id="inner" data-bind="foo.bar"></div></div>', context, (node) =>
     node = $('#inner', node)
-    equals node.html(), ""
+    equal node.html(), ""
     context.set 'foo', "outer changed"
-    equals node.html(), ""
+    equal node.html(), ""
     context.set 'namespace.foo.bar', 'inner'
-    equals node.html(), "inner"
+    equal node.html(), "inner"
     QUnit.start()
 
 QUnit.module 'Batman.View visibility bindings'
@@ -215,7 +215,7 @@ asyncTest 'input value bindings should not escape their value', 1, ->
   helpers.render '<input data-bind="foo"></input>',
     foo: '<script></script>'
   , (node) =>
-    equals node.val(), "<script></script>"
+    equal node.val(), "<script></script>"
     QUnit.start()
 
 asyncTest 'it should bind the input value and update the input when it changes', 2, ->
@@ -320,8 +320,8 @@ asyncTest 'textarea value bindings should not escape their value', 2, ->
     # jsdom and the browser have different behaviour, so lets just test against a node with the expected contents
     # to see if they are the same
     textarea = $('<textarea>').val("<script></script>")
-    equals node.html(), textarea.html()
-    equals node.val(), textarea.val()
+    equal node.html(), textarea.html()
+    equal node.val(), textarea.val()
     QUnit.start()
 
 asyncTest 'it should bind the value of textareas and inputs simulatenously', ->
@@ -435,7 +435,7 @@ asyncTest 'it should allow mixins to be applied', 1, ->
 
   source = '<div data-mixin="test"></div>'
   helpers.render source, false, (node) ->
-    equals Batman.data(node.firstChild, 'foo'), 'bar'
+    equal Batman.data(node.firstChild, 'foo'), 'bar'
     delete Batman.mixins.test
     QUnit.start()
 

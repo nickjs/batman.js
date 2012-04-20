@@ -15,7 +15,7 @@ asyncTest 'it should pull in objects for form rendering', 1, ->
     instanceOfUser: new @User
 
   node = helpers.render source, context, (node) ->
-    equals $('input', node).val(), "default name"
+    equal $('input', node).val(), "default name"
     QUnit.start()
 
 asyncTest 'it should update objects when form rendering', 1, ->
@@ -32,7 +32,7 @@ asyncTest 'it should update objects when form rendering', 1, ->
     # IE8 inserts explicit text nodes
     childNode = if node[0].childNodes[1].nodeName != '#text' then node[0].childNodes[1] else node[0].childNodes[0]
     helpers.triggerChange(childNode)
-    equals @User.lastInstance.name, "new name"
+    equal @User.lastInstance.name, "new name"
 
     QUnit.start()
 
@@ -45,9 +45,9 @@ asyncTest 'it should update the context for the form if the context changes', 2,
   context = Batman()
 
   node = helpers.render source, context, (node) =>
-    equals $('input', node).val(), ""
+    equal $('input', node).val(), ""
     context.set 'instanceOfUser', new @User
-    equals $('input', node).val(), "default name"
+    equal $('input', node).val(), "default name"
 
     QUnit.start()
 

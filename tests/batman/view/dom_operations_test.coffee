@@ -75,11 +75,12 @@ asyncTest "insertBefore fires beforeAppear and appear events on views being adde
 
 asyncTest "removeOrDestroyNode removes but does not destroy cached views", 1, ->
   @context.OuterView::cached = true
-
+  failNow = true
   helpers.render @simpleSource, false, @context, (node) =>
     ok @context.OuterView.instance.get('cached')
-    @context.OuterView.instance.on 'destroy', -> ok false
+    @context.OuterView.instance.on 'destroy', -> ok false if failNow
     Batman.DOM.removeOrDestroyNode(node.childNodes[0])
+    failNow = false
     QUnit.start()
 
 asyncTest "removeOrDestroyNode destroys non-cached views", 2, ->
@@ -102,13 +103,14 @@ asyncTest "removeOrDestroyNode removes yielded nodes when their parents are remo
   @context.CachedView = class CachedView extends @TestView
     cached: true
 
+  failNow = true
   helpers.render source, false, @context, (node) =>
-    @context.CachedView.instance.on 'destroy', -> ok false
-    @context.InnerView.instance.on  'destroy', -> ok false
+    @context.CachedView.instance.on 'destroy', -> ok false if failNow
+    @context.InnerView.instance.on  'destroy', -> ok false if failNow
     Batman.DOM.removeOrDestroyNode($('.cached', node)[0])
 
     equal $('.foo', node).html(), ""
-
+    failNow = false
     QUnit.start()
 
 asyncTest "removeOrDestroyNode removes yielded nodes when the yield is cleared if the yielded node's parent is cached", 1, ->
@@ -123,11 +125,13 @@ asyncTest "removeOrDestroyNode removes yielded nodes when the yield is cleared i
   @context.CachedView = class CachedView extends @TestView
     cached: true
 
+  failNow = true
   helpers.render source, false, @context, (node) =>
-    @context.CachedView.instance.on 'destroy', -> ok false
-    @context.InnerView.instance.on  'destroy', -> ok false
+    @context.CachedView.instance.on 'destroy', -> ok false if failNow
+    @context.InnerView.instance.on  'destroy', -> ok false if failNow
     @context.InnerView.instance.on  'disappear', -> ok true
     Batman.DOM.Yield.withName('foo').clear()
+    failNow = false
     QUnit.start()
 
 asyncTest "removeOrDestroyNode destroys yielded nodes when the yield is cleared if the yielded node's parent is not cached", 1, ->
@@ -141,10 +145,12 @@ asyncTest "removeOrDestroyNode destroys yielded nodes when the yield is cleared 
       </div>
     </div>
   """
+  failNow = true
   helpers.render source, false, @context, (node) =>
     @context.InnerView.instance.on  'destroy', -> ok true
-    @context.OuterView.instance.on  'destroy', -> ok false
+    @context.OuterView.instance.on  'destroy', -> ok false if failNow
     Batman.DOM.Yield.withName('bar').clear()
+    failNow = false
     QUnit.start()
 
 test "addEventListener and removeEventListener store and remove callbacks using Batman.data", ->

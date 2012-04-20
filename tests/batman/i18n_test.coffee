@@ -4,7 +4,6 @@ viewHelpers = if typeof require is 'undefined' then window.viewHelpers else requ
 
 oldLocales = Batman.I18N.locales
 oldRequest = Batman.Request
-QUnit.testStart (test) -> console.warn test
 
 reset = ->
   # Hack so that the actions taken in reset don't fire observers which

@@ -2357,11 +2357,12 @@ class Batman.App extends Batman.Object
     @observe 'layout', (layout) =>
       layout?.on 'ready', => @fire 'ready'
 
-    if (layout = @get('layout'))?
+    layout = @get('layout')
+    if layout
       if typeof layout == 'string'
         layoutClass = @[helpers.camelize(layout) + 'View']
     else
-      layoutClass = Batman.View
+      layoutClass = Batman.View unless layout == null
 
     if layoutClass
       layout = @set 'layout', new layoutClass
@@ -4240,7 +4241,6 @@ class Batman.View extends Batman.Object
 # fragment is particularly long.
 class Batman.Renderer extends Batman.Object
   deferEvery: 50
-
   constructor: (@node, callback, @context, @view) ->
     super()
     @on('parsed', callback) if callback?
@@ -4296,6 +4296,7 @@ class Batman.Renderer extends Batman.Object
       @resumeNode = node
       @timeout = $setImmediate @resume
       return
+
     if node.getAttribute and node.attributes
       bindings = []
       for attribute in node.attributes

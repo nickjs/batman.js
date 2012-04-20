@@ -22,7 +22,7 @@ asyncTest "preloaded/already rendered partials should render", ->
   source = '<div data-partial="test/one"></div>'
   node = helpers.render source, {}, (node) ->
     delay =>
-      equals node.children(0).html(), "<div>Hello from a partial</div>"
+      equal node.children(0).html(), "<div>Hello from a partial</div>"
 
 asyncTest "unloaded partials should load then render", 2, ->
   source = '<div data-partial="test/one"></div>'

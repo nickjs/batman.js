@@ -159,6 +159,8 @@ asyncTest 'hash history', 1, ->
 
   setTimeout =>
     class @App extends Batman.App
+      @layout: null
+
     @App.route 'test', ->
       window.location.hash = '#!/test2'
 

@@ -158,7 +158,6 @@ basicSetTestSuite = ->
     equal spy.callCount, 1, 'replaces() fires length observers'
 
   test "replace() fires item-based mutation events for Batman.Set", ->
-    return if @set.console isnt Batman.Set
     addedSpy = createSpy()
     removedSpy = createSpy()
     other = new Batman.Set

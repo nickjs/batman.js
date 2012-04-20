@@ -202,6 +202,7 @@ Built in validators are attached by calling `@validate` with options designating
 
 !!!
 test '@validate accepts options to check for validity', ->
+  QUnit.expect(0)
   show(class Post extends Batman.Model
     @validate 'title', 'body', {presence: true}
   )

@@ -8,42 +8,42 @@ QUnit.module "Batman.View filter value and parameter parsing"
 
 asyncTest "should parse one segment keypaths as values", ->
   helpers.render '<div data-bind="foo | test"></div>', Batman(foo: "bar"), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, ["bar"]
     QUnit.start()
 
 asyncTest "should parse many segment keypaths as values", ->
   helpers.render '<div data-bind="foo.bar | test"></div>', Batman(foo: Batman(bar: "baz")), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, ["baz"]
     QUnit.start()
 
 asyncTest "should parse one segment keypaths as arguments", ->
   helpers.render '<div data-bind="1 | test foo"></div>', Batman(foo: "bar"), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, [1, "bar"]
     QUnit.start()
 
 asyncTest "should parse one segment keypaths as arguments anywhere in the list of arguments", ->
   helpers.render '<div data-bind="1 | test foo, 2, bar, 3, baz"></div>', Batman(foo: "a", bar: "b", baz: "c"), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, [1, "a", 2, "b", 3, "c"]
     QUnit.start()
 
 asyncTest "should parse many segment keypaths as arguments anywhere in the list of arguments", ->
   helpers.render '<div data-bind="1 | test qux.foo, 2, qux.bar, 3, qux.baz"></div>', Batman(qux: Batman(foo: "a", bar: "b", baz: "c")), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, [1, "a", 2, "b", 3, "c"]
     QUnit.start()
 
 asyncTest "should parse many segment keypaths as arguments", ->
   helpers.render '<div data-bind="1 | test foo.bar"></div>', Batman(foo: Batman(bar: "baz")), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, [1, "baz"]
     QUnit.start()
@@ -69,32 +69,32 @@ asyncTest "should parse keypaths containing false as arguments", ->
 
 asyncTest "should not parse true or false as a keypath", ->
   helpers.render '<div data-bind="1 | test true"></div>', Batman("true": Batman(bar: "baz")), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, [1, true]
     helpers.render '<div data-bind="1 | test false"></div>', Batman(truesay: Batman(bar: "baz")), (node) =>
-      equals node.html(), "testValue"
+      equal node.html(), "testValue"
       ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
       deepEqual @spy.lastCallArguments, [1, false]
       QUnit.start()
 
 asyncTest "should parse single quoted strings as arguments", ->
   helpers.render '<div data-bind="1 | test \'foo\'"></div>', Batman(), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, [1, "foo"]
     QUnit.start()
 
 asyncTest "should parse double quoted strings as arguments", ->
   helpers.render '<div data-bind=\'1 | test "foo"\'></div>', Batman(), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, [1, "foo"]
     QUnit.start()
 
 asyncTest "should parse strings with more than 3 commas as arguments", ->
   helpers.render '<div data-bind="1 | test \'a,b,c,d,e,f\'"></div>', Batman(), (node) =>
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, [1, "a,b,c,d,e,f"]
     QUnit.start()
@@ -103,7 +103,7 @@ asyncTest 'should render chained filters', 1, ->
   node = helpers.render '<div data-bind="foo | upcase | downcase"></div>',
     foo: 'foo'
   , (node) ->
-    equals node.html(), "foo"
+    equal node.html(), "foo"
     QUnit.start()
 
 asyncTest 'should update bindings with the filtered value if they change', 1, ->
@@ -111,7 +111,7 @@ asyncTest 'should update bindings with the filtered value if they change', 1, ->
     foo: 'bar'
   helpers.render '<div data-bind="foo | upcase"></div>', context, (node) ->
     context.set('foo', 'baz')
-    equals node.html(), 'BAZ'
+    equal node.html(), 'BAZ'
     QUnit.start()
 
 asyncTest 'should allow filtering on attributes', 2, ->
@@ -120,21 +120,21 @@ asyncTest 'should allow filtering on attributes', 2, ->
     bar: [true]
   , (node) ->
     ok node.hasClass('works')
-    equals node.attr('attr'), 'BAR'
+    equal node.attr('attr'), 'BAR'
     QUnit.start()
 
 asyncTest 'should allow filtering on simple values', 1, ->
   helpers.render '<div data-bind="\'foo\' | upcase"></div>', {}, (node) ->
-    equals node.html(), 'FOO'
+    equal node.html(), 'FOO'
     QUnit.start()
 
 asyncTest 'should allow filtering on objects and arrays', 2, ->
   helpers.render '<div data-bind="[1,2,3] | join \' \'"></div>', {}, (node) ->
-    equals node.html(), '1 2 3'
+    equal node.html(), '1 2 3'
 
     Batman.Filters.dummyObjectFilter = (value, key) -> value[key]
     helpers.render '<div data-bind="{\'foo\': \'bar\', \'baz\': 4} | dummyObjectFilter \'foo\'"></div>', {}, (node) ->
-      equals node.html(), 'bar'
+      equal node.html(), 'bar'
       delete Batman.Filters.dummyObjectFilter
       QUnit.start()
 
@@ -143,7 +143,7 @@ asyncTest 'should allow keypaths as arguments to filters', 1, ->
     foo: [1,2,3]
     bar: ':'
   , (node) ->
-    equals node.html(), '1:2:3'
+    equal node.html(), '1:2:3'
     QUnit.start()
 
 asyncTest 'should allow many keypaths as arguments to filters', 1, ->
@@ -157,7 +157,7 @@ asyncTest 'should allow many keypaths as arguments to filters', 1, ->
     qux: 'c'
   , (node) ->
     delete Batman.Filters.joining
-    equals node.html(), 'a b c'
+    equal node.html(), 'a b c'
     QUnit.start()
 
 asyncTest 'should allow a mix of keypaths and simple values as arguments to filters', 2, ->
@@ -171,10 +171,10 @@ asyncTest 'should allow a mix of keypaths and simple values as arguments to filt
     qux: 'c'
 
   helpers.render '<div data-bind="foo | joining \'a\', baz, \'c\'"></div>', context, (node) ->
-    equals node.html(), 'a b c'
+    equal node.html(), 'a b c'
     helpers.render '<div data-bind="foo | joining bar, \'b\', qux"></div>', context, (node) ->
       delete Batman.Filters.joining
-      equals node.html(), 'a b c'
+      equal node.html(), 'a b c'
       QUnit.start()
 
 renderWithoutBatmanizing = (source, context, callback) ->
@@ -223,9 +223,9 @@ asyncTest 'should update bindings when argument keypaths change', 2, ->
     bar: ''
 
   helpers.render '<div data-bind="foo | join bar"></div>', context, (node) ->
-    equals node.html(), '123'
+    equal node.html(), '123'
     context.set('bar', "-")
-    equals node.html(), '1-2-3'
+    equal node.html(), '1-2-3'
 
     QUnit.start()
 
@@ -236,9 +236,9 @@ asyncTest 'should update bindings when argument keypaths change in the middle of
     array: [1,2,3]
 
   helpers.render '<div data-bind="array | join foo.bar"></div>', context, (node) ->
-    equals node.html(), '1.2.3'
+    equal node.html(), '1.2.3'
     context.set('foo', Batman(bar: '-'))
-    equals node.html(), '1-2-3'
+    equal node.html(), '1-2-3'
 
     QUnit.start()
 
@@ -259,9 +259,9 @@ asyncTest 'should update bindings when argument keypaths change context', 2, ->
 
   view.on 'ready', ->
     node = view.get('node')
-    equals node.innerHTML, '1.2.3'
+    equal node.innerHTML, '1.2.3'
     closer.set('foo', '-')
-    equals node.innerHTML, '1-2-3'
+    equal node.innerHTML, '1-2-3'
 
     QUnit.start()
 
@@ -315,7 +315,7 @@ asyncTest 'should allow filtered keypaths as arguments to context', 1, ->
     bar: 'baz'
 
   helpers.render '<div data-context-corge="foo | get bar"><div id="test" data-bind="corge.qux"></div></div>', context, (node) ->
-    equals $("#test", node).html(), 'filtered!'
+    equal $("#test", node).html(), 'filtered!'
 
     QUnit.start()
 
@@ -347,7 +347,7 @@ asyncTest 'should allow filtered keypaths as arguments to formfor', 1, ->
 
   source = '<form data-formfor-obj="klass | get \'instance\'"><span id="test" data-bind="obj.someKey"></span></form>'
   helpers.render source, context, (node) ->
-    equals $("#test", node).html(), 'foobar'
+    equal $("#test", node).html(), 'foobar'
 
     QUnit.start()
 
@@ -359,7 +359,7 @@ asyncTest 'should allow filtered keypaths as arguments to mixin', 1, ->
     bar: 'baz'
 
   helpers.render '<div id="test" data-mixin="foo | get bar"></div>', context, (node) ->
-    equals Batman.data(node[0], 'someKey'), 'foobar'
+    equal Batman.data(node[0], 'someKey'), 'foobar'
 
     QUnit.start()
 

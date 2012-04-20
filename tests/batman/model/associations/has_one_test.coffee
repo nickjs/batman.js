@@ -61,7 +61,7 @@ asyncTest "hasOne associations are loaded via JSON", 3, ->
   @Store.find 2, (err, store) =>
     product = store.get 'product'
     delay =>
-      equals productLoadSpy.callCount, 0
+      equal productLoadSpy.callCount, 0
       equal product.get('id'), 3
       equal product.get('name'), "JSON Product"
 

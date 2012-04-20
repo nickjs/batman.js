@@ -7,13 +7,13 @@ asyncTest 'get', 1, ->
     foo: new Batman.Hash({bar: "qux"})
 
   helpers.render '<div data-bind="foo | get \'bar\'"></div>', context, (node) ->
-    equals node.html(), "qux"
+    equal node.html(), "qux"
     QUnit.start()
 
 asyncTest 'keypaths with dashes', ->
   context = Batman "foo-bar": "baz"
   helpers.render '<div data-bind="foo-bar"></div>', context, (node) ->
-    equals node.html(), 'baz'
+    equal node.html(), 'baz'
     QUnit.start()
 
 asyncTest 'get dotted syntax', 1, ->
@@ -21,7 +21,7 @@ asyncTest 'get dotted syntax', 1, ->
     foo: new Batman.Hash({bar: "qux"})
 
   helpers.render '<div data-bind="foo.bar"></div>', context, (node) ->
-    equals node.html(), "qux"
+    equal node.html(), "qux"
     QUnit.start()
 
 asyncTest 'get short syntax', 1, ->
@@ -29,7 +29,7 @@ asyncTest 'get short syntax', 1, ->
     foo: new Batman.Hash({bar: "qux"})
 
   helpers.render '<div data-bind="foo[\'bar\']"></div>', context, (node) ->
-    equals node.html(), "qux"
+    equal node.html(), "qux"
     QUnit.start()
 
 asyncTest 'get short syntax with looked-up key', 1, ->
@@ -38,7 +38,7 @@ asyncTest 'get short syntax with looked-up key', 1, ->
     foo: new Batman.Hash({bar: "qux"})
 
   helpers.render '<div data-bind="foo[key]"></div>', context, (node) ->
-    equals node.html(), "qux"
+    equal node.html(), "qux"
     QUnit.start()
 
 asyncTest 'get short syntax with complex key', 1, ->
@@ -47,7 +47,7 @@ asyncTest 'get short syntax with complex key', 1, ->
     foo: new Batman.Hash({bar: "qux"})
 
   helpers.render '<div data-bind="foo[complex.key]"></div>', context, (node) ->
-    equals node.html(), "qux"
+    equal node.html(), "qux"
     QUnit.start()
 
 asyncTest 'get short syntax with chained dot lookup', 1, ->
@@ -56,7 +56,7 @@ asyncTest 'get short syntax with chained dot lookup', 1, ->
     foo: new Batman.Hash({bar: { baz: "qux" }})
 
   helpers.render '<div data-bind="foo[key].baz"></div>', context, (node) ->
-    equals node.html(), "qux"
+    equal node.html(), "qux"
     QUnit.start()
 
 asyncTest 'get chained short syntax', 1, ->
@@ -64,7 +64,7 @@ asyncTest 'get chained short syntax', 1, ->
     foo: new Batman.Hash({bar: {baz: "qux"}})
 
   helpers.render '<div data-bind="foo[\'bar\'][\'baz\']"></div>', context, (node) ->
-    equals node.html(), "qux"
+    equal node.html(), "qux"
     QUnit.start()
 
 asyncTest 'hideously complex chain of property lookups', 1, ->
@@ -80,7 +80,7 @@ asyncTest 'hideously complex chain of property lookups', 1, ->
                   h: 'value'
 
   helpers.render '<div data-bind="a.b[ss.ee].d[\'e\'][\'f\'].g.h"></div>', context, (node) ->
-    equals node.html(), "value"
+    equal node.html(), "value"
     QUnit.start()
 
 asyncTest 'hideously complex chain of property lookups with filters', 1, ->
@@ -104,34 +104,34 @@ asyncTest 'truncate', 2, ->
   helpers.render '<div data-bind="foo | truncate 5"></div>',
     foo: 'your mother was a hampster'
   , (node) ->
-    equals node.html(), "yo..."
+    equal node.html(), "yo..."
 
     helpers.render '<div data-bind="foo.bar | truncate 5, \'\'"></div>',
       foo: Batman
         bar: 'your mother was a hampster'
     , (node) ->
-      equals node.html(), "your "
+      equal node.html(), "your "
       QUnit.start()
 
 asyncTest 'prepend', 1, ->
   helpers.render '<div data-bind="foo | prepend \'special-\'"></div>',
     foo: 'bar'
   , (node) ->
-    equals node.html(), "special-bar"
+    equal node.html(), "special-bar"
     QUnit.start()
 
 asyncTest 'append', 1, ->
   helpers.render '<div data-bind="foo | append \'-special\'"></div>',
     foo: 'bar'
   , (node) ->
-    equals node.html(), "bar-special"
+    equal node.html(), "bar-special"
     QUnit.start()
 
 asyncTest 'replace', 1, ->
   helpers.render '<div data-bind="foo | replace \'bar\', \'baz\'"></div>',
     foo: 'bar'
   , (node) ->
-    equals node.html(), "baz"
+    equal node.html(), "baz"
     QUnit.start()
 
 asyncTest 'contains', 1, ->
@@ -145,14 +145,14 @@ asyncTest 'downcase', 1, ->
   helpers.render '<div data-bind="foo | downcase"></div>',
     foo: 'BAR'
   , (node) ->
-    equals node.html(), "bar"
+    equal node.html(), "bar"
     QUnit.start()
 
 asyncTest 'upcase', 1, ->
   helpers.render '<div data-bind="foo | upcase"></div>',
     foo: 'bar'
   , (node) ->
-    equals node.html(), "BAR"
+    equal node.html(), "BAR"
     QUnit.start()
 
 asyncTest 'pluralize with a count', 1, ->
@@ -160,40 +160,40 @@ asyncTest 'pluralize with a count', 1, ->
     object: 'foo'
     count: 2
   , (node) ->
-    equals node.html(), "2 foos"
+    equal node.html(), "2 foos"
     QUnit.start()
 
 asyncTest 'pluralize without a count', 1, ->
   helpers.render '<div data-bind="object | pluralize"></div>',
     object: 'foo'
   , (node) ->
-    equals node.html(), "foos"
+    equal node.html(), "foos"
     QUnit.start()
 
 asyncTest 'join', 2, ->
   helpers.render '<div data-bind="foo | join"></div>',
     foo: ['a', 'b', 'c']
   , (node) ->
-    equals node.html(), "abc"
+    equal node.html(), "abc"
 
     helpers.render '<div data-bind="foo | join \'|\'"></div>',
       foo: ['a', 'b', 'c']
     , (node) ->
-      equals node.html(), "a|b|c"
+      equal node.html(), "a|b|c"
       QUnit.start()
 
 asyncTest 'sort', 1, ->
   helpers.render '<div data-bind="foo | sort | join"></div>',
     foo: ['b', 'c', 'a', '1']
   , (node) ->
-    equals node.html(), "1abc"
+    equal node.html(), "1abc"
     QUnit.start()
 
 asyncTest 'not', 1, ->
   helpers.render '<input type="checkbox" data-bind="foo | not" />',
     foo: true
   , (node) ->
-    equals node[0].checked, false
+    equal node[0].checked, false
     QUnit.start()
 
 asyncTest 'and', 4, ->
@@ -207,10 +207,10 @@ asyncTest 'and', 4, ->
             '<input type="checkbox" data-bind="jambon | and jambon"/>'
 
   helpers.render source, context, (node) ->
-    equals node[0].checked, true
-    equals node[1].checked, false
-    equals node[2].checked, false
-    equals node[3].checked, false
+    equal node[0].checked, true
+    equal node[1].checked, false
+    equal node[2].checked, false
+    equal node[3].checked, false
     QUnit.start()
 
 asyncTest 'or', 4, ->
@@ -224,10 +224,10 @@ asyncTest 'or', 4, ->
             '<input type="checkbox" data-bind="mushroom | or mushroom"/>'
 
   helpers.render source, context, (node) ->
-    equals node[0].checked, true
-    equals node[1].checked, true
-    equals node[2].checked, true
-    equals node[3].checked, false
+    equal node[0].checked, true
+    equal node[1].checked, true
+    equal node[2].checked, true
+    equal node[3].checked, false
     QUnit.start()
 
 asyncTest 'map', 1, ->
@@ -241,7 +241,7 @@ asyncTest 'map', 1, ->
         comments: 20
     ]
   , (node) ->
-    equals node.html(), "one, two"
+    equal node.html(), "one, two"
     QUnit.start()
 
 asyncTest 'map with a numeric key', 1, ->
@@ -251,7 +251,7 @@ asyncTest 'map with a numeric key', 1, ->
       [4, 5, 6]
     ]
   , (node) ->
-    equals node.html(), "2, 5"
+    equal node.html(), "2, 5"
     QUnit.start()
 
 asyncTest 'map over a set', 1, ->
@@ -275,7 +275,7 @@ asyncTest 'map over batman objects', 1, ->
   helpers.render '<div data-bind="posts | map \'foo\' | join \', \'"></div>',
     {posts: new Batman.Set(new Silly, new Silly)}
   , (node) ->
-    equals node.html(), "bar, bar"
+    equal node.html(), "bar, bar"
     QUnit.start()
 
 asyncTest 'has in a set', 3, ->
@@ -333,7 +333,7 @@ asyncTest 'meta', 2, ->
         get: spy = createSpy().whichReturns("something")
 
   helpers.render '<div data-bind="foo | meta \'bar\'"></div>', context, (node) ->
-    equals node.html(), "something"
+    equal node.html(), "something"
     deepEqual spy.lastCallArguments, ['bar']
     QUnit.start()
 
@@ -342,9 +342,9 @@ asyncTest 'meta binding to a hash', 2, ->
     foo: new Batman.Hash(bar: "qux")
 
   helpers.render '<div data-bind="foo | meta \'length\'"></div>', context, (node) ->
-    equals node.html(), "1"
+    equal node.html(), "1"
     context.get('foo').set('corge', 'test')
-    equals node.html(), "2"
+    equal node.html(), "2"
 
     QUnit.start()
 
@@ -353,9 +353,9 @@ asyncTest 'escape', 2, ->
     foo: "<script></script>"
 
   helpers.render '<div data-bind="foo | escape | raw"></div>', context, (node) ->
-    equals node.html(), "&lt;script&gt;&lt;/script&gt;"
+    equal node.html(), "&lt;script&gt;&lt;/script&gt;"
     context.set('foo', '"testing"')
-    equals node.html(), '"testing"'
+    equal node.html(), '"testing"'
 
     QUnit.start()
 
@@ -364,9 +364,9 @@ asyncTest 'raw', 2, ->
     foo: "<script></script>"
 
   helpers.render '<div data-bind="foo | raw"></div>', context, (node) ->
-    equals node.html(), "<script></script>"
+    equal node.html(), "<script></script>"
     context.set('foo', '"testing"')
-    equals node.html(), '"testing"'
+    equal node.html(), '"testing"'
 
     QUnit.start()
 
@@ -420,7 +420,7 @@ asyncTest 'should render a user defined filter', 4, ->
     foo: 'bar'
     bar: 'baz'
   helpers.render '<div data-bind="foo | test 1, \'baz\'"></div>', ctx, (node) ->
-    equals node.html(), "testValue"
+    equal node.html(), "testValue"
     equal Batman._functionName(spy.lastCallContext.constructor), 'RenderContext'
     deepEqual spy.lastCallArguments.slice(0,3), ['bar', 1, 'baz']
     ok spy.lastCallArguments[3] instanceof Batman.DOM.AbstractBinding
