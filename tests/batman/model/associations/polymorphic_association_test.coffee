@@ -288,20 +288,20 @@ asyncTest "hasMany associations are saved via the parent model", 7, ->
   store.save (err, record) =>
     throw err if err
     equal storeSaveSpy.callCount, 1
-    equal metafield1.get('subject_id'), record.id
+    equal metafield1.get('subject_id'), record.get('id')
     equal metafield1.get('subject_type'), 'Store'
-    equal metafield2.get('subject_id'), record.id
+    equal metafield2.get('subject_id'), record.get('id')
     equal metafield2.get('subject_type'), 'Store'
 
-    @Store.find record.id, (err, store2) =>
+    @Store.find record.get('id'), (err, store2) =>
       throw err if err
-      storedJSON = @storeAdapter.storage["stores#{record.id}"]
+      storedJSON = @storeAdapter.storage["stores#{record.get('id')}"]
       deepEqual store2.toJSON(), storedJSON
       # hasMany saves inline by default
       sorter = generateSorterOnProperty('key')
       deepEqual sorter(storedJSON.metafields), sorter([
-        {key: "Gizmo", subject_id: record.id, subject_type: 'Store'}
-        {key: "Gadget", subject_id: record.id, subject_type: 'Store'}
+        {key: "Gizmo", subject_id: record.get('id'), subject_type: 'Store'}
+        {key: "Gadget", subject_id: record.get('id'), subject_type: 'Store'}
       ])
       QUnit.start()
 
@@ -312,7 +312,7 @@ asyncTest "hasMany associations are saved via the child model", 3, ->
     metafield.set 'subject', store
     metafield.save (err, savedMetafield) ->
       throw err if err
-      equal savedMetafield.get('subject_id'), store.id
+      equal savedMetafield.get('subject_id'), store.get('id')
       equal savedMetafield.get('subject_type'), 'Store'
       metafields = store.get('metafields')
       ok metafields.has(savedMetafield)
