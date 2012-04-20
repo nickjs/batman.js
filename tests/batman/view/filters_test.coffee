@@ -295,11 +295,11 @@ asyncTest 'has in a set', 3, ->
   helpers.render '<input type="checkbox" data-bind="posts | has post" />', context, (node) ->
     ok node[0].checked
     context.get('posts').remove(context.get('post'))
-    delay ->
-      ok !node[0].checked
-      context.get('posts').add(context.get('post'))
-      delay ->
-        ok node[0].checked
+    ok !node[0].checked
+    context.get('posts').add(context.get('post'))
+    ok node[0].checked
+
+    QUnit.start()
 
 asyncTest 'has in an array', 3, ->
   posts = [
@@ -320,11 +320,11 @@ asyncTest 'has in an array', 3, ->
   helpers.render '<input type="checkbox" data-bind="posts | has post" />', context, (node) ->
     ok node[0].checked
     context.set 'posts', secondPost
-    delay ->
-      ok !node[0].checked
-      context.set 'posts', posts
-      delay ->
-        ok node[0].checked
+    ok !node[0].checked
+    context.set 'posts', posts
+    ok node[0].checked
+
+    QUnit.start()
 
 asyncTest 'meta', 2, ->
   context = Batman
@@ -344,8 +344,9 @@ asyncTest 'meta binding to a hash', 2, ->
   helpers.render '<div data-bind="foo | meta \'length\'"></div>', context, (node) ->
     equals node.html(), "1"
     context.get('foo').set('corge', 'test')
-    delay =>
-      equals node.html(), "2"
+    equals node.html(), "2"
+
+    QUnit.start()
 
 asyncTest 'escape', 2, ->
   context = Batman
@@ -354,8 +355,9 @@ asyncTest 'escape', 2, ->
   helpers.render '<div data-bind="foo | escape | raw"></div>', context, (node) ->
     equals node.html(), "&lt;script&gt;&lt;/script&gt;"
     context.set('foo', '"testing"')
-    delay =>
-      equals node.html(), '"testing"'
+    equals node.html(), '"testing"'
+
+    QUnit.start()
 
 asyncTest 'raw', 2, ->
   context = Batman
@@ -364,8 +366,9 @@ asyncTest 'raw', 2, ->
   helpers.render '<div data-bind="foo | raw"></div>', context, (node) ->
     equals node.html(), "<script></script>"
     context.set('foo', '"testing"')
-    delay =>
-      equals node.html(), '"testing"'
+    equals node.html(), '"testing"'
+
+    QUnit.start()
 
 
 QUnit.module "Batman.Filters: interpolate filter"

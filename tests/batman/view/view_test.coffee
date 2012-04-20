@@ -61,3 +61,62 @@ asyncTest 'should allow prefetching of view sources', 2, ->
     MockRequest.lastInstance.fireSuccess('prefetched contents')
     view = new Batman.View({source: 'view'})
     equal view.get('html'), 'prefetched contents'
+
+QUnit.module 'Batman.View isInDOM'
+  setup: ->
+    @options =
+      html: "predetermined contents"
+
+    @view = new Batman.View(@options)
+  teardown: ->
+    Batman.DOM.Yield.reset()
+
+test 'should report isInDOM correctly as false when without node', ->
+  equal @view.isInDOM(), false
+
+asyncTest 'should report isInDOM correctly as false when with node but not in the dom', ->
+  node = document.createElement('div')
+  @view.set('node', node)
+  equal @view.isInDOM(), false
+  delay =>
+    equal @view.isInDOM(), false
+
+asyncTest 'should report isInDOM correctly as true when it\'s node is in the dom', ->
+  node = $('<div/>')
+  @view.set('node', node[0])
+  @view.on 'ready', =>
+    node.appendTo($('body'))
+    ok @view.isInDOM()
+    node.remove()
+    equal @view.isInDOM(), false
+    QUnit.start()
+
+asyncTest 'should report isInDOM correctly as true when a yielded node is in the dom', ->
+  source = '''
+  <div data-contentfor="baz">chunky bacon</div>
+  <div data-yield="baz" id="test">erased</div>
+  '''
+  node = helpers.render source, {}, (node, view) ->
+    ok view.isInDOM()
+    QUnit.start()
+
+asyncTest 'should report isInDOM correctly as true when only one of many yielded nodes is in the dom', ->
+  source = '''
+  <div data-contentfor="bar">chunky bacon</div>
+  <div data-yield="bar">erased</div>
+  <div data-contentfor="baz">chunky bacon</div>
+  <div data-contentfor="qux">chunky bacon</div>
+  '''
+  node = helpers.render source, {}, (node, view) ->
+    ok view.isInDOM()
+    QUnit.start()
+
+asyncTest 'should report isInDOM correctly as false when none of many yielded nodes is in the dom', ->
+  source = '''
+  <div data-contentfor="bar">chunky bacon</div>
+  <div data-contentfor="baz">chunky bacon</div>
+  <div data-contentfor="qux">chunky bacon</div>
+  '''
+  node = helpers.render source, {}, (node, view) ->
+    equal view.isInDOM(), false
+    QUnit.start()
