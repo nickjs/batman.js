@@ -110,5 +110,9 @@ exports.render = (source, jqueryize = true, context = {}, callback = ->) ->
     Batman.DOM.willInsertNode(view.get('node'))
     Batman.DOM.didInsertNode(view.get('node'))
     callback(node, view)
+    QUnit.moduleDone ->
+      try
+        Batman.DOM.destroyNode(node)
+      catch e
 
   view.get('node')
