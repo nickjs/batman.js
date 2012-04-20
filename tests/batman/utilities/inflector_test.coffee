@@ -180,8 +180,21 @@ testBothDirections = (singular, plural) ->
 
 QUnit.module 'Batman.Inflector pluralization and singularization'
 
-testBothDirections(singular, plural) for singular, plural of SingularToPlural
-testBothDirections(singular, plural) for singular, plural of Irregularities
+test "singulars are pluralized to plurals", ->
+  for singular, plural of SingularToPlural
+    equal Batman.helpers.inflector.pluralize(singular), plural
+
+test "irregular singulars are pluralized to plurals", ->
+  for singular, plural of Irregularities
+    equal Batman.helpers.inflector.pluralize(singular), plural
+
+test "plurals are singularized to singulars", ->
+  for singular, plural of SingularToPlural
+    equal Batman.helpers.inflector.pluralize(singular), plural
+
+test "irregular plurals are singularized to singulars", ->
+  for singular, plural of Irregularities
+    equal Batman.helpers.inflector.pluralize(singular), plural
 
 QUnit.module 'Batman.Inflector ordinalization'
 
