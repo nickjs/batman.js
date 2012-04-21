@@ -5424,10 +5424,11 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
       @node.href = path
 
   pathFromValue: (value) ->
-    if value.isNamedRouteQuery
-      value.get('path')
-    else
-      @get('dispatcher')?.pathFromParams(value)
+    if value?
+      if value.isNamedRouteQuery
+        value.get('path')
+      else
+        @get('dispatcher')?.pathFromParams(value)
 
 class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
   constructor: ->
