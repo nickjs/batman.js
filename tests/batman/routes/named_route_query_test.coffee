@@ -34,8 +34,14 @@ test "should find root level collection routes", ->
 test "should find root level member routes", ->
   equal @query.get('products').get(@product).get('path'), '/products/10'
 
+test "should find root level member routes using explicit params", ->
+  equal @query.get('products').get(10).get('path'), '/products/10'
+
 test "should find nonstandard root level member routes", ->
   equal @query.get('products').get(@product).get('duplicate.path'), '/products/10/duplicate'
+
+test "should find nonstandard root level member routes using explicit params", ->
+  equal @query.get('products').get(10).get('duplicate.path'), '/products/10/duplicate'
 
 test "should find nonstandard root level collection routes", ->
   equal @query.get('products.filtered.path'), '/products/filtered'
