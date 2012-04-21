@@ -1918,6 +1918,8 @@ class Batman.NamedRouteQuery extends Batman.Object
 
   constructor: (routeMap, args = []) ->
     super({routeMap, args})
+    for key of @get('routeMap').childrenByName
+      @[key] = @_queryAccess.bind(@, key)
 
   @accessor 'route', ->
     {memberRoute, collectionRoute} = @get('routeMap')
@@ -1925,14 +1927,7 @@ class Batman.NamedRouteQuery extends Batman.Object
       return route if route.namedArguments.length == @get('args').length
     return collectionRoute || memberRoute
 
-  @accessor 'path', ->
-    params = {}
-    namedArguments = @get('route.namedArguments')
-    for argumentName, index in namedArguments
-      if (argumentValue = @get('args')[index])?
-        params[argumentName] = @_toParam(argumentValue)
-
-    @get('route').pathFromParams(params)
+  @accessor 'path', -> @path()
 
   @accessor 'routeMap', 'args', 'cardinality', Batman.Property.defaultAccessor
 
@@ -1957,6 +1952,19 @@ class Batman.NamedRouteQuery extends Batman.Object
     args.push arg
     @clone(args)
 
+  path: ->
+    params = {}
+    namedArguments = @get('route.namedArguments')
+    for argumentName, index in namedArguments
+      if (argumentValue = @get('args')[index])?
+        params[argumentName] = @_toParam(argumentValue)
+
+    @get('route').pathFromParams(params)
+
+  toString: -> @path()
+
+  clone: (args = @args) -> new Batman.NamedRouteQuery(@routeMap, args)
+
   _toParam: (arg) ->
     if arg instanceof Batman.AssociationProxy
       arg = arg.get('target')
@@ -1966,7 +1974,11 @@ class Batman.NamedRouteQuery extends Batman.Object
     string = helpers.singularize($functionName(arg)) + "Id"
     string.charAt(0).toLowerCase() + string.slice(1)
 
-  clone: (args = @args) -> new Batman.NamedRouteQuery(@routeMap, args)
+  _queryAccess: (key, arg) ->
+    query = @nextQueryForName(key)
+    if arg?
+      query = query.nextQueryWithArgument(arg)
+    query
 
 class Batman.RouteMapBuilder
   @BUILDER_FUNCTIONS = ['resources', 'member', 'collection', 'route', 'root']
