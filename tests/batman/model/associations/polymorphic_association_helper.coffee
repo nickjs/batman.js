@@ -91,5 +91,5 @@ ex.baseSetup = ->
         key: "SEO Title"
       },{
         id: 30
-        key: "SEO Title"
+        key: "SEO Handle"
       }]

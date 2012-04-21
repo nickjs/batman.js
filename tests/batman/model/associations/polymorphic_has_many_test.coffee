@@ -172,6 +172,87 @@ asyncTest "unsaved hasMany models should reflect their associated children after
     equal metafields.get('length'), 1
     QUnit.start()
 
+asyncTest "unsaved hasMany models should decode their child records based on ID", ->
+  @Metafield.load (err, metafields) =>
+    product = new @Product
+
+    twenty = metafields[metafields.length - 2]
+    thirty = metafields[metafields.length - 1]
+
+    # decode with the metafields out of order
+    product.fromJSON
+      name: "Product Six"
+      id: 6
+      metafields: [{
+        id: 30
+        key: "SEO Handle"
+      },{
+        id: 20
+        key: "SEO Title"
+      }]
+
+
+    equal product.get('metafields.length'), 2
+    deepEqual product.get('metafields').mapToProperty('id').sort(), [20,30]
+    equal twenty.get('key'), "SEO Title"
+    equal thirty.get('key'), "SEO Handle"
+    QUnit.start()
+
+asyncTest "unsaved hasMany models should decode their existing child records based on ID", ->
+  @Metafield.load (err, metafields) =>
+    product = new @Product
+    twenty = metafields[metafields.length - 2]
+    thirty = metafields[metafields.length - 1]
+
+    product.get('metafields').add(twenty)
+    product.get('metafields').add(thirty)
+
+    twenty = metafields[metafields.length - 2]
+    thirty = metafields[metafields.length - 1]
+
+    # decode with the metafields out of order
+    product.fromJSON
+      name: "Product Six"
+      id: 6
+      metafields: [{
+        id: 30
+        key: "SEO Handle"
+      },{
+        id: 20
+        key: "SEO Title"
+      }]
+
+    equal product.get('metafields.length'), 2
+    deepEqual product.get('metafields').mapToProperty('id').sort(), [20,30]
+    equal twenty.get('key'), "SEO Title"
+    equal thirty.get('key'), "SEO Handle"
+    QUnit.start()
+
+asyncTest "saved hasMany models should decode their child records based on ID", ->
+  @Product.find 6, (err, product) =>
+    throw err if err
+
+    twenty = product.get('metafields').indexedByUnique('id').get(20)
+    thirty = product.get('metafields').indexedByUnique('id').get(30)
+
+    # decode with the variants out of order
+    product.fromJSON
+      name: "Product Six"
+      id: 6
+      metafields: [{
+        id: 30
+        key: "SEO Handle"
+      },{
+        id: 20
+        key: "SEO Title"
+      }]
+
+    equal product.get('metafields.length'), 2
+    deepEqual product.get('metafields').mapToProperty('id').sort(), [20,30]
+    equal twenty.get('key'), "SEO Title"
+    equal thirty.get('key'), "SEO Handle"
+    QUnit.start()
+
 asyncTest "hasMany sets the foreign key on the inverse relation if the children haven't been loaded", 3, ->
   @Product.find 6, (err, product) =>
     throw err if err

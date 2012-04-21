@@ -3550,21 +3550,27 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       decode: (data, key, _, __, parentRecord) ->
         if relatedModel = association.getRelatedModel()
           existingRelations = association.getFromAttributes(parentRecord) || association.setForRecord(parentRecord)
-          existingArray = existingRelations?.toArray()
-          for jsonObject, i in data
-            record = if existingArray && existingArray[i]
-              existing = true
-              existingArray[i]
-            else
-              existing = false
-              new relatedModel()
+          newRelations = existingRelations.filter((relation) -> relation.isNew()).toArray()
+          for jsonObject in data
+            record = new relatedModel()
             record.fromJSON jsonObject
+            existingRecord = relatedModel.get('loaded').indexedByUnique(association.foreignKey).get(record.get('id'))
+            if existingRecord?
+              existingRecord._pauseDirtyTracking = true
+              existingRecord.fromJSON jsonObject
+              existingRecord._pauseDirtyTracking = false
+              record = existingRecord
+            else
+              if newRelations.length > 0
+                savedRecord = newRelations.shift()
+                savedRecord.fromJSON jsonObject
+                record = savedRecord
+            record = relatedModel._mapIdentity(record)
+            existingRelations.add record
 
             if association.options.inverseOf
               record.set association.options.inverseOf, parentRecord
 
-            record = relatedModel._mapIdentity(record)
-            existingRelations.add record
           existingRelations.set 'loaded', true
         else
           developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"
