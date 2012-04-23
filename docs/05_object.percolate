@@ -87,7 +87,7 @@ Accessors are extremely useful but you must keep these items in mind while progr
 
  1. Accessors should be linear, so they can be cached.
 
-Batman automatically memoizes the return value of accessors, and will not re-execute the body until one of the accessor's sources changes. If you need the accessor to recalculate every time the property is gotten, pass false as the `cacheable` in the accessor descriptor object (the last argument to the `@accessor` function).
+Batman automatically memoizes the return value of accessors, and will not re-execute the body until one of the accessor's sources changes. If you need the accessor to recalculate every time the property is gotten, pass `false` for the `cache` option in the accessor descriptor object (the last argument to the `@accessor` function).
 
 !!!
 test "@accessor usually caches results", ->
@@ -96,14 +96,14 @@ test "@accessor usually caches results", ->
         @accessor 'cachedCounter', -> ++counter
         @accessor 'notCachedCounter',
           get: -> ++counter
-          cachable: false
+          cache: false
   )
   show example = new Example()
   equal example.get('cachedCounter'), 1
   equal example.get('cachedCounter'), 1
   equal example.get('cachedCounter'), 1, "The second and third calls do not execute the function"
   equal example.get('notCachedCounter'), 2
-  equal example.get('notCachedCounter'), 3, "Passing cachable: false does re-execute the function"
+  equal example.get('notCachedCounter'), 3, "Passing cache: false does re-execute the function"
   equal example.get('cachedCounter'), 1
 !!!
 

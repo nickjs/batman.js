@@ -516,7 +516,7 @@ class Batman.Property
     get: (key) -> @[key]
     set: (key, val) -> @[key] = val
     unset: (key) -> x = @[key]; delete @[key]; x
-    cachable: no
+    cache: no
   @defaultAccessorForBase: (base) ->
     base._batman?.getFirst('defaultAccessor') or Batman.Property.defaultAccessor
   @accessorForBaseAndKey: (base, key) ->
@@ -611,8 +611,8 @@ class Batman.Property
 
   isCachable: ->
     return true if @isFinal()
-    cachable = @accessor().cachable
-    if cachable? then !!cachable else true
+    cacheable = @accessor().cache
+    if cacheable? then !!cacheable else true
 
   isCached: -> @isCachable() and @cached
 
@@ -922,6 +922,10 @@ class BatmanObject extends Object
   getAccessorObject = (base, accessor) ->
     if typeof accessor is 'function'
       accessor = {get: accessor}
+    for deprecated in ['cachable', 'cacheable']
+      if deprecated of accessor
+        developer.warn "Property accessor option \"#{deprecated}\" is deprecated. Use \"cache\" instead."
+        accessor.cache = accessor[deprecated] unless 'cache' of accessor
     accessor
 
   promiseWrapper = (fetcher) ->
@@ -936,7 +940,7 @@ class BatmanObject extends Object
         fetcher.call(this, deliver, key)
         returned = true
         val
-      cachable: true
+      cache: true
 
   @classAccessor: (keys..., accessor) ->
     if not accessor?
@@ -1177,7 +1181,7 @@ class Batman.Hash extends Batman.Object
       result = Batman.SimpleHash::unset.call(@, key)
       @fire 'itemsWereRemoved', key if result?
       result
-    cachable: false
+    cache: false
 
   @accessor @defaultAccessor
 
@@ -1939,7 +1943,7 @@ class Batman.NamedRouteQuery extends Batman.Object
       else
         @nextQueryWithArgument(key)
     set: ->
-    cacheable: false
+    cache: false
 
   nextQueryForName: (key) ->
     if map = @get('routeMap').childrenByName[key]
@@ -2408,7 +2412,7 @@ class Batman.RenderCache extends Batman.Hash
   _newViewFromOptions: (options) -> new options.viewClass(options)
 
   @wrapAccessor (core) ->
-    cacheable: false
+    cache: false
     get: (key) ->
       result = core.get.call(@, key)
       # Bubble the result up to the top of the queue

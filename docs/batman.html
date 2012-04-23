@@ -1691,7 +1691,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <ol>
 <li>Accessors should be linear, so they can be cached.</li>
 </ol>
-<p>Batman automatically memoizes the return value of accessors, and will not re-execute the body until one of the accessor&#39;s sources changes. If you need the accessor to recalculate every time the property is gotten, pass false as the <code>cacheable</code> in the accessor descriptor object (the last argument to the <code>@accessor</code> function).
+<p>Batman automatically memoizes the return value of accessors, and will not re-execute the body until one of the accessor&#39;s sources changes. If you need the accessor to recalculate every time the property is gotten, pass <code>false</code> for the <code>cache</code> option in the accessor descriptor object (the last argument to the <code>@accessor</code> function).
 
 </p>
 <div class="console-session">
@@ -1713,7 +1713,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
       <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="o">++</span><span class="nx">counter</span><span class="p">;</span>
       <span class="p">},</span>
-      <span class="nx">cachable</span><span class="o">:</span> <span class="kc">false</span>
+      <span class="nx">cache</span><span class="o">:</span> <span class="kc">false</span>
     <span class="p">});</span>
 
     <span class="k">return</span> <span class="nx">Example</span><span class="p">;</span>
@@ -1729,7 +1729,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">example</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;notCachedCounter&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">2</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">example</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;notCachedCounter&#39;</span><span class="p">)</span>
-</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">3</span> <span class="c1">// Passing cachable: false does re-execute the function</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">3</span> <span class="c1">// Passing cache: false does re-execute the function</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">example</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cachedCounter&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
 </pre></div></div></code>
@@ -2825,7 +2825,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <h4 id="batman-app-run-starting-an-application-with-domevents">starting an application with DOMEvents</h4>
-<pre><code class="coffeescript"><div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+<pre><code class="coffeescript"><div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s">&#39;load&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
   <span class="nx">MyApp</span><span class="p">.</span><span class="nx">run</span><span class="p">()</span>
 </pre></div></code></pre>
 <h4 id="batman-app-run-starting-an-application-with-jquery">starting an application with jQuery</h4>
@@ -3456,7 +3456,6 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">adapter</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;all.length&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">0</span> <span class="c1">// The synchronously returned set is empty</span>
-</pre></div></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">...</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;all.length&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">2</span> <span class="c1">// After the async load the set is populated</span>
 </pre></div></div></code>
@@ -3490,8 +3489,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Post</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">posts</span> <span class="o">=</span> <span class="nx">result</span><span class="p">;</span>
   <span class="p">})</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">...</span>
-</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">posts</span><span class="p">.</span><span class="nx">length</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">posts</span><span class="p">.</span><span class="nx">length</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">0</span>
 </pre></div></div></code>
   </pre>
@@ -3801,7 +3799,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">Alfred</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">App</span>
-  <span class="nx">@resources</span> <span class="s1">&#39;todos&#39;</span>
+  <span class="nx">@resources</span> <span class="s">&#39;todos&#39;</span>
 </pre></div></code></pre>
 <p>This means that routes like <code>/todos</code> and <code>/todos/:id</code> exist. To route to the collection action, use the plural name of the resource:
 
@@ -3822,8 +3820,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">Tracker</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">App</span>
-  <span class="nx">@resources</span> <span class="s1">&#39;villians&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-    <span class="nx">@resources</span> <span class="s1">&#39;crimes&#39;</span>
+  <span class="nx">@resources</span> <span class="s">&#39;villians&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="nx">@resources</span> <span class="s">&#39;crimes&#39;</span>
 </pre></div></code></pre>
 <p>Routes for collection and member crimes should look like <code>/villians/:villian_id/crimes</code> and <code>/villians/:villian_id/crimes/:id</code> respectively. Assuming the presence of a <code>villian</code> and a <code>crime</code> in the context, chained <code>get</code>s on <code>NamedRouteQuery</code>s achieve this:
 
