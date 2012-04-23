@@ -2860,7 +2860,7 @@ class Batman.Model extends Batman.Object
       if @_willSet(k)
         @get('attributes').set(k, v)
       else
-        $getPath @, ['attributes', k]
+        @get(k)
     unset: (k) -> @get('attributes').unset(k)
 
   # Add a universally accessible accessor for retrieving the primrary key, regardless of which key its stored under.
@@ -5244,6 +5244,20 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
       @get('keyContext').get(contextKeySegments.join('.'))
     else
       @get('keyContext')
+
+  # The `unfilteredValue` is whats evaluated each time any dependents change.
+  @wrapAccessor 'unfilteredValue', (core) ->
+    get: ->
+      if k = @get('key')
+        keys = k.split('.')
+        if keys.length > 1
+          functionKey = keys.pop()
+          keyContext = $getPath(this, ['keyContext'].concat(keys))
+          if keyContext?
+            keyContext = Batman.RenderContext.deProxy(keyContext)
+            return keyContext[functionKey]
+      
+      core.get.apply(@, arguments)
 
 class Batman.DOM.RadioBinding extends Batman.DOM.AbstractBinding
   isInputBinding: true

@@ -2,19 +2,57 @@ helpers = if typeof require is 'undefined' then window.viewHelpers else require 
 
 QUnit.module 'Batman.View event bindings'
 
-asyncTest 'it should allow events to be bound and execute them in the context as specified on a multi key keypath', 3, ->
+asyncTest 'it should allow events to be bound and execute them in the context as specified on a multi key keypath', 4, ->
+  spy = createSpy()
   context = Batman
     foo: Batman
       bar: Batman
-        doSomething: spy = createSpy()
+        doSomething: spy
 
   source = '<button data-event-click="foo.bar.doSomething"></button>'
   helpers.render source, context, (node) ->
     helpers.triggerClick(node[0])
+    ok spy.called
     equal spy.lastCallContext, context.get('foo.bar')
     equal spy.lastCallArguments[0], node[0]
     equal spy.lastCallArguments[2].findKey('foo')[0], context.get('foo')
 
+    QUnit.start()
+
+asyncTest 'it should allow events to be bound to undefined', ->
+  QUnit.expect(0)
+
+  spy = createSpy()
+  context = Batman
+    foo: Batman
+
+  source = '<button data-event-click="foo.bar.doSomething"></button>'
+  helpers.render source, context, (node) ->
+    helpers.triggerClick(node[0])
+    QUnit.start()
+
+asyncTest 'it should use native property access instead of `get` to find event handlers', 1, ->
+  spy = createSpy()
+  class Test extends Batman.Object
+    constructor: ->
+      @attrs = new Batman.Hash
+      super
+
+    bar: spy
+
+    @accessor
+      get: (key) -> 
+        @attrs.get(key)
+      set: (key, value) ->
+        @attrs.set(key, value)
+
+  context = Batman
+    foo: new Test()
+
+  source = '<button data-event-click="foo.bar"></button>'
+  helpers.render source, context, (node) ->
+    helpers.triggerClick(node[0])
+    ok spy.called
     QUnit.start()
 
 asyncTest 'it should allow events to be bound and execute them in the context as specified on terminal keypath', 3, ->
@@ -132,22 +170,6 @@ asyncTest 'it should allow form submit events to be bound', 2, ->
     helpers.triggerSubmit(node[0])
     ok spy.called
     ok spy.lastCallArguments[2].findKey
-
-    QUnit.start()
-
-asyncTest 'allows data-event-click attributes to reference native model properties directly', ->
-  spy = createSpy()
-  class Foo extends Batman.Model
-    constructor: ->
-      super
-      @set 'handleClick', spy
-
-  source = '<button data-event-click="foo.handleClick"></button>'
-
-  helpers.render source, {foo: new Foo()}, (node) ->
-    helpers.triggerClick(node[0])
-    ok spy.called
-    equal spy.lastCallArguments[0], node[0]
 
     QUnit.start()
 
