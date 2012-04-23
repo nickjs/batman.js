@@ -54,6 +54,13 @@ asyncTest 'should fire the ready event once its contents have been loaded', 1, -
   delay =>
     ok observer.called
 
+asyncTest 'should call the ready function once its contents have been loaded', 1, ->
+  @view.ready = observer = createSpy()
+
+  MockRequest.lastInstance.fireSuccess('view contents')
+  delay =>
+    ok observer.called
+
 asyncTest 'should allow prefetching of view sources', 2, ->
   Batman.View.store.prefetch('view')
   equal MockRequest.lastConstructorArguments[0].url, "/views/view.html"
