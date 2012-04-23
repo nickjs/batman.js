@@ -2722,7 +2722,10 @@ class Batman.Model extends Batman.Object
   # ### Query methods
   @classAccessor 'all',
     get: ->
-      @load() if @::hasStorage() and @get('lifecycle.state') not in ['loaded', 'loading']
+      @_batman.check(@)
+      if @::hasStorage() and !@_batman.allLoadTriggered
+        @load()
+        @_batman.allLoadTriggered = true
       @get('loaded')
 
     set: (k, v) -> @set('loaded', v)
