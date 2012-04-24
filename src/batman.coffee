@@ -894,9 +894,6 @@ Batman._Batman = class _Batman
 class BatmanObject extends Object
   Batman.initializeObject(this)
   Batman.initializeObject(@prototype)
-  @global: (isGlobal) ->
-    return if isGlobal is false
-    Batman.container[$functionName(@)] = @
 
   # Apply mixins to this class.
   @classMixin: -> $mixin @, arguments...
@@ -1976,10 +1973,6 @@ class Batman.NamedRouteQuery extends Batman.Object
       arg = arg.get('target')
     if arg?.toParam? then arg.toParam() else arg
 
-  _paramName: (arg) ->
-    string = helpers.singularize($functionName(arg)) + "Id"
-    string.charAt(0).toLowerCase() + string.slice(1)
-
   _queryAccess: (key, arg) ->
     query = @nextQueryForName(key)
     if arg?
@@ -2702,15 +2695,15 @@ class Batman.Model extends Batman.Object
     parents = {}
     for key in keys
       parents[key + '_id'] = Batman.helpers.pluralize(key)
-    children = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
+    childSegment = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
 
     @url = (options) ->
       for key, plural of parents
         parentID = options.data[key]
         if parentID
           delete options.data[key]
-          return "#{plural}/#{parentID}/#{children}"
-      return children
+          return "#{plural}/#{parentID}/#{childSegment}"
+      return childSegment
 
     @::url = ->
       for key, plural of parents
@@ -2718,9 +2711,9 @@ class Batman.Model extends Batman.Object
         if parentID is undefined
           parentID = @get(key)
         if parentID
-          url = "#{plural}/#{parentID}/#{children}"
+          url = "#{plural}/#{parentID}/#{childSegment}"
           break
-      url ||= children
+      url ||= childSegment
       if id = @get('id')
         url += '/' + id
       url
