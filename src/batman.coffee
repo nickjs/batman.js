@@ -36,6 +36,10 @@ Batman.typeOf = $typeOf = (object) ->
 # Cache this function to skip property lookups.
 _objectToString = Object.prototype.toString
 
+Batman.extend = $extend = (to, objects...) ->
+  to[key] = value for key, value of object for object in objects
+  to
+
 # `$mixin` applies every key from every argument after the first to the
 # first argument. If a mixin has an `initialize` method, it will be called in
 # the context of the `to` object, and it's key/values won't be applied.
@@ -3749,9 +3753,9 @@ class Batman.StorageAdapter extends Batman.Object
 
   constructor: (model) ->
     super(model: model)
-    extend = (x, y) -> x[key] = value for key, value of y
-    extend model, @constructor.ModelMixin if @constructor.ModelMixin
-    extend model.prototype, @constructor.RecordMixin if @constructor.RecordMixin
+    constructor = @constructor
+    $extend model, constructor.ModelMixin if constructor.ModelMixin
+    $extend model.prototype, constructor.RecordMixin if constructor.RecordMixin
 
   isStorageAdapter: true
 
@@ -6079,9 +6083,8 @@ Batman.Encoders = new Batman.Object
 if typeof define is 'function'
   define 'batman', [], -> Batman
 
-# Optionally export global sugar. Not sure what to do with this.
 Batman.exportHelpers = (onto) ->
-  for k in ['mixin', 'unmixin', 'route', 'redirect', 'typeOf', 'redirect', 'setImmediate']
+  for k in ['mixin', 'extend', 'unmixin', 'redirect', 'typeOf', 'redirect', 'setImmediate']
     onto["$#{k}"] = Batman[k]
   onto
 
