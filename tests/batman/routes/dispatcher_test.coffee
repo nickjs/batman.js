@@ -116,6 +116,14 @@ test "dispatch updates the currentURL on the app", ->
   @dispatcher.dispatch('/matched/route')
   equal @App.get('currentURL'), '/matched/route'
 
+test "dispatch updates the currentParams on the app", ->
+  route = mockRoute()
+  route.paramsFromPath = -> foo: 'bar'
+  @routeMap.routeForParams = -> route
+
+  @dispatcher.dispatch foo: 'bar'
+  deepEqual @App.currentParams.replace.lastCallArguments, [foo: 'bar']
+
 test "dispatch redirects to 404 if no route is found", ->
   Batman.redirect = createSpy()
   @routeMap.routeForParams = -> undefined

@@ -1881,6 +1881,7 @@ class Batman.Dispatcher extends Batman.Object
 
     @set 'app.currentURL', path
     @set 'app.currentRoute', route
+    @get('app.currentParams').replace(route?.paramsFromPath(path) or {})
 
     path
 
