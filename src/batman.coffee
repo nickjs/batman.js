@@ -3758,8 +3758,8 @@ class Batman.StorageAdapter extends Batman.Object
     model = record?.constructor || @model
     model.get('storageKey') || helpers.pluralize(helpers.underscore($functionName(model)))
 
-  getRecordFromData: (attributes, klass = @model) ->
-    record = new klass()
+  getRecordFromData: (attributes, constructor = @model) ->
+    record = new constructor()
     record.fromJSON(attributes)
     record
 
