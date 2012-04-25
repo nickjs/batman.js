@@ -1,5 +1,5 @@
 (function() {
-  var coffee, delayCount, exportHelpers, fs, glob, jqueryPath, oldErrorHandler, path, percolate, qqunit, testDir,
+  var coffee, exportHelpers, fs, glob, jqueryPath, oldErrorHandler, path, percolate, qqunit, testDir,
     __hasProp = {}.hasOwnProperty,
     __slice = [].slice;
 
@@ -23,23 +23,6 @@
 
   jqueryPath = path.join(testDir, 'lib', 'jquery.js');
 
-  delayCount = 0;
-
-  global.delay = function(time, fn) {
-    var defer, _ref;
-    if (fn == null) {
-      _ref = [15, time], time = _ref[0], fn = _ref[1];
-    }
-    delayCount++;
-    defer = function() {
-      fn();
-      if (--delayCount === 0) {
-        return QUnit.start();
-      }
-    };
-    return setTimeout(defer, time);
-  };
-
   exportHelpers = function(object) {
     var k, v, _results;
     _results = [];
@@ -55,13 +38,9 @@
     var docs;
     try {
       global.jQuery = jQuery;
-      exportHelpers(require("" + testDir + "/batman/test_helper"));
-      global.Batman = require('../src/batman.node');
-      Batman.exportGlobals(global);
-      Batman.Request.prototype.send = function() {
-        throw new Error("Can't send requests during tests!");
-      };
-      exportHelpers(require("" + testDir + "/batman/model/model_helper"));
+      exportHelpers(require(path.join(testDir, 'batman', 'test_helper')));
+      global.Batman = require(path.join('..', 'src', 'batman.node'));
+      exportHelpers(require(path.join(testDir, 'batman', 'model', 'model_helper')));
       TestStorageAdapter.autoCreate = false;
       docs = glob.sync("" + __dirname + "/**/*.percolate").map(function(doc) {
         return path.resolve(process.cwd(), doc);

@@ -1,3 +1,4 @@
+
 if module?.exports
   exports = module.exports
   container = global
@@ -8,13 +9,17 @@ else
   exports.IN_NODE = false
 
 originalPathname = window.location.pathname
-QUnit.begin ->
+
+globalPreparation = ->
   oldRun = Batman.App.run
   Batman.App.run = ->
     throw new Error("Ensure test App classes have @layout: null so they don't render the page!") unless @layout == null
     oldRun.apply(@, arguments...)
+  Batman.exportGlobals(container)
 
-  Batman.exportGlobals(global) if IN_NODE
+QUnit.moduleStart ->
+  globalPreparation?();
+  globalPreparation = undefined;
 
 # set Batman.config:
 QUnit.testStart ->

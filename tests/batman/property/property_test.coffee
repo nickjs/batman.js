@@ -140,9 +140,9 @@ test "getValue() just returns the .value without hitting the accessor if .cached
   strictEqual property.getValue(), 'cached'
   ok not spy.called
 
-test "getValue() ignores the cache if its accessor has cachable: false", ->
+test "getValue() ignores the cache if its accessor has cache: false", ->
   property = @baseWithNestedAccessors.property('baz') # uses Batman.Property.defaultAccessor, which has caching turned off
-  strictEqual property.accessor().cachable, false
+  strictEqual property.accessor().cache, false
   strictEqual property.isCachable(), false
 
   spy = spyOn(property.accessor(), 'get')

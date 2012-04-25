@@ -12,7 +12,6 @@ qqunit.Environment.jsdom.jQueryify window, path.join(__dirname, 'lib', 'jquery.j
   global[k] = v for own k,v of Helper
 
   global.Batman = require '../src/batman.node'
-  Batman.exportGlobals(global)
   Batman.Request::getModule = ->
     request: -> throw new Error "Can't send requests during tests!"
 

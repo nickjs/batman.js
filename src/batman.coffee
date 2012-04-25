@@ -516,7 +516,7 @@ class Batman.Property
     get: (key) -> @[key]
     set: (key, val) -> @[key] = val
     unset: (key) -> x = @[key]; delete @[key]; x
-    cachable: no
+    cache: no
   @defaultAccessorForBase: (base) ->
     base._batman?.getFirst('defaultAccessor') or Batman.Property.defaultAccessor
   @accessorForBaseAndKey: (base, key) ->
@@ -611,8 +611,8 @@ class Batman.Property
 
   isCachable: ->
     return true if @isFinal()
-    cachable = @accessor().cachable
-    if cachable? then !!cachable else true
+    cacheable = @accessor().cache
+    if cacheable? then !!cacheable else true
 
   isCached: -> @isCachable() and @cached
 
@@ -628,7 +628,7 @@ class Batman.Property
 
   sourceChangeHandler: ->
     handler = @_handleSourceChange.bind(@)
-    developer.do -> handler.property = @
+    developer.do => handler.property = @
     @sourceChangeHandler = -> handler
     handler
 
@@ -720,6 +720,8 @@ class Batman.Keypath extends Batman.Property
       @segments = [key]
       @depth = 1
     super
+  isCachable: ->
+    if @depth is 1 then super else true
   terminalProperty: ->
     base = $getPath(@base, @segments.slice(0, -1))
     return unless base?
@@ -892,9 +894,6 @@ Batman._Batman = class _Batman
 class BatmanObject extends Object
   Batman.initializeObject(this)
   Batman.initializeObject(@prototype)
-  @global: (isGlobal) ->
-    return if isGlobal is false
-    Batman.container[$functionName(@)] = @
 
   # Apply mixins to this class.
   @classMixin: -> $mixin @, arguments...
@@ -922,6 +921,10 @@ class BatmanObject extends Object
   getAccessorObject = (base, accessor) ->
     if typeof accessor is 'function'
       accessor = {get: accessor}
+    for deprecated in ['cachable', 'cacheable']
+      if deprecated of accessor
+        developer.warn "Property accessor option \"#{deprecated}\" is deprecated. Use \"cache\" instead."
+        accessor.cache = accessor[deprecated] unless 'cache' of accessor
     accessor
 
   promiseWrapper = (fetcher) ->
@@ -936,7 +939,7 @@ class BatmanObject extends Object
         fetcher.call(this, deliver, key)
         returned = true
         val
-      cachable: true
+      cache: true
 
   @classAccessor: (keys..., accessor) ->
     if not accessor?
@@ -1177,7 +1180,7 @@ class Batman.Hash extends Batman.Object
       result = Batman.SimpleHash::unset.call(@, key)
       @fire 'itemsWereRemoved', key if result?
       result
-    cachable: false
+    cache: false
 
   @accessor @defaultAccessor
 
@@ -1918,6 +1921,8 @@ class Batman.NamedRouteQuery extends Batman.Object
 
   constructor: (routeMap, args = []) ->
     super({routeMap, args})
+    for key of @get('routeMap').childrenByName
+      @[key] = @_queryAccess.bind(@, key)
 
   @accessor 'route', ->
     {memberRoute, collectionRoute} = @get('routeMap')
@@ -1925,14 +1930,7 @@ class Batman.NamedRouteQuery extends Batman.Object
       return route if route.namedArguments.length == @get('args').length
     return collectionRoute || memberRoute
 
-  @accessor 'path', ->
-    params = {}
-    namedArguments = @get('route.namedArguments')
-    for argumentName, index in namedArguments
-      if (argumentValue = @get('args')[index])?
-        params[argumentName] = @_toParam(argumentValue)
-
-    @get('route').pathFromParams(params)
+  @accessor 'path', -> @path()
 
   @accessor 'routeMap', 'args', 'cardinality', Batman.Property.defaultAccessor
 
@@ -1944,7 +1942,7 @@ class Batman.NamedRouteQuery extends Batman.Object
       else
         @nextQueryWithArgument(key)
     set: ->
-    cacheable: false
+    cache: false
 
   nextQueryForName: (key) ->
     if map = @get('routeMap').childrenByName[key]
@@ -1957,16 +1955,29 @@ class Batman.NamedRouteQuery extends Batman.Object
     args.push arg
     @clone(args)
 
+  path: ->
+    params = {}
+    namedArguments = @get('route.namedArguments')
+    for argumentName, index in namedArguments
+      if (argumentValue = @get('args')[index])?
+        params[argumentName] = @_toParam(argumentValue)
+
+    @get('route').pathFromParams(params)
+
+  toString: -> @path()
+
+  clone: (args = @args) -> new Batman.NamedRouteQuery(@routeMap, args)
+
   _toParam: (arg) ->
     if arg instanceof Batman.AssociationProxy
       arg = arg.get('target')
-    if arg? && arg.toParam isnt 'undefined' then arg.toParam() else arg
+    if arg?.toParam? then arg.toParam() else arg
 
-  _paramName: (arg) ->
-    string = helpers.singularize($functionName(arg)) + "Id"
-    string.charAt(0).toLowerCase() + string.slice(1)
-
-  clone: (args = @args) -> new Batman.NamedRouteQuery(@routeMap, args)
+  _queryAccess: (key, arg) ->
+    query = @nextQueryForName(key)
+    if arg?
+      query = query.nextQueryWithArgument(arg)
+    query
 
 class Batman.RouteMapBuilder
   @BUILDER_FUNCTIONS = ['resources', 'member', 'collection', 'route', 'root']
@@ -2396,7 +2407,7 @@ class Batman.RenderCache extends Batman.Hash
   _newViewFromOptions: (options) -> new options.viewClass(options)
 
   @wrapAccessor (core) ->
-    cacheable: false
+    cache: false
     get: (key) ->
       result = core.get.call(@, key)
       # Bubble the result up to the top of the queue
@@ -2683,15 +2694,15 @@ class Batman.Model extends Batman.Object
     parents = {}
     for key in keys
       parents[key + '_id'] = Batman.helpers.pluralize(key)
-    children = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
+    childSegment = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
 
     @url = (options) ->
       for key, plural of parents
         parentID = options.data[key]
         if parentID
           delete options.data[key]
-          return "#{plural}/#{parentID}/#{children}"
-      return children
+          return "#{plural}/#{parentID}/#{childSegment}"
+      return childSegment
 
     @::url = ->
       for key, plural of parents
@@ -2699,9 +2710,9 @@ class Batman.Model extends Batman.Object
         if parentID is undefined
           parentID = @get(key)
         if parentID
-          url = "#{plural}/#{parentID}/#{children}"
+          url = "#{plural}/#{parentID}/#{childSegment}"
           break
-      url ||= children
+      url ||= childSegment
       if id = @get('id')
         url += '/' + id
       url
@@ -2709,7 +2720,10 @@ class Batman.Model extends Batman.Object
   # ### Query methods
   @classAccessor 'all',
     get: ->
-      @load() if @::hasStorage() and @get('lifecycle.state') not in ['loaded', 'loading']
+      @_batman.check(@)
+      if @::hasStorage() and !@_batman.allLoadTriggered
+        @load()
+        @_batman.allLoadTriggered = true
       @get('loaded')
 
     set: (k, v) -> @set('loaded', v)
@@ -2847,7 +2861,7 @@ class Batman.Model extends Batman.Object
       if @_willSet(k)
         @get('attributes').set(k, v)
       else
-        $getPath @, ['attributes', k]
+        @get(k)
     unset: (k) -> @get('attributes').unset(k)
 
   # Add a universally accessible accessor for retrieving the primrary key, regardless of which key its stored under.
@@ -3550,21 +3564,27 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       decode: (data, key, _, __, parentRecord) ->
         if relatedModel = association.getRelatedModel()
           existingRelations = association.getFromAttributes(parentRecord) || association.setForRecord(parentRecord)
-          existingArray = existingRelations?.toArray()
-          for jsonObject, i in data
-            record = if existingArray && existingArray[i]
-              existing = true
-              existingArray[i]
-            else
-              existing = false
-              new relatedModel()
+          newRelations = existingRelations.filter((relation) -> relation.isNew()).toArray()
+          for jsonObject in data
+            record = new relatedModel()
             record.fromJSON jsonObject
+            existingRecord = relatedModel.get('loaded').indexedByUnique(association.foreignKey).get(record.get('id'))
+            if existingRecord?
+              existingRecord._pauseDirtyTracking = true
+              existingRecord.fromJSON jsonObject
+              existingRecord._pauseDirtyTracking = false
+              record = existingRecord
+            else
+              if newRelations.length > 0
+                savedRecord = newRelations.shift()
+                savedRecord.fromJSON jsonObject
+                record = savedRecord
+            record = relatedModel._mapIdentity(record)
+            existingRelations.add record
 
             if association.options.inverseOf
               record.set association.options.inverseOf, parentRecord
 
-            record = relatedModel._mapIdentity(record)
-            existingRelations.add record
           existingRelations.set 'loaded', true
         else
           developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"
@@ -4290,6 +4310,7 @@ class Batman.View extends Batman.Object
   _setNodeOwner: (node) -> Batman._data(node, 'view', @)
   _setNodeYielder: (node) -> Batman._data(node, 'yielder', @)
 
+  @::on 'ready', -> @ready? arguments...
   @::on 'appear', -> @viewDidAppear? arguments...
   @::on 'disappear', -> @viewDidDisappear? arguments...
   @::on 'beforeAppear', -> @viewWillAppear? arguments...
@@ -5285,6 +5306,20 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
     else
       @get('keyContext')
 
+  # The `unfilteredValue` is whats evaluated each time any dependents change.
+  @wrapAccessor 'unfilteredValue', (core) ->
+    get: ->
+      if k = @get('key')
+        keys = k.split('.')
+        if keys.length > 1
+          functionKey = keys.pop()
+          keyContext = $getPath(this, ['keyContext'].concat(keys))
+          if keyContext?
+            keyContext = Batman.RenderContext.deProxy(keyContext)
+            return keyContext[functionKey]
+      
+      core.get.apply(@, arguments)
+
 class Batman.DOM.RadioBinding extends Batman.DOM.AbstractBinding
   isInputBinding: true
   dataChange: (value) ->
@@ -5468,10 +5503,11 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
       @node.href = path
 
   pathFromValue: (value) ->
-    if value.isNamedRouteQuery
-      value.get('path')
-    else
-      @get('dispatcher')?.pathFromParams(value)
+    if value?
+      if value.isNamedRouteQuery
+        value.get('path')
+      else
+        @get('dispatcher')?.pathFromParams(value)
 
 class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
   constructor: ->

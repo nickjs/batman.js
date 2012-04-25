@@ -75,6 +75,20 @@ asyncTest 'it should allow commenting of bindings', 1, ->
     equal node.html(), ""
     QUnit.start()
 
+asyncTest 'it should correctly bind to a deep keypath when the base segment changes', 2, ->
+  source = '<span data-bind="gadget.name"></span>'
+  batarang = Batman name: 'batarang'
+  sharkSpray = Batman name: 'shark spray'
+
+  context = Batman gadget: batarang
+
+  helpers.render source, context, (node) =>
+    equal node[0].innerHTML, "batarang"
+
+    context.set 'gadget', sharkSpray
+    equal node[0].innerHTML, "shark spray"
+    QUnit.start()
+
 asyncTest 'bindings in lower down scopes should shadow higher ones', 3, ->
   context = Batman
     namespace: Batman

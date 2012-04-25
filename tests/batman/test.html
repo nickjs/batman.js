@@ -12,13 +12,13 @@
     <script type="text/javascript" src="../../lib/es5-shim.js"></script>
     <script type="text/javascript" src="../../lib/coffee-script.js"></script>
 
-    <script type="text/coffeescript" src="test_helper.coffee"></script>
+    <script type="text/coffeescript" nocopy src="test_helper.coffee"></script>
     <script type="text/coffeescript" src="../../src/batman.coffee"></script>
     <script type="text/coffeescript" src="../../src/extras/batman.rails.coffee"></script>
     <script type="text/coffeescript" src="../../src/extras/batman.i18n.coffee"></script>
     <script type="text/coffeescript" src="../../src/extras/batman.paginator.coffee"></script>
-    <script type="text/coffeescript">Batman.exportGlobals()</script>
     <script type="text/coffeescript" src="model/model_helper.coffee"></script>
+    <script type="text/coffeescript" src="model/associations/polymorphic_association_helper.coffee"></script>
     <script type="text/coffeescript" src="storage_adapter/storage_adapter_helper.coffee"></script>
     <script type="text/coffeescript" src="storage_adapter/rest_storage_helper.coffee"></script>
     <script type="text/coffeescript" src="view/view_helper.coffee"></script>
@@ -38,7 +38,9 @@
     <script type="text/coffeescript" src="model/associations/belongs_to_test.coffee"></script>
     <script type="text/coffeescript" src="model/associations/has_many_test.coffee"></script>
     <script type="text/coffeescript" src="model/associations/has_one_test.coffee"></script>
-    <script type="text/coffeescript" src="model/associations/polymorphic_association_test.coffee"></script>
+    <script type="text/coffeescript" src="model/associations/polymorphic_belongs_to_test.coffee"></script>
+    <script type="text/coffeescript" src="model/associations/polymorphic_has_one_test.coffee"></script>
+    <script type="text/coffeescript" src="model/associations/polymorphic_has_many_test.coffee"></script>
     <script type="text/coffeescript" src="model/class_querying_test.coffee"></script>
     <script type="text/coffeescript" src="model/dirty_keys_test.coffee"></script>
     <script type="text/coffeescript" src="model/encoders_test.coffee"></script>

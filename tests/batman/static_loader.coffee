@@ -6,7 +6,6 @@ jQuery.ajax
       $(element).attr('src').replace('.coffee', '.js')
 
     head.js jsScripts..., ->
-      Batman.exportGlobals()
       QUnit.start()
 
   error: -> throw new Error("Couldn't load test.html!")
