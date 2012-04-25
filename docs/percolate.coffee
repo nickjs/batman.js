@@ -14,19 +14,6 @@ percolate = require 'percolate'
 testDir = path.resolve(__dirname, '..', 'tests')
 jqueryPath = path.join(testDir, 'lib', 'jquery.js')
 
-# Handy for async tests which usually follow this pattern
-delayCount = 0
-global.delay = (time, fn) ->
-  [time, fn] = [15, time] unless fn?
-
-  delayCount++
-  defer = ->
-    fn()
-    if --delayCount == 0
-      QUnit.start()
-
-  setTimeout(defer, time)
-
 exportHelpers = (object) ->
     global[k] = v for own k,v of object
 
@@ -35,13 +22,11 @@ qqunit.Environment.jsdom.jQueryify window, jqueryPath, (window, jQuery) ->
     global.jQuery = jQuery
 
     # Load test helper
-    exportHelpers require "#{testDir}/batman/test_helper"
+    exportHelpers require path.join(testDir, 'batman', 'test_helper')
 
-    global.Batman = require '../src/batman.node'
-    Batman.exportGlobals(global)
-    Batman.Request::send = -> throw new Error "Can't send requests during tests!"
+    global.Batman = require path.join('..', 'src', 'batman.node')
 
-    exportHelpers require "#{testDir}/batman/model/model_helper"
+    exportHelpers require path.join(testDir, 'batman', 'model', 'model_helper')
     TestStorageAdapter.autoCreate = false
 
     docs = glob.sync("#{__dirname}/**/*.percolate").map (doc) -> path.resolve(process.cwd(), doc)

@@ -27,7 +27,6 @@
       global[k] = v;
     }
     global.Batman = require('../src/batman.node');
-    Batman.exportGlobals(global);
     Batman.Request.prototype.getModule = function() {
       return {
         request: function() {
