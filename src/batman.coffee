@@ -15,6 +15,7 @@ Batman.version = '0.9.0'
 Batman.config =
   pathPrefix: '/'
   usePushState: no
+  minificationErrors: yes
 
 Batman.container = if exports?
   module.exports = Batman
@@ -1558,6 +1559,11 @@ class Batman.SetIntersection extends Batman.BinarySetOperation
     @add itemsToAdd...
   _itemsWereRemovedFromSource: (source, opposite, items...) -> @remove items...
 
+
+BatmanObject.classAccessor 'className', ->
+  developer.error("Please give the class #{$functionName(@)} a className property for minification saftey!") if Batman.config.minificationErrors
+  $functionName(@)
+
 # State Machines
 # --------------
 
@@ -1828,7 +1834,7 @@ class Batman.Dispatcher extends Batman.Object
 
   @paramsFromArgument: (argument) ->
     resourceNameFromModel = (model) ->
-      helpers.camelize(helpers.pluralize($functionName(model)), true)
+      helpers.camelize(helpers.pluralize(model.get('className')), true)
 
     return argument unless @canInferRoute(argument)
 
@@ -2465,7 +2471,15 @@ class Batman.RenderCache extends Batman.Hash
 class Batman.Controller extends Batman.Object
   @singleton 'sharedController'
 
-  @accessor 'controllerName', -> @_controllerName ||= helpers.underscore($functionName(@constructor).replace('Controller', ''))
+  @classAccessor 'className', ->
+    if @className?
+      @className
+    else if @::routingKey?
+      helpers.camelize(@::routingKey)
+    else
+      developer.error("Please define className on the class or routingKey on the prototype of #{$functionName(@)} in order for your controller to be minification safe.") if Batman.config.minificationErrors
+      $functionName(@).replace('Controller', '')
+
   @accessor '_renderContext', -> Batman.RenderContext.root().descend(@)
 
   _optionsFromFilterArguments = (options, nameOrFunction) ->
@@ -2503,7 +2517,7 @@ class Batman.Controller extends Batman.Object
   # You shouldn't call this method directly. It will be called by the dispatcher when a route is called.
   # If you need to call a route manually, use `$redirect()`.
   dispatch: (action, params = {}) ->
-    params.controller ||= @get 'controllerName'
+    params.controller ||= @constructor.get 'className'
     params.action ||= action
     params.target ||= @
 
@@ -2523,7 +2537,7 @@ class Batman.Controller extends Batman.Object
     $redirect(redirectTo) if redirectTo
 
   executeAction: (action, params = @get('params')) ->
-    developer.assert @[action], "Error! Controller action #{@get 'controllerName'}.#{action} couldn't be found!"
+    developer.assert @[action], "Error! Controller action #{@constructor.get 'className'}.#{action} couldn't be found!"
 
     @_actionFrames.push frame = {actionTaken: false, action: action}
 
@@ -2545,7 +2559,7 @@ class Batman.Controller extends Batman.Object
 
     if frame
       if frame.actionTaken
-        developer.warn "Warning! Trying to redirect but an action has already be taken during #{@get('controllerName')}.#{frame.action || @get('action')}}"
+        developer.warn "Warning! Trying to redirect but an action has already be taken during #{@constructor.get('className')}.#{frame.action || @get('action')}}"
 
       frame.actionTaken = true
 
@@ -2567,7 +2581,7 @@ class Batman.Controller extends Batman.Object
       options.into ||= 'main'
 
     if frame && frame.actionTaken && @_renderedYields[options.into]
-      developer.warn "Warning! Trying to render but an action has already be taken during #{@get('controllerName')}.#{action} on yield #{options.into}"
+      developer.warn "Warning! Trying to render but an action has already be taken during #{@get('className')}.#{action} on yield #{options.into}"
 
     # Ensure the frame is marked as having had an action executed so that render false prevents the implicit render.
     frame?.actionTaken = true
@@ -2576,9 +2590,9 @@ class Batman.Controller extends Batman.Object
     @_renderedYields?[options.into] = true
 
     if not options.view
-      options.viewClass ||= Batman.currentApp?[helpers.camelize("#{@get('controllerName')}_#{action}_view")] || Batman.View
+      options.viewClass ||= Batman.currentApp?[helpers.camelize("#{@constructor.get('className')}_#{action}_view")] || Batman.View
       options.context ||= @get('_renderContext')
-      options.source ||= helpers.underscore(@get('controllerName') + '/' + action)
+      options.source ||= helpers.underscore(@constructor.get('className') + '/' + action)
       view = @renderCache.viewForOptions(options)
     else
       view = options.view
@@ -2697,11 +2711,20 @@ class Batman.Model extends Batman.Object
     @_batman.check(@)
     @_batman.lifecycle ||= new @LifecycleStateMachine('empty', @)
 
+  @classAccessor 'className', ->
+    if @className?
+      @className
+    else if @::storageKey?
+      helpers.camelize(helpers.singularize(@::storageKey))
+    else
+      developer.error("Please define className on the class or storageKey on the prototype of #{$functionName(@)}in order for your model to be minification safe.") if Batman.config.minificationErrors
+      $functionName(@)
+
   @urlNestsUnder: (keys...) ->
     parents = {}
     for key in keys
       parents[key + '_id'] = Batman.helpers.pluralize(key)
-    childSegment = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
+    childSegment = helpers.pluralize(@get('className').toLowerCase())
 
     @url = (options) ->
       for key, plural of parents
@@ -2897,7 +2920,7 @@ class Batman.Model extends Batman.Object
     @
 
   toString: ->
-    "#{$functionName(@constructor)}: #{@get('id')}"
+    "#{@constructor.get('className')}: #{@get('id')}"
 
   toParam: -> @get('id')
 
@@ -3274,11 +3297,11 @@ class Batman.Association
 
   getRelatedModel: ->
     scope = @options.namespace or Batman.currentApp
-    modelName = @options.name
-    relatedModel = scope?[modelName]
+    className = @options.name
+    relatedModel = scope?[className]
     developer.do ->
       if Batman.currentApp? and not relatedModel
-        developer.warn "Related model #{modelName} hasn't loaded yet."
+        developer.warn "Related model #{className} hasn't loaded yet."
     relatedModel
 
   getFromAttributes: (record) -> record.get("attributes.#{@label}")
@@ -3425,7 +3448,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
         model = instanceOrProxy.association.model
       else
         model = instanceOrProxy.constructor
-      foreignTypeValue = $functionName(model)
+      foreignTypeValue = model.get('className')
       base.set @foreignTypeKey, foreignTypeValue
 
   getAccessor: (self, model, label) ->
@@ -3456,7 +3479,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
       relatedModel = scope?[type]
       developer.do ->
         if Batman.currentApp? and not relatedModel
-          developer.warn "Related model #{modelName} for polymorhic association not found."
+          developer.warn "Related model #{className} for polymorhic association not found."
       relatedModel
 
   setIndexForType: (type) ->
@@ -3507,7 +3530,7 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
   constructor: ->
     super
     @primaryKey = @options.primaryKey or "id"
-    @foreignKey = @options.foreignKey or "#{helpers.underscore($functionName(@model))}_id"
+    @foreignKey = @options.foreignKey or "#{helpers.underscore(@model.get('className'))}_id"
 
   apply: (baseSaveError, base) ->
     if relation = @getFromAttributes(base)
@@ -3540,7 +3563,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       return new Batman.PolymorphicHasManyAssociation(arguments...)
     super
     @primaryKey = @options.primaryKey or "id"
-    @foreignKey = @options.foreignKey or "#{helpers.underscore($functionName(@model))}_id"
+    @foreignKey = @options.foreignKey or "#{helpers.underscore(@model.get('className'))}_id"
 
   apply: (baseSaveError, base) ->
     unless baseSaveError
@@ -3615,7 +3638,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
 
   getRelatedModelForType: -> @getRelatedModel()
 
-  modelType: -> $functionName(@model)
+  modelType: -> @model.get('className')
 
   setIndex: ->
     if !@typeIndex
@@ -3762,7 +3785,7 @@ class Batman.StorageAdapter extends Batman.Object
 
   storageKey: (record) ->
     model = record?.constructor || @model
-    model.get('storageKey') || helpers.pluralize(helpers.underscore($functionName(model)))
+    model.get('storageKey') || helpers.pluralize(helpers.underscore(model.get('className')))
 
   getRecordFromData: (attributes, constructor = @model) ->
     record = new constructor()
