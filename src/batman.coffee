@@ -243,7 +243,7 @@ Batman.developer =
   assert: (result, message) -> developer.error(message) unless result
   do: (f) -> f() unless developer.suppressed
   addFilters: ->
-    $mixin Batman.Filters,
+    $extend Batman.Filters,
       log: (value, key) ->
         console?.log? arguments
         value
@@ -836,7 +836,7 @@ Batman._Batman = class _Batman
           (a, b) -> a.merge(b)
         else if results.every((x) -> typeof x is 'object')
           results.unshift({})
-          (a, b) -> $mixin(a, b)
+          (a, b) -> $extend(a, b)
 
         if reduction
           results.reduceRight(reduction)
@@ -1043,17 +1043,12 @@ Batman.Enumerable =
       current.push x
     r
 
-# Provide this simple mixin ability so that during bootstrapping we don't have to use `$mixin`. `$mixin`
-# will correctly attempt to use `set` on the mixinee, which ends up requiring the definition of
-# `SimpleSet` to be complete during its definition.
-Batman.extendsEnumerable = $extendsEnumerable = (onto) -> onto[k] = v for k,v of Batman.Enumerable
-
 class Batman.SimpleHash
   constructor: (obj) ->
     @_storage = {}
     @length = 0
     @update(obj) if obj?
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
   propertyClass: Batman.Property
   hasKey: (key) ->
     if @objectKey(key)
@@ -1171,7 +1166,7 @@ class Batman.Hash extends Batman.Object
     Batman.SimpleHash.apply(@, arguments)
     super
 
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
   propertyClass: Batman.Property
 
   @defaultAccessor =
@@ -1240,7 +1235,7 @@ class Batman.SimpleSet
     @length = 0
     @add.apply @, arguments if arguments.length > 0
 
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
 
   has: (item) ->
     !!(~@_storage.indexOf item)
@@ -1311,7 +1306,7 @@ class Batman.Set extends Batman.Object
   constructor: ->
     Batman.SimpleSet.apply @, arguments
 
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
 
   @_applySetAccessors = (klass) ->
     accessors =
@@ -1389,7 +1384,7 @@ class Batman.SetProxy extends Batman.Object
       @set 'length', @base.length
       @fire('itemsWereRemoved', items...)
 
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
 
   filter: (f) ->
     r = new Batman.Set()
@@ -1467,7 +1462,7 @@ class Batman.SetSort extends Batman.SetProxy
 
 class Batman.SetIndex extends Batman.Object
   @accessor 'toArray', -> @toArray()
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
   propertyClass: Batman.Property
   constructor: (@base, @key) ->
     super()
@@ -1573,7 +1568,7 @@ class Batman.StateMachine extends Batman.Object
         object[v.from] = v.to
       table[k] = object
 
-    @::transitionTable = $mixin {}, @::transitionTable, table
+    @::transitionTable = $extend {}, @::transitionTable, table
     for k, transitions of @::transitionTable when !@::[k]
       do (k) =>
         @::[k] = -> @startTransition(k)
@@ -1736,7 +1731,7 @@ class Batman.Route extends Batman.Object
   paramsFromPath: (path) ->
     [path, query] = path.split '?'
     namedArguments = @get('namedArguments')
-    params = $mixin {path}, @get('baseParams')
+    params = $extend {path}, @get('baseParams')
 
     matches = @get('regexp').exec(path).slice(1)
     for match, index in matches
@@ -1751,7 +1746,7 @@ class Batman.Route extends Batman.Object
     params
 
   pathFromParams: (argumentParams) ->
-    params = $mixin {}, argumentParams
+    params = $extend {}, argumentParams
     path = @get('templatePath')
 
     # Replace the names in the template with their values from params
@@ -2050,7 +2045,7 @@ class Batman.RouteMapBuilder
         route = @constructor.ROUTES[action]
         as = route.name(resourceRoot)
         path = route.path(resourceRoot)
-        routeOptions = $mixin {controller, action, path, as}, options
+        routeOptions = $extend {controller, action, path, as}, options
         childBuilder[route.cardinality](action, routeOptions)
 
     true
@@ -2086,12 +2081,12 @@ class Batman.RouteMapBuilder
     if typeof options is 'string'
       names.push options
       options = {}
-    options = $mixin {}, @baseOptions, options
+    options = $extend {}, @baseOptions, options
     options[cardinality] = true
     route = @constructor.ROUTES[cardinality]
     resourceRoot = options.controller
     for name in names
-      routeOptions = $mixin {action: name}, options
+      routeOptions = $extend {action: name}, options
       unless routeOptions.path?
         routeOptions.path = route.path(resourceRoot, name)
       unless routeOptions.as?
@@ -2406,7 +2401,7 @@ class Batman.RenderCache extends Batman.Hash
 
   viewForOptions: (options) ->
     @getOrSet options, =>
-      @_newViewFromOptions($mixin {}, options)
+      @_newViewFromOptions($extend {}, options)
 
   _newViewFromOptions: (options) -> new options.viewClass(options)
 
@@ -2642,7 +2637,7 @@ class Batman.Model extends Batman.Object
         encoder.encode = encoderOrLastKey.encode if encoderOrLastKey.encode?
         encoder.decode = encoderOrLastKey.decode if encoderOrLastKey.decode?
 
-    encoder = $mixin {}, @defaultEncoder, encoder
+    encoder = $extend {}, @defaultEncoder, encoder
 
     for operation in ['encode', 'decode']
       for key in keys
@@ -3252,7 +3247,7 @@ class Batman.Association
     defaultOptions =
       namespace: Batman.currentApp
       name: helpers.camelize(helpers.singularize(@label))
-    @options = $mixin defaultOptions, @defaultOptions, options
+    @options = $extend defaultOptions, @defaultOptions, options
 
     # Setup encoders and accessors for this association.
     @model.encode label, @encoder()
@@ -3723,7 +3718,7 @@ Validators = Batman.Validators = [
       callback()
 ]
 
-$mixin Batman.translate.messages,
+$extend Batman.translate.messages,
   errors:
     format: "%{attribute} %{message}"
     messages:
@@ -3957,7 +3952,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
       options.action = action
       @_doStorageOperation options.method.toLowerCase(), options, callback
 
-  @ModelMixin: $mixin({}, @BaseMixin,
+  @ModelMixin: $extend({}, @BaseMixin,
     urlNestsUnder: (keys...) ->
       parents = {}
       for key in keys
@@ -3986,7 +3981,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         url
     )
 
-  @RecordMixin: $mixin({}, @BaseMixin)
+  @RecordMixin: $extend({}, @BaseMixin)
 
   defaultRequestOptions:
     type: 'json'
@@ -3995,7 +3990,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
   constructor: ->
     super
-    @defaultRequestOptions = $mixin {}, @defaultRequestOptions
+    @defaultRequestOptions = $extend {}, @defaultRequestOptions
 
   recordJsonNamespace: (record) -> helpers.singularize(@storageKey(record))
   collectionJsonNamespace: (constructor) -> helpers.pluralize(@storageKey(constructor.prototype))
@@ -4043,7 +4038,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     @_execWithOptions(object, 'urlSuffix', env.options) || ''
 
   request: (env, next) ->
-    options = $mixin env.options,
+    options = $extend env.options,
       success: (data) -> env.data = data
       error: (error) -> env.error = error
       loaded: ->
@@ -4054,7 +4049,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
   perform: (key, record, options, callback) ->
     options ||= {}
-    $mixin options, @defaultRequestOptions
+    $extend options, @defaultRequestOptions
     super(key, record, options, callback)
 
   @::before 'all', @skipIfError (env, next) ->
@@ -5932,7 +5927,7 @@ do ->
       return false
     return true
 
-  $mixin Batman,
+  $extend Batman,
     cache: {}
     uuid: 0
     expando: "batman" + Math.random().toString().replace(/\D/g, '')
@@ -5981,9 +5976,9 @@ do ->
       # shallow copied over onto the existing cache
       if typeof name == "object" or typeof name == "function"
         if pvt
-          cache[id][internalKey] = $mixin(cache[id][internalKey], name)
+          cache[id][internalKey] = $extend(cache[id][internalKey], name)
         else
-          cache[id] = $mixin(cache[id], name)
+          cache[id] = $extend(cache[id], name)
 
       thisCache = cache[id]
 
