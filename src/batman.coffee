@@ -2802,7 +2802,6 @@ class Batman.Model extends Batman.Object
     developer.assert @::hasStorage(), "Can't #{operation} model #{$functionName(@constructor)} without any storage adapters!"
     adapter = @::_batman.get('storage')
     adapter.perform(operation, @, options, callback)
-    true
 
   # Each model instance (each record) can be in one of many states throughout its lifetime. Since various
   # operations on the model are asynchronous, these states are used to indicate exactly what point the
@@ -3074,7 +3073,6 @@ class Batman.Model extends Batman.Object
     adapter.perform operation, @, options, =>
       callback(arguments...)
       @_pauseDirtyTracking = false
-    return
 
 # ## Associations
 class Batman.AssociationProxy extends Batman.Object
