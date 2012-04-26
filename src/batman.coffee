@@ -36,6 +36,10 @@ Batman.typeOf = $typeOf = (object) ->
 # Cache this function to skip property lookups.
 _objectToString = Object.prototype.toString
 
+Batman.extend = $extend = (to, objects...) ->
+  to[key] = value for key, value of object for object in objects
+  to
+
 # `$mixin` applies every key from every argument after the first to the
 # first argument. If a mixin has an `initialize` method, it will be called in
 # the context of the `to` object, and it's key/values won't be applied.
@@ -239,7 +243,7 @@ Batman.developer =
   assert: (result, message) -> developer.error(message) unless result
   do: (f) -> f() unless developer.suppressed
   addFilters: ->
-    $mixin Batman.Filters,
+    $extend Batman.Filters,
       log: (value, key) ->
         console?.log? arguments
         value
@@ -832,7 +836,7 @@ Batman._Batman = class _Batman
           (a, b) -> a.merge(b)
         else if results.every((x) -> typeof x is 'object')
           results.unshift({})
-          (a, b) -> $mixin(a, b)
+          (a, b) -> $extend(a, b)
 
         if reduction
           results.reduceRight(reduction)
@@ -1039,17 +1043,12 @@ Batman.Enumerable =
       current.push x
     r
 
-# Provide this simple mixin ability so that during bootstrapping we don't have to use `$mixin`. `$mixin`
-# will correctly attempt to use `set` on the mixinee, which ends up requiring the definition of
-# `SimpleSet` to be complete during its definition.
-Batman.extendsEnumerable = $extendsEnumerable = (onto) -> onto[k] = v for k,v of Batman.Enumerable
-
 class Batman.SimpleHash
   constructor: (obj) ->
     @_storage = {}
     @length = 0
     @update(obj) if obj?
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
   propertyClass: Batman.Property
   hasKey: (key) ->
     if @objectKey(key)
@@ -1167,7 +1166,7 @@ class Batman.Hash extends Batman.Object
     Batman.SimpleHash.apply(@, arguments)
     super
 
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
   propertyClass: Batman.Property
 
   @defaultAccessor =
@@ -1236,7 +1235,7 @@ class Batman.SimpleSet
     @length = 0
     @add.apply @, arguments if arguments.length > 0
 
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
 
   has: (item) ->
     !!(~@_storage.indexOf item)
@@ -1307,7 +1306,7 @@ class Batman.Set extends Batman.Object
   constructor: ->
     Batman.SimpleSet.apply @, arguments
 
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
 
   @_applySetAccessors = (klass) ->
     accessors =
@@ -1385,7 +1384,7 @@ class Batman.SetProxy extends Batman.Object
       @set 'length', @base.length
       @fire('itemsWereRemoved', items...)
 
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
 
   filter: (f) ->
     r = new Batman.Set()
@@ -1463,7 +1462,7 @@ class Batman.SetSort extends Batman.SetProxy
 
 class Batman.SetIndex extends Batman.Object
   @accessor 'toArray', -> @toArray()
-  $extendsEnumerable(@prototype)
+  $extend @prototype, Batman.Enumerable
   propertyClass: Batman.Property
   constructor: (@base, @key) ->
     super()
@@ -1569,7 +1568,7 @@ class Batman.StateMachine extends Batman.Object
         object[v.from] = v.to
       table[k] = object
 
-    @::transitionTable = $mixin {}, @::transitionTable, table
+    @::transitionTable = $extend {}, @::transitionTable, table
     for k, transitions of @::transitionTable when !@::[k]
       do (k) =>
         @::[k] = -> @startTransition(k)
@@ -1648,7 +1647,7 @@ class Batman.Request extends Batman.Object
       formData.append(key, val)
     formData
 
-  @dataHasFileUploads = dataHasFileUploads = (data) ->
+  @dataHasFileUploads: dataHasFileUploads = (data) ->
     return true if data instanceof File
     type = $typeOf(data)
     switch type
@@ -1732,7 +1731,7 @@ class Batman.Route extends Batman.Object
   paramsFromPath: (path) ->
     [path, query] = path.split '?'
     namedArguments = @get('namedArguments')
-    params = $mixin {path}, @get('baseParams')
+    params = $extend {path}, @get('baseParams')
 
     matches = @get('regexp').exec(path).slice(1)
     for match, index in matches
@@ -1747,7 +1746,7 @@ class Batman.Route extends Batman.Object
     params
 
   pathFromParams: (argumentParams) ->
-    params = $mixin {}, argumentParams
+    params = $extend {}, argumentParams
     path = @get('templatePath')
 
     # Replace the names in the template with their values from params
@@ -2047,7 +2046,7 @@ class Batman.RouteMapBuilder
         route = @constructor.ROUTES[action]
         as = route.name(resourceRoot)
         path = route.path(resourceRoot)
-        routeOptions = $mixin {controller, action, path, as}, options
+        routeOptions = $extend {controller, action, path, as}, options
         childBuilder[route.cardinality](action, routeOptions)
 
     true
@@ -2083,12 +2082,12 @@ class Batman.RouteMapBuilder
     if typeof options is 'string'
       names.push options
       options = {}
-    options = $mixin {}, @baseOptions, options
+    options = $extend {}, @baseOptions, options
     options[cardinality] = true
     route = @constructor.ROUTES[cardinality]
     resourceRoot = options.controller
     for name in names
-      routeOptions = $mixin {action: name}, options
+      routeOptions = $extend {action: name}, options
       unless routeOptions.path?
         routeOptions.path = route.path(resourceRoot, name)
       unless routeOptions.as?
@@ -2403,7 +2402,7 @@ class Batman.RenderCache extends Batman.Hash
 
   viewForOptions: (options) ->
     @getOrSet options, =>
-      @_newViewFromOptions($mixin {}, options)
+      @_newViewFromOptions($extend {}, options)
 
   _newViewFromOptions: (options) -> new options.viewClass(options)
 
@@ -2610,17 +2609,16 @@ class Batman.Model extends Batman.Object
 
   # Pick one or many mechanisms with which this model should be persisted. The mechanisms
   # can be already instantiated or just the class defining them.
-  @persist: (mechanisms...) ->
+  @persist: (mechanism, options) ->
     Batman.initializeObject @prototype
-    storage = @::_batman.storage ||= []
-    results = for mechanism in mechanisms
-      mechanism = if mechanism.isStorageAdapter then mechanism else new mechanism(@)
-      storage.push mechanism
-      mechanism
-    if results.length > 1
-      results
-    else
-      results[0]
+    mechanism = if mechanism.isStorageAdapter then mechanism else new mechanism(@)
+    $mixin mechanism, options if options
+    @::_batman.storage = mechanism
+    mechanism
+
+  @storageAdapter: ->
+    Batman.initializeObject @prototype
+    @::_batman.storage
 
   # Encoders are the tiny bits of logic which manage marshalling Batman models to and from their
   # storage representations. Encoders do things like stringifying dates and parsing them back out again,
@@ -2640,7 +2638,7 @@ class Batman.Model extends Batman.Object
         encoder.encode = encoderOrLastKey.encode if encoderOrLastKey.encode?
         encoder.decode = encoderOrLastKey.decode if encoderOrLastKey.decode?
 
-    encoder = $mixin {}, @defaultEncoder, encoder
+    encoder = $extend {}, @defaultEncoder, encoder
 
     for operation in ['encode', 'decode']
       for key in keys
@@ -2756,11 +2754,9 @@ class Batman.Model extends Batman.Object
       callback = options
       options = {}
 
-    developer.assert @::_batman.getAll('storage').length, "Can't load model #{$functionName(@)} without any storage adapters!"
-
     lifecycle = @get('lifecycle')
     if lifecycle.load()
-      @::_doStorageOperation 'readAll', options, (err, records, env) =>
+      @_doStorageOperation 'readAll', {data: options}, (err, records, env) =>
         if err?
           lifecycle.error()
           callback?(err, [])
@@ -2803,6 +2799,10 @@ class Batman.Model extends Batman.Object
         @get('loaded').add(record)
         return record
 
+  @_doStorageOperation: (operation, options, callback) ->
+    developer.assert @::hasStorage(), "Can't #{operation} model #{$functionName(@constructor)} without any storage adapters!"
+    adapter = @::_batman.get('storage')
+    adapter.perform(operation, @, options, callback)
 
   # Each model instance (each record) can be in one of many states throughout its lifetime. Since various
   # operations on the model are asynchronous, these states are used to indicate exactly what point the
@@ -2936,7 +2936,7 @@ class Batman.Model extends Batman.Object
     # Mixin the buffer object to use optimized and event-preventing sets used by `mixin`.
     @mixin obj
 
-  hasStorage: -> (@_batman.get('storage') || []).length > 0
+  hasStorage: -> @_batman.get('storage')?
 
   # `load` fetches the record from all sources possible
   load: (options, callback) =>
@@ -2952,7 +2952,7 @@ class Batman.Model extends Batman.Object
       callbackQueue.push callback if callback?
       if !hasOptions
         @_currentLoad = callbackQueue
-      @_doStorageOperation 'read', options, (err, record, env) =>
+      @_doStorageOperation 'read', {data: options}, (err, record, env) =>
         unless err
           @get('lifecycle').loaded()
           record = @constructor._mapIdentity(record)
@@ -2994,7 +2994,7 @@ class Batman.Model extends Batman.Object
         associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(@)
         @_pauseDirtyTracking = false
 
-        @_doStorageOperation storageOperation, options, (err, record, env) =>
+        @_doStorageOperation storageOperation, {data: options}, (err, record, env) =>
           unless err
             @get('dirtyKeys').clear()
             if associations
@@ -3014,7 +3014,7 @@ class Batman.Model extends Batman.Object
       [options, callback] = [{}, options]
 
     if @get('lifecycle').destroy()
-      @_doStorageOperation 'destroy', options, (err, record, env) =>
+      @_doStorageOperation 'destroy', {data: options}, (err, record, env) =>
         unless err
           @constructor.get('loaded').remove(@)
           @get('lifecycle').destroyed()
@@ -3069,14 +3069,11 @@ class Batman.Model extends Batman.Object
 
   _doStorageOperation: (operation, options, callback) ->
     developer.assert @hasStorage(), "Can't #{operation} model #{$functionName(@constructor)} without any storage adapters!"
-    adapters = @_batman.get('storage')
-    for adapter in adapters
-      @_pauseDirtyTracking = true
-      adapter.perform operation, @, {data: options}, =>
-        callback(arguments...)
-        @_pauseDirtyTracking = false
-
-    true
+    adapter = @_batman.get('storage')
+    @_pauseDirtyTracking = true
+    adapter.perform operation, @, options, =>
+      callback(arguments...)
+      @_pauseDirtyTracking = false
 
 # ## Associations
 class Batman.AssociationProxy extends Batman.Object
@@ -3249,7 +3246,7 @@ class Batman.Association
     defaultOptions =
       namespace: Batman.currentApp
       name: helpers.camelize(helpers.singularize(@label))
-    @options = $mixin defaultOptions, @defaultOptions, options
+    @options = $extend defaultOptions, @defaultOptions, options
 
     # Setup encoders and accessors for this association.
     @model.encode label, @encoder()
@@ -3720,7 +3717,7 @@ Validators = Batman.Validators = [
       callback()
 ]
 
-$mixin Batman.translate.messages,
+$extend Batman.translate.messages,
   errors:
     format: "%{attribute} %{message}"
     messages:
@@ -3748,7 +3745,11 @@ class Batman.StorageAdapter extends Batman.Object
     constructor: (message) ->
       super(message || "Record couldn't be found in storage!")
 
-  constructor: (model) -> super(model: model)
+  constructor: (model) ->
+    super(model: model)
+    constructor = @constructor
+    $extend model, constructor.ModelMixin if constructor.ModelMixin
+    $extend model.prototype, constructor.RecordMixin if constructor.RecordMixin
 
   isStorageAdapter: true
 
@@ -3793,8 +3794,13 @@ class Batman.StorageAdapter extends Batman.Object
     actionFilters = @_batman.filters[position][action] || []
     env.action = action
 
-    # Action specific filters execute first, and then the `all` filters.
-    filters = actionFilters.concat(allFilters)
+    filters = if position == 'before'
+      # Action specific filter execute first, and then the `all` filters.
+      actionFilters.concat(allFilters)
+    else
+      # `all` filters execute first, and then the action specific filters
+      allFilters.concat(actionFilters)
+
     next = (newEnv) =>
       env = newEnv if newEnv?
       if (nextFilter = filters.shift())?
@@ -3810,13 +3816,9 @@ class Batman.StorageAdapter extends Batman.Object
 
   _jsonToAttributes: (json) -> JSON.parse(json)
 
-  perform: (key, recordOrProto, options, callback) ->
+  perform: (key, subject, options, callback) ->
     options ||= {}
-    env = {options}
-    if key == 'readAll'
-      env.proto = recordOrProto
-    else
-      env.record = recordOrProto
+    env = {options, subject}
 
     next = (newEnv) =>
       env = newEnv if newEnv?
@@ -3847,13 +3849,13 @@ class Batman.LocalStorage extends Batman.StorageAdapter
       iterator.call(@, key, @storage.getItem(key))
     true
 
-  _storageEntriesMatching: (proto, options) ->
-    re = @storageRegExpForRecord(proto)
+  _storageEntriesMatching: (constructor, options) ->
+    re = @storageRegExpForRecord(constructor.prototype)
     records = []
     @_forAllStorageEntries (storageKey, storageString) ->
       if keyMatches = re.exec(storageKey)
         data = @_jsonToAttributes(storageString)
-        data[proto.constructor.primaryKey] = keyMatches[1]
+        data[constructor.primaryKey] = keyMatches[1]
         records.push data if @_dataMatches(options, data)
     records
 
@@ -3867,19 +3869,19 @@ class Batman.LocalStorage extends Batman.StorageAdapter
 
   @::before 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
     if env.action == 'create'
-      env.id = env.record.get('id') || env.record.set('id', @nextIdForRecord(env.record))
+      env.id = env.subject.get('id') || env.subject.set('id', @nextIdForRecord(env.subject))
     else
-      env.id = env.record.get('id')
+      env.id = env.subject.get('id')
 
     unless env.id?
       env.error = new @constructor.StorageError("Couldn't get/set record primary key on #{env.action}!")
     else
-      env.key = @storageKey(env.record) + env.id
+      env.key = @storageKey(env.subject) + env.id
 
     next()
 
   @::before 'create', 'update', @skipIfError (env, next) ->
-    env.recordAttributes = JSON.stringify(env.record)
+    env.recordAttributes = JSON.stringify(env.subject)
     next()
 
   @::after 'read', @skipIfError (env, next) ->
@@ -3889,20 +3891,16 @@ class Batman.LocalStorage extends Batman.StorageAdapter
       catch error
         env.error = error
         return next()
-    env.record.fromJSON env.recordAttributes
+    env.subject.fromJSON env.recordAttributes
     next()
 
   @::after 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
-    env.result = env.record
+    env.result = env.subject
     next()
 
   @::after 'readAll', @skipIfError (env, next) ->
     env.result = env.records = for recordAttributes in env.recordsAttributes
-      @getRecordFromData(recordAttributes, env.proto.constructor)
-    next()
-
-  @::after 'destroy', @skipIfError (env, next) ->
-    env.result = env.record
+      @getRecordFromData(recordAttributes, env.subject)
     next()
 
   read: @skipIfError (env, next) ->
@@ -3926,9 +3924,9 @@ class Batman.LocalStorage extends Batman.StorageAdapter
     @storage.removeItem(key)
     next()
 
-  readAll: @skipIfError ({proto, options}, next) ->
+  readAll: @skipIfError (env, next) ->
     try
-      arguments[0].recordsAttributes = @_storageEntriesMatching(proto, options.data)
+      arguments[0].recordsAttributes = @_storageEntriesMatching(env.subject, env.options.data)
     catch error
       arguments[0].error = error
     next()
@@ -3944,20 +3942,64 @@ class Batman.RestStorage extends Batman.StorageAdapter
   @JSONContentType: 'application/json'
   @PostBodyContentType: 'application/x-www-form-urlencoded'
 
+  @BaseMixin =
+    request: (action, options, callback) ->
+      if !callback
+        callback = options
+        options = {}
+      options.method ||= 'GET'
+      options.action = action
+      @_doStorageOperation options.method.toLowerCase(), options, callback
+
+  @ModelMixin: $extend({}, @BaseMixin,
+    urlNestsUnder: (keys...) ->
+      parents = {}
+      for key in keys
+        parents[key + '_id'] = Batman.helpers.pluralize(key)
+      children = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
+
+      @url = (options) ->
+        for key, plural of parents
+          parentID = options.data[key]
+          if parentID
+            delete options.data[key]
+            return "#{plural}/#{parentID}/#{children}"
+        return children
+
+      @::url = ->
+        for key, plural of parents
+          parentID = @dirtyKeys.get(key)
+          if parentID is undefined
+            parentID = @get(key)
+          if parentID
+            url = "#{plural}/#{parentID}/#{children}"
+            break
+        url ||= children
+        if id = @get('id')
+          url += '/' + id
+        url
+    )
+
+  @RecordMixin: $extend({}, @BaseMixin)
+
   defaultRequestOptions:
     type: 'json'
-
+  _implicitActionNames: ['create', 'read', 'update', 'destroy', 'readAll']
   serializeAsForm: true
 
   constructor: ->
     super
-    @defaultRequestOptions = $mixin {}, @defaultRequestOptions
+    @defaultRequestOptions = $extend {}, @defaultRequestOptions
 
   recordJsonNamespace: (record) -> helpers.singularize(@storageKey(record))
-  collectionJsonNamespace: (proto) -> helpers.pluralize(@storageKey(proto))
+  collectionJsonNamespace: (constructor) -> helpers.pluralize(@storageKey(constructor.prototype))
 
   _execWithOptions: (object, key, options) -> if typeof object[key] is 'function' then object[key](options) else object[key]
-  _defaultCollectionUrl: (record) -> "/#{@storageKey(record)}"
+  _defaultCollectionUrl: (model) -> "/#{@storageKey(model.prototype)}"
+  _addParams: (url, options) ->
+    if options && options.action && !(options.action in @_implicitActionNames)
+      url += '/' + options.action.toLowerCase()
+    url
 
   urlForRecord: (record, env) ->
     if record.url
@@ -3966,7 +4008,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
       url = if record.constructor.url
         @_execWithOptions(record.constructor, 'url', env.options)
       else
-        @_defaultCollectionUrl(record)
+        @_defaultCollectionUrl(record.constructor)
 
       if env.action != 'create'
         if (id = record.get('id'))?
@@ -3974,13 +4016,17 @@ class Batman.RestStorage extends Batman.StorageAdapter
         else
           throw new @constructor.StorageError("Couldn't get/set record primary key on #{env.action}!")
 
+    url = @_addParams(url, env.options)
+
     @urlPrefix(record, env) + url + @urlSuffix(record, env)
 
   urlForCollection: (model, env) ->
     url = if model.url
       @_execWithOptions(model, 'url', env.options)
     else
-      @_defaultCollectionUrl(model::, env.options)
+      @_defaultCollectionUrl(model, env.options)
+
+    url = @_addParams(url, env.options)
 
     @urlPrefix(model, env) + url + @urlSuffix(model, env)
 
@@ -3991,7 +4037,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     @_execWithOptions(object, 'urlSuffix', env.options) || ''
 
   request: (env, next) ->
-    options = $mixin env.options,
+    options = $extend env.options,
       success: (data) -> env.data = data
       error: (error) -> env.error = error
       loaded: ->
@@ -4001,26 +4047,27 @@ class Batman.RestStorage extends Batman.StorageAdapter
     env.request = new Batman.Request(options)
 
   perform: (key, record, options, callback) ->
-    $mixin (options ||= {}), @defaultRequestOptions
-    super
+    options ||= {}
+    $extend options, @defaultRequestOptions
+    super(key, record, options, callback)
 
-  @::before 'create', 'read', 'update', 'destroy', @skipIfError (env, next) ->
+  @::before 'all', @skipIfError (env, next) ->
     try
-      env.options.url = @urlForRecord(env.record, env)
+      env.options.url = if env.subject.prototype
+        @urlForCollection(env.subject, env)
+      else
+        @urlForRecord(env.subject, env)
     catch error
       env.error = error
     next()
 
-  @::before 'readAll', @skipIfError (env, next) ->
-    try
-      env.options.url = @urlForCollection(env.proto.constructor, env)
-    catch error
-      env.error = error
+  @::before 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
+    env.options.method = env.action.toUpperCase()
     next()
 
   @::before 'create', 'update', @skipIfError (env, next) ->
-    json = env.record.toJSON()
-    if namespace = @recordJsonNamespace(env.record)
+    json = env.subject.toJSON()
+    if namespace = @recordJsonNamespace(env.subject)
       data = {}
       data[namespace] = json
     else
@@ -4036,7 +4083,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     env.options.data = data
     next()
 
-  @::after 'create', 'read', 'update', @skipIfError (env, next) ->
+  @::after 'all', @skipIfError (env, next) ->
     if !env.data?
       return next()
 
@@ -4050,29 +4097,41 @@ class Batman.RestStorage extends Batman.StorageAdapter
     else
       json = env.data
 
-    if json?
-      namespace = @recordJsonNamespace(env.record)
-      json = json[namespace] if namespace && json[namespace]?
-      env.record.fromJSON(json)
-    env.result = env.record
+    env.json = json
+    next()
+
+  @::after 'create', 'read', 'update', @skipIfError (env, next) ->
+    if env.json?
+      namespace = @recordJsonNamespace(env.subject)
+      json = if namespace && env.json[namespace]?
+        env.json[namespace]
+      else
+        env.json
+      env.subject.fromJSON(json)
+    env.result = env.subject
     next()
 
   @::after 'readAll', @skipIfError (env, next) ->
-    if typeof env.data is 'string'
-      try
-        env.data = JSON.parse(env.data)
-      catch jsonError
-        env.error = jsonError
-        return next()
-
-    namespace = @collectionJsonNamespace(env.proto)
-    env.recordsAttributes = if namespace && env.data[namespace]?
-      env.data[namespace]
+    namespace = @collectionJsonNamespace(env.subject)
+    env.recordsAttributes = if namespace && env.json[namespace]?
+      env.json[namespace]
     else
-      env.data
+      env.json
 
     env.result = env.records = for jsonRecordAttributes in env.recordsAttributes
-      @getRecordFromData(jsonRecordAttributes, env.proto.constructor)
+      @getRecordFromData(jsonRecordAttributes, env.subject)
+    next()
+
+  @::after 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
+    json = env.json
+    namespace = if env.subject.prototype
+      @collectionJsonNamespace(env.subject)
+    else
+      @recordJsonNamespace(env.subject)
+    env.result = if namespace && env.json[namespace]?
+      env.json[namespace]
+    else
+      env.json
     next()
 
   @HTTPMethods =
@@ -4082,10 +4141,10 @@ class Batman.RestStorage extends Batman.StorageAdapter
     readAll: 'GET'
     destroy: 'DELETE'
 
-  for key in ['create', 'read', 'update', 'destroy', 'readAll']
+  for key in ['create', 'read', 'update', 'destroy', 'readAll', 'get', 'post', 'put', 'delete']
     do (key) =>
       @::[key] = @skipIfError (env, next) ->
-        env.options.method = @constructor.HTTPMethods[key]
+        env.options.method ||= @constructor.HTTPMethods[key]
         @request(env, next)
 
 # Views
@@ -5867,7 +5926,7 @@ do ->
       return false
     return true
 
-  $mixin Batman,
+  $extend Batman,
     cache: {}
     uuid: 0
     expando: "batman" + Math.random().toString().replace(/\D/g, '')
@@ -5916,9 +5975,9 @@ do ->
       # shallow copied over onto the existing cache
       if typeof name == "object" or typeof name == "function"
         if pvt
-          cache[id][internalKey] = $mixin(cache[id][internalKey], name)
+          cache[id][internalKey] = $extend(cache[id][internalKey], name)
         else
-          cache[id] = $mixin(cache[id], name)
+          cache[id] = $extend(cache[id], name)
 
       thisCache = cache[id]
 
@@ -6018,9 +6077,8 @@ Batman.Encoders = new Batman.Object
 if typeof define is 'function'
   define 'batman', [], -> Batman
 
-# Optionally export global sugar. Not sure what to do with this.
 Batman.exportHelpers = (onto) ->
-  for k in ['mixin', 'unmixin', 'route', 'redirect', 'typeOf', 'redirect', 'setImmediate']
+  for k in ['mixin', 'extend', 'unmixin', 'redirect', 'typeOf', 'redirect', 'setImmediate']
     onto["$#{k}"] = Batman[k]
   onto
 

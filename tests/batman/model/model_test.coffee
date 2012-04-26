@@ -76,16 +76,30 @@ test 'the instantiated storage adapter should be returned when persisting', ->
 
   ok returned.isTestStorageAdapter
 
-test 'the array of instantiated storage adapters should be returned when persisting', ->
-  [a, b, c] = [false, false, false]
+test 'the storage adapter should be returned after persisting with Model.storageAdapter()', ->
+  returned = false
   class StorageAdapter extends Batman.StorageAdapter
     isTestStorageAdapter: true
 
   class Product extends Batman.Model
-    [a,b,c] = @persist StorageAdapter, StorageAdapter, StorageAdapter
+     @persist StorageAdapter
 
-  for instance in [a,b,c]
-    ok instance.isTestStorageAdapter
+  equal Product.storageAdapter().constructor, StorageAdapter
+
+test 'options passed to persist should be mixed in to the storage adapter once instantiated', ->
+  returned = false
+  class StorageAdapter extends Batman.StorageAdapter
+    isTestStorageAdapter: true
+
+  class Product extends Batman.Model
+     @persist StorageAdapter, {foo: 'bar'}
+
+  equal Product.storageAdapter().foo, 'bar'
+
+  class Order extends Batman.Model
+  adapter = new StorageAdapter(Order)
+  Order.persist adapter, {baz: 'qux'}
+  equal adapter.baz, 'qux'
 
 QUnit.module "Batman.Model class clearing"
   setup: ->
@@ -118,6 +132,7 @@ asyncTest 'model will reload data from storage after clear', ->
 QUnit.module 'Batman.Model.urlNestsUnder',
   setup: ->
     class @Product extends Batman.Model
+      @persist Batman.RestStorage
       @urlNestsUnder 'shop', 'manufacturer'
 
 test 'urlNestsUnder should nest collection URLs', 1, ->

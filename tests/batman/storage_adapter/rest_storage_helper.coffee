@@ -71,14 +71,14 @@ restStorageTestSuite = ->
     otherAdapter = new @adapter.constructor(@Product)
     notEqual otherAdapter.defaultRequestOptions, @adapter.defaultRequestOptions
 
-  asyncTest 'can readAll from JSON string', 3, ->
+  asyncTest 'can readAll from JSON string', 2, ->
     MockRequest.expect
       url: '/products'
       method: 'GET'
     , JSON.stringify products: [ name: "test", cost: 20 ]
 
-    @adapter.perform 'readAll', @Product::, {}, (err, readProducts) ->
-      ok !err
+    @adapter.perform 'readAll', @Product, {}, (err, readProducts) ->
+      throw err if err
       ok readProducts
       equal readProducts[0].get("name"), "test"
       QUnit.start()
@@ -160,7 +160,7 @@ restStorageTestSuite = ->
           cost: 10
         ]
 
-    @adapter.perform 'readAll', @Product::, {}, (err, readProducts, env) ->
+    @adapter.perform 'readAll', @Product, {}, (err, readProducts, env) ->
       throw err if err
       equal env.data.someMetaData, "foo"
       ok env.request instanceof Batman.Request
@@ -218,6 +218,71 @@ restStorageTestSuite = ->
 
   sharedStorageTestSuite(restStorageTestSuite.sharedSuiteHooks)
 
+  asyncTest 'custom REST actions on storage: records should callback with the response', 4, ->
+    product = new @Product(name: "test", id: 10)
+    counter = 0
+    for method in ['GET', 'POST', 'PUT', 'DELETE']
+      MockRequest.expect
+        url: '/products/10/extra'
+        method: method
+      , foo: 'bar'
+
+      counter += 1
+      @adapter.perform method.toLowerCase(), product, {action: 'extra'}, (err, response) ->
+        throw err if err
+        deepEqual response, {foo: 'bar'}
+        QUnit.start() if --counter == 0
+
+  asyncTest 'custom REST actions on storage: records should callback with the error if given', 4, ->
+    product = new @Product(name: "test", id: 10)
+    counter = 0
+    for method in ['GET', 'POST', 'PUT', 'DELETE']
+      MockRequest.expect
+        url: '/products/10/extra'
+        method: method
+      , error: "Foo!"
+
+      counter += 1
+      @adapter.perform method.toLowerCase(), product, {action: 'extra'}, (err, response) ->
+        ok err
+        QUnit.start() if --counter == 0
+
+  asyncTest 'custom REST actions on storage: models should callback with the response', 4, ->
+    counter = 0
+    for method in ['GET', 'POST', 'PUT', 'DELETE']
+      MockRequest.expect
+        url: '/products/extra'
+        method: method
+      , foo: 'bar'
+
+      counter += 1
+      @adapter.perform method.toLowerCase(), @Product, {action: 'extra'}, (err, response) ->
+        throw err if err
+        deepEqual response, {foo: 'bar'}
+        QUnit.start() if --counter == 0
+
+  asyncTest 'custom REST actions on storage: models should callback with the error if given', 4, ->
+    counter = 0
+    for method in ['GET', 'POST', 'PUT', 'DELETE']
+      MockRequest.expect
+        url: '/products/extra'
+        method: method
+      , error: "Foo!"
+
+      counter += 1
+      @adapter.perform method.toLowerCase(), @Product, {action: 'extra'}, (err, response) ->
+        ok err
+        QUnit.start() if --counter == 0
+
+  test "persisting a model with this adapter should add helpers for making gets, puts, posts, and deletes", ->
+    @adapter.perform = perform = createSpy()
+
+    @product = new @Product(name: "test", id: 10)
+
+    @product.request 'duplicate', {method: 'GET'}, callback = (err, response) ->
+    deepEqual perform.lastCallArguments.slice(0,3), ['get', @product, {method: 'GET', action: 'duplicate'}]
+    equal typeof perform.lastCallArguments[3], 'function'
+
 restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
   test 'string record urls should be gotten in the options', 1, ->
     product = new @Product
@@ -237,7 +302,6 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     product.url = (passedOpts) ->
       equal passedOpts, opts
       '/some/url'
-
     @adapter.urlForRecord product, {options: opts}
 
   test 'string model urls should be gotten in the options', 1, ->
@@ -282,6 +346,26 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     @Product.urlSuffix = '.foo'
     url = @adapter.urlForCollection @Product, {}
     equal url, "/some/url.foo#{urlSuffix}"
+
+  test 'nonstandard actions can be passed to models without url functions defined', 1, ->
+    product = new @Product(id: 1)
+    url = @adapter.urlForRecord product, {options: {action: 'duplicate'}}
+    equal url, "/products/1/duplicate#{urlSuffix}"
+
+  test 'nonstandard actions can be passed to models with url functions defined', 1, ->
+    product = new @Product(id: 1)
+    product.url = '/some/url'
+    url = @adapter.urlForRecord product, {options: {action: 'duplicate'}}
+    equal url, "/some/url/duplicate#{urlSuffix}"
+
+  test 'nonstandard actions can be passed to records without url functions defined', 1, ->
+    url = @adapter.urlForCollection @Product, {options: {action: 'subset'}}
+    equal url, "/products/subset#{urlSuffix}"
+
+  test 'nonstandard actions can be passed to records with url functions defined', 1, ->
+    @Product.url = '/some/url'
+    url = @adapter.urlForCollection @Product, {options: {action: 'subset'}}
+    equal url, "/some/url/subset#{urlSuffix}"
 
 restStorageTestSuite.sharedSuiteHooks =
   'creating in storage: should succeed if the record doesn\'t already exist': ->

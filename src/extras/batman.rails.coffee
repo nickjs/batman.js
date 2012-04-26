@@ -108,8 +108,9 @@ applyExtra = (Batman) ->
         env.options.data = @_serializeToFormData(env.options.data)
       next()
 
-    @::after 'update', 'create', ({error, record, response}, next) ->
-      env = arguments[0]
+    @::after 'update', 'create', (env, next) ->
+      record = env.subject
+      {error, response} = env
       if error
         # Rails validation errors
         if error.request?.get('status') == 422

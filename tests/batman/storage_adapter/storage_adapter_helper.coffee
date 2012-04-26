@@ -139,7 +139,7 @@ sharedStorageTestSuite = (hooks = {}) ->
       throw err if err
       @adapter.perform 'create', product2, {}, (err, createdRecord2) =>
         throw err if err
-        @adapter.perform 'readAll', product1.constructor.prototype, {}, (err, readProducts) ->
+        @adapter.perform 'readAll', product1.constructor, {}, (err, readProducts) ->
           throw err if err
           deepEqual t(readProducts), t([createdRecord1, createdRecord2])
           QUnit.start()
@@ -165,7 +165,7 @@ sharedStorageTestSuite = (hooks = {}) ->
       throw err if err
       @adapter.perform 'create', product2, {}, (err, createdRecord2) =>
         throw err if err
-        @adapter.perform 'readAll', @Product::, {}, (err, readProducts) ->
+        @adapter.perform 'readAll', @Product, {}, (err, readProducts) ->
           throw err if err
           deepEqual t(readProducts), ['TESTA', 'TESTB']
           QUnit.start()
@@ -177,13 +177,13 @@ sharedStorageTestSuite = (hooks = {}) ->
       throw err if err
       @adapter.perform 'create', product2, {}, (err, createdRecord2) =>
         throw err if err
-        @adapter.perform 'readAll', @Product::, {data: {cost: 10}}, (err, readProducts) ->
+        @adapter.perform 'readAll', @Product, {data: {cost: 10}}, (err, readProducts) ->
           throw err if err
           deepEqual t(readProducts), ['testA', 'testB']
           QUnit.start()
 
   asyncTestWithHooks 'reading many from storage: should callback with an empty array if no records exist', 1, ->
-    @adapter.perform 'readAll', @Product::, {}, (err, readProducts) ->
+    @adapter.perform 'readAll', @Product, {}, (err, readProducts) ->
       throw err if err
       deepEqual readProducts, []
       QUnit.start()

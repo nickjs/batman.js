@@ -1,5 +1,3 @@
-Batman.exportHelpers(this)
-
 QUnit.module "Batman.get"
 
 test "should invoke obj.get if it is a function", ->
