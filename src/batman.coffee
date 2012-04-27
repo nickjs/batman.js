@@ -945,14 +945,21 @@ class BatmanObject extends Object
         val
       cache: true
 
-  @classAccessor: (keys..., accessor) ->
+  wrapSingleAccessor = (core, wrapper) ->
+    wrapper = wrapper?(core) or wrapper
+    for k, v of core
+      wrapper[k] = v unless k of wrapper
+    wrapper
+
+  @_defineAccessor: (keys..., accessor) ->
     if not accessor?
       return Batman.Property.defaultAccessorForBase(this)
     else if keys.length is 0 and $typeOf(accessor) not in ['Object', 'Function']
       return Batman.Property.accessorForBaseAndKey(this, accessor)
     else if typeof accessor.promise is 'function'
-      return @wrapAccessor(keys..., promiseWrapper(accessor.promise))
-    Batman.initializeObject @
+      return @_defineWrapAccessor(keys..., promiseWrapper(accessor.promise))
+    
+    Batman.initializeObject this
     # Create a default accessor if no keys have been given.
     if keys.length is 0
       # The `accessor` argument is wrapped in `getAccessorObject` which allows functions to be passed in
@@ -963,28 +970,25 @@ class BatmanObject extends Object
       @_batman.keyAccessors ||= new Batman.SimpleHash
       @_batman.keyAccessors.set(key, getAccessorObject(this, accessor)) for key in keys
 
-  # Support adding accessors to the prototype from within class defintions or after the class has been created
-  # with `KlassExtendingBatmanObject.accessor(keys..., accessorObject)`
-  @accessor: -> @classAccessor.apply @prototype, arguments
-  # Support adding accessors to instances after creation
-  accessor: @classAccessor
+  _defineAccessor: @_defineAccessor
 
-  wrapSingleAccessor = (core, wrapper) ->
-    wrapper = wrapper?(core) or wrapper
-    for k, v of core
-      wrapper[k] = v unless k of wrapper
-    wrapper
-
-  @wrapClassAccessor: (keys..., wrapper) ->
+  @_defineWrapAccessor: (keys..., wrapper) ->
     Batman.initializeObject(this)
     if keys.length is 0
-      @accessor wrapSingleAccessor(@accessor(), wrapper)
+      @_defineAccessor wrapSingleAccessor(@_defineAccessor(), wrapper)
     else
       for key in keys
-        @accessor key, wrapSingleAccessor(@accessor(key), wrapper)
+        @_defineAccessor key, wrapSingleAccessor(@_defineAccessor(key), wrapper)
 
-  @wrapAccessor: -> @wrapClassAccessor.apply @prototype, arguments
-  wrapAccessor: @wrapClassAccessor
+  _defineWrapAccessor: @_defineWrapAccessor
+
+  @classAccessor: @_defineAccessor
+  @accessor: -> @prototype._defineAccessor(arguments...)
+  accessor: @_defineAccessor
+
+  @wrapClassAccessor: @_defineWrapAccessor
+  @wrapAccessor: -> @prototype._defineWrapAccessor(arguments...)
+  wrapAccessor: @_defineWrapAccessor
 
   constructor: (mixins...) ->
     @_batman = new _Batman(@)

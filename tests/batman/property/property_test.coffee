@@ -428,6 +428,10 @@ QUnit.module 'Batman.Property promises',
         set: @setter = createSpy(Batman.Property.defaultAccessor.set)
         unset: @unsetter = createSpy(Batman.Property.defaultAccessor.unset)
     @thing = new @SpecialThing
+
+test "passing a promise function to a classAccessor declaration wraps the class's accessor", ->
+  @SpecialThing.classAccessor 'classFoo', promise: (deliver) -> deliver("error", "result")
+  equal @SpecialThing.get('classFoo'), "result"
   
 test "passing a promise function to an accessor declaration wraps the class's default accessor", ->
   @thing.accessor 'foo', promise: (deliver) -> deliver("error", "result")
