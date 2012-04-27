@@ -376,11 +376,14 @@ helpers = Batman.helpers =
   inflector: new Batman.Inflector
   ordinalize: -> helpers.inflector.ordinalize.apply helpers.inflector, arguments
   singularize: -> helpers.inflector.singularize.apply helpers.inflector, arguments
-  pluralize: (count, singular, plural) ->
+  pluralize: (count, singular, plural, includeCount = true) ->
     if arguments.length < 2
       helpers.inflector.pluralize count
     else
-      "#{count || 0} " + if +count is 1 then singular else (plural || helpers.inflector.pluralize(singular))
+      result = if +count is 1 then singular else (plural || helpers.inflector.pluralize(singular))
+      if includeCount
+        result = "#{count || 0} " + result
+      result
 
   camelize: (string, firstLetterLower) ->
     string = string.replace camelize_rx, (str, p1) -> p1.toUpperCase()
@@ -958,7 +961,7 @@ class BatmanObject extends Object
       return Batman.Property.accessorForBaseAndKey(this, accessor)
     else if typeof accessor.promise is 'function'
       return @_defineWrapAccessor(keys..., promiseWrapper(accessor.promise))
-    
+
     Batman.initializeObject this
     # Create a default accessor if no keys have been given.
     if keys.length is 0
@@ -5319,7 +5322,7 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
           if keyContext?
             keyContext = Batman.RenderContext.deProxy(keyContext)
             return keyContext[functionKey]
-      
+
       core.get.apply(@, arguments)
 
 class Batman.DOM.RadioBinding extends Batman.DOM.AbstractBinding
@@ -5861,9 +5864,16 @@ Batman.Filters =
   upcase: buntUndefined (value) ->
     value.toUpperCase()
 
-  pluralize: buntUndefined (string, count, binding) ->
-    if binding
-      helpers.pluralize(count, string)
+  pluralize: buntUndefined (string, count, includeCount, binding) ->
+    if !binding
+      binding = includeCount
+      includeCount = true
+      if !binding
+        binding = count
+        count = undefined
+
+    if count
+      helpers.pluralize(count, string, undefined, includeCount)
     else
       helpers.pluralize(string)
 
