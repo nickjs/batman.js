@@ -29,21 +29,18 @@ pipedExec = do ->
         callback(code)
 
 task 'build', 'compile Batman.js and all the tools', (options) ->
-  files = glob.sync('./src/**/*').concat(glob.sync('./tests/lib/*'))
+  files = glob.sync('./src/**/*').concat(glob.sync('./tests/**/*'))
   muffin.run
     files: files
     options: options
     map:
-      'src/batman\.coffee'       : (matches) -> muffin.compileScript(matches[0], 'lib/batman.js', options)
-      'src/batman\.(.+)\.coffee' : (matches) -> muffin.compileScript(matches[0], "lib/batman.#{matches[1]}.js", options)
-      'src/extras/(.+)\.coffee'  : (matches) -> muffin.compileScript(matches[0], "lib/extras/#{matches[1]}.js", options)
-      'src/tools/batman\.coffee' : (matches) ->
-        source = muffin.readFile(matches[0], options).then (source) ->
-          compiled = muffin.compileString(source, options)
-          compiled = "#!/usr/bin/env node\n\n" + compiled
-          muffin.writeFile "tools/batman", compiled, muffin.extend({}, options, {mode: 0o755})
-      'src/tools/(.+)\.coffee'   : (matches) -> muffin.compileScript(matches[0], "tools/#{matches[1]}.js", options)
-      'tests/run\.coffee'     : (matches) -> muffin.compileScript(matches[0], 'tests/run.js', options)
+      'src/manifest\.coffee'      : (matches) -> muffin.compileTree(matches[0], 'lib/batman.js', options)
+      'src/platform/(.+)\.coffee' : (matches) -> muffin.compileScript(matches[0], "lib/batman.#{matches[1]}.js", options)
+      'src/extras/(.+)\.coffee'   : (matches) -> muffin.compileScript(matches[0], "lib/extras/#{matches[1]}.js", options)
+      'src/tools/batman\.coffee'  : (matches) -> muffin.compileScript(matches[0], "tools/batman", muffin.extend({}, options, {mode: 0o755, hashbang: true}))
+      'src/tools/(.+)\.coffee'    : (matches) -> muffin.compileScript(matches[0], "tools/#{matches[1]}.js", options)
+      'tests/run\.coffee'         : (matches) -> muffin.compileScript(matches[0], 'tests/run.js', options)
+      'tests/batman/(.+)\.coffee' : (matches) -> muffin.compileScript(matches[0], "build/tests/batman/#{matches[1]}.js", muffin.extend({}, options, notify: false))
 
   if options.dist
     temp    = require 'temp'
