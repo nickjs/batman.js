@@ -2493,7 +2493,7 @@ class Batman.Controller extends Batman.Object
     filters = @_batman.afterFilters ||= new Batman.SimpleHash
     filters.set(options.block, options)
 
-  contstructor: ->
+  constructor: ->
     @_renderedYields = {}
     @_actionFrames = []
     super
