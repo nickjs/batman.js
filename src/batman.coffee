@@ -1830,7 +1830,7 @@ class Batman.Dispatcher extends Batman.Object
 
   @paramsFromArgument: (argument) ->
     resourceNameFromModel = (model) ->
-      helpers.camelize(helpers.pluralize(model.get('className')), true)
+      helpers.camelize(helpers.pluralize(model.get('resourceName')), true)
 
     return argument unless @canInferRoute(argument)
 
@@ -2706,18 +2706,19 @@ class Batman.Model extends Batman.Object
     @_batman.check(@)
     @_batman.lifecycle ||= new @LifecycleStateMachine('empty', @)
 
-  @classAccessor 'className', ->
-    if @className?
-      @className
-    else
-      developer.error("Please define className on the class or storageKey on the prototype of #{$functionName(@)}in order for your model to be minification safe.") if Batman.config.minificationErrors
-      $functionName(@)
+  @classAccessor 'resourceName',
+    get: ->
+      if @resourceName?
+        @resourceName
+      else
+        developer.error("Please define className on the class or storageKey on the prototype of #{$functionName(@)} in order for your model to be minification safe.") if Batman.config.minificationErrors
+        Batman.helpers.underscore($functionName(@))
 
   @urlNestsUnder: (keys...) ->
     parents = {}
     for key in keys
       parents[key + '_id'] = Batman.helpers.pluralize(key)
-    childSegment = helpers.pluralize(@get('className').toLowerCase())
+    childSegment = helpers.pluralize(@get('resourceName').toLowerCase())
 
     @url = (options) ->
       for key, plural of parents
@@ -2913,7 +2914,7 @@ class Batman.Model extends Batman.Object
     @
 
   toString: ->
-    "#{@constructor.get('className')}: #{@get('id')}"
+    "#{@constructor.get('resourceName')}: #{@get('id')}"
 
   toParam: -> @get('id')
 
@@ -3441,7 +3442,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
         model = instanceOrProxy.association.model
       else
         model = instanceOrProxy.constructor
-      foreignTypeValue = model.get('className')
+      foreignTypeValue = model.get('resourceName')
       base.set @foreignTypeKey, foreignTypeValue
 
   getAccessor: (self, model, label) ->
@@ -3469,10 +3470,12 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
 
   getRelatedModelForType: (type) ->
       scope = @options.namespace or Batman.currentApp
-      relatedModel = scope?[type]
+      if type
+        relatedModel = scope?[type]
+        relatedModel ||= scope?[Batman.helpers.camelize(type)]
       developer.do ->
         if Batman.currentApp? and not relatedModel
-          developer.warn "Related model #{className} for polymorhic association not found."
+          developer.warn "Related model #{type} for polymorhic association not found."
       relatedModel
 
   setIndexForType: (type) ->
@@ -3523,7 +3526,7 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
   constructor: ->
     super
     @primaryKey = @options.primaryKey or "id"
-    @foreignKey = @options.foreignKey or "#{helpers.underscore(@model.get('className'))}_id"
+    @foreignKey = @options.foreignKey or "#{helpers.underscore(@model.get('resourceName'))}_id"
 
   apply: (baseSaveError, base) ->
     if relation = @getFromAttributes(base)
@@ -3556,7 +3559,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       return new Batman.PolymorphicHasManyAssociation(arguments...)
     super
     @primaryKey = @options.primaryKey or "id"
-    @foreignKey = @options.foreignKey or "#{helpers.underscore(@model.get('className'))}_id"
+    @foreignKey = @options.foreignKey or "#{helpers.underscore(@model.get('resourceName'))}_id"
 
   apply: (baseSaveError, base) ->
     unless baseSaveError
@@ -3631,7 +3634,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
 
   getRelatedModelForType: -> @getRelatedModel()
 
-  modelType: -> @model.get('className')
+  modelType: -> @model.get('resourceName')
 
   setIndex: ->
     if !@typeIndex
@@ -3778,7 +3781,7 @@ class Batman.StorageAdapter extends Batman.Object
 
   storageKey: (record) ->
     model = record?.constructor || @model
-    model.get('storageKey') || helpers.pluralize(helpers.underscore(model.get('className')))
+    model.get('storageKey') || helpers.pluralize(helpers.underscore(model.get('resourceName')))
 
   getRecordFromData: (attributes, constructor = @model) ->
     record = new constructor()

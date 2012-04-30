@@ -48,9 +48,9 @@ asyncTest "hasMany associations are saved via the parent model", 7, ->
     throw err if err
     equal storeSaveSpy.callCount, 1
     equal metafield1.get('subject_id'), record.get('id')
-    equal metafield1.get('subject_type'), 'Store'
+    equal metafield1.get('subject_type'), 'store'
     equal metafield2.get('subject_id'), record.get('id')
-    equal metafield2.get('subject_type'), 'Store'
+    equal metafield2.get('subject_type'), 'store'
 
     @Store.find record.get('id'), (err, store2) =>
       throw err if err
@@ -59,8 +59,8 @@ asyncTest "hasMany associations are saved via the parent model", 7, ->
       # hasMany saves inline by default
       sorter = generateSorterOnProperty('key')
       deepEqual sorter(storedJSON.metafields), sorter([
-        {key: "Gizmo", subject_id: record.get('id'), subject_type: 'Store'}
-        {key: "Gadget", subject_id: record.get('id'), subject_type: 'Store'}
+        {key: "Gizmo", subject_id: record.get('id'), subject_type: 'store'}
+        {key: "Gadget", subject_id: record.get('id'), subject_type: 'store'}
       ])
       QUnit.start()
 
@@ -72,7 +72,7 @@ asyncTest "hasMany associations are saved via the child model", 3, ->
     metafield.save (err, savedMetafield) ->
       throw err if err
       equal savedMetafield.get('subject_id'), store.get('id')
-      equal savedMetafield.get('subject_type'), 'Store'
+      equal savedMetafield.get('subject_type'), 'store'
       metafields = store.get('metafields')
       ok metafields.has(savedMetafield)
       QUnit.start()
@@ -83,7 +83,7 @@ asyncTest "hasMany associations should index the loaded set", 3, ->
     metafields = product.get('metafields')
     ok metafields instanceof Batman.AssociationSet
     equal metafields.get('length'), 1
-    metafield = new @Metafield(subject_id: 4, subject_type: 'Product', key: "Test Metafield")
+    metafield = new @Metafield(subject_id: 4, subject_type: 'product', key: "Test Metafield")
     metafield.save (err) ->
       throw err if err
       equal metafields.get('length'), 2
@@ -133,7 +133,7 @@ asyncTest "unsaved hasMany models should save their associated children", 4, ->
       id: 11
       name: "Hello!"
       metafields:[
-        {key: "test", subject_id: product.get('id'), subject_type: 'Product'}
+        {key: "test", subject_id: product.get('id'), subject_type: 'product'}
       ]
 
     ok !product.isNew()

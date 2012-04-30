@@ -35,7 +35,7 @@ asyncTest "belongsTo associations are saved", ->
   metafield.save (err, record) =>
     throw err if err
     equal record.get('subject_id'), 11
-    equal record.get('subject_type'), 'Store'
+    equal record.get('subject_type'), 'store'
     storedJSON = @metafieldAdapter.storage["metafields10"]
     deepEqual storedJSON, metafield.toJSON()
     QUnit.start()
@@ -58,7 +58,7 @@ asyncTest "belongsTo supports inline saving", 1, ->
     deepEqual storageAdapter.storage["inline_metafields#{record.get('id')}"],
       key: "SEO Title"
       subject: {name: "Inline Store"}
-      subject_type: 'Store'
+      subject_type: 'store'
     QUnit.start()
 
 asyncTest "belongsTo parent models are added to the identity map", 1, ->

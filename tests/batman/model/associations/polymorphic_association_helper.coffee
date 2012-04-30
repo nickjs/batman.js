@@ -15,7 +15,7 @@ ex.baseSetup = ->
     'metafields1':
       id: 1
       subject_id: 1
-      subject_type: 'Store'
+      subject_type: 'store'
       key: 'Store metafield'
     'metafields2':
       id: 2
@@ -25,7 +25,7 @@ ex.baseSetup = ->
     'metafields3':
       id: 3
       subject_id: 1
-      subject_type: 'Store'
+      subject_type: 'store'
       key: 'Store metafield 2'
     'metafields4':
       id: 4
