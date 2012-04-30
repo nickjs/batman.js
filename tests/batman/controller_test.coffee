@@ -9,17 +9,11 @@ class MockView extends MockClass
 
 QUnit.module 'Batman.Controller'
 
-test "get('className') should use the class level className property", ->
-  class ProductsController extends Batman.Controller
-    @className: 'Products'
-
-  equal ProductsController.get('className'), 'Products'
-
-test "get('className') should use the prototype level routingKey property", ->
+test "get('routingKey') should use the prototype level routingKey property", ->
   class ProductsController extends Batman.Controller
     routingKey: 'products'
 
-  equal ProductsController.get('className'), 'Products'
+  equal (new ProductsController).get('routingKey'), 'products'
 
 QUnit.module 'Batman.Controller render'
   setup: ->
