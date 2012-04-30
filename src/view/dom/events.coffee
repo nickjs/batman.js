@@ -1,6 +1,6 @@
 #= require dom
 
-# `Batman.DOM.events` contains the helpers used for binding to events. These aren't called by
+# `Batman.DOM.events` contains the Batman.helpers used for binding to events. These aren't called by
 # DOM directives, but are used to handle specific events by the `data-event-#{name}` helper.
 Batman.DOM.events =
   click: (node, callback, context, eventName = 'click') ->

@@ -9,7 +9,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       return new Batman.PolymorphicHasManyAssociation(arguments...)
     super
     @primaryKey = @options.primaryKey or "id"
-    @foreignKey = @options.foreignKey or "#{helpers.underscore(Batman.functionName(@model))}_id"
+    @foreignKey = @options.foreignKey or "#{Batman.helpers.underscore(Batman.functionName(@model))}_id"
 
   apply: (baseSaveError, base) ->
     unless baseSaveError

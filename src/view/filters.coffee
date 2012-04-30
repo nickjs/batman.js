@@ -72,9 +72,9 @@ Batman.Filters =
 
   pluralize: buntUndefined (string, count, binding) ->
     if binding
-      helpers.pluralize(count, string)
+      Batman.helpers.pluralize(count, string)
     else
-      helpers.pluralize(string)
+      Batman.helpers.pluralize(string)
 
   join: buntUndefined (value, withWhat = '', binding) ->
     if !binding

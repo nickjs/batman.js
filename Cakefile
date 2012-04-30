@@ -28,67 +28,37 @@ pipedExec = do ->
         running = false
         callback(code)
 
-task 'build', 'compile Batman.js and all the tools', (options) ->
+buildTask = (options) ->
   files = glob.sync('./src/**/*').concat(glob.sync('./tests/**/*'))
   muffin.run
     files: files
     options: options
     map:
-      'src/manifest\.coffee'      : (matches) -> muffin.compileTree(matches[0], 'lib/batman.js', options)
+      'src/batman\.coffee'        : (matches) -> muffin.compileTree(matches[0], 'lib/batman.js', options)
       'src/platform/(.+)\.coffee' : (matches) -> muffin.compileScript(matches[0], "lib/batman.#{matches[1]}.js", options)
       'src/extras/(.+)\.coffee'   : (matches) -> muffin.compileScript(matches[0], "lib/extras/#{matches[1]}.js", options)
       'src/tools/batman\.coffee'  : (matches) -> muffin.compileScript(matches[0], "tools/batman", muffin.extend({}, options, {mode: 0o755, hashbang: true}))
       'src/tools/(.+)\.coffee'    : (matches) -> muffin.compileScript(matches[0], "tools/#{matches[1]}.js", options)
       'tests/run\.coffee'         : (matches) -> muffin.compileScript(matches[0], 'tests/run.js', options)
-      'tests/batman/(.+)\.coffee' : (matches) -> muffin.compileScript(matches[0], "build/tests/batman/#{matches[1]}.js", muffin.extend({}, options, notify: false))
 
-  if options.dist
-    temp    = require 'temp'
-    tmpdir = temp.mkdirSync()
-    distDir = "lib/dist"
-    developmentTransform = require('./tools/build/remove_development_transform').removeDevelopment
+distributionBuildTask = (options) ->
+  temp    = require 'temp'
+  tmpdir = temp.mkdirSync()
+  distDir = "lib/dist"
+  developmentTransform = require('./tools/build/remove_development_transform').removeDevelopment
 
-    # Compile the scripts to the distribution folder by:
-    # 1. Finding each platform specific batman file of the form `batman.platform.coffee`
-    # 2. Concatenating each platform specific file with the main Batman source, and storing that in memory
-    # 3. Compiling each complete platform specific batman distribution into JavaScript in `./lib/dist`
-    # 4. Minify each complete platform specific distribution in to a .min.js file in `./lib/dist`
-    compileDist = (platformName) ->
-      return if platformName in ['node']
-      joinedCoffeePath = "#{tmpdir}/batman.#{platformName}.coffee"
-      # Read the platform specific code
-      platform = muffin.readFile "src/batman.#{platformName}.coffee", options
-      standard = muffin.readFile 'src/batman.coffee', options
-      q.join platform, standard, (platformSource, standardSource) ->
-        # Compile the joined coffeescript to JS
-        js = muffin.compileString(standardSource + "\n" + platformSource, options)
-        destination = "#{distDir}/batman#{if platformName is 'solo' then '' else '.' + platformName}.js"
-        # Write the unminified javascript.
-        muffin.writeFile(destination, js, options).then ->
+  # Run a task which concats the coffeescript, compiles it, and then minifies it
+  first = true
+  muffin.run
+    files: './src/**/*'
+    options: options
+    map:
+      'src/dist/(.+)\.coffee' : (matches) ->
+        destination = "lib/dist/#{matches[1]}.js"
+        muffin.compileTree(matches[0], destination).then ->
           options.transform = developmentTransform
-          muffin.minifyScript(destination, options).then( ->
+          muffin.minifyScript(destination, options).then ->
             muffin.notify(destination, "File #{destination} minified.")
-          )
-
-    # Run a task which concats the coffeescript, compiles it, and then minifies it
-    first = true
-    muffin.run
-      files: './src/**/*'
-      options: options
-      map:
-        'src/batman\.(.+)\.coffee': (matches) -> compileDist(matches[1])
-        'src/batman.coffee'       : (matches) ->
-          done = false
-          if first
-            first = false
-            return
-          # When the the root batman file changes, compile all the platform files.
-          platformFiles = glob.sync('./src/batman.*.coffee')
-          for file in platformFiles
-            matches = /src\/batman.(.+).coffee/.exec(file)
-            done = q.wait(done, compileDist(matches[1]))
-          console.warn done
-          done
 
 task 'doc', 'build the Percolate documentation', (options) ->
   muffin.run
@@ -125,6 +95,13 @@ task 'test', 'compile Batman.js and the tests and run them on the command line',
 
 task 'stats', 'compile the files and report on their final size', (options) ->
   muffin.statFiles(glob.sync('./src/**/*.coffee').concat(glob.sync('./lib/**/*.js')), options)
+
+task 'build', 'compile Batman.js and all the tools', (options) ->
+  buildTask(options)
+  if options.dist
+    distributionBuildTask(options)
+
+task 'build:dist', 'compile Batman.js files for distribution', distributionBuildTask
 
 task 'build:site', (options) ->
   temp    = require 'temp'

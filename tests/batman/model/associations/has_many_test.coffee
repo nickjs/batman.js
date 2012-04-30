@@ -421,7 +421,7 @@ asyncTest "hasMany associations render", 4, ->
         addedProduct.save (err, savedProduct) ->
           delay ->
             equal node.children().get(3)?.innerHTML, 'Product Four'
-      , ASYNC_TEST_DELAY * 3
+      , ASYNC_TEST_DELAY * 5
 
 asyncTest "hasMany adds new related model instances to its set", ->
   @Store.find 1, (err, store) =>

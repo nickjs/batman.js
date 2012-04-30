@@ -8,7 +8,7 @@ class Batman.Association
   constructor: (@model, @label, options = {}) ->
     defaultOptions =
       namespace: Batman.currentApp
-      name: helpers.camelize(helpers.singularize(@label))
+      name: Batman.helpers.camelize(Batman.helpers.singularize(@label))
     @options = Batman.extend defaultOptions, @defaultOptions, options
 
     # Setup encoders and accessors for this association.

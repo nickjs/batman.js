@@ -29,17 +29,16 @@
     "daemon": "~0.3.0",
     "docco": "~0.3.0",
     "glob": "~>3.0.1",
-    "q": "~>0.6.0",
+    "q": "~>0.8",
     "muffin": "0.3.0",
     "uglify-js": "1.2.5",
     "temp": "~>0.2.0",
     "qqunit": "~>0.2",
-    "percolate": "~> 0.2.5"
+    "percolate": "~> 0.2.5",
+    "connect-assets": "~>2.1",
+    "liquor": "~>0.0"
   },
   "engines": {
     "node": "0.4.x || 0.6.x"
-  },
-  "batman": {
-    "build": false
   }
 }

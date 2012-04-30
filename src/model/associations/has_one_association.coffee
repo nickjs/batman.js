@@ -8,7 +8,7 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
   constructor: ->
     super
     @primaryKey = @options.primaryKey or "id"
-    @foreignKey = @options.foreignKey or "#{helpers.underscore(Batman.functionName(@model))}_id"
+    @foreignKey = @options.foreignKey or "#{Batman.helpers.underscore(Batman.functionName(@model))}_id"
 
   apply: (baseSaveError, base) ->
     if relation = @getFromAttributes(base)

@@ -8,7 +8,7 @@ class Batman.Dispatcher extends Batman.Object
 
   @paramsFromArgument: (argument) ->
     resourceNameFromModel = (model) ->
-      helpers.camelize(helpers.pluralize(Batman.functionName(model)), true)
+      Batman.helpers.camelize(Batman.helpers.pluralize(Batman.functionName(model)), true)
 
     return argument unless @canInferRoute(argument)
 
@@ -32,7 +32,7 @@ class Batman.Dispatcher extends Batman.Object
 
   class ControllerDirectory extends Batman.Object
     @accessor '__app', Batman.Property.defaultAccessor
-    @accessor (key) -> @get("__app.#{helpers.capitalize(key)}Controller.sharedController")
+    @accessor (key) -> @get("__app.#{Batman.helpers.capitalize(key)}Controller.sharedController")
 
   @accessor 'controllers', -> new ControllerDirectory(__app: @get('app'))
 

@@ -78,7 +78,7 @@ class Batman.Model extends Batman.Object
       # Given options, find the validations which match the given options, and add them to the validators
       # array.
       options = optionsOrFunction
-      for validator in Validators
+      for validator in Batman.Validators
         if (matches = validator.matches(options))
           delete options[match] for match in matches
           validators.push

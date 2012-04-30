@@ -53,8 +53,8 @@ class Batman.RestStorage extends Batman.StorageAdapter
     super
     @defaultRequestOptions = Batman.extend {}, @defaultRequestOptions
 
-  recordJsonNamespace: (record) -> helpers.singularize(@storageKey(record))
-  collectionJsonNamespace: (constructor) -> helpers.pluralize(@storageKey(constructor.prototype))
+  recordJsonNamespace: (record) -> Batman.helpers.singularize(@storageKey(record))
+  collectionJsonNamespace: (constructor) -> Batman.helpers.pluralize(@storageKey(constructor.prototype))
 
   _execWithOptions: (object, key, options) -> if typeof object[key] is 'function' then object[key](options) else object[key]
   _defaultCollectionUrl: (model) -> "/#{@storageKey(model.prototype)}"

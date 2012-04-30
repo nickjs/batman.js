@@ -8,7 +8,7 @@ Batman._Batman = class _Batman
   # the object it is pointing to.
   check: (object) ->
     if object != @object
-      object._batman = new _Batman(object)
+      object._batman = new Batman._Batman(object)
       return false
     return true
 

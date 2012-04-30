@@ -1,5 +1,5 @@
-#= require simple_set
 #= require ../object
+#= require simple_set
 #= require ../enumerable
 
 class Batman.Set extends Batman.Object

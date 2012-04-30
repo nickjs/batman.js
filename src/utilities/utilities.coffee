@@ -184,9 +184,9 @@ Batman.escapeHTML = do ->
 
 # `translate` is hook for the i18n extra to override and implemnent. All strings which might
 # be shown to the user pass through this method. `translate` is aliased to `t` internally.
-Batman.translate = (x, values = {}) -> helpers.interpolate(Batman.get(Batman.translate.messages, x), values)
+Batman.translate = (x, values = {}) -> Batman.helpers.interpolate(Batman.get(Batman.translate.messages, x), values)
 Batman.translate.messages = {}
-t = -> Batman.translate(arguments...)
+Batman.t = -> Batman.translate(arguments...)
 
 Batman.redirect = (url) ->
   Batman.navigator?.redirect url
@@ -204,5 +204,5 @@ Batman.initializeObject = (object) ->
   if object._batman?
     object._batman.check(object)
   else
-    object._batman = new _Batman(object)
+    object._batman = new Batman._Batman(object)
 

@@ -144,8 +144,8 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
     # Rewrite [] style gets, replace quotes to be JSON friendly, and split the string by pipes to see if there are any filters.
     keyPath = @keyPath
-    keyPath = keyPath.replace(get_dot_rx, "]['Batman.1']") while get_dot_rx.test(keyPath)  # Stupid lack of lookbehind assertions...
-    filters = keyPath.replace(get_rx, " | get Batman.1 ").replace(/'/g, '"').split(/(?!")\s+\|\s+(?!")/)
+    keyPath = keyPath.replace(get_dot_rx, "]['$1']") while get_dot_rx.test(keyPath)  # Stupid lack of lookbehind assertions...
+    filters = keyPath.replace(get_rx, " | get $1 ").replace(/'/g, '"').split(/(?!")\s+\|\s+(?!")/)
 
     # The key will is always the first token before the pipe.
     try

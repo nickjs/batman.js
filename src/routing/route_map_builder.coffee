@@ -53,8 +53,8 @@ class Batman.RouteMapBuilder
       delete options.only
 
     for resourceName in resourceNames
-      resourceRoot = helpers.pluralize(resourceName)
-      controller = helpers.camelize(resourceRoot, true)
+      resourceRoot = Batman.helpers.pluralize(resourceName)
+      controller = Batman.helpers.camelize(resourceRoot, true)
       childBuilder = @_childBuilder({controller})
 
       # Call the callback so that routes defined within it are matched
@@ -130,14 +130,14 @@ class Batman.RouteMapBuilder
       .replace(/\/+/g, '_')
       .replace(/(^_)|(_$)/g, '')
 
-    name = helpers.camelize(underscored)
+    name = Batman.helpers.camelize(underscored)
     name.charAt(0).toLowerCase() + name.slice(1)
 
   _nestingPath: ->
     unless @parent
       ""
     else
-      nestingParam = ":" + helpers.singularize(@baseOptions.controller) + "Id"
+      nestingParam = ":" + Batman.helpers.singularize(@baseOptions.controller) + "Id"
       "#{@parent._nestingPath()}/#{@baseOptions.controller}/#{nestingParam}/"
 
   _nestingName: ->

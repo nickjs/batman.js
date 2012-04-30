@@ -8,7 +8,6 @@
 
 (->
   cli = require './cli'
-  Batman = require '../lib/batman.js'
   global.RUNNING_IN_BATMAN = true
   # List of commands for use in the multiple `cli.parse` calls below.
   Commands = ['server', 'generate', 'new']

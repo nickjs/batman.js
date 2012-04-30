@@ -1,4 +1,3 @@
-
 if module?.exports
   exports = module.exports
   container = global

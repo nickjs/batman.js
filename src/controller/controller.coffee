@@ -1,9 +1,10 @@
-#= require object
+#= require ../object
+#= require render_cache
 
 class Batman.Controller extends Batman.Object
   @singleton 'sharedController'
 
-  @accessor 'controllerName', -> @_controllerName ||= helpers.underscore(Batman.functionName(@constructor).replace('Controller', ''))
+  @accessor 'controllerName', -> @_controllerName ||= Batman.helpers.underscore(Batman.functionName(@constructor).replace('Controller', ''))
   @accessor '_renderContext', -> Batman.RenderContext.root().descend(@)
 
   _optionsFromFilterArguments = (options, nameOrFunction) ->
@@ -114,9 +115,9 @@ class Batman.Controller extends Batman.Object
     @_renderedYields?[options.into] = true
 
     if not options.view
-      options.viewClass ||= Batman.currentApp?[helpers.camelize("#{@get('controllerName')}_#{action}_view")] || Batman.View
+      options.viewClass ||= Batman.currentApp?[Batman.helpers.camelize("#{@get('controllerName')}_#{action}_view")] || Batman.View
       options.context ||= @get('_renderContext')
-      options.source ||= helpers.underscore(@get('controllerName') + '/' + action)
+      options.source ||= Batman.helpers.underscore(@get('controllerName') + '/' + action)
       view = @renderCache.viewForOptions(options)
     else
       view = options.view

@@ -1,6 +1,7 @@
+#= require _batman
 #= require event_emitter/event_emitter
 #= require observable/observable
-#= require _batman
+#= require hash/simple_hash
 
 # `Batman.Object` is the base class for all other Batman objects. It is not abstract.
 class BatmanObject extends Object
@@ -99,7 +100,7 @@ class BatmanObject extends Object
   wrapAccessor: @_defineWrapAccessor
 
   constructor: (mixins...) ->
-    @_batman = new _Batman(@)
+    @_batman = new Batman._Batman(@)
     @mixin mixins...
 
   # Make every subclass and their instances observable.
