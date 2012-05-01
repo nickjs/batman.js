@@ -2714,33 +2714,6 @@ class Batman.Model extends Batman.Object
         developer.error("Please define className on the class or storageKey on the prototype of #{$functionName(@)} in order for your model to be minification safe.") if Batman.config.minificationErrors
         Batman.helpers.underscore($functionName(@))
 
-  @urlNestsUnder: (keys...) ->
-    parents = {}
-    for key in keys
-      parents[key + '_id'] = Batman.helpers.pluralize(key)
-    childSegment = helpers.pluralize(@get('resourceName').toLowerCase())
-
-    @url = (options) ->
-      for key, plural of parents
-        parentID = options.data[key]
-        if parentID
-          delete options.data[key]
-          return "#{plural}/#{parentID}/#{childSegment}"
-      return childSegment
-
-    @::url = ->
-      for key, plural of parents
-        parentID = @dirtyKeys.get(key)
-        if parentID is undefined
-          parentID = @get(key)
-        if parentID
-          url = "#{plural}/#{parentID}/#{childSegment}"
-          break
-      url ||= childSegment
-      if id = @get('id')
-        url += '/' + id
-      url
-
   # ### Query methods
   @classAccessor 'all',
     get: ->
@@ -3982,15 +3955,15 @@ class Batman.RestStorage extends Batman.StorageAdapter
       parents = {}
       for key in keys
         parents[key + '_id'] = Batman.helpers.pluralize(key)
-      children = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
+      childSegment = helpers.pluralize(@get('resourceName').toLowerCase())
 
       @url = (options) ->
         for key, plural of parents
           parentID = options.data[key]
           if parentID
             delete options.data[key]
-            return "#{plural}/#{parentID}/#{children}"
-        return children
+            return "#{plural}/#{parentID}/#{childSegment}"
+        return childSegment
 
       @::url = ->
         for key, plural of parents
@@ -3998,9 +3971,9 @@ class Batman.RestStorage extends Batman.StorageAdapter
           if parentID is undefined
             parentID = @get(key)
           if parentID
-            url = "#{plural}/#{parentID}/#{children}"
+            url = "#{plural}/#{parentID}/#{childSegment}"
             break
-        url ||= children
+        url ||= childSegment
         if id = @get('id')
           url += '/' + id
         url
