@@ -2711,7 +2711,7 @@ class Batman.Model extends Batman.Object
       if @resourceName?
         @resourceName
       else
-        developer.error("Please define className on the class or storageKey on the prototype of #{$functionName(@)} in order for your model to be minification safe.") if Batman.config.minificationErrors
+        developer.error("Please define #{$functionName(@)}.resourceName in order for your model to be minification safe.") if Batman.config.minificationErrors
         Batman.helpers.underscore($functionName(@))
 
   # ### Query methods
