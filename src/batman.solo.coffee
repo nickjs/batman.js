@@ -426,8 +426,10 @@ buildParams = (prefix, obj, add) ->
 
 Batman.Request::_parseResponseHeaders = (xhr) ->
   headers = xhr.getAllResponseHeaders().split('\n').reduce((acc, header) ->
-    [key, value] = header.split(':')
-    acc[key]
+    if matches = header.match(/([^:]*):\s*(.*)/)
+      key = matches[1]
+      value = matches[2]
+      acc[key] = value
     acc
   , {})
 
