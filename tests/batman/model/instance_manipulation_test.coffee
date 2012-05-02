@@ -102,6 +102,19 @@ test "callbacks passed to load with options should not be pipelined into the sam
   QUnit.raises (-> product.load({id: 2}, (err, product) -> throw err if err))
   QUnit.raises (-> product.load({id: 1}, (err, product )-> throw err if err))
 
+asyncTest "load calls in an accessor will have no sources", ->
+  obj = Batman()
+  product = new @Product(1)
+  callCount = 0
+  obj.accessor 'foo', =>
+    callCount += 1
+    product.load (err, product) ->
+      throw err if err
+      delay ->
+        equal callCount, 1
+  obj.get('foo')
+  equal obj.property('foo').sources.length, 0
+
 QUnit.module "Batman.Model instance saving"
   setup: ->
     class @Product extends Batman.Model
@@ -210,6 +223,19 @@ asyncTest "string ids are coerced into integers when possible", ->
       equal foundProduct, product
       QUnit.start()
 
+asyncTest "save calls in an accessor will have no sources", ->
+  obj = Batman()
+  product = new @Product(1)
+  callCount = 0
+  obj.accessor 'foo', =>
+    callCount += 1
+    product.save (err, product) ->
+      throw err if err
+      delay ->
+        equal callCount, 1
+  obj.get('foo')
+  equal obj.property('foo').sources.length, 0
+
 QUnit.module "Batman.Model instance destruction"
   setup: ->
     class @Product extends Batman.Model
@@ -247,3 +273,35 @@ asyncTest "model instances which don't exist in the store shouldn't be destroyab
     ok err
     QUnit.start()
 
+asyncTest "destroy calls in an accessor will have no sources", ->
+  obj = Batman()
+  product = new @Product(10)
+  callCount = 0
+  obj.accessor 'foo', =>
+    callCount += 1
+    product.destroy (err) ->
+      throw err if err
+      delay ->
+        equal callCount, 1
+  obj.get('foo')
+  equal obj.property('foo').sources.length, 0
+
+QUnit.module "Batman.Model instance validation"
+  setup: ->
+    class @Product extends Batman.Model
+      @encode 'name', 'cost'
+
+    @adapter = new AsyncTestStorageAdapter(@Product)
+    @Product.persist @adapter
+
+asyncTest "validate calls in an accessor will have no sources", ->
+  obj = Batman()
+  product = new @Product(1)
+  callCount = 0
+  obj.accessor 'foo', =>
+    callCount += 1
+    product.validate (err) ->
+      delay ->
+        equal callCount, 1
+  obj.get('foo')
+  equal obj.property('foo').sources.length, 0

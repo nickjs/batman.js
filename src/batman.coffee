@@ -539,12 +539,14 @@ class Batman.Property
       base.property(key)
     else
       new Batman.Keypath(base, key)
-  @withoutTracking: (block) ->
-    @pushDummySourceTracker()
-    try
-      block()
-    finally
-      @popSourceTracker()
+  @withoutTracking: (block) -> @wrapTrackingPrevention(block)()
+  @wrapTrackingPrevention: (block) ->
+    ->
+      Batman.Property.pushDummySourceTracker()
+      try
+        block.apply(@, arguments)
+      finally
+        Batman.Property.popSourceTracker()
   @registerSource: (obj) ->
     return unless obj.isEventEmitter
     @sourceTracker()?.add(obj)
@@ -1595,7 +1597,7 @@ class Batman.StateMachine extends Batman.Object
   onEnter: (into, callback) -> @on("enter #{into}", callback)
   onExit: (from, callback) -> @on("exit #{from}", callback)
 
-  startTransition: (event) ->
+  startTransition: Batman.Property.wrapTrackingPrevention (event) ->
     if @isTransitioning
       @nextEvents.push event
       return
@@ -2801,6 +2803,9 @@ class Batman.Model extends Batman.Object
     adapter = @::_batman.get('storage')
     adapter.perform(operation, @, options, callback)
 
+  for functionName in ['find', 'load', 'create']
+    @[functionName] = Batman.Property.wrapTrackingPrevention(@[functionName])
+
   # Each model instance (each record) can be in one of many states throughout its lifetime. Since various
   # operations on the model are asynchronous, these states are used to indicate exactly what point the
   # record is at in it's lifetime, which can often be during a save or load operation.
@@ -2830,6 +2835,7 @@ class Batman.Model extends Batman.Object
       error:
         from: ['saving', 'creating', 'loading', 'destroying']
         to: 'error'
+
 
   # ### Record API
 
@@ -3071,6 +3077,9 @@ class Batman.Model extends Batman.Object
     adapter.perform operation, @, options, =>
       callback(arguments...)
       @_pauseDirtyTracking = false
+
+  for functionName in ['load', 'save', 'validate', 'destroy', 'fromJSON']
+    @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])
 
 # ## Associations
 class Batman.AssociationProxy extends Batman.Object
@@ -3314,12 +3323,11 @@ class Batman.SingularAssociation extends Batman.Association
 class Batman.PluralAssociation extends Batman.Association
   isSingular: false
 
-  setForRecord: (record) ->
-    Batman.Property.withoutTracking =>
-      if id = record.get(@primaryKey)
-        @setIndex().get(id)
-      else
-        new Batman.AssociationSet(undefined, @)
+  setForRecord: Batman.Property.wrapTrackingPrevention (record) ->
+    if id = record.get(@primaryKey)
+      @setIndex().get(id)
+    else
+      new Batman.AssociationSet(undefined, @)
 
   getAccessor: (self, model, label) ->
     return unless self.getRelatedModel()

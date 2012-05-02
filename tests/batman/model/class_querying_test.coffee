@@ -67,6 +67,18 @@ asyncTest "models will find instances even if the constructor is overridden", ->
       equal LiskovsEnemy.get('loaded').length, 1
       QUnit.start()
 
+asyncTest "find calls in an accessor will have no sources", ->
+  obj = Batman()
+  callCount = 0
+  obj.accessor 'foo', =>
+    callCount += 1
+    @Product.find 1, (err, product, env) ->
+      throw err if err
+      delay ->
+        equal callCount, 1
+  obj.get('foo')
+  equal obj.property('foo').sources.length, 0
+
 QUnit.module "Batman.Model class findOrCreating"
   setup: ->
     class @Product extends Batman.Model
@@ -191,3 +203,15 @@ test "models without storage adapters should throw errors when trying to be load
   class Silly extends Batman.Model
   raises ->
     Silly.load()
+
+asyncTest "load calls in an accessor will have no sources", ->
+  obj = Batman()
+  callCount = 0
+  obj.accessor 'foo', =>
+    callCount += 1
+    @Product.load (err, product, env) ->
+      throw err if err
+      delay ->
+        equal callCount, 1
+  obj.get('foo')
+  equal obj.property('foo').sources.length, 0
