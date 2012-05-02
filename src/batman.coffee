@@ -1659,7 +1659,7 @@ class Batman.Request extends Batman.Object
     formData
 
   @dataHasFileUploads: dataHasFileUploads = (data) ->
-    return true if data instanceof File
+    return true if File? and data instanceof File
     type = $typeOf(data)
     switch type
       when 'Object'
