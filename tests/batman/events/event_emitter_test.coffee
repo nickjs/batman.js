@@ -13,7 +13,7 @@ test "on attaches handlers which get called during firing", ->
   ok spy.called
 
 test "once attaches handlers which get called during firing and then remove themselves", ->
-  @ottawaWeather.once 'rain', spy = createSpy()
+  @ottawaWeather.onFirst 'rain', spy = createSpy()
   @rain.fire()
   equal spy.callCount, 1
   @rain.fire()

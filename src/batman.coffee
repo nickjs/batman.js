@@ -485,7 +485,9 @@ Batman.EventEmitter =
       newEvent
   on: (key, handler) ->
     @event(key).addHandler(handler)
-  once: (key, originalHandler) ->
+  off: (key, handler) ->
+    @event(key).removeHandler(handler)
+  onFirst: (key, originalHandler) ->
     event = @event(key)
     handler = ->
       originalHandler.apply(@, arguments)
@@ -682,6 +684,14 @@ class Batman.Property
     @changeEvent().addHandler(handler)
     @getValue() unless @sources?
     this
+  observeFirst: (originalHandler) ->
+    event = @changeEvent()
+    handler = ->
+      originalHandler.apply(@, arguments)
+      event.removeHandler(handler)
+    event.addHandler(handler)
+    @getValue() unless @sources?
+    this
 
   _removeHandlers: ->
     handler = @sourceChangeHandler()
@@ -787,6 +797,10 @@ Batman.Observable =
 
   observeAndFire: (key, args...) ->
     @property(key).observeAndFire(args...)
+    @
+
+  observeFirst: (key, args...) ->
+    @property(key).observeFirst(args...)
     @
 
 # Objects
@@ -2981,16 +2995,16 @@ class Batman.Model extends Batman.Object
     if @get('lifecycle').get('state') in ['destroying', 'destroyed']
       callback?(new Error("Can't save a destroyed record!"))
       return
+
     isNew = @isNew()
     [startState, storageOperation, endState] = if isNew then ['create', 'create', 'created'] else ['save', 'update', 'saved']
+
     @validate (error, errors) =>
       if error || errors.length
         callback?(error || errors)
         return
-      creating = @isNew()
 
       if @get('lifecycle').startTransition startState
-
         associations = @constructor._batman.get('associations')
         # Save belongsTo models immediately since we don't need this model's id
         @_pauseDirtyTracking = true
