@@ -2743,7 +2743,7 @@ class Batman.Model extends Batman.Object
   @find: (id, callback) ->
     developer.assert callback, "Must call find with a callback!"
     record = new @()
-    record.set 'id', id
+    record._withoutDirtyTracking -> @set 'id', id
     record.load callback
     return record
 
@@ -2792,11 +2792,12 @@ class Batman.Model extends Batman.Object
     else
       existing = @get("loaded.indexedBy.id").get(id)?.toArray()[0]
       if existing
-        existing.updateAttributes(record.get('attributes')?.toObject() || {})
-        return existing
+        existing._withoutDirtyTracking ->
+          @updateAttributes(record.get('attributes')?.toObject() || {})
+        existing
       else
         @get('loaded').add(record)
-        return record
+        record
 
   @_doStorageOperation: (operation, options, callback) ->
     developer.assert @::hasStorage(), "Can't #{operation} model #{$functionName(@constructor)} without any storage adapters!"
@@ -2993,16 +2994,17 @@ class Batman.Model extends Batman.Object
 
         associations = @constructor._batman.get('associations')
         # Save belongsTo models immediately since we don't need this model's id
-        @_pauseDirtyTracking = true
-        associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(@)
-        @_pauseDirtyTracking = false
+        @_withoutDirtyTracking ->
+          associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(@)
 
         @_doStorageOperation storageOperation, {data: options}, (err, record, env) =>
           unless err
             @get('dirtyKeys').clear()
+
             if associations
-              associations.getByType('hasOne')?.forEach (association, label) -> association.apply(err, record)
-              associations.getByType('hasMany')?.forEach (association, label) -> association.apply(err, record)
+              record._withoutDirtyTracking ->
+                associations.getByType('hasOne')?.forEach (association, label) -> association.apply(err, record)
+                associations.getByType('hasMany')?.forEach (association, label) -> association.apply(err, record)
             record = @constructor._mapIdentity(record)
             @get('lifecycle').startTransition endState
           else
@@ -3073,12 +3075,16 @@ class Batman.Model extends Batman.Object
   _doStorageOperation: (operation, options, callback) ->
     developer.assert @hasStorage(), "Can't #{operation} model #{$functionName(@constructor)} without any storage adapters!"
     adapter = @_batman.get('storage')
-    @_pauseDirtyTracking = true
     adapter.perform operation, @, options, =>
       callback(arguments...)
-      @_pauseDirtyTracking = false
 
-  for functionName in ['load', 'save', 'validate', 'destroy', 'fromJSON']
+  _withoutDirtyTracking: (block) ->
+    @_pauseDirtyTracking = true
+    result = block.call(@)
+    @_pauseDirtyTracking = false
+    result
+
+  for functionName in ['load', 'save', 'validate', 'destroy']
     @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])
 
 # ## Associations
@@ -3382,7 +3388,7 @@ class Batman.BelongsToAssociation extends Batman.SingularAssociation
       decode: (data, _, __, ___, childRecord) ->
         relatedModel = association.getRelatedModel()
         record = new relatedModel()
-        record.fromJSON(data)
+        record._withoutDirtyTracking -> @fromJSON(data)
         record = relatedModel._mapIdentity(record)
         if association.options.inverseOf
           if inverse = association.inverse()
@@ -3482,7 +3488,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
         foreignTypeValue = response[association.foreignTypeKey] || childRecord.get(association.foreignTypeKey)
         relatedModel = association.getRelatedModelForType(foreignTypeValue)
         record = new relatedModel()
-        record.fromJSON(data)
+        record._withoutDirtyTracking -> @fromJSON(data)
         record = relatedModel._mapIdentity(record)
         if association.options.inverseOf
           if inverse = association.inverseForType(foreignTypeValue)
@@ -3524,7 +3530,7 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
       decode: (data, _, __, ___, parentRecord) ->
         relatedModel = association.getRelatedModel()
         record = new (relatedModel)()
-        record.fromJSON(data)
+        record._withoutDirtyTracking -> @fromJSON(data)
         if association.options.inverseOf
           record.set association.options.inverseOf, parentRecord
         record = relatedModel._mapIdentity(record)
@@ -3575,14 +3581,12 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
             record.fromJSON jsonObject
             existingRecord = relatedModel.get('loaded').indexedByUnique(association.foreignKey).get(record.get('id'))
             if existingRecord?
-              existingRecord._pauseDirtyTracking = true
-              existingRecord.fromJSON jsonObject
-              existingRecord._pauseDirtyTracking = false
+              existingRecord._withoutDirtyTracking -> @fromJSON jsonObject
               record = existingRecord
             else
               if newRelations.length > 0
                 savedRecord = newRelations.shift()
-                savedRecord.fromJSON jsonObject
+                savedRecord._withoutDirtyTracking -> @fromJSON jsonObject
                 record = savedRecord
             record = relatedModel._mapIdentity(record)
             existingRelations.add record
@@ -3766,7 +3770,7 @@ class Batman.StorageAdapter extends Batman.Object
 
   getRecordFromData: (attributes, constructor = @model) ->
     record = new constructor()
-    record.fromJSON(attributes)
+    record._withoutDirtyTracking -> @fromJSON(attributes)
     record
 
   @skipIfError: (f) ->
@@ -3898,7 +3902,7 @@ class Batman.LocalStorage extends Batman.StorageAdapter
       catch error
         env.error = error
         return next()
-    env.subject.fromJSON env.recordAttributes
+    env.subject._withoutDirtyTracking -> @fromJSON env.recordAttributes
     next()
 
   @::after 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
@@ -4114,7 +4118,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         env.json[namespace]
       else
         env.json
-      env.subject.fromJSON(json)
+      env.subject._withoutDirtyTracking -> @fromJSON(json)
     env.result = env.subject
     next()
 

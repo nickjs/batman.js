@@ -249,7 +249,7 @@ asyncTest "unsaved hasMany models should save their associated children", 4, ->
   # Mock out what a realbackend would do: assign ids to the child records
   # The TestStorageAdapter is smart enough to do this for the parent, but not the children.
   @productAdapter.create = (record, options, callback) ->
-    id = record.set('id', @counter++)
+    id = @_setRecordID(record)
     if id
       @storage[@storageKey(record) + id] = record.toJSON()
       record.fromJSON
@@ -286,7 +286,7 @@ asyncTest "unsaved hasMany models should reflect their associated children after
   # Mock out what a realbackend would do: assign ids to the child records
   # The TestStorageAdapter is smart enough to do this for the parent, but not the children.
   @productAdapter.create = (record, options, callback) ->
-    id = record.set('id', @counter++)
+    id = @_setRecordID(record)
     if id
       @storage[@storageKey(record) + id] = record.toJSON()
       record.fromJSON

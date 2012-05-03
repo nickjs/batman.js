@@ -8,6 +8,9 @@ class TestStorageAdapter extends Batman.StorageAdapter
     @create(new @model, {}, ->) if @constructor.autoCreate
     @env = {}
 
+  _setRecordID: (record) ->
+    record._withoutDirtyTracking => record.set('id', @counter++)
+
   update: (record, options, callback) ->
     id = record.get('id')
     if id
@@ -17,10 +20,10 @@ class TestStorageAdapter extends Batman.StorageAdapter
       callback(new Error("Couldn't get record primary key."))
 
   create: (record, options, callback) ->
-    id = record.set('id', @counter++)
+    id = @_setRecordID(record)
     if id
       @storage[@storageKey(record) + id] = record.toJSON()
-      record.fromJSON {id: id}
+      record._withoutDirtyTracking -> @fromJSON {id: id}
       callback(undefined, record, @env)
     else
       callback(new Error("Couldn't get record primary key."))
@@ -30,7 +33,7 @@ class TestStorageAdapter extends Batman.StorageAdapter
     if id
       attrs = @storage[@storageKey(record) + id]
       if attrs
-        record.fromJSON(attrs)
+        record._withoutDirtyTracking -> @fromJSON(attrs)
         callback(undefined, record, @env)
       else
         callback(new Error("Couldn't find record!"))
