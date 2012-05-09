@@ -78,7 +78,7 @@ test "routes should build paths with query parameters", 3, ->
   equal @route.pathFromParams({id: 1, page: 3, limit: 10}), "/books/3?id=1&limit=10"
 
   @route = new Batman.Route "/welcome", {}
-  equal @route.pathFromParams({"the phrase": "a phrase with spaces"}), "/welcome?the%20phrase=a%20phrase%20with%20spaces"
+  equal @route.pathFromParams({"the phrase": "a phrase with spaces"}), "/welcome?the+phrase=a+phrase+with+spaces"
 
 test "routes should parse paths with query parameters", ->
   route = new Batman.Route "/welcome", {}

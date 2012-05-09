@@ -1807,9 +1807,8 @@ class Batman.Route extends Batman.Object
 
     for key in @testKeys
       delete params[key]
-    # Append the rest of the params as a query string
-    e = encodeURIComponent
-    query = ("#{e(key)}=#{e(value)}" for key, value of params).join("&")
+
+    query = Batman.URI.queryFromParams(params)
     path += "?#{query}" if query
 
     path
