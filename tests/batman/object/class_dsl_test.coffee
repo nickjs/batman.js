@@ -46,27 +46,29 @@ test "@wrapAccessor calls the given function with the existing accessor, and mer
   class PlusOne extends Batman.Object
     @wrapAccessor (core) ->
       get: (key) -> core.get.apply(this, arguments) + 1
-  
+      set: (key, value) -> core.set.call(@, key, value + 1)
+
   example = new PlusOne
   example.set('foo', 1)
-  equal example.foo, 1
-  equal example.get('foo'), 2
+  equal example.foo, 2
+  equal example.get('foo'), 3
 
 test "@wrapAccessor can be passed an accessor object directly instead of an accessor-returning function", ->
   class PlusOne extends Batman.Object
     @wrapAccessor
+      get: (key) -> @[key] + 1
       set: (key, val) -> @[key] = val + 1
-  
+
   example = new PlusOne
   example.set('foo', 1)
   equal example.foo, 2
-  equal example.get('foo'), 2
+  equal example.get('foo'), 3
 
 test "@wrapAccessor can be given a wrapper function for specific keys", ->
   class PlusOne extends Batman.Object
     @wrapAccessor 'foo', 'bar', (core) ->
       set: (key, val) -> core.set.call(this, key, val+1)
-  
+
   example = new PlusOne
   example.set('foo', 1)
   equal example.foo, 2
@@ -82,7 +84,7 @@ test "@wrapAccessor can be given a wrapper object for specific keys", ->
   class PlusOne extends Batman.Object
     @wrapAccessor 'foo', 'bar'
       get: (key) -> @[key] + 1
-  
+
   example = new PlusOne
   example.set('foo', 1)
   equal example.foo, 1
