@@ -1781,24 +1781,17 @@ class Batman.Route extends Batman.Object
 
     super(properties)
 
-  paramsFromPath: (path) ->
-    [path, query] = path.split '?'
+  paramsFromPath: (pathAndQuery) ->
+    uri = new Batman.URI(pathAndQuery)
     namedArguments = @get('namedArguments')
-    params = $extend {path}, @get('baseParams')
+    params = $extend {path: uri.path}, @get('baseParams')
 
-    matches = @get('regexp').exec(path).slice(1)
+    matches = @get('regexp').exec(uri.path).slice(1)
     for match, index in matches
       name = namedArguments[index]
       params[name] = match
 
-    if query
-      query = query.replace(/\+/g, '%20')
-      query = decodeURIComponent(query)
-      for pair in query.split('&')
-        [key, value] = pair.split '='
-        params[key] = value
-
-    params
+    $extend params, uri.queryParams()
 
   pathFromParams: (argumentParams) ->
     params = $extend {}, argumentParams
