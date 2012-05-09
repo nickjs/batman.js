@@ -29,6 +29,7 @@ test "falsey properties can be stored", ->
 test "primary key is undefined on new models", ->
   product = new @Product
   ok product.isNew()
+  ok product.get('isNew')
   equal typeof product.get('id'), 'undefined'
 
 test "primary key is 'id' by default", ->

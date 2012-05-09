@@ -11,11 +11,12 @@ test "new instances start 'clean'", ->
   ok product.isNew()
   equal product.get('lifecycle.state'), 'clean'
 
-asyncTest "loaded instances start 'clean'", 2, ->
+asyncTest "loaded instances start 'clean'", 3, ->
   product = new @Product(10)
   product.load (err, product) ->
     throw err if err
     ok !product.isNew()
+    ok !product.get("isNew")
     equal product.get('lifecycle.state'), 'clean'
     QUnit.start()
 
