@@ -70,9 +70,16 @@ Batman.Filters =
   upcase: buntUndefined (value) ->
     value.toUpperCase()
 
-  pluralize: buntUndefined (string, count, binding) ->
-    if binding
-      Batman.helpers.pluralize(count, string)
+  pluralize: buntUndefined (string, count, includeCount, binding) ->
+    if !binding
+      binding = includeCount
+      includeCount = true
+      if !binding
+        binding = count
+        count = undefined
+
+    if count
+      Batman.helpers.pluralize(count, string, undefined, includeCount)
     else
       Batman.helpers.pluralize(string)
 

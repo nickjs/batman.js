@@ -170,6 +170,17 @@ asyncTest 'pluralize without a count', 1, ->
     equal node.html(), "foos"
     QUnit.start()
 
+asyncTest 'pluralize with a count without including the count', 2, ->
+  context = Batman
+    object: 'foo'
+    count: 2
+
+  helpers.render '<div data-bind="object | pluralize count, false"></div>', context, (node) ->
+    equal node.html(), "foos"
+    context.set 'count', 1
+    equal node.html(), "foo"
+    QUnit.start()
+
 asyncTest 'join', 2, ->
   helpers.render '<div data-bind="foo | join"></div>',
     foo: ['a', 'b', 'c']

@@ -8,7 +8,7 @@ class Batman.Dispatcher extends Batman.Object
 
   @paramsFromArgument: (argument) ->
     resourceNameFromModel = (model) ->
-      Batman.helpers.camelize(Batman.helpers.pluralize(Batman.functionName(model)), true)
+      Batman.helpers.camelize(Batman.helpers.pluralize(model.get('resourceName')), true)
 
     return argument unless @canInferRoute(argument)
 

@@ -95,32 +95,13 @@ class Batman.Model extends Batman.Object
     @_batman.check(@)
     @_batman.lifecycle ||= new @LifecycleStateMachine('empty', @)
 
-  @urlNestsUnder: (keys...) ->
-    parents = {}
-    for key in keys
-      parents[key + '_id'] = Batman.helpers.pluralize(key)
-    childSegment = Batman.helpers.pluralize(Batman._functionName(@).toLowerCase())
-
-    @url = (options) ->
-      for key, plural of parents
-        parentID = options.data[key]
-        if parentID
-          delete options.data[key]
-          return "#{plural}/#{parentID}/#{childSegment}"
-      return childSegment
-
-    @::url = ->
-      for key, plural of parents
-        parentID = @dirtyKeys.get(key)
-        if parentID is undefined
-          parentID = @get(key)
-        if parentID
-          url = "#{plural}/#{parentID}/#{childSegment}"
-          break
-      url ||= childSegment
-      if id = @get('id')
-        url += '/' + id
-      url
+  @classAccessor 'resourceName',
+    get: ->
+      if @resourceName?
+        @resourceName
+      else
+        Batman.developer.error("Please define className on the class or storageKey on the prototype of #{Batman.functionName(@)} in order for your model to be minification safe.") if Batman.config.minificationErrors
+        Batman.helpers.underscore(Batman.functionName(@))
 
   # ### Query methods
   @classAccessor 'all',
@@ -295,7 +276,7 @@ class Batman.Model extends Batman.Object
     @
 
   toString: ->
-    "#{Batman.functionName(@constructor)}: #{@get('id')}"
+    "#{@constructor.get('resourceName')}: #{@get('id')}"
 
   toParam: -> @get('id')
 

@@ -8,6 +8,7 @@ Batman.version = '0.9.0'
 Batman.config =
   pathPrefix: '/'
   usePushState: no
+  minificationErrors: yes
 
 Batman.container = if exports?
   module.exports = Batman

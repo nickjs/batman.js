@@ -101,6 +101,12 @@ test 'options passed to persist should be mixed in to the storage adapter once i
   Order.persist adapter, {baz: 'qux'}
   equal adapter.baz, 'qux'
 
+test "get('resourceName') should use the class level resourceName property", ->
+  class Product extends Batman.Model
+    @resourceName: 'product'
+
+  equal Product.get('resourceName'), 'product'
+
 QUnit.module "Batman.Model class clearing"
   setup: ->
     class @Product extends Batman.Model

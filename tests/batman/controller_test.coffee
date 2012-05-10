@@ -7,6 +7,14 @@ class MockView extends MockClass
   set: ->
   inUse: -> false
 
+QUnit.module 'Batman.Controller'
+
+test "get('routingKey') should use the prototype level routingKey property", ->
+  class ProductsController extends Batman.Controller
+    routingKey: 'products'
+
+  equal (new ProductsController).get('routingKey'), 'products'
+
 QUnit.module 'Batman.Controller render'
   setup: ->
     Batman.Controller::renderCache = new Batman.RenderCache

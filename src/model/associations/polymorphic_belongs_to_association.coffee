@@ -20,7 +20,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
         model = instanceOrProxy.association.model
       else
         model = instanceOrProxy.constructor
-      foreignTypeValue = Batman.functionName(model)
+      foreignTypeValue = model.get('resourceName')
       base.set @foreignTypeKey, foreignTypeValue
 
   getAccessor: (self, model, label) ->
@@ -47,12 +47,14 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
       return "/#{root}/#{id}/#{ending}"
 
   getRelatedModelForType: (type) ->
-      scope = @options.namespace or Batman.currentApp
+    scope = @options.namespace or Batman.currentApp
+    if type
       relatedModel = scope?[type]
-      Batman.developer.do ->
-        if Batman.currentApp? and not relatedModel
-          Batman.developer.warn "Related model #{modelName} for polymorhic association not found."
-      relatedModel
+      relatedModel ||= scope?[Batman.helpers.camelize(type)]
+    Batman.developer.do ->
+      if Batman.currentApp? and not relatedModel
+        Batman.developer.warn "Related model #{type} for polymorhic association not found."
+    relatedModel
 
   setIndexForType: (type) ->
     @typeIndicies[type] ||= new Batman.PolymorphicUniqueAssociationSetIndex(@, type, @primaryKey)

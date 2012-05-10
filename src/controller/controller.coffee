@@ -4,7 +4,13 @@
 class Batman.Controller extends Batman.Object
   @singleton 'sharedController'
 
-  @accessor 'controllerName', -> @_controllerName ||= Batman.helpers.underscore(Batman.functionName(@constructor).replace('Controller', ''))
+  @wrapAccessor 'routingKey', (core) ->
+    get: ->
+      if @routingKey?
+        @routingKey
+      else
+        Batman.developer.error("Please define `routingKey` on the prototype of #{Batman.functionName(@constructor)} in order for your controller to be minification safe.") if Batman.config.minificationErrors
+        Batman.functionName(@constructor).replace(/Controller$/, '')
   @accessor '_renderContext', -> Batman.RenderContext.root().descend(@)
 
   _optionsFromFilterArguments = (options, nameOrFunction) ->
@@ -32,7 +38,7 @@ class Batman.Controller extends Batman.Object
     filters = @_batman.afterFilters ||= new Batman.SimpleHash
     filters.set(options.block, options)
 
-  contstructor: ->
+  constructor: ->
     @_renderedYields = {}
     @_actionFrames = []
     super
@@ -42,7 +48,7 @@ class Batman.Controller extends Batman.Object
   # You shouldn't call this method directly. It will be called by the dispatcher when a route is called.
   # If you need to call a route manually, use `Batman.redirect()`.
   dispatch: (action, params = {}) ->
-    params.controller ||= @get 'controllerName'
+    params.controller ||= @get 'routingKey'
     params.action ||= action
     params.target ||= @
 
@@ -62,7 +68,7 @@ class Batman.Controller extends Batman.Object
     Batman.redirect(redirectTo) if redirectTo
 
   executeAction: (action, params = @get('params')) ->
-    Batman.developer.assert @[action], "Error! Controller action #{@get 'controllerName'}.#{action} couldn't be found!"
+    Batman.developer.assert @[action], "Error! Controller action #{@get 'routingKey'}.#{action} couldn't be found!"
 
     @_actionFrames.push frame = {actionTaken: false, action: action}
 
@@ -84,7 +90,7 @@ class Batman.Controller extends Batman.Object
 
     if frame
       if frame.actionTaken
-        Batman.developer.warn "Warning! Trying to redirect but an action has already be taken during #{@get('controllerName')}.#{frame.action || @get('action')}}"
+        Batman.developer.warn "Warning! Trying to redirect but an action has already be taken during #{@get('routingKey')}.#{frame.action || @get('action')}}"
 
       frame.actionTaken = true
 
@@ -106,7 +112,7 @@ class Batman.Controller extends Batman.Object
       options.into ||= 'main'
 
     if frame && frame.actionTaken && @_renderedYields[options.into]
-      Batman.developer.warn "Warning! Trying to render but an action has already be taken during #{@get('controllerName')}.#{action} on yield #{options.into}"
+      Batman.developer.warn "Warning! Trying to render but an action has already be taken during #{@get('routingKey')}.#{action} on yield #{options.into}"
 
     # Ensure the frame is marked as having had an action executed so that render false prevents the implicit render.
     frame?.actionTaken = true
@@ -115,9 +121,9 @@ class Batman.Controller extends Batman.Object
     @_renderedYields?[options.into] = true
 
     if not options.view
-      options.viewClass ||= Batman.currentApp?[Batman.helpers.camelize("#{@get('controllerName')}_#{action}_view")] || Batman.View
+      options.viewClass ||= Batman.currentApp?[Batman.helpers.camelize("#{@get('routingKey')}_#{action}_view")] || Batman.View
       options.context ||= @get('_renderContext')
-      options.source ||= Batman.helpers.underscore(@get('controllerName') + '/' + action)
+      options.source ||= Batman.helpers.underscore(@get('routingKey') + '/' + action)
       view = @renderCache.viewForOptions(options)
     else
       view = options.view

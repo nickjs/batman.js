@@ -12,8 +12,11 @@
     <script type="text/javascript" src="../../lib/es5-shim.js"></script>
 
     #{ js('/src/batman.js') }
+
     #{ js('/src/extras/batman.rails.js') }
+
     #{ js('/src/extras/batman.i18n.js') }
+
     #{ js('/src/extras/batman.paginator.js') }
 
     #{ js('/tests/batman/tests.js') }

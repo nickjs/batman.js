@@ -19,7 +19,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
 
   getRelatedModelForType: -> @getRelatedModel()
 
-  modelType: -> Batman.functionName(@model)
+  modelType: -> @model.get('resourceName')
 
   setIndex: ->
     if !@typeIndex

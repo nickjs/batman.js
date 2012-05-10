@@ -24,7 +24,7 @@ applyExtra = (Batman) ->
     @disable: ->
       Batman.translate = @_oldTranslation
 
-    constructor: -> developer.error "Can't instantiate i18n!"
+    constructor: -> Batman.developer.error "Can't instantiate i18n!"
 
   class Batman.I18N.LocalesStorage extends Batman.Object
     constructor: ->

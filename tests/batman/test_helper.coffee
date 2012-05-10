@@ -15,6 +15,7 @@ globalPreparation = ->
     throw new Error("Ensure test App classes have @layout: null so they don't render the page!") unless @layout == null
     oldRun.apply(@, arguments...)
   Batman.exportGlobals(container)
+  Batman.config.minificationErrors = false
 
 QUnit.moduleStart ->
   globalPreparation?();
