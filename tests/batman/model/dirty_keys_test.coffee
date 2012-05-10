@@ -4,6 +4,7 @@ QUnit.module "Batman.Model dirty key tracking",
   setup: ->
     Batman.developer.suppress()
     class @Product extends Batman.Model
+      @encode "foo"
       @persist TestStorageAdapter
   teardown: ->
     Batman.developer.unsuppress()
@@ -31,3 +32,25 @@ asyncTest "saving clears dirty keys", ->
     notEqual(product.lifecycle.get('state'), 'dirty')
     QUnit.start()
 
+asyncTest "no keys are dirty upon class load", ->
+  @Product.load (err, products) ->
+    throw err if err
+    product = products.pop()
+    equal(product.get('dirtyKeys').length, 0)
+    equal(product.get('lifecycle.state'), 'clean')
+    QUnit.start()
+
+asyncTest "no keys are dirty upon class find", ->
+  @Product.find 10, (err, product) =>
+    throw err if err
+    equal(product.get('dirtyKeys').length, 0)
+    equal(product.get('lifecycle.state'), 'clean')
+    QUnit.start()
+
+asyncTest "no keys are dirty upon instance load", ->
+  @Product.find 10, (err, product) =>
+    throw err if err
+    product.load (err, product) ->
+      equal(product.get('dirtyKeys').length, 0)
+      equal(product.get('lifecycle.state'), 'clean')
+      QUnit.start()

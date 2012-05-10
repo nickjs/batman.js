@@ -173,3 +173,4 @@ asyncTest "errors set contents should be bindable", 4, ->
     equal errors.length, 1, 'the validation shouldn\'t succeed'
     equal @someObject.get('productNameErrorsLength'), 1, 'the foreign key should have updated'
     QUnit.start()
+

@@ -32,7 +32,7 @@ class Batman.StorageAdapter extends Batman.Object
 
   getRecordFromData: (attributes, constructor = @model) ->
     record = new constructor()
-    record.fromJSON(attributes)
+    record._withoutDirtyTracking -> @fromJSON(attributes)
     record
 
   @skipIfError: (f) ->

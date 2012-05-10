@@ -26,12 +26,14 @@ class Batman.Property
       base.property(key)
     else
       new Batman.Keypath(base, key)
-  @withoutTracking: (block) ->
-    @pushDummySourceTracker()
-    try
-      block()
-    finally
-      @popSourceTracker()
+  @withoutTracking: (block) -> @wrapTrackingPrevention(block)()
+  @wrapTrackingPrevention: (block) ->
+    ->
+      Batman.Property.pushDummySourceTracker()
+      try
+        block.apply(@, arguments)
+      finally
+        Batman.Property.popSourceTracker()
   @registerSource: (obj) ->
     return unless obj.isEventEmitter
     @sourceTracker()?.add(obj)

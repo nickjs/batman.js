@@ -32,7 +32,7 @@ class Batman.StateMachine extends Batman.Object
   onEnter: (into, callback) -> @on("enter #{into}", callback)
   onExit: (from, callback) -> @on("exit #{from}", callback)
 
-  startTransition: (event) ->
+  startTransition: Batman.Property.wrapTrackingPrevention (event) ->
     if @isTransitioning
       @nextEvents.push event
       return

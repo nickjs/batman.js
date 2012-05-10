@@ -170,7 +170,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         env.json[namespace]
       else
         env.json
-      env.subject.fromJSON(json)
+      env.subject._withoutDirtyTracking -> @fromJSON(json)
     env.result = env.subject
     next()
 

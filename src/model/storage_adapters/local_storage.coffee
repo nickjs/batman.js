@@ -64,7 +64,7 @@ class Batman.LocalStorage extends Batman.StorageAdapter
       catch error
         env.error = error
         return next()
-    env.subject.fromJSON env.recordAttributes
+    env.subject._withoutDirtyTracking -> @fromJSON env.recordAttributes
     next()
 
   @::after 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->

@@ -41,17 +41,15 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
           newRelations = existingRelations.filter((relation) -> relation.isNew()).toArray()
           for jsonObject in data
             record = new relatedModel()
-            record.fromJSON jsonObject
+            record._withoutDirtyTracking -> @fromJSON(jsonObject)
             existingRecord = relatedModel.get('loaded').indexedByUnique(association.foreignKey).get(record.get('id'))
             if existingRecord?
-              existingRecord._pauseDirtyTracking = true
-              existingRecord.fromJSON jsonObject
-              existingRecord._pauseDirtyTracking = false
+              existingRecord._withoutDirtyTracking -> @fromJSON jsonObject
               record = existingRecord
             else
               if newRelations.length > 0
                 savedRecord = newRelations.shift()
-                savedRecord.fromJSON jsonObject
+                savedRecord._withoutDirtyTracking -> @fromJSON jsonObject
                 record = savedRecord
             record = relatedModel._mapIdentity(record)
             existingRelations.add record

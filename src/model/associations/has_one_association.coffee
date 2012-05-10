@@ -25,7 +25,7 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
       decode: (data, _, __, ___, parentRecord) ->
         relatedModel = association.getRelatedModel()
         record = new (relatedModel)()
-        record.fromJSON(data)
+        record._withoutDirtyTracking -> @fromJSON(data)
         if association.options.inverseOf
           record.set association.options.inverseOf, parentRecord
         record = relatedModel._mapIdentity(record)

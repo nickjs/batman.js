@@ -3,12 +3,11 @@
 class Batman.PluralAssociation extends Batman.Association
   isSingular: false
 
-  setForRecord: (record) ->
-    Batman.Property.withoutTracking =>
-      if id = record.get(@primaryKey)
-        @setIndex().get(id)
-      else
-        new Batman.AssociationSet(undefined, @)
+  setForRecord: Batman.Property.wrapTrackingPrevention (record) ->
+    if id = record.get(@primaryKey)
+      @setIndex().get(id)
+    else
+      new Batman.AssociationSet(undefined, @)
 
   getAccessor: (self, model, label) ->
     return unless self.getRelatedModel()

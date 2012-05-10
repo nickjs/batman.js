@@ -100,7 +100,7 @@ class Batman.Model extends Batman.Object
       if @resourceName?
         @resourceName
       else
-        Batman.developer.error("Please define className on the class or storageKey on the prototype of #{Batman.functionName(@)} in order for your model to be minification safe.") if Batman.config.minificationErrors
+        Batman.developer.error("Please define #{Batman.functionName(@)}.resourceName in order for your model to be minification safe.") if Batman.config.minificationErrors
         Batman.helpers.underscore(Batman.functionName(@))
 
   # ### Query methods
@@ -130,7 +130,7 @@ class Batman.Model extends Batman.Object
   @find: (id, callback) ->
     Batman.developer.assert callback, "Must call find with a callback!"
     record = new @()
-    record.set 'id', id
+    record._withoutDirtyTracking -> @set 'id', id
     record.load callback
     return record
 
@@ -179,16 +179,20 @@ class Batman.Model extends Batman.Object
     else
       existing = @get("loaded.indexedBy.id").get(id)?.toArray()[0]
       if existing
-        existing.updateAttributes(record.get('attributes')?.toObject() || {})
-        return existing
+        existing._withoutDirtyTracking ->
+          @updateAttributes(record.get('attributes')?.toObject() || {})
+        existing
       else
         @get('loaded').add(record)
-        return record
+        record
 
   @_doStorageOperation: (operation, options, callback) ->
     Batman.developer.assert @::hasStorage(), "Can't #{operation} model #{Batman.functionName(@constructor)} without any storage adapters!"
     adapter = @::_batman.get('storage')
     adapter.perform(operation, @, options, callback)
+
+  for functionName in ['find', 'load', 'create']
+    @[functionName] = Batman.Property.wrapTrackingPrevention(@[functionName])
 
   # Each model instance (each record) can be in one of many states throughout its lifetime. Since various
   # operations on the model are asynchronous, these states are used to indicate exactly what point the
@@ -376,16 +380,16 @@ class Batman.Model extends Batman.Object
 
         associations = @constructor._batman.get('associations')
         # Save belongsTo models immediately since we don't need this model's id
-        @_pauseDirtyTracking = true
-        associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(@)
-        @_pauseDirtyTracking = false
+        @_withoutDirtyTracking ->
+          associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(@)
 
         @_doStorageOperation storageOperation, {data: options}, (err, record, env) =>
           unless err
             @get('dirtyKeys').clear()
             if associations
-              associations.getByType('hasOne')?.forEach (association, label) -> association.apply(err, record)
-              associations.getByType('hasMany')?.forEach (association, label) -> association.apply(err, record)
+              record._withoutDirtyTracking ->
+                associations.getByType('hasOne')?.forEach (association, label) -> association.apply(err, record)
+                associations.getByType('hasMany')?.forEach (association, label) -> association.apply(err, record)
             record = @constructor._mapIdentity(record)
             @get('lifecycle').startTransition endState
           else
@@ -456,7 +460,14 @@ class Batman.Model extends Batman.Object
   _doStorageOperation: (operation, options, callback) ->
     Batman.developer.assert @hasStorage(), "Can't #{operation} model #{Batman.functionName(@constructor)} without any storage adapters!"
     adapter = @_batman.get('storage')
-    @_pauseDirtyTracking = true
     adapter.perform operation, @, options, =>
       callback(arguments...)
-      @_pauseDirtyTracking = false
+
+  _withoutDirtyTracking: (block) ->
+    @_pauseDirtyTracking = true
+    result = block.call(@)
+    @_pauseDirtyTracking = false
+    result
+
+  for functionName in ['load', 'save', 'validate', 'destroy']
+    @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])

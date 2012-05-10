@@ -124,3 +124,9 @@ test "accessors should be able to source state", 2, ->
   equal x.get('foo'), 'ON'
   @sm.switch()
   equal x.get('foo'), 'OFF'
+
+test "transitions in accessors shouldn't add sources", ->
+  x = Batman(sm: @sm)
+  x.accessor 'foo', => @sm.switch()
+  x.get('foo')
+  equal x.property('foo').sources.length, 0
