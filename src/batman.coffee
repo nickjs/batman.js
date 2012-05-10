@@ -4762,7 +4762,7 @@ Batman.DOM = {
       @yields[name] ||= new @({name})
       @yields[name]
 
-    clear:   @queued -> $removeOrDestroyNode(child) for child in Array::slice.call(@containerNode.childNodes)
+    clear:   @queued -> $removeOrDestroyNode(child) for child in @containerNode.childNodes
     append:  @queued (node) -> $appendChild @containerNode, node, true
     replace: @queued (node) -> @clear(); @append(node)
 
@@ -4815,7 +4815,7 @@ Batman.DOM = {
 
   # Memory-safe setting of a node's innerHTML property
   setInnerHTML: $setInnerHTML = (node, html) ->
-    childNodes = Array::slice.call(node.childNodes)
+    childNodes = node.childNodes
     Batman.DOM.willRemoveNode(child) for child in childNodes
     result = node.innerHTML = html
     Batman.DOM.didRemoveNode(child) for child in childNodes
