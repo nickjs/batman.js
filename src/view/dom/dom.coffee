@@ -54,7 +54,7 @@ Batman.DOM =
 
   # Memory-safe setting of a node's innerHTML property
   setInnerHTML: Batman.setInnerHTML = (node, html) ->
-    childNodes = Array::slice.call(node.childNodes)
+    childNodes = (child for child in node.childNodes)
     Batman.DOM.willRemoveNode(child) for child in childNodes
     result = node.innerHTML = html
     Batman.DOM.didRemoveNode(child) for child in childNodes

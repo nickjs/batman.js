@@ -36,24 +36,17 @@ class Batman.Route extends Batman.Object
 
     super(properties)
 
-  paramsFromPath: (path) ->
-    [path, query] = path.split '?'
+  paramsFromPath: (pathAndQuery) ->
+    uri = new Batman.URI(pathAndQuery)
     namedArguments = @get('namedArguments')
-    params = Batman.extend {path}, @get('baseParams')
+    params = $extend {path: uri.path}, @get('baseParams')
 
-    matches = @get('regexp').exec(path).slice(1)
+    matches = @get('regexp').exec(uri.path).slice(1)
     for match, index in matches
       name = namedArguments[index]
       params[name] = match
 
-    if query
-      query = query.replace(/\+/g, '%20')
-      query = decodeURIComponent(query)
-      for pair in query.split('&')
-        [key, value] = pair.split '='
-        params[key] = value
-
-    params
+    $extend params, uri.queryParams()
 
   pathFromParams: (argumentParams) ->
     params = Batman.extend {}, argumentParams
@@ -69,9 +62,8 @@ class Batman.Route extends Batman.Object
 
     for key in @testKeys
       delete params[key]
-    # Append the rest of the params as a query string
-    e = encodeURIComponent
-    query = ("#{e(key)}=#{e(value)}" for key, value of params).join("&")
+
+    query = Batman.URI.queryFromParams(params)
     path += "?#{query}" if query
 
     path

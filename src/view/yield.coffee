@@ -19,6 +19,6 @@ Batman.DOM.Yield = class Yield extends Batman.Object
     @yields[name] ||= new @({name})
     @yields[name]
 
-  clear:   @queued -> Batman.removeOrDestroyNode(child) for child in Array::slice.call(@containerNode.childNodes)
+  clear:   @queued -> Batman.removeOrDestroyNode(child) for child in (child for child in @containerNode.childNodes)
   append:  @queued (node) -> Batman.appendChild @containerNode, node, true
   replace: @queued (node) -> @clear(); @append(node)
