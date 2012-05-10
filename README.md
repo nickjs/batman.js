@@ -513,7 +513,7 @@ cake test
 To run in the browser, start a web server to serve up the tests:
 
 ```bash
-batman server
+coffee tests/serve.coffee
 ```
 
 ...then visit `http://localhost:1047/tests/batman/test.html`.
