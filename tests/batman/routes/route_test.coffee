@@ -70,12 +70,23 @@ test "routes should build paths with splat parameters", 2, ->
   equal @route.pathFromParams({categories: ""}), "/books//all"
   equal @route.pathFromParams({categories: "fiction/fantasy"}), "/books/fiction/fantasy/all"
 
-test "routes should build paths with query parameters", 2, ->
+test "routes should build paths with query parameters", 3, ->
   @route = new Batman.Route "/books/:id", {}
   equal @route.pathFromParams({id: 1, page: 3, limit: 10}), "/books/1?page=3&limit=10"
 
   @route = new Batman.Route "/books/:page", {}
   equal @route.pathFromParams({id: 1, page: 3, limit: 10}), "/books/3?id=1&limit=10"
+
+  @route = new Batman.Route "/welcome", {}
+  equal @route.pathFromParams({"the phrase": "a phrase with spaces"}), "/welcome?the%20phrase=a%20phrase%20with%20spaces"
+
+test "routes should parse paths with query parameters", ->
+  route = new Batman.Route "/welcome", {}
+  path = "/welcome?the%20phrase=a+phrase+with+spaces+and+a+plus+%2B"
+  expectedParams =
+    path: "/welcome"
+    "the phrase": "a phrase with spaces and a plus +"
+  deepEqual route.paramsFromPath(path), expectedParams
 
 test "controller action routes should match", ->
   App =  Batman

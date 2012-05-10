@@ -47,6 +47,8 @@ class Batman.Route extends Batman.Object
       params[name] = match
 
     if query
+      query = query.replace(/\+/g, '%20')
+      query = decodeURIComponent(query)
       for pair in query.split('&')
         [key, value] = pair.split '='
         params[key] = value
@@ -68,9 +70,9 @@ class Batman.Route extends Batman.Object
     for key in @testKeys
       delete params[key]
     # Append the rest of the params as a query string
-    queryParams = ("#{key}=#{value}" for key, value of params)
-    if queryParams.length > 0
-      path += "?" + queryParams.join("&")
+    e = encodeURIComponent
+    query = ("#{e(key)}=#{e(value)}" for key, value of params).join("&")
+    path += "?#{query}" if query
 
     path
 

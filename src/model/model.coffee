@@ -242,6 +242,7 @@ class Batman.Model extends Batman.Object
   @accessor 'attributes', -> @attributes ||= new Batman.Hash
   @accessor 'dirtyKeys', -> @dirtyKeys ||= new Batman.Hash
   @accessor 'errors', -> @errors ||= new Batman.ErrorsSet
+  @accessor 'isNew', -> @isNew()
 
   # Default accessor implementing the latching draft behaviour
   @accessor Model.defaultAccessor =
@@ -470,4 +471,4 @@ class Batman.Model extends Batman.Object
     result
 
   for functionName in ['load', 'save', 'validate', 'destroy']
-    @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])
+   @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])

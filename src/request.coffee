@@ -23,7 +23,7 @@ class Batman.Request extends Batman.Object
     formData
 
   @dataHasFileUploads: dataHasFileUploads = (data) ->
-    return true if data instanceof File
+    return true if File? && data instanceof File
     type = Batman.typeOf(data)
     switch type
       when 'Object'
