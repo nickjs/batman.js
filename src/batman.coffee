@@ -94,13 +94,6 @@ Batman._isChildOf = $isChildOf = (parentNode, childNode) ->
     node = node.parentNode
   false
 
-Batman.getPrototypeOf = (object) ->
-    if ( typeof Object.getPrototypeOf is "function" )
-        return Object.getPrototypeOf(object)
-    if ( typeof "test".__proto__ is "object" )
-        return object.__proto__
-    object.constructor.prototype
-
 $setImmediate = $clearImmediate = null
 _implementImmediates = (container) ->
   canUsePostMessage = ->
@@ -888,7 +881,7 @@ Batman._Batman = class _Batman
     parent = if isClass
       @object.__super__?.constructor
     else
-      if (proto = Batman.getPrototypeOf(@object)) == @object
+      if (proto = Object.getPrototypeOf(@object)) == @object
         @object.constructor.__super__
       else
         proto
