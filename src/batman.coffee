@@ -4016,7 +4016,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
       @::url = ->
         for key, plural of parents
-          parentID = @dirtyKeys.get(key)
+          parentID = @get('dirtyKeys').get(key)
           if parentID is undefined
             parentID = @get(key)
           if parentID
