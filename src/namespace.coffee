@@ -11,7 +11,7 @@ Batman.config =
   minificationErrors: yes
 
 Batman.container = if exports?
-  module.exports = Batman
+  global.Batman = Batman # I'm so sorry. So, so sorry.
   global
 else
   window.Batman = Batman

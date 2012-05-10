@@ -39,7 +39,7 @@
     try {
       global.jQuery = jQuery;
       exportHelpers(require(path.join(testDir, 'batman', 'test_helper')));
-      global.Batman = require(path.join('..', 'src', 'batman.node'));
+      global.Batman = require(path.join('..', 'lib', 'dist', 'batman.node'));
       exportHelpers(require(path.join(testDir, 'batman', 'model', 'model_helper')));
       TestStorageAdapter.autoCreate = false;
       docs = glob.sync("" + __dirname + "/**/*.percolate").map(function(doc) {

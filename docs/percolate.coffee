@@ -24,7 +24,7 @@ qqunit.Environment.jsdom.jQueryify window, jqueryPath, (window, jQuery) ->
     # Load test helper
     exportHelpers require path.join(testDir, 'batman', 'test_helper')
 
-    global.Batman = require path.join('..', 'src', 'batman.node')
+    global.Batman = require path.join('..', 'lib', 'dist', 'batman.node')
 
     exportHelpers require path.join(testDir, 'batman', 'model', 'model_helper')
     TestStorageAdapter.autoCreate = false

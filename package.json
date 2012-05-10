@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git://github.com/Shopify/batman.git"
   },
-  "main": "./lib/batman.node.js",
+  "main": "./lib/dist/batman.node.js",
   "bin" : {
     "batman" : "./tools/batman"
   },
@@ -30,10 +30,10 @@
     "docco": "~0.3.0",
     "glob": "~>3.0.1",
     "q": "~>0.8",
-    "muffin": "~0.4",
+    "muffin": "~0.4.1",
     "uglify-js": "1.2.5",
     "temp": "~>0.2.0",
-    "qqunit": "~>0.2",
+    "qqunit": "~>0.2.1",
     "percolate": "~> 0.2.5",
     "connect-assets": "~>2.2",
     "liquor": "~>0.0"

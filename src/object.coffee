@@ -1,3 +1,4 @@
+#= require_tree utilities
 #= require _batman
 #= require event_emitter/event_emitter
 #= require observable/observable

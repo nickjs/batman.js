@@ -12,12 +12,7 @@
 url = require 'url'
 querystring = require 'querystring'
 
-Batman = require './batman'
-(require './extras/batman.rails')(Batman)
-(require './extras/batman.i18n')(Batman)
-(require './extras/batman.paginator')(Batman)
-
-Batman.mixin Batman.Request::,
+Batman.extend Batman.Request::,
   getModule: (protocol) ->
     requestModule = switch protocol
       when 'http:', 'https:'
@@ -99,5 +94,3 @@ Batman.mixin Batman.Request::,
     request.end()
 
     request
-
-module.exports = Batman
