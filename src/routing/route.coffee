@@ -39,14 +39,14 @@ class Batman.Route extends Batman.Object
   paramsFromPath: (pathAndQuery) ->
     uri = new Batman.URI(pathAndQuery)
     namedArguments = @get('namedArguments')
-    params = $extend {path: uri.path}, @get('baseParams')
+    params = Batman.extend {path: uri.path}, @get('baseParams')
 
     matches = @get('regexp').exec(uri.path).slice(1)
     for match, index in matches
       name = namedArguments[index]
       params[name] = match
 
-    $extend params, uri.queryParams()
+    Batman.extend params, uri.queryParams()
 
   pathFromParams: (argumentParams) ->
     params = Batman.extend {}, argumentParams
