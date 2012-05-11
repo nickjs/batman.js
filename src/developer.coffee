@@ -1,4 +1,4 @@
-Batman.developer = developer =
+Batman.developer =
   suppressed: false
   DevelopmentError: (->
     DevelopmentError = (@message) ->
@@ -35,4 +35,5 @@ Batman.developer = developer =
         console?.log? developer.currentFilterStack
         value
 
+developer = Batman.developer
 Batman.developer.assert (->).bind, "Error! Batman needs Function.bind to work! Please shim it using something like es5-shim or augmentjs!"

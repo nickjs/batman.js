@@ -1,5 +1,5 @@
 (function() {
-  var MAP, REMOVE_NODE, uglify;
+  var DEVELOPER_NAMESPACES, MAP, REMOVE_NODE, deepEqual, isArguments, isUndefinedOrNull, objEquiv, uglify;
 
   uglify = require('uglify-js');
 
@@ -9,46 +9,109 @@
     remove: true
   };
 
-  exports.removeDevelopment = function(ast, DEVELOPER_NAMESPACE) {
-    var clean, cleanBlock, cleanLambdaBody, cleanupWalker, keepNode, removalWalker;
-    if (DEVELOPER_NAMESPACE == null) {
-      DEVELOPER_NAMESPACE = 'developer';
+  DEVELOPER_NAMESPACES = ['developer', ['name', 'developer'], ['dot', ['name', 'Batman'], 'developer']];
+
+  isUndefinedOrNull = function(value) {
+    return value === null || value === undefined;
+  };
+
+  isArguments = function(object) {
+    return Object.prototype.toString.call(object) === "[object Arguments]";
+  };
+
+  deepEqual = function(actual, expected) {
+    if (actual === expected) {
+      return true;
+    } else if (actual instanceof Date && expected instanceof Date) {
+      return actual.getTime() === expected.getTime();
+    } else if (actual instanceof RegExp && expected instanceof RegExp) {
+      return actual.source === expected.source && actual.global === expected.global && actual.ignoreCase === expected.ignoreCase && actual.multiline === expected.multiline;
+    } else if (typeof actual !== "object" && typeof expected !== "object") {
+      return actual === expected;
+    } else {
+      return objEquiv(actual, expected);
     }
+  };
+
+  objEquiv = function(a, b) {
+    var i, ka, kb, key;
+    if (isUndefinedOrNull(a) || isUndefinedOrNull(b)) {
+      return false;
+    }
+    if (a.prototype !== b.prototype) {
+      return false;
+    }
+    if (isArguments(a)) {
+      if (!isArguments(b)) {
+        return false;
+      }
+      a = pSlice.call(a);
+      b = pSlice.call(b);
+      return deepEqual(a, b);
+    }
+    try {
+      ka = Object.keys(a);
+      kb = Object.keys(b);
+      key = void 0;
+      i = void 0;
+    } catch (e) {
+      return false;
+    }
+    if (ka.length !== kb.length) {
+      return false;
+    }
+    ka.sort();
+    kb.sort();
+    i = ka.length - 1;
+    while (i >= 0) {
+      if (ka[i] !== kb[i]) {
+        return false;
+      }
+      i--;
+    }
+    i = ka.length - 1;
+    while (i >= 0) {
+      key = ka[i];
+      if (!deepEqual(a[key], b[key])) {
+        return false;
+      }
+      i--;
+    }
+    return true;
+  };
+
+  exports.removeDevelopment = function(ast) {
+    var clean, cleanBlock, cleanLambdaBody, cleanupWalker, isDeveloperNamespace, keepNode, removalWalker;
     removalWalker = uglify.uglify.ast_walker();
     cleanupWalker = uglify.uglify.ast_walker();
+    isDeveloperNamespace = function(x) {
+      return DEVELOPER_NAMESPACES.some(function(y) {
+        return deepEqual(x, y);
+      });
+    };
     ast = removalWalker.with_walkers({
       call: function(expr, args) {
-        var fn, key, objectName, op, upon;
+        var fn, op, upon;
         op = expr[0], upon = expr[1], fn = expr[2];
-        if (upon) {
-          key = upon[0], objectName = upon[1];
-          if (objectName === DEVELOPER_NAMESPACE) {
-            return REMOVE_NODE;
-          }
+        if (isDeveloperNamespace(upon)) {
+          return REMOVE_NODE;
         }
         return ['call', removalWalker.walk(expr), MAP(args, removalWalker.walk)];
       },
       assign: function(_, lvalue, rvalue) {
-        var fn, key, objectName, op, upon, _ref;
+        var op, upon;
         if (rvalue.length) {
-          if (rvalue[0] === 'name' && rvalue[1] === DEVELOPER_NAMESPACE) {
+          if (isDeveloperNamespace(rvalue)) {
             return REMOVE_NODE;
           }
         }
         if (lvalue.length) {
+          if (isDeveloperNamespace(lvalue)) {
+            return REMOVE_NODE;
+          }
           op = lvalue[0], upon = lvalue[1];
-          switch (op) {
-            case 'dot':
-            case 'sub':
-              op = lvalue[0], (_ref = lvalue[1], key = _ref[0], objectName = _ref[1]), fn = lvalue[2];
-              if (objectName === DEVELOPER_NAMESPACE) {
-                return REMOVE_NODE;
-              }
-              break;
-            case 'name':
-              if (upon === DEVELOPER_NAMESPACE) {
-                return REMOVE_NODE;
-              }
+          if (isDeveloperNamespace(upon)) {
+            return REMOVE_NODE;
           }
         }
         return ['assign', _, removalWalker.walk(lvalue), removalWalker.walk(rvalue)];
@@ -57,7 +120,7 @@
         defs = defs.filter(function(_arg) {
           var name, val, _ref;
           name = _arg[0], val = _arg[1];
-          if (name === DEVELOPER_NAMESPACE || (val && val[0] === 'name' && val[1] === DEVELOPER_NAMESPACE) || (val && ((_ref = val[0]) === 'dot' || _ref === 'sub') && val[1].length && val[1][1] === DEVELOPER_NAMESPACE)) {
+          if (isDeveloperNamespace(name) || isDeveloperNamespace(val) || (val && ((_ref = val[0]) === 'dot' || _ref === 'sub') && val[1].length && isDeveloperNamespace(val[1]))) {
             return false;
           } else {
             return true;

@@ -37,14 +37,21 @@ task 'build', 'compile Batman.js and all the tools', (options) ->
       'src/batman\.coffee'            : (matches) -> muffin.compileTree(matches[0], 'lib/batman.js', options)
       'src/platform/(.+)\.coffee'     : (matches) -> muffin.compileScript(matches[0], "lib/batman.#{matches[1]}.js", options) unless matches[1] == 'node'
       'src/extras/(.+)\.coffee'       : (matches) -> muffin.compileScript(matches[0], "lib/extras/#{matches[1]}.js", options)
-      'src/tools/batman\.coffee'      : (matches) -> muffin.compileScript(matches[0], "tools/batman", muffin.extend({}, options, {mode: 0o755, hashbang: true}))
-      'src/tools/(.+)\.coffee'        : (matches) -> muffin.compileScript(matches[0], "tools/#{matches[1]}.js", options)
       'tests/run\.coffee'             : (matches) -> muffin.compileScript(matches[0], 'tests/run.js', options)
 
   invoke 'build:node'
+  invoke 'build:tools'
 
   if options.dist
     invoke 'build:dist'
+
+task 'build:tools', 'compile command line batman tools and build transforms', (options) ->
+  muffin.run
+    files: './src/tools/**/*'
+    options: options
+    map:
+      'src/tools/batman\.coffee'      : (matches) -> muffin.compileScript(matches[0], "tools/batman", muffin.extend({}, options, {mode: 0o755, hashbang: true}))
+      'src/tools/(.+)\.coffee'        : (matches) -> muffin.compileScript(matches[0], "tools/#{matches[1]}.js", options)
 
 task 'build:node', 'compile node distribution of Batman.js', (options) ->
   muffin.run
@@ -101,8 +108,9 @@ task 'test', 'compile Batman.js and the tests and run them on the command line',
 
       pipedExec 'tests/run.js', (code) ->
         failFast(code)
-        pipedExec 'docs/percolate.js', '--test-only', (code) ->
-          failFast(code)
+        unless process.env['FILTER']?
+          pipedExec 'docs/percolate.js', '--test-only', (code) ->
+            failFast(code)
 
 task 'stats', 'compile the files and report on their final size', (options) ->
   muffin.statFiles(glob.sync('./src/**/*.coffee').concat(glob.sync('./lib/**/*.js')), options)
