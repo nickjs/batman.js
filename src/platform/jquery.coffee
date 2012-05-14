@@ -19,7 +19,7 @@ Batman.Request::_parseResponseHeaders = (xhr) ->
     acc
   , {})
 
-Batman.Request::send = (data) ->
+Batman.Request::_prepareOptions = (data) ->
   options =
     url: @get 'url'
     type: @get 'method'
@@ -60,7 +60,10 @@ Batman.Request::send = (data) ->
       options.processData = false
       options.data = @constructor.objectToFormData(options.data)
 
-  jQuery.ajax options
+  options
+
+Batman.Request::send = (data) ->
+  jQuery.ajax @_prepareOptions(data)
 
 Batman.mixins.animation =
   show: (addToParent) ->
