@@ -1,4 +1,4 @@
-#= require association_proxy
+#= require ./association_proxy
 
 class Batman.HasOneProxy extends Batman.AssociationProxy
   @accessor 'primaryValue', -> @model.get(@association.primaryKey)

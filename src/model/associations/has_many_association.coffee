@@ -1,4 +1,4 @@
-#= require plural_association
+#= require ./plural_association
 
 class Batman.HasManyAssociation extends Batman.PluralAssociation
   associationType: 'hasMany'

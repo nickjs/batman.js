@@ -1,4 +1,5 @@
-#= require set
+#= require ./set
+#= require ./set_proxy
 
 class Batman.BinarySetOperation extends Batman.Set
   constructor: (@left, @right) ->

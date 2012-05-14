@@ -1,4 +1,4 @@
-#= require set_index
+#= require ./set_index
 
 class Batman.UniqueSetIndex extends Batman.SetIndex
   constructor: ->

@@ -1,4 +1,4 @@
-#= require storage_adapter
+#= require ./storage_adapter
 
 class Batman.LocalStorage extends Batman.StorageAdapter
   constructor: ->

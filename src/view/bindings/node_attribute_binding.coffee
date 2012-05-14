@@ -1,4 +1,4 @@
-#= require abstract_attribute_binding
+#= require ./abstract_attribute_binding
 
 class Batman.DOM.NodeAttributeBinding extends Batman.DOM.AbstractAttributeBinding
   dataChange: (value = "") -> @node[@attributeName] = value

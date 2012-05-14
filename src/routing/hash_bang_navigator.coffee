@@ -1,4 +1,4 @@
-#= require navigator
+#= require ./navigator
 
 class Batman.HashbangNavigator extends Batman.Navigator
   HASH_PREFIX: '#!'

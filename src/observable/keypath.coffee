@@ -1,4 +1,4 @@
-#= require property
+#= require ./property
 
 class Batman.Keypath extends Batman.Property
   constructor: (base, key) ->

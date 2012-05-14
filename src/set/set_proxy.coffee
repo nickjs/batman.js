@@ -1,5 +1,5 @@
 #= require ../object
-#= require set
+#= require ./set
 
 class Batman.SetProxy extends Batman.Object
   constructor: (@base) ->

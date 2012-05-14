@@ -1,5 +1,5 @@
 #= require ../object
-#= require render_cache
+#= require ./render_cache
 
 class Batman.Controller extends Batman.Object
   @singleton 'sharedController'

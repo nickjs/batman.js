@@ -1,4 +1,4 @@
-#= require event
+#= require ./event
 
 Batman.EventEmitter =
   isEventEmitter: true

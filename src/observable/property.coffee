@@ -1,4 +1,4 @@
-#= require property_event
+#= require ./property_event
 #= require ../event_emitter/event_emitter
 #= require ../set/simple_set
 

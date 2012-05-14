@@ -1,5 +1,5 @@
-#= require set
-#= require set_observer
+#= require ./set
+#= require ./set_observer
 #= require ../object
 
 class Batman.SetIndex extends Batman.Object

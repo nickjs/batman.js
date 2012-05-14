@@ -1,4 +1,4 @@
-#= require singular_association
+#= require ./singular_association
 
 class Batman.HasOneAssociation extends Batman.SingularAssociation
   associationType: 'hasOne'

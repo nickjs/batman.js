@@ -1,4 +1,4 @@
-#= require abstract_collection_binding
+#= require ./abstract_collection_binding
 
 class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   deferEvery: 50

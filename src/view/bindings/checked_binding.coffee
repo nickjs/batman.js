@@ -1,4 +1,4 @@
-#= require node_attribute_binding
+#= require ./node_attribute_binding
 
 class Batman.DOM.CheckedBinding extends Batman.DOM.NodeAttributeBinding
   isInputBinding: true

@@ -1,5 +1,5 @@
-#= require object
-#= require_tree routing
+#= require ./object
+#= require_tree ./routing
 
 class Batman.App extends Batman.Object
   @classAccessor 'currentParams',

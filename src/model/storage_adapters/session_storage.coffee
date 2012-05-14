@@ -1,4 +1,4 @@
-#= require local_storage
+#= require ./local_storage
 
 class Batman.SessionStorage extends Batman.LocalStorage
   constructor: ->

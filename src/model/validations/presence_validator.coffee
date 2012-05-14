@@ -1,4 +1,4 @@
-#= require validators
+#= require ./validators
 
 class Batman.PresenceValidator extends Batman.Validator
   @options 'presence'

@@ -1,4 +1,4 @@
-#= require abstract_binding
+#= require ./abstract_binding
 
 class Batman.DOM.ShowHideBinding extends Batman.DOM.AbstractBinding
   constructor: (node, className, key, context, parentRenderer, @invert = false) ->

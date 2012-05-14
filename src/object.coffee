@@ -1,8 +1,8 @@
-#= require_tree utilities
-#= require _batman
-#= require event_emitter/event_emitter
-#= require observable/observable
-#= require hash/simple_hash
+#= require_tree ./utilities
+#= require ./_batman
+#= require ./event_emitter/event_emitter
+#= require ./observable/observable
+#= require ./hash/simple_hash
 
 # `Batman.Object` is the base class for all other Batman objects. It is not abstract.
 class BatmanObject extends Object

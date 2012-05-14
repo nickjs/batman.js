@@ -1,5 +1,5 @@
-#= require set_proxy
-#= require set_observer
+#= require ./set_proxy
+#= require ./set_observer
 
 class Batman.SetSort extends Batman.SetProxy
   constructor: (base, @key, order="asc") ->

@@ -1,4 +1,4 @@
-#= require binary_set_operation
+#= require ./binary_set_operation
 
 class Batman.SetIntersection extends Batman.BinarySetOperation
   _itemsWereAddedToSource: (source, opposite, items...) ->

@@ -1,5 +1,5 @@
-#= require property
-#= require keypath
+#= require ./property
+#= require ./keypath
 
 # Batman.Observable is a generic mixin that can be applied to any object to allow it to be bound to.
 # It is applied by default to every instance of `Batman.Object` and subclasses.

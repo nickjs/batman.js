@@ -1,4 +1,4 @@
-#= require association_set
+#= require ./association_set
 
 class Batman.PolymorphicAssociationSet extends Batman.AssociationSet
   constructor: (@foreignKeyValue, @foreignTypeKeyValue, @association) ->

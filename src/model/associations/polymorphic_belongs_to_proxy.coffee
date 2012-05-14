@@ -1,4 +1,4 @@
-#= require belongs_to_proxy
+#= require ./belongs_to_proxy
 
 class Batman.PolymorphicBelongsToProxy extends Batman.BelongsToProxy
   @accessor 'foreignTypeValue', -> @model.get(@association.foreignTypeKey)

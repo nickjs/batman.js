@@ -1,4 +1,4 @@
-#= require abstract_binding
+#= require ./abstract_binding
 
 class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
   constructor: ->

@@ -1,4 +1,4 @@
-#= require dom
+#= require ./dom
 
 # `Batman.DOM.readers` contains the functions used for binding a node's value or innerHTML, showing/hiding nodes,
 # and any other `data-#{name}=""` style DOM directives.

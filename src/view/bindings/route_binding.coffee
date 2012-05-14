@@ -1,4 +1,4 @@
-#= require abstract_binding
+#= require ./abstract_binding
 
 class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
   onATag: false

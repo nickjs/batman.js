@@ -1,4 +1,4 @@
-#= require abstract_collection_binding
+#= require ./abstract_collection_binding
 
 class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
 

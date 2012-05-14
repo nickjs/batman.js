@@ -1,5 +1,5 @@
-#= require object
-#= require uri
+#= require ./object
+#= require ./uri
 
 class Batman.Request extends Batman.Object
   @objectToFormData: (data) ->

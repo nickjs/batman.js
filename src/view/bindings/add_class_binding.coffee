@@ -1,4 +1,4 @@
-#= require abstract_attribute_binding
+#= require ./abstract_attribute_binding
 
 class Batman.DOM.AddClassBinding extends Batman.DOM.AbstractAttributeBinding
   constructor: (node, className, keyPath, renderContext, renderer, only, @invert = false) ->

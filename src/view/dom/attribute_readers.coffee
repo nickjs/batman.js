@@ -1,4 +1,4 @@
-#= require dom
+#= require ./dom
 
 # `Batman.DOM.attrReaders` contains all the DOM directives which take an argument in their name, in the
 # `data-dosomething-argument="keypath"` style. This means things like foreach, binding attributes like

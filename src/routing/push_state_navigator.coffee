@@ -1,4 +1,4 @@
-#= require navigator
+#= require ./navigator
 
 class Batman.PushStateNavigator extends Batman.Navigator
   @isSupported: -> window?.history?.pushState?

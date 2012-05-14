@@ -1,4 +1,4 @@
-#= require has_many_association
+#= require ./has_many_association
 
 class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
   isPolymorphic: true

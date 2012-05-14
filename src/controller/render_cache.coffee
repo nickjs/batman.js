@@ -1,4 +1,4 @@
-#= require ../hash
+#= require_tree ../hash
 
 class Batman.RenderCache extends Batman.Hash
   maximumLength: 4

@@ -1,4 +1,4 @@
-#= require storage_adapter
+#= require ./storage_adapter
 
 class Batman.RestStorage extends Batman.StorageAdapter
   @JSONContentType: 'application/json'

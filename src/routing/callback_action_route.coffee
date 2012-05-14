@@ -1,4 +1,4 @@
-#= require route
+#= require ./route
 
 class Batman.CallbackActionRoute extends Batman.Route
   optionKeys: ['member', 'collection', 'callback', 'app']

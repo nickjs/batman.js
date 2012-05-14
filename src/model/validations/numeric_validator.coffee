@@ -1,4 +1,4 @@
-#= require validators
+#= require ./validators
 
 class Batman.NumericValidator extends Batman.Validator
     @options 'numeric'

@@ -1,4 +1,4 @@
-#= require route
+#= require ./route
 class Batman.ControllerActionRoute extends Batman.Route
   optionKeys: ['member', 'collection', 'app', 'controller', 'action']
   constructor: (templatePath, options) ->

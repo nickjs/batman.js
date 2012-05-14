@@ -1,4 +1,4 @@
-#= require validator
+#= require ./validator
 
 Batman.Validators = []
 

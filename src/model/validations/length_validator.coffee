@@ -1,4 +1,4 @@
-#= require validators
+#= require ./validators
 
 class Batman.LengthValidator extends Batman.Validator
     @options 'minLength', 'maxLength', 'length', 'lengthWithin', 'lengthIn'

@@ -1,4 +1,4 @@
-#= require abstract_attribute_binding
+#= require ./abstract_attribute_binding
 
 class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
   bindImmediately: false

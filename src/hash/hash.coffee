@@ -1,4 +1,4 @@
-#= require simple_hash
+#= require ./simple_hash
 #= require ../object
 
 class Batman.Hash extends Batman.Object

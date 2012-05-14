@@ -1,5 +1,5 @@
-#= require ../../event_emitter
-#= require ../../observable
+#= require_tree ../../event_emitter
+#= require_tree ../../observable
 
 Batman.DOM =
   # List of input type="types" for which we can use keyup events to track

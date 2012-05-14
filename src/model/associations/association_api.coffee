@@ -1,5 +1,5 @@
 #= require ../model
-#= require association_curator
+#= require ./association_curator
 
 for k in Batman.AssociationCurator.availableAssociations
   do (k) =>

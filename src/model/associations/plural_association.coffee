@@ -1,4 +1,4 @@
-#= require association
+#= require ./association
 
 class Batman.PluralAssociation extends Batman.Association
   isSingular: false
