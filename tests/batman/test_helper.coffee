@@ -277,5 +277,7 @@ doWhen = (conditionFunction, actionFunction, timeout=2000) ->
         clearInterval interval
   interval = setInterval f, 20
 
-for k, v of {Spy, MockClass, createSpy, spyOn, spyOnDuring, mockClassDuring, delay, doWhen}
+lowerEqual = (x, y, message) -> equal x.toLowerCase(), y.toLowerCase(), message
+
+for k, v of {Spy, MockClass, createSpy, spyOn, spyOnDuring, mockClassDuring, delay, doWhen, lowerEqual}
   exports[k] = v

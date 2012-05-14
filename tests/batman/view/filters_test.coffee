@@ -372,10 +372,10 @@ asyncTest 'escape', 2, ->
 
 asyncTest 'raw', 2, ->
   context = Batman
-    foo: "<script></script>"
+    foo: "<p></p>"
 
   helpers.render '<div data-bind="foo | raw"></div>', context, (node) ->
-    equal node.html(), "<script></script>"
+    lowerEqual node.html(), "<p></p>"
     context.set('foo', '"testing"')
     equal node.html(), '"testing"'
 
