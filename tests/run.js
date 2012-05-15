@@ -1,10 +1,12 @@
 (function() {
-  var glob, path, qqunit,
+  var coffee, glob, path, qqunit,
     __hasProp = {}.hasOwnProperty;
 
   glob = require('glob');
 
   path = require('path');
+
+  coffee = require('coffee-script');
 
   qqunit = require('qqunit');
 

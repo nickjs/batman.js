@@ -1,5 +1,6 @@
 glob = require 'glob'
 path = require 'path'
+coffee = require 'coffee-script'
 # Load test runner
 qqunit = require 'qqunit'
 
