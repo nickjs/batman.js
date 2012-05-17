@@ -1,1 +1,71 @@
 ## Batman.Controller
+
+`Batman.Controller` is the base class from which all an application's controllers should descend from. `Batman.Controllers` are responsible for executing _actions_ which fire off requests for model data, render views, or redirect to other actions in response to navigation state changes.
+
+### Controller Directory
+
+`Batman.Controller`s are singletons which means each controller in your application is instantiated exactly once. The instance of each controller is available on the class at the `@sharedContoller` property, or within a `ControllerDirectory` on the `Application` class. See `Batman.Application.controllers`.
+
+### Actions
+
+Each `Batman.Controller` should have a number of instance level functions which can fetch the data needed and often render a view (or views) to display that data. These functions can be declared in typical CoffeeScript fashion like so:
+
+```coffeescript
+class Alfred.TodosController
+
+  index: (params) ->
+
+  show: (params) ->
+```
+
+Each action function receives the parameters from the dispatcher which are pulled out of the navigated-to URL. This includes both named route parameters (`/:foo` style) as well as arbitrary query paramters (`?foo=bar` style).
+
+### @beforeFilter(options : [String|Object], filter : [String|Function])
+
+`@beforeFilter` allows the declaration of a function to be executed before the body of an action during action execution. `@beforeFilter` accepts either a string or options object representing which action(s) to execute the filter before, and then a string naming a function or function proper to execute.
+
+!!!
+test "@beforeFilter allows declaration of filters to execute before an action", ->
+  show(class TestController extends Batman.Controller
+    @beforeFilter 'index', -> log 'before!'
+    index: ->
+      log 'action!'
+      @render false
+  )
+  show controller = TestController.get('sharedController')
+  show controller.dispatch 'index'
+  equal logged[0], 'before!'
+  equal logged[1], 'action!'
+!!!
+
+!!!
+test "@beforeFilter allows declaration of named filters to execute before an action", ->
+  show(class TodoController extends Batman.Controller
+    @beforeFilter 'show', 'fetchTodo'
+    fetchTodo: -> @set 'todo', {isDone: true}
+    show: ->
+      @render false
+  )
+  show controller = TodoController.get('sharedController')
+  show controller.dispatch 'show'
+  deepEqual controller.get('todo'), {isDone: true}
+!!!
+
+
+!!!
+test "@beforeFilter allows whitelisting or blacklisting filters to execute before an action", ->
+  show(class TodoController extends Batman.Controller
+    @beforeFilter {only: ['show', 'edit']}, 'fetchTodo'
+    @beforeFilter {except: ['index']}, 'prepareNewTodo'
+    fetchTodo: -> @set 'todo', {isDone: true}
+    prepareNewTodo: -> @set 'newTodo', {isDone: false}
+    index: -> @render false
+    show: -> @render false
+  )
+  show controller = TodoController.get('sharedController')
+  show controller.dispatch 'show'
+  deepEqual controller.get('todo'), {isDone: true}
+  deepEqual controller.get('newTodo'), {isDone: false}
+!!!
+
+### @afterFilter

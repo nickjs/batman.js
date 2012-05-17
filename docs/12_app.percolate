@@ -16,10 +16,9 @@ A Batman-wide reference to the currently running `Batman.App`.
  4. Wait for the layout view to fire it's `ready` event.
  5. Start the first action dispatch by telling the `Navigator` to begin monitoring the URL.
 
-_Note_: `@run` emits the `run` class event on the `App`, but not necessarily as soon as `@run` is called because the `layout` renders asynchronously and may need to fetch other components. If you need to execute code as soon as the `App` has started running, add a listener to the `run` event on the `App` class. If you need to execute code as soon as the layout has rendered, you can use the `ready` event on the `App` class.
+_Note_: `@run` emits the `run` class event on the `App`, but not necessarily as soon as `@run` is called. Because the `layout` View renders asynchronously and may need to fetch other components, the `run` event can and often does fire long after `@run` is called. If you need to execute code as soon as the `App` has started running, add a listener to the `run` event on the `App` class. If you need to execute code as soon as the layout has rendered, you can use the `ready` event on the `App` class.
 
 `@run` can be called before or on the `load` DOMEvent of the window. `@run` will return the App if the commencement was successful and complete, or `false` if the App must wait for the `layout` to render or if the `App` has already run.
-
 
 ==== starting an application with DOMEvents
 ```coffeescript
