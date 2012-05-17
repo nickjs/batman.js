@@ -1,14 +1,3 @@
-#
-# batman.node.coffee
-# batman.js
-#
-# Created by Nick Small
-# Copyright 2011, Shopify
-#
-
-# Include this file if you plan to use batman
-# with node.js.
-
 url = require 'url'
 querystring = require 'querystring'
 

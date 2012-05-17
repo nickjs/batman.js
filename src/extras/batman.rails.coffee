@@ -1,45 +1,4 @@
 
-# `param` and `buildParams` stolen from jQuery
-#
-# jQuery JavaScript Library
-# http://jquery.com/
-#
-# Copyright 2011, John Resig
-# Dual licensed under the MIT or GPL Version 2 licenses.
-# http://jquery.org/license
-# Rails really doesn't like collection[0][rules], it wants collection[][rules],
-# so we will give it that.
-rbracket = /\[\]$/
-r20 = /%20/g
-param = (a) ->
-  return a if typeof a is 'string'
-  s = []
-  add = (key, value) ->
-    value = value() if typeof value is 'function'
-    value = '' unless value?
-    s[s.length] = encodeURIComponent(key) + "=" + encodeURIComponent(value)
-
-  if Batman.typeOf(a) is 'Array'
-    for value, name of a
-      add name, value
-  else
-    for own k, v of a
-      buildParams k, v, add
-  s.join("&").replace r20, "+"
-
-buildParams = (prefix, obj, add) ->
-  if Batman.typeOf(obj) is 'Array'
-    for v, i in obj
-      if rbracket.test(prefix)
-        add prefix, v
-      else
-        buildParams prefix + "[]", v, add
-  else if obj? and typeof obj == "object"
-    for name of obj
-      buildParams prefix + "[" + name + "]", obj[name], add
-  else
-    add prefix, obj
-
 numericKeys = [1, 2, 3, 4, 5, 6, 7, 10, 11]
 date_re = ///
   ^
@@ -90,8 +49,6 @@ Batman.mixin Batman.Encoders,
 
 class Batman.RailsStorage extends Batman.RestStorage
 
-  _serializeToFormData: (data) -> param(data)
-
   urlForRecord: -> @_addJsonExtension(super)
   urlForCollection: -> @_addJsonExtension(super)
 
@@ -101,11 +58,6 @@ class Batman.RailsStorage extends Batman.RestStorage
     url + '.json'
 
   _errorsFrom422Response: (response) -> JSON.parse(response)
-
-  @::before 'update', 'create', (env, next) ->
-    if @serializeAsForm && !Batman.Request.dataHasFileUploads(env.options.data)
-      env.options.data = @_serializeToFormData(env.options.data)
-    next()
 
   @::after 'update', 'create', (env, next) ->
     record = env.subject

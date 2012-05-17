@@ -55,9 +55,11 @@ Batman.Request::_prepareOptions = (data) ->
 
     unless @hasFileUploads()
       options.contentType = @get 'contentType'
+      if typeof options is 'object'
+        options.processData = false
+        options.data = Batman.URI.queryFromParams(options.data)
     else
       options.contentType = false
-      options.processData = false
       options.data = @constructor.objectToFormData(options.data)
 
   options
