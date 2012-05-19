@@ -38,7 +38,7 @@ asyncTest 'data-bind-style should bind to a vanilla object', 4, ->
 asyncTest 'data-bind-style should bind to a Batman object', 8, ->
   source = '<input type="text" data-bind-style="object"></input>'
   context = Batman
-    object: new Batman.Hash
+    object: new Batman.Object
       'backgroundColor': 'blue'
       color: 'green'
 
@@ -52,13 +52,13 @@ asyncTest 'data-bind-style should bind to a Batman object', 8, ->
     context.unset 'object.color'
     equal node.style['color'], ''
     equal node.style['backgroundColor'], 'blue'
-    context.set 'object', new Batman.Hash color: 'yellow'
+    context.set 'object', new Batman.Object color: 'yellow'
     equal node.style['color'], 'yellow'
-    equal node.style['backgroundColor'], 'blue'
+    equal node.style['backgroundColor'], ''
 
     QUnit.start()
 
-asyncTest 'data-bind-style should forget previously bound hashes', 6, ->
+asyncTest 'data-bind-style should bind to hashes', 6, ->
   source = '<div data-bind-style="hash"></div>'
   hash = new Batman.Hash
     'backgroundColor': 'blue'
@@ -70,31 +70,12 @@ asyncTest 'data-bind-style should forget previously bound hashes', 6, ->
     equal node.style['color'], 'green'
 
     context.set 'hash', new Batman.Hash color: 'red'
-    equal node.style['backgroundColor'], 'blue'
+    equal node.style['backgroundColor'], ''
     equal node.style['color'], 'red'
 
     hash.set 'color', 'green'
-    equal node.style['backgroundColor'], 'blue'
+    equal node.style['backgroundColor'], ''
     equal node.style['color'], 'red'
-
-    QUnit.start()
-
-asyncTest 'data-bind-style should bind to a vanilla object of attr/keypath pairs', 4, ->
-  source = '<input type="text" data-bind-style="styles"></input>'
-  context = Batman
-    color: 'blue'
-    backgroundColor: 'green'
-    styles:
-      color: 'color'
-      'backgroundColor': 'backgroundColor'
-
-  helpers.render source, context, (node) ->
-    node = node[0]
-    equal node.style.color, 'blue'
-    equal node.style['backgroundColor'], 'green'
-    context.set 'color', 'green'
-    equal node.style.color, 'green'
-    equal node.style['backgroundColor'], 'green'
 
     QUnit.start()
 

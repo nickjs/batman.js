@@ -3,23 +3,26 @@
 class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
 
   class @SingleStyleBinding extends Batman.DOM.AbstractAttributeBinding
+    isTwoWay: -> false
     constructor: (args..., @parent) ->
       super(args...)
-    dataChange: (value) -> @parent.setStyle(@attributeName, value)
+    dataChange: (value) ->
+      @parent.setStyle(@attributeName, value)
 
   constructor: ->
     @oldStyles = {}
+    @styleBindings = {}
     super
 
   dataChange: (value) ->
     unless value
-      @reapplyOldStyles()
+      @resetStyles()
       return
 
     @unbindCollection()
 
     if typeof value is 'string'
-      @reapplyOldStyles()
+      @resetStyles()
       for style in value.split(';')
         # handle a case when css value contains colons itself (absolute URI)
         # split and rejoin because IE7/8 don't splice values of capturing regexes into split's return array
@@ -28,28 +31,36 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
       return
 
     if value instanceof Batman.Hash
-      if @bindCollection(value)
-        value.forEach (key, value) => @setStyle key, value
+      @bindCollection(value)
     else if value instanceof Object
-      @reapplyOldStyles()
-      for own key, keyValue of value
-        # Check whether the value is an existing keypath, and if so bind this attribute to it
-        if keypathValue = @renderContext.get(keyValue)
-          @bindSingleAttribute key, keyValue
-          @setStyle key, keypathValue
-        else
-          @setStyle key, keyValue
+      @resetStyles()
+      for own key of value when key != '_batman'
+        @bindSingleAttribute key, "#{@keyPath}.#{key}"
 
-  handleItemsWereAdded: (newKey) => @setStyle newKey, @collection.get(newKey); return
-  handleItemsWereRemoved: (oldKey) => @setStyle oldKey, ''; return
+  handleArrayChanged: (array) =>
+    # Only hashes are bound to, so iterate over their keys and bind each specific attribute to the hash's value at that key.
+    @collection.forEach (key, value) =>
+      @bindSingleAttribute(key, "#{@keyPath}.#{key}")
 
-  bindSingleAttribute: (attr, keyPath) -> new @constructor.SingleStyleBinding(@node, attr, keyPath, @renderContext, @renderer, @only, @)
+  bindSingleAttribute: (attr, keyPath) ->
+    @styleBindings[attr] = new @constructor.SingleStyleBinding(@node, attr, keyPath, @renderContext, @renderer, @only, @)
 
   setStyle: (key, value) =>
-    return unless key
     key = Batman.helpers.camelize(key.trim(), true)
-    @oldStyles[key] = @node.style[key]
-    @node.style[key] = if value then value.trim() else ""
+    @oldStyles[key] ?= @node.style[key]
+    value = value.trim() if value?.trim
+    value ?= ""
+    @node.style[key] = value
 
-  reapplyOldStyles: ->
+  resetStyles: ->
     @setStyle(cssName, cssValue) for own cssName, cssValue of @oldStyles
+
+  resetBindings: ->
+    for attribute, binding of @styleBindings
+      binding._fireDataChange ''
+      binding.die()
+    @styleBindings = {}
+
+  unbindCollection: ->
+    @resetBindings()
+    super
