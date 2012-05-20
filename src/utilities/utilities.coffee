@@ -120,6 +120,22 @@ _implementImmediates = (container) ->
       document.documentElement.appendChild(script)
       handle
     Batman.clearImmediate = (handle) -> tasks.unset(handle)
+  else if process?.nextTick
+    functions = {}
+    willExecute = false
+    Batman.setImmediate = (f) ->
+      handle = getHandle()
+      functions[handle] = f
+      if !willExecute
+        willExecute = true
+        process.nextTick ->
+          willExecute = false
+          f() for handle, f of functions
+      handle
+
+    Batman.clearImmediate = (handle) ->
+      delete functions[handle]
+
   else
     Batman.setImmediate = (f) -> setTimeout(f, 0)
     Batman.clearImmediate = (handle) -> clearTimeout(handle)
