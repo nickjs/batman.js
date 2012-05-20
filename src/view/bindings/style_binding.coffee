@@ -32,10 +32,13 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
 
     if value instanceof Batman.Hash
       @bindCollection(value)
-    else if value instanceof Object
+    else
+      if value instanceof Batman.Object
+        value = value.toJSON()
       @resetStyles()
-      for own key of value when key != '_batman'
+      for own key of value
         @bindSingleAttribute key, "#{@keyPath}.#{key}"
+
 
   handleArrayChanged: (array) =>
     # Only hashes are bound to, so iterate over their keys and bind each specific attribute to the hash's value at that key.

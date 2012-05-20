@@ -3,7 +3,11 @@
 class Batman.DOM.AbstractCollectionBinding extends Batman.DOM.AbstractAttributeBinding
 
   bindCollection: (newCollection) ->
-    unless newCollection == @collection
+    if newCollection instanceof Batman.Hash
+      newCollection = newCollection.meta # Get the object which will  have a toArray
+    if newCollection == @collection
+      return true
+    else
       @unbindCollection()
       @collection = newCollection
       if @collection?.isObservable

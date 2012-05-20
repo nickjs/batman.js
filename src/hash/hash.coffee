@@ -3,12 +3,15 @@
 
 class Batman.Hash extends Batman.Object
   class @Metadata extends Batman.Object
+    Batman.extend @prototype, Batman.Enumerable
     constructor: (@hash) ->
     @accessor 'length', ->
       @hash.registerAsMutableSource()
       @hash.length
-    @accessor 'isEmpty', -> @hash.isEmpty()
-    @accessor 'keys', -> @hash.keys()
+    @accessor 'isEmpty', 'keys', 'toArray', (key) ->
+      @hash.registerAsMutableSource()
+      @hash[key]()
+    forEach: -> @hash.forEach(arguments...)
 
   constructor: ->
     @meta = new @constructor.Metadata(this)
@@ -72,7 +75,7 @@ class Batman.Hash extends Batman.Object
   for k in ['equality', 'hashKeyFor', 'objectKey', 'prefixedKey', 'unprefixedKey']
     @::[k] = Batman.SimpleHash::[k]
 
-  for k in ['hasKey', 'forEach', 'isEmpty', 'keys', 'merge', 'toJSON', 'toObject']
+  for k in ['hasKey', 'forEach', 'isEmpty', 'keys', 'toArray', 'merge', 'toJSON', 'toObject']
     do (k) =>
       @prototype[k] = ->
         @registerAsMutableSource()

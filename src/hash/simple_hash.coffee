@@ -79,6 +79,7 @@ class Batman.SimpleHash
     # Explicitly reference this foreach so that if it's overriden in subclasses the new implementation isn't used.
     Batman.SimpleHash::forEach.call @, (key) -> result.push key
     result
+  toArray: @::keys
   clear: ->
     @_storage = {}
     delete @_objectStorage

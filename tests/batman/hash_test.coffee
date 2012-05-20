@@ -219,6 +219,24 @@ test "keys() returns an array of the hash's keys", ->
     test(@hash.keys())
     test(@hash.meta.get('keys'))
 
+test "toArray() returns an array of the hash's keys", ->
+  Batman.developer.suppress =>
+    @hash.set 'foo', 'bar'
+    @hash.set (o1 = {}), 1
+    @hash.set (o2 = {}), 2
+    @hash.set 'foo', 'baz'
+    @hash.set 'bar', 'buzz'
+    @hash.set 'baz', 'blue'
+    @hash.unset 'baz'
+    test = (keys) ->
+      equal keys.indexOf('baz'), -1
+      notEqual keys.indexOf('foo'), -1
+      notEqual keys.indexOf(o1), -1
+      notEqual keys.indexOf(o2), -1
+      notEqual keys.indexOf('bar'), -1
+    test(@hash.toArray())
+    test(@hash.meta.get('toArray'))
+
 test "get/set/unset/hasKey with an undefined or null key works like any other, and they don't collide with each other", ->
   equal @hash.hasKey(undefined), false
   equal @hash.hasKey(null), false
