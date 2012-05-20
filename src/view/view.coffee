@@ -90,7 +90,7 @@ class Batman.View extends Batman.Object
     # We use a renderer with the continuation style rendering engine to not
     # block user interaction for too long during the render.
     if node
-      @_renderer = new Batman.Renderer(node, null, @context, @)
+      @_renderer = new Batman.Renderer(node, @context, @)
       @_renderer.on 'rendered', =>
         @fire('ready', node)
 
