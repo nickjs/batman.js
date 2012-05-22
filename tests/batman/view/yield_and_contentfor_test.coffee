@@ -1,5 +1,51 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
+QUnit.module 'Batman.DOM.Yield'
+  setup: ->
+    @yield = Batman.DOM.Yield.withName('test')
+    @containerNode = document.createElement('div')
+    @yield.set('containerNode', @containerNode)
+    @nodeA = document.createElement('div')
+    @nodeB = document.createElement('div')
+
+  teardown: ->
+    Batman.DOM.Yield.reset()
+
+test "append(node) should add the node to the container node", ->
+  @yield.append(@nodeA)
+  equal @containerNode.childNodes.length, 1
+
+test "replace(node) should leave only that node to the container node", ->
+  @yield.append(@nodeA)
+  @yield.replace(@nodeB)
+  equal @containerNode.childNodes.length, 1
+  equal @containerNode.childNodes[0], @nodeB
+
+test "clear() should remove all nodes", ->
+  @yield.append(@nodeA)
+  @yield.append(@nodeB)
+  @yield.clear()
+  equal @containerNode.childNodes.length, 0
+
+test "cycle() and then clearStale() should remove nodes added before cycle()", ->
+  @yield.append(@nodeA)
+  @yield.cycle()
+  @yield.clearStale()
+  equal @containerNode.childNodes.length, 0
+
+test "cycle() and then clearStale() should keep nodes added after cycle()", ->
+  @yield.cycle()
+  @yield.append(@nodeB)
+  @yield.clearStale()
+  equal @containerNode.childNodes.length, 1
+  equal @containerNode.childNodes[0], @nodeB
+
+test "clear() after append() should remove references to old nodes", ->
+  @yield.append(@nodeA)
+  @yield.append(@nodeB)
+  @yield.clear()
+  deepEqual @yield.currentVersionNodes, []
+
 QUnit.module 'Batman.View yield, contentFor, and replace rendering'
   teardown: ->
     Batman.DOM.Yield.reset()
