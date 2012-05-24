@@ -55,7 +55,7 @@ Batman.Request::_prepareOptions = (data) ->
 
     unless @hasFileUploads()
       options.contentType = @get 'contentType'
-      if typeof options is 'object'
+      if typeof options.data is 'object'
         options.processData = false
         options.data = Batman.URI.queryFromParams(options.data)
     else
