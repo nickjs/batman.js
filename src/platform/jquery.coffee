@@ -60,6 +60,7 @@ Batman.Request::_prepareOptions = (data) ->
         options.data = Batman.URI.queryFromParams(options.data)
     else
       options.contentType = false
+      options.processData = false
       options.data = @constructor.objectToFormData(options.data)
 
   options
