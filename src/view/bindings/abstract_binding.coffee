@@ -52,6 +52,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
           # Apply the filter.
           args.unshift value
+          args.push undefined while args.length < (fn.length - 1)
           args.push self
           fn.apply(renderContext, args)
         , unfilteredValue)
