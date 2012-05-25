@@ -34,6 +34,13 @@ asyncTest "should parse one segment keypaths as arguments anywhere in the list o
     deepEqual @spy.lastCallArguments, [1, "a", 2, "b", 3, "c"]
     QUnit.start()
 
+asyncTest "should not pass arguments implicitly to the named filter", ->
+  helpers.render '<div data-bind="1 | test foo, 2, bar, 3, baz | test"></div>', Batman(foo: "a", bar: "b", baz: "c"), (node) =>
+    equal node.html(), "testValue"
+    ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
+    deepEqual @spy.lastCallArguments, ['testValue']
+    QUnit.start()
+
 asyncTest "should parse many segment keypaths as arguments anywhere in the list of arguments", ->
   helpers.render '<div data-bind="1 | test qux.foo, 2, qux.bar, 3, qux.baz"></div>', Batman(qux: Batman(foo: "a", bar: "b", baz: "c")), (node) =>
     equal node.html(), "testValue"
