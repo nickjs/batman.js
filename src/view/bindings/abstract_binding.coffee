@@ -168,6 +168,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
           args = filterString.substr(split)
         else
           filterName = filterString
+          args = ""
 
         # If the filter exists, grab it.
         if filter = Batman.Filters[filterName]

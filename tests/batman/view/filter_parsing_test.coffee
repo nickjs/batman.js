@@ -113,6 +113,13 @@ asyncTest 'should render chained filters', 1, ->
     equal node.html(), "foo"
     QUnit.start()
 
+asyncTest 'should render chained filters with arguments', 1, ->
+  node = helpers.render '<div data-bind="foo | prepend \'(\' | append \')\' | append"></div>',
+    foo: 'foo'
+  , (node) ->
+    equal node.html(), "(foo)undefined"
+    QUnit.start()
+
 asyncTest 'should update bindings with the filtered value if they change', 1, ->
   context = Batman
     foo: 'bar'
@@ -405,14 +412,3 @@ asyncTest 'should bind to things under window only when the keypath specifies it
     helpers.render '<div data-bind="window.foo"></div>', null, (node) ->
       equal node.html(), "bar"
       QUnit.start()
-
-asyncTest 'should not write to the bound value if binding has filters', ->
-  context = Batman(foo: false)
-  helpers.render '<input type="checkbox" data-bind-checked="foo | not | not"></div>', context, (node) ->
-    equal node[0].checked, false
-    node[0].checked = true
-    helpers.triggerChange node[0]
-    equal context.get('foo'), false
-
-    QUnit.start()
-
