@@ -170,7 +170,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
         # If the filter exists, grab it; otherwise, bail.
         unless filter = Batman.Filters[filterName]
-          Batman.developer.error "Unrecognized filter '#{filterName}' in key \"#{@keyPath}\"!"
+          return Batman.developer.error "Unrecognized filter '#{filterName}' in key \"#{@keyPath}\"!"
 
         @filterFunctions.push filter
 
