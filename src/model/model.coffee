@@ -262,17 +262,17 @@ class Batman.Model extends Batman.Object
         core.get.apply(@, arguments)
       else
         @get(primaryKey)
-    set: (k, v) ->
+    set: (key, value) ->
       # naively coerce string ids into integers
-      if (typeof v is "string") and (v.match(/[^0-9]/) is null) and ("#{parseInt(v, 10)}" is v)
-        v = parseInt(v, 10)
+      if (typeof value is "string") and (value.match(/[^0-9]/) is null) and ("#{parsedValue = parseInt(value, 10)}" is value)
+        value = parsedValue
 
       primaryKey = @constructor.primaryKey
       if primaryKey == 'id'
-        @_willSet(k)
+        @_willSet(key)
         core.set.apply(@, arguments)
       else
-        @set(primaryKey, v)
+        @set(primaryKey, value)
 
   isNew: -> typeof @get('id') is 'undefined'
 
