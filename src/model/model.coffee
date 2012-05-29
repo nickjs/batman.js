@@ -264,7 +264,7 @@ class Batman.Model extends Batman.Object
         @get(primaryKey)
     set: (k, v) ->
       # naively coerce string ids into integers
-      if typeof v is "string" and v.match(/[^0-9]/) is null
+      if (typeof v is "string") and (v.match(/[^0-9]/) is null) and ("#{parseInt(v, 10)}" is v)
         v = parseInt(v, 10)
 
       primaryKey = @constructor.primaryKey
