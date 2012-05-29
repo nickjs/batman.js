@@ -10,12 +10,7 @@ Batman.config =
   usePushState: no
   minificationErrors: yes
 
-Batman.container = if exports?
-  global.Batman = Batman # I'm so sorry. So, so sorry.
-  global
-else
-  window.Batman = Batman
-  window
+(Batman.container = do -> this).Batman = Batman  # I am so, so sorry.
 
 # Support AMD loaders
 if typeof define is 'function'
