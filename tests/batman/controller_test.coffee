@@ -117,6 +117,16 @@ test 'it should render views if given in the options', ->
     deepEqual testView.get.lastCallArguments, ['node']
     deepEqual replace.lastCallArguments, ['view contents']
 
+test 'it should allow setting the default render destination yield', ->
+  testView = new MockView
+  @controller.defaultRenderYield = 'sidebar'
+  @controller.render
+    view: testView
+
+  spyOnDuring Batman.DOM.Yield.withName('sidebar'), 'replace', (replace) =>
+    testView.fireReady()
+    deepEqual replace.lastCallArguments, ['view contents']
+
 test 'it should pull in views if not present already', ->
   mockClassDuring Batman ,'View', MockView, (mockClass) =>
     @controller.dispatch 'show'

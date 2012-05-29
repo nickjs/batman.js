@@ -42,6 +42,7 @@ class Batman.Controller extends Batman.Object
     super
 
   renderCache: new Batman.RenderCache
+  defaultRenderYield: 'main'
 
   # You shouldn't call this method directly. It will be called by the dispatcher when a route is called.
   # If you need to call a route manually, use `Batman.redirect()`.
@@ -107,7 +108,7 @@ class Batman.Controller extends Batman.Object
     action = frame?.action || @get('action')
 
     if options
-      options.into ||= 'main'
+      options.into ||= @defaultRenderYield
 
     # Ensure the frame is marked as having had an action executed so that render false prevents the implicit render.
     frame?.actionTaken = true
