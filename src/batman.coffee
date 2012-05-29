@@ -487,7 +487,7 @@ Batman.EventEmitter =
     @event(key).addHandler(handler)
   off: (key, handler) ->
     @event(key).removeHandler(handler)
-  onFirst: (key, originalHandler) ->
+  once: (key, originalHandler) ->
     event = @event(key)
     handler = ->
       originalHandler.apply(@, arguments)
@@ -684,7 +684,7 @@ class Batman.Property
     @changeEvent().addHandler(handler)
     @getValue() unless @sources?
     this
-  observeFirst: (originalHandler) ->
+  observeOnce: (originalHandler) ->
     event = @changeEvent()
     handler = ->
       originalHandler.apply(@, arguments)

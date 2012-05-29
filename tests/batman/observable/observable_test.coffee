@@ -327,11 +327,11 @@ test "observeAndFire(key, callback) adds the callback and then calls it immediat
   deepEqual callback.lastCallArguments, ['quxVal', 'quxVal']
 
 ###
-# observeFirst(key, callback)
+# observeOnce(key, callback)
 ###
-test "observeFirst(key, callback) adds the callback and removes it after the first fire", ->
+test "observeOnce(key, callback) adds the callback and removes it after the first fire", ->
   callback = createSpy()
-  @obj.observeFirst 'foo', callback
+  @obj.observeOnce 'foo', callback
   @obj.set 'foo', 'batman'
   @obj.set 'foo', 'gotham'
 
