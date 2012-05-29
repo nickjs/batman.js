@@ -1,4 +1,5 @@
 #= require ./belongs_to_association
+#= require ./polymorphic_belongs_to_proxy
 
 class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
   isPolymorphic: true

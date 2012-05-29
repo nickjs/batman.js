@@ -1,4 +1,5 @@
 #= require ./singular_association
+#= require ./belongs_to_proxy
 
 class Batman.BelongsToAssociation extends Batman.SingularAssociation
   associationType: 'belongsTo'
