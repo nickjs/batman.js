@@ -69,6 +69,31 @@ asyncTest 'should allow prefetching of view sources', 2, ->
     view = new Batman.View({source: 'view'})
     equal view.get('html'), 'prefetched contents'
 
+test 'should not autogenerate a node if the node property is false', 1, ->
+  MockRequest.reset()
+
+  class SpecialView extends Batman.View
+    node: false
+
+  @view = new SpecialView(@options)
+  equal MockRequest.lastInstance, false
+
+asyncTest 'should render a given node after not autogenerating one if the node property is false', 4, ->
+  class SpecialView extends Batman.View
+    node: false
+    html: '<span data-bind="foo"></span>'
+
+  renderSpy = spyOn SpecialView.prototype, 'render'
+
+  @view = new SpecialView context: {foo: 'bar'}
+  delay =>
+    equal renderSpy.callCount, 0
+    equal @view.get('node'), false
+    @view.set 'node', document.createElement('div')
+    delay =>
+      equal renderSpy.callCount, 1
+      equal @view.get('node').childNodes[0].innerHTML, 'bar'
+
 QUnit.module 'Batman.View isInDOM'
   setup: ->
     @options =
