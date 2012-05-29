@@ -45,3 +45,7 @@ Batman.Observable =
   observeAndFire: (key, args...) ->
     @property(key).observeAndFire(args...)
     @
+
+  observeOnce: (key, args...) ->
+    @property(key).observeOnce(args...)
+    @
