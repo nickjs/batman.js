@@ -55,7 +55,12 @@ class Batman.SimpleHash
         @length--
         delete @_storage[key]
       val
-  getOrSet: Batman.Observable.getOrSet
+  getOrSet: (key, valueFunction) ->
+    currentValue = @get(key)
+    unless currentValue
+      currentValue = valueFunction()
+      @set(key, currentValue)
+    currentValue
   prefixedKey: (key) -> "_"+key
   unprefixedKey: (key) -> key.slice(1)
   hashKeyFor: (obj) -> obj?.hashKey?() or obj

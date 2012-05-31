@@ -1,4 +1,5 @@
 #= require ../enumerable
+#= require ../hash/simple_hash
 
 class Batman.SimpleSet
   constructor: ->
@@ -8,12 +9,10 @@ class Batman.SimpleSet
 
   Batman.extend @prototype, Batman.Enumerable
 
-  has: (item) ->
-    !!(~@_storage.indexOf item)
-
+  has: (item) -> !!(~@_indexOfItem(item))
   add: (items...) ->
     addedItems = []
-    for item in items when !~@_storage.indexOf item
+    for item in items when !~@_indexOfItem(item)
       @_storage.push item
       addedItems.push item
     @length = @_storage.length
@@ -23,7 +22,7 @@ class Batman.SimpleSet
     addedItems
   remove: (items...) ->
     removedItems = []
-    for item in items when ~(index = @_storage.indexOf(item))
+    for item in items when ~(index = @_indexOfItem(item))
       @_storage.splice(index, 1)
       removedItems.push item
     @length = @_storage.length
@@ -72,3 +71,9 @@ class Batman.SimpleSet
     @_sorts ||= new Batman.SimpleHash
     sortsForKey = @_sorts.get(key) or @_sorts.set(key, new Batman.Object)
     sortsForKey.get(order) or sortsForKey.set(order, new Batman.SetSort(@, key, order))
+
+  equality: Batman.SimpleHash::equality
+  _indexOfItem: (givenItem) ->
+    for item, index in @_storage
+      return index if @equality(givenItem, item)
+    return -1

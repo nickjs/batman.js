@@ -19,12 +19,7 @@ Batman.Observable =
   unset: (key) ->
     @property(key).unsetValue()
 
-  getOrSet: (key, valueFunction) ->
-    currentValue = @get(key)
-    unless currentValue
-      currentValue = valueFunction()
-      @set(key, currentValue)
-    currentValue
+  getOrSet: Batman.SimpleHash::getOrSet
 
   # `forget` removes an observer from an object. If the callback is passed in,
   # its removed. If no callback but a key is passed in, all the observers on
