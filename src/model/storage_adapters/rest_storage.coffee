@@ -115,13 +115,14 @@ class Batman.RestStorage extends Batman.StorageAdapter
     super(key, record, options, callback)
 
   @::before 'all', @skipIfError (env, next) ->
-    try
-      env.options.url = if env.subject.prototype
-        @urlForCollection(env.subject, env)
-      else
-        @urlForRecord(env.subject, env)
-    catch error
-      env.error = error
+    unless env.options.url
+      try
+        env.options.url = if env.subject.prototype
+          @urlForCollection(env.subject, env)
+        else
+          @urlForRecord(env.subject, env)
+      catch error
+        env.error = error
     next()
 
   @::before 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
