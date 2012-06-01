@@ -197,6 +197,24 @@ asyncTest "model instances shouldn't save if they don't validate", ->
     equal err.length, 1
     QUnit.start()
 
+asyncTest "model instances should not be in error if they don't validate", ->
+  @Product.validate 'name', presence: yes
+  product = new @Product()
+  product.save (err, product) ->
+    notEqual product.get('lifecycle.state'), 'error'
+    QUnit.start()
+
+asyncTest "model instances should return to dirty if they don't validate", ->
+  @Product.validate 'name', presence: yes
+  product = new @Product()
+  product.save (err, product) ->
+    ok err
+    product.set 'name', 'Chair'
+    product.save (err, product) ->
+      ok !err
+      equal product.get('lifecycle.state'), 'clean'
+      QUnit.start()
+
 asyncTest "model instances shouldn't save if they have been destroyed", ->
   p = new @Product(10)
   p.destroy (err) =>
