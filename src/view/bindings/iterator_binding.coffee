@@ -17,8 +17,8 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     # and move any Batman._data from the sourceNode to the sibling because we need to
     # retain the bindings, and we want to dispose of the node.
     previousSiblingNode = sourceNode.nextSibling
-    @startNode = document.createComment "start #{@iteratorName}-#{@get('objectID')}"
-    @endNode = document.createComment "end #{@iteratorName}-#{@get('objectID')}"
+    @startNode = document.createComment "start #{@iteratorName}-#{@get('_batmanID')}"
+    @endNode = document.createComment "end #{@iteratorName}-#{@get('_batmanID')}"
     @endNode[Batman.expando] = sourceNode[Batman.expando]
     delete sourceNode[Batman.expando] if Batman.canDeleteExpando
     Batman.insertBefore sourceNode.parentNode, @startNode, previousSiblingNode

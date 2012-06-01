@@ -17,18 +17,18 @@ class BatmanObject extends Object
   mixin: @classMixin
 
   counter = 0
-  _objectID: ->
-    @_objectID = -> c
+  _batmanID: ->
+    @_batmanID = -> c
     c = counter++
 
   hashKey: ->
     return if typeof @isEqual is 'function'
     @hashKey = -> key
-    key = "<Batman.Object #{@_objectID()}>"
+    key = "<Batman.Object #{@_batmanID()}>"
 
   toJSON: ->
     obj = {}
-    for own key, value of @ when key not in ["_batman", "hashKey", "_objectID"]
+    for own key, value of @ when key not in ["_batman", "hashKey", "_batmanID"]
       obj[key] = if value?.toJSON then value.toJSON() else value
     obj
 
@@ -114,5 +114,7 @@ class BatmanObject extends Object
   @singleton: (singletonMethodName="sharedInstance") ->
     @classAccessor singletonMethodName,
       get: -> @["_#{singletonMethodName}"] ||= new @
+
+  @accessor '_batmanID', -> @_batmanID()
 
 Batman.Object = BatmanObject

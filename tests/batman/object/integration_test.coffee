@@ -25,3 +25,7 @@ test 'Batman: runtime integration test', ->
   c.observe 'whatever', spy = createSpy()
   b.set 'foo', 1000
   ok spy.called
+
+test "Batman.Object: _batmanID accessor", ->
+  object = Batman()
+  ok object.get('_batmanID')?
