@@ -122,15 +122,12 @@ _implementImmediates = (container) ->
     Batman.clearImmediate = (handle) -> tasks.unset(handle)
   else if process?.nextTick
     functions = {}
-    willExecute = false
     Batman.setImmediate = (f) ->
       handle = getHandle()
       functions[handle] = f
-      if !willExecute
-        willExecute = true
-        process.nextTick ->
-          willExecute = false
-          f() for handle, f of functions
+      process.nextTick ->
+        f() for handle, f of functions
+        functions = {}
       handle
 
     Batman.clearImmediate = (handle) ->
