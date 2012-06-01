@@ -42,45 +42,23 @@ test 'it should cache the rendered Batman.View if `view` isn\'t given in the opt
     @controller.dispatch 'show'
     equal mockClass.lastInstance, view, "No new instance has been made"
 
-test 'it should clear yields which weren\'t rendered into after dispatch', ->
-  spyOnDuring Batman.DOM.Yield.withName('sidebar'), 'clear', (sidebarClearSpy) =>
-    spyOnDuring Batman.DOM.Yield.withName('main'), 'clear', (mainClearSpy) =>
+test 'it should cycle and clearStale all yields after dispatch', ->
+  spyOnDuring Batman.DOM.Yield.withName('sidebar'), 'cycle', (sidebarCycleSpy) =>
+    spyOnDuring Batman.DOM.Yield.withName('main'), 'cycle', (mainCycleSpy) =>
       mockClassDuring Batman ,'View', MockView, (mockClass) =>
         @controller.show = ->
           @render {into: 'main'}
         @controller.index = ->
           @render {into: 'sidebar'}
 
-        equal mainClearSpy.callCount, 0
-        equal sidebarClearSpy.callCount, 0
+        equal mainCycleSpy.callCount, 0
+        equal sidebarCycleSpy.callCount, 0
         @controller.dispatch 'show'
-        equal mainClearSpy.callCount, 0
-        equal sidebarClearSpy.callCount, 1
+        equal mainCycleSpy.callCount, 1
+        equal sidebarCycleSpy.callCount, 1
         @controller.dispatch 'index'
-        equal mainClearSpy.callCount, 1
-        equal sidebarClearSpy.callCount, 1
-
-test 'it should clear yields which weren\'t rendered into after dispatch if the implicit render takes place', ->
-  spyOnDuring Batman.DOM.Yield.withName('sidebar'), 'clear', (sidebarClearSpy) =>
-    spyOnDuring Batman.DOM.Yield.withName('main'), 'clear', (mainClearSpy) =>
-      mockClassDuring Batman ,'View', MockView, (mockClass) =>
-        @controller.dispatch 'show'
-        ok sidebarClearSpy.called
-        equal mainClearSpy.called, false
-
-test 'it should clear yields which weren\'t rendered into after dispatch if several named renders take place', ->
-  spyOnDuring Batman.DOM.Yield.withName('slider'), 'clear', (sliderClearSpy) =>
-    spyOnDuring Batman.DOM.Yield.withName('sidebar'), 'clear', (sidebarClearSpy) =>
-      spyOnDuring Batman.DOM.Yield.withName('main'), 'clear', (mainClearSpy) =>
-        mockClassDuring Batman ,'View', MockView, (mockClass) =>
-          @controller.show = ->
-            @render {source: 'list', into: 'main'}
-            @render {source: 'show', into: 'slider'}
-
-          @controller.dispatch 'show'
-          equal mainClearSpy.called, false
-          equal sliderClearSpy.called, false
-          ok sidebarClearSpy.called
+        equal mainCycleSpy.callCount, 2
+        equal sidebarCycleSpy.callCount, 2
 
 test 'it should render a Batman.View subclass with the ControllerAction name on the current app if it exists', ->
   Batman.currentApp = mockApp = Batman _renderContext: Batman.RenderContext.base
@@ -137,6 +115,16 @@ test 'it should render views if given in the options', ->
   spyOnDuring Batman.DOM.Yield.withName('main'), 'replace', (replace) =>
     testView.fireReady()
     deepEqual testView.get.lastCallArguments, ['node']
+    deepEqual replace.lastCallArguments, ['view contents']
+
+test 'it should allow setting the default render destination yield', ->
+  testView = new MockView
+  @controller.defaultRenderYield = 'sidebar'
+  @controller.render
+    view: testView
+
+  spyOnDuring Batman.DOM.Yield.withName('sidebar'), 'replace', (replace) =>
+    testView.fireReady()
     deepEqual replace.lastCallArguments, ['view contents']
 
 test 'it should pull in views if not present already', ->
@@ -258,18 +246,3 @@ test 'actions executed by other actions have their filters run', ->
   @controller.dispatch 'test'
   ok beforeSpy.called
   ok afterSpy.called
-
-test 'actions executed by other actions prevent yields from being cleared at the end of dispatch', ->
-  spyOnDuring Batman.DOM.Yield.withName('sidebar'), 'clear', (sidebarClearSpy) =>
-    spyOnDuring Batman.DOM.Yield.withName('main'), 'clear', (mainClearSpy) =>
-      mockClassDuring Batman ,'View', MockView, (mockClass) =>
-        @controller.show = ->
-          @executeAction 'index'
-          @render {into: 'main'}
-        @controller.index = ->
-          @render {into: 'sidebar'}
-
-        @controller.dispatch 'show'
-
-        equal mainClearSpy.callCount, 0
-        equal sidebarClearSpy.callCount, 0

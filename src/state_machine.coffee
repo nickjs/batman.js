@@ -15,9 +15,24 @@ class Batman.StateMachine extends Batman.Object
       table[k] = object
 
     @::transitionTable = Batman.extend {}, @::transitionTable, table
+
+    predicateKeys = []
+    definePredicate = (state) =>
+      key = "is#{Batman.helpers.capitalize(state)}"
+      return if @::[key]?
+      predicateKeys.push key
+      @::[key] = -> @get('state') == state
+
     for k, transitions of @::transitionTable when !@::[k]
       do (k) =>
         @::[k] = -> @startTransition(k)
+
+      for fromState, toState of transitions
+        definePredicate(fromState)
+        definePredicate(toState)
+
+    if predicateKeys.length
+      @accessor predicateKeys..., (key) -> @[key]()
     @
 
   constructor: (startState) ->

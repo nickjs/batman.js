@@ -9,6 +9,18 @@ basicSetTestSuite = ->
   test "has(undefined) returns false", ->
     equal @set.has(undefined), false
 
+  test "has(item) for an item with isEqual defined returns true if another item isEqual to that item", ->
+    itemA = {isEqual: -> true}
+    itemB = {isEqual: -> true}
+    @set.add(itemA)
+    equal @set.has(itemB), true
+
+  test "has(item) for an item with isEqual defined returns false if no other item isEqual to that item", ->
+    itemA = {isEqual: -> true}
+    itemB = {isEqual: -> false}
+    @set.add(itemA)
+    equal @set.has(itemB), false
+
   test "add(items...) adds the items to the set, such that has(item) returns true for each item, and increments the set's length accordingly", ->
     deepEqual @set.add('foo', 'bar'), ['foo', 'bar']
     equal @set.length, 2

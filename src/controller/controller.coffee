@@ -1,4 +1,3 @@
-#= require ../object
 #= require ./render_cache
 
 class Batman.Controller extends Batman.Object
@@ -39,11 +38,11 @@ class Batman.Controller extends Batman.Object
     filters.set(options.block, options)
 
   constructor: ->
-    @_renderedYields = {}
     @_actionFrames = []
     super
 
   renderCache: new Batman.RenderCache
+  defaultRenderYield: 'main'
 
   # You shouldn't call this method directly. It will be called by the dispatcher when a route is called.
   # If you need to call a route manually, use `Batman.redirect()`.
@@ -52,15 +51,15 @@ class Batman.Controller extends Batman.Object
     params.action ||= action
     params.target ||= @
 
-    @_renderedYields = {}
     @_actionFrames = []
     @set 'action', action
     @set 'params', params
 
+    Batman.DOM.Yield.cycleAll()
+
     @executeAction(action, params)
 
-    for name, yieldObject of Batman.DOM.Yield.yields when !@_renderedYields[name]
-      yieldObject.clear()
+    Batman.DOM.Yield.clearAllStale()
 
     redirectTo = @_afterFilterRedirect
     delete @_afterFilterRedirect
@@ -109,16 +108,11 @@ class Batman.Controller extends Batman.Object
     action = frame?.action || @get('action')
 
     if options
-      options.into ||= 'main'
-
-    if frame && frame.actionTaken && @_renderedYields[options.into]
-      Batman.developer.warn "Warning! Trying to render but an action has already be taken during #{@get('routingKey')}.#{action} on yield #{options.into}"
+      options.into ||= @defaultRenderYield
 
     # Ensure the frame is marked as having had an action executed so that render false prevents the implicit render.
     frame?.actionTaken = true
     return if options is false
-
-    @_renderedYields?[options.into] = true
 
     if not options.view
       options.viewClass ||= Batman.currentApp?[Batman.helpers.camelize("#{@get('routingKey')}_#{action}_view")] || Batman.View

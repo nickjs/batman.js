@@ -69,3 +69,4 @@ test "should recreate argument bindings if the view's node changes", ->
   view.set 'node', newNode
   equal view.get('keyA'), "bar"
   equal view.get('keyB'), "foo"
+

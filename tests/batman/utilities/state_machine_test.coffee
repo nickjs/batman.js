@@ -10,13 +10,19 @@ QUnit.module "Batman.StateMachine"
 test "should start in the inital state given", ->
   equal 'on', @sm.get('state')
 
+test "should define accessors and function state predicates", ->
+  ok @sm.isOn()
+  ok @sm.get('isOn')
+  ok !@sm.isOff()
+  ok !@sm.get('isOff')
+
 test "should accept a transition table in the constructor", ->
   equal @sm.get('state'), 'on'
   @sm.switch()
   equal @sm.get('state'), 'off'
   @sm.switch()
   equal @sm.get('state'), 'on'
-  @sm.startTransition('switch') # transitions can be called using strings as well
+  @sm.startTransition('switch')
   equal @sm.get('state'), 'off'
 
   ok @sm.canStartTransition('switch')

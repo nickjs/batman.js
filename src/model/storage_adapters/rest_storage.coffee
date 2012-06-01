@@ -115,13 +115,14 @@ class Batman.RestStorage extends Batman.StorageAdapter
     super(key, record, options, callback)
 
   @::before 'all', @skipIfError (env, next) ->
-    try
-      env.options.url = if env.subject.prototype
-        @urlForCollection(env.subject, env)
-      else
-        @urlForRecord(env.subject, env)
-    catch error
-      env.error = error
+    unless env.options.url
+      try
+        env.options.url = if env.subject.prototype
+          @urlForCollection(env.subject, env)
+        else
+          @urlForRecord(env.subject, env)
+      catch error
+        env.error = error
     next()
 
   @::before 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
@@ -163,23 +164,26 @@ class Batman.RestStorage extends Batman.StorageAdapter
     env.json = json
     next()
 
+  extractFromNamespace: (data, namespace) ->
+    if namespace and data[namespace]?
+      data[namespace]
+    else
+      data
+
   @::after 'create', 'read', 'update', @skipIfError (env, next) ->
     if env.json?
-      namespace = @recordJsonNamespace(env.subject)
-      json = if namespace && env.json[namespace]?
-        env.json[namespace]
-      else
-        env.json
+      json = @extractFromNamespace(env.json, @recordJsonNamespace(env.subject))
       env.subject._withoutDirtyTracking -> @fromJSON(json)
     env.result = env.subject
     next()
 
   @::after 'readAll', @skipIfError (env, next) ->
     namespace = @collectionJsonNamespace(env.subject)
-    env.recordsAttributes = if namespace && env.json[namespace]?
-      env.json[namespace]
-    else
-      env.json
+    env.recordsAttributes = @extractFromNamespace(env.json, namespace)
+
+    unless Batman.typeOf(env.recordsAttributes) is 'Array'
+      namespace = @recordJsonNamespace(env.subject.prototype)
+      env.recordsAttributes = [@extractFromNamespace(env.json, namespace)]
 
     env.result = env.records = for jsonRecordAttributes in env.recordsAttributes
       @getRecordFromData(jsonRecordAttributes, env.subject)

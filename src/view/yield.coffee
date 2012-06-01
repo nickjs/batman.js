@@ -11,14 +11,41 @@ Batman.DOM.Yield = class Yield extends Batman.Object
           result = fn.apply(@, args)
           @forget 'containerNode', handler
           result
+
   @reset: -> @yields = {}
-  @clearAll: ->
-    yieldObject.clear() for name, yieldObject of @yields
-    return
+
   @withName: (name) ->
     @yields[name] ||= new @({name})
     @yields[name]
 
-  clear:   @queued -> Batman.removeOrDestroyNode(child) for child in (child for child in @containerNode.childNodes)
-  append:  @queued (node) -> Batman.appendChild @containerNode, node, true
-  replace: @queued (node) -> @clear(); @append(node)
+  @forEach: (f) ->
+    for name, yieldObject of @yields
+      f(yieldObject)
+    return
+
+  @clearAll: -> @forEach (yieldObject) -> yieldObject.clear()
+  @cycleAll: -> @forEach (yieldObject) -> yieldObject.cycle()
+  @clearAllStale: -> @forEach (yieldObject) -> yieldObject.clearStale()
+
+  constructor: ->
+    @cycle()
+
+  cycle: ->
+    @currentVersionNodes = []
+
+  clear:   @queued ->
+    @cycle()
+    for child in (child for child in @containerNode.childNodes)
+      Batman.removeOrDestroyNode(child)
+
+  clearStale: @queued ->
+    for child in (child for child in @containerNode.childNodes) when !~@currentVersionNodes.indexOf(child)
+      Batman.removeOrDestroyNode(child)
+
+  append:  @queued (node) ->
+    @currentVersionNodes.push node
+    Batman.appendChild @containerNode, node, true
+
+  replace: @queued (node) ->
+    @clear()
+    @append(node)

@@ -77,6 +77,18 @@ test "observed properties should call the accessor when changed", ->
   @object.set 'foo', 12345
   equal getter.callCount, 1
 
+test "Property.withoutTracking(block) runs the block and returns its return value, while preventing it from registering property sources", ->
+  barVal = null
+  @class.accessor 'foo', ->
+    Batman.Property.withoutTracking =>
+      barVal = @get('bar')
+  @object.set('bar', 'barVal')
+
+  equal @object.get('foo'), 'barVal'
+  equal barVal, 'barVal'
+
+  deepEqual @object.property('foo').sources.toArray(), []
+
 
 QUnit.module 'Batman.Property',
   setup: ->

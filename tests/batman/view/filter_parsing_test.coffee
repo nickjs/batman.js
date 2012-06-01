@@ -34,6 +34,13 @@ asyncTest "should parse one segment keypaths as arguments anywhere in the list o
     deepEqual @spy.lastCallArguments, [1, "a", 2, "b", 3, "c"]
     QUnit.start()
 
+asyncTest "should not pass arguments implicitly to the named filter", ->
+  helpers.render '<div data-bind="1 | test foo, 2, bar, 3, baz | test"></div>', Batman(foo: "a", bar: "b", baz: "c"), (node) =>
+    equal node.html(), "testValue"
+    ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
+    deepEqual @spy.lastCallArguments, ['testValue']
+    QUnit.start()
+
 asyncTest "should parse many segment keypaths as arguments anywhere in the list of arguments", ->
   helpers.render '<div data-bind="1 | test qux.foo, 2, qux.bar, 3, qux.baz"></div>', Batman(qux: Batman(foo: "a", bar: "b", baz: "c")), (node) =>
     equal node.html(), "testValue"
@@ -99,11 +106,25 @@ asyncTest "should parse strings with more than 3 commas as arguments", ->
     deepEqual @spy.lastCallArguments, [1, "a,b,c,d,e,f"]
     QUnit.start()
 
+asyncTest 'should pass undefined for absent arguments', 1, ->
+  node = helpers.render '<div data-bind="foo | append"></div>',
+    foo: 'foo'
+  , (node) ->
+    equal node.html(), "fooundefined"
+    QUnit.start()
+
 asyncTest 'should render chained filters', 1, ->
   node = helpers.render '<div data-bind="foo | upcase | downcase"></div>',
     foo: 'foo'
   , (node) ->
     equal node.html(), "foo"
+    QUnit.start()
+
+asyncTest 'should render chained filters with arguments', 1, ->
+  node = helpers.render '<div data-bind="foo | prepend \'(\' | append \')\' | append"></div>',
+    foo: 'foo'
+  , (node) ->
+    equal node.html(), "(foo)undefined"
     QUnit.start()
 
 asyncTest 'should update bindings with the filtered value if they change', 1, ->
@@ -398,14 +419,3 @@ asyncTest 'should bind to things under window only when the keypath specifies it
     helpers.render '<div data-bind="window.foo"></div>', null, (node) ->
       equal node.html(), "bar"
       QUnit.start()
-
-asyncTest 'should not write to the bound value if binding has filters', ->
-  context = Batman(foo: false)
-  helpers.render '<input type="checkbox" data-bind-checked="foo | not | not"></div>', context, (node) ->
-    equal node[0].checked, false
-    node[0].checked = true
-    helpers.triggerChange node[0]
-    equal context.get('foo'), false
-
-    QUnit.start()
-
