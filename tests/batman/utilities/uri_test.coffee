@@ -59,9 +59,9 @@ test ".queryFromParams(params) returns a query string for the given object", ->
     foo: ''
     bar: null
     baz: undefined
-	qux: []
+    qux: []
 
-  equal query, "a+phrase=this+phrase&num=1&foo=&bar&baz&qux"
+  equal query, "a+phrase=this+phrase&num=1&foo=&bar&baz&qux[]"
 
 # taken from Rack:
 #
