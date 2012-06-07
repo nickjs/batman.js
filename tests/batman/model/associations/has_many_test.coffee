@@ -65,9 +65,11 @@ asyncTest "hasMany associations are loaded", 4, ->
       products.forEach (product) => ok product instanceof @Product
       deepEqual products.map((x) -> x.get('id')), [1,2,3]
 
-asyncTest "AssociationSet fires loaded event", 1, ->
+asyncTest "AssociationSet fires loaded event and sets loaded accessor", 3, ->
   @Store.find 1, (err, store) ->
+    deepEqual store.get('products').get('loaded'), false
     store.get('products').on 'loaded', ->
+      deepEqual store.get('products').get('loaded'), true
       ok true, 'loaded fired'
       QUnit.start()
 
