@@ -385,45 +385,6 @@
 `
 (exports ? this).reqwest = if window? then window.reqwest else reqwest
 
-# `param` and `buildParams` stolen from jQuery
-#
-# jQuery JavaScript Library v1.6.1
-# http://jquery.com/
-#
-# Copyright 2011, John Resig
-# Dual licensed under the MIT or GPL Version 2 licenses.
-# http://jquery.org/license
-rbracket = /\[\]$/
-r20 = /%20/g
-param = (a) ->
-  return a if typeof a is 'string'
-  s = []
-  add = (key, value) ->
-    value = value() if typeof value is 'function'
-    value = '' unless value?
-    s[s.length] = encodeURIComponent(key) + "=" + encodeURIComponent(value)
-
-  if Batman.typeOf(a) is 'Array'
-    for value, name of a
-      add name, value
-  else
-    for own k, v of a
-      buildParams k, v, add
-  s.join("&").replace r20, "+"
-
-buildParams = (prefix, obj, add) ->
-  if Batman.typeOf(obj) is 'Array'
-    for v, i in obj
-      if rbracket.test(prefix)
-        add prefix, v
-      else
-        buildParams prefix + "[" + (if typeof v == "object" or Batman.typeOf(v) is 'Array' then i else "") + "]", v, add
-  else if obj? and typeof obj == "object"
-    for name of obj
-      buildParams prefix + "[" + name + "]", obj[name], add
-  else
-    add prefix, obj
-
 Batman.Request::_parseResponseHeaders = (xhr) ->
   headers = xhr.getAllResponseHeaders().split('\n').reduce((acc, header) ->
     if matches = header.match(/([^:]*):\s*(.*)/)
@@ -470,7 +431,7 @@ Batman.Request::send = (data) ->
       options.data = @constructor.objectToFormData(data)
     else
       options.contentType = @get('contentType')
-      options.data = param(data)
+      options.data = Batman.URI.queryFromParams(data)
 
   else
     options.data = data

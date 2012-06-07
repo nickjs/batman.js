@@ -5,5 +5,4 @@
 #= require ../extras/batman.paginator
 
 Batman = global.Batman
-delete global.Batman
 module.exports = Batman

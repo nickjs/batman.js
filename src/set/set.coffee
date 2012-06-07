@@ -3,8 +3,7 @@
 #= require ../enumerable
 
 class Batman.Set extends Batman.Object
-  constructor: ->
-    Batman.SimpleSet.apply @, arguments
+  constructor: -> Batman.SimpleSet.apply @, arguments
 
   Batman.extend @prototype, Batman.Enumerable
 
@@ -23,7 +22,7 @@ class Batman.Set extends Batman.Object
 
   @_applySetAccessors(@)
 
-  for k in ['add', 'remove', 'clear', 'replace', 'indexedBy', 'indexedByUnique', 'sortedBy']
+  for k in ['add', 'remove', 'clear', 'replace', 'indexedBy', 'indexedByUnique', 'sortedBy', 'equality', '_indexOfItem']
     @::[k] = Batman.SimpleSet::[k]
 
   for k in ['find', 'merge', 'forEach', 'toArray', 'isEmpty', 'has']

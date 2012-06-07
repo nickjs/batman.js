@@ -71,7 +71,7 @@ restStorageTestSuite = ->
     otherAdapter = new @adapter.constructor(@Product)
     notEqual otherAdapter.defaultRequestOptions, @adapter.defaultRequestOptions
 
-  asyncTest 'can readAll from JSON string', 2, ->
+  asyncTest 'can readAll from JSON string', 3, ->
     MockRequest.expect
       url: '/products'
       method: 'GET'
@@ -80,7 +80,21 @@ restStorageTestSuite = ->
     @adapter.perform 'readAll', @Product, {}, (err, readProducts) ->
       throw err if err
       ok readProducts
-      equal readProducts[0].get("name"), "test"
+      equal readProducts.length, 1
+      equal readProducts[0]?.get("name"), "test"
+      QUnit.start()
+
+  asyncTest 'can readAll from JSON string representing just one object', 3, ->
+    MockRequest.expect
+      url: '/products'
+      method: 'GET'
+    , JSON.stringify product: {name: "test", cost: 20}
+
+    @adapter.perform 'readAll', @Product, {}, (err, readProducts) ->
+      throw err if err
+      ok readProducts
+      equal readProducts.length, 1
+      equal readProducts[0]?.get("name"), "test"
       QUnit.start()
 
   asyncTest 'updating in storage: should update the record with the response if it is different', 1, ->

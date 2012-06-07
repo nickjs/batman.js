@@ -52,6 +52,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
           # Apply the filter.
           args.unshift value
+          args.push undefined while args.length < (fn.length - 1)
           args.push self
           fn.apply(renderContext, args)
         , unfilteredValue)
@@ -162,27 +163,23 @@ class Batman.DOM.AbstractBinding extends Batman.Object
       while filterString = filters.shift()
         # For each filter, get the name and the arguments by splitting on the first space.
         split = filterString.indexOf(' ')
-        if ~split
-          filterName = filterString.substr(0, split)
-          args = filterString.substr(split)
-        else
-          filterName = filterString
+        split = filterString.length if split is -1
 
-        # If the filter exists, grab it.
-        if filter = Batman.Filters[filterName]
-          @filterFunctions.push filter
+        filterName = filterString.substr(0, split)
+        args = filterString.substr(split)
 
-          # Get the arguments for the filter by parsing the args as JSON, or
-          # just pushing an placeholder array
-          if args
-            try
-              @filterArguments.push @parseSegment(args)
-            catch e
-              Batman.developer.error "Bad filter arguments \"#{args}\"!"
-          else
-            @filterArguments.push []
-        else
-          Batman.developer.error "Unrecognized filter '#{filterName}' in key \"#{@keyPath}\"!"
+        # If the filter exists, grab it; otherwise, bail.
+        unless filter = Batman.Filters[filterName]
+          return Batman.developer.error "Unrecognized filter '#{filterName}' in key \"#{@keyPath}\"!"
+
+        @filterFunctions.push filter
+
+        # Get the arguments for the filter by parsing the args as JSON, or
+        # just pushing an placeholder array
+        try
+          @filterArguments.push @parseSegment(args)
+        catch e
+          Batman.developer.error "Bad filter arguments \"#{args}\"!"
       true
 
   # Turn a piece of a `data` keypath into a usable javascript object.

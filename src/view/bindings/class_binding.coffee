@@ -20,5 +20,3 @@ class Batman.DOM.ClassBinding extends Batman.DOM.AbstractCollectionBinding
       @node.className = array.join ' '
 
   handleArrayChanged: => @updateFromCollection()
-  handleItemsWereRemoved: => @updateFromCollection()
-  handleItemsWereAdded: => @updateFromCollection()

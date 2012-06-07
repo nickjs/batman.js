@@ -42,7 +42,7 @@ class Batman.LocalStorage extends Batman.StorageAdapter
 
   @::before 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
     if env.action == 'create'
-      env.id = env.subject.get('id') || env.subject.set('id', @nextIdForRecord(env.subject))
+      env.id = env.subject.get('id') || env.subject._withoutDirtyTracking => env.subject.set('id', @nextIdForRecord(env.subject))
     else
       env.id = env.subject.get('id')
 

@@ -116,7 +116,7 @@ class Batman.RouteMapBuilder
 
   _addRoute: (options = {}) ->
     path = @rootPath + options.path
-    name = @rootName + options.as
+    name = @rootName + Batman.helpers.camelize(options.as, true)
     delete options.as
     delete options.path
     klass = if options.callback then Batman.CallbackActionRoute else Batman.ControllerActionRoute
@@ -138,7 +138,8 @@ class Batman.RouteMapBuilder
       ""
     else
       nestingParam = ":" + Batman.helpers.singularize(@baseOptions.controller) + "Id"
-      "#{@parent._nestingPath()}/#{@baseOptions.controller}/#{nestingParam}/"
+      nestingSegment = Batman.helpers.underscore(@baseOptions.controller)
+      "#{@parent._nestingPath()}/#{nestingSegment}/#{nestingParam}/"
 
   _nestingName: ->
     unless @parent

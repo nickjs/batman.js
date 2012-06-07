@@ -3,30 +3,22 @@
 class Batman.DOM.AbstractCollectionBinding extends Batman.DOM.AbstractAttributeBinding
 
   bindCollection: (newCollection) ->
-    unless newCollection == @collection
+    if newCollection instanceof Batman.Hash
+      newCollection = newCollection.meta # Get the object which will  have a toArray
+    if newCollection == @collection
+      return true
+    else
       @unbindCollection()
       @collection = newCollection
-      if @collection
-        if @collection.isObservable && @collection.toArray
-          @collection.observe 'toArray', @handleArrayChanged
-        else if @collection.isEventEmitter
-          @collection.on 'itemsWereAdded', @handleItemsWereAdded
-          @collection.on 'itemsWereRemoved', @handleItemsWereRemoved
-        else
-          return false
+      if @collection?.isObservable
+        @collection.observeAndFire 'toArray', @handleArrayChanged
         return true
     return false
 
   unbindCollection: ->
-    if @collection
-      if @collection.isObservable && @collection.toArray
-        @collection.forget('toArray', @handleArrayChanged)
-      else if @collection.isEventEmitter
-        @collection.event('itemsWereAdded').removeHandler(@handleItemsWereAdded)
-        @collection.event('itemsWereRemoved').removeHandler(@handleItemsWereRemoved)
+    if @collection?.isObservable
+      @collection.forget('toArray', @handleArrayChanged)
 
-  handleItemsWereAdded: ->
-  handleItemsWereRemoved: ->
   handleArrayChanged: ->
 
   die: ->

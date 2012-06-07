@@ -5,9 +5,8 @@
 # fragment is particularly long.
 class Batman.Renderer extends Batman.Object
   deferEvery: 50
-  constructor: (@node, callback, @context, @view) ->
+  constructor: (@node, @context, @view) ->
     super()
-    @on('parsed', callback) if callback?
     Batman.developer.error "Must pass a RenderContext to a renderer for rendering" unless @context instanceof Batman.RenderContext
     @immediate = Batman.setImmediate @start
 

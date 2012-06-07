@@ -1,4 +1,5 @@
 #= require ./singular_association
+#= require ./has_one_proxy
 
 class Batman.HasOneAssociation extends Batman.SingularAssociation
   associationType: 'hasOne'

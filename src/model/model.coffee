@@ -213,6 +213,9 @@ class Batman.Model extends Batman.Object
       destroy:
         from: ['dirty', 'clean']
         to: 'destroying'
+      failedValidation:
+        from: ['saving', 'creating']
+        to: 'dirty'
       loaded: {loading: 'clean'}
       created: {creating: 'clean'}
       saved: {saving: 'clean'}
@@ -262,17 +265,17 @@ class Batman.Model extends Batman.Object
         core.get.apply(@, arguments)
       else
         @get(primaryKey)
-    set: (k, v) ->
+    set: (key, value) ->
       # naively coerce string ids into integers
-      if typeof v is "string" and v.match(/[^0-9]/) is null
-        v = parseInt(v, 10)
+      if (typeof value is "string") and (value.match(/[^0-9]/) is null) and ("#{parsedValue = parseInt(value, 10)}" is value)
+        value = parsedValue
 
       primaryKey = @constructor.primaryKey
       if primaryKey == 'id'
-        @_willSet(k)
+        @_willSet(key)
         core.set.apply(@, arguments)
       else
-        @set(primaryKey, v)
+        @set(primaryKey, value)
 
   isNew: -> typeof @get('id') is 'undefined'
 
@@ -373,7 +376,8 @@ class Batman.Model extends Batman.Object
     [startState, storageOperation, endState] = if isNew then ['create', 'create', 'created'] else ['save', 'update', 'saved']
     @validate (error, errors) =>
       if error || errors.length
-        callback?(error || errors)
+        @get('lifecycle').failedValidation()
+        callback?(error || errors, @)
         return
       creating = @isNew()
 
@@ -394,8 +398,11 @@ class Batman.Model extends Batman.Object
             record = @constructor._mapIdentity(record)
             @get('lifecycle').startTransition endState
           else
-            @get('lifecycle').error()
-          callback?(err, record, env)
+            if err instanceof Batman.ErrorsSet
+              @get('lifecycle').failedValidation()
+            else
+              @get('lifecycle').error()
+          callback?(err, record || @, env)
       else
         callback?(new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}"))
 

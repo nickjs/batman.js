@@ -79,14 +79,17 @@ class Batman.URI
     return prefix unless value?
     valueType = Batman.typeOf(value)
     unless prefix? or valueType is 'Object'
-      throw new Error("value must be an Object") 
+      throw new Error("value must be an Object")
     switch valueType
       when 'Array'
         (queryFromParams(v, "#{prefix}[]") for v in value).join("&")
       when 'Object'
         (queryFromParams(v, if prefix then "#{prefix}[#{encodeQueryComponent(k)}]" else encodeQueryComponent(k)) for k, v of value).join("&")
       else
-        "#{prefix}=#{encodeQueryComponent(value)}"
+        if prefix?
+          "#{prefix}=#{encodeQueryComponent(value)}"
+        else
+          encodeQueryComponent(value)
 
   @encodeComponent: encodeComponent = (str) ->
     if str?

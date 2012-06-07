@@ -169,6 +169,14 @@ class Batman.Property
     @changeEvent().addHandler(handler)
     @getValue() unless @sources?
     this
+  observeOnce: (originalHandler) ->
+    event = @changeEvent()
+    handler = ->
+      originalHandler.apply(@, arguments)
+      event.removeHandler(handler)
+    event.addHandler(handler)
+    @getValue() unless @sources?
+    this
 
   _removeHandlers: ->
     handler = @sourceChangeHandler()

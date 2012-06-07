@@ -39,7 +39,7 @@ class Batman.View extends Batman.Object
 
   @accessor 'node'
     get: ->
-      unless @node
+      unless @node?
         html = @get('html')
         return unless html && html.length > 0
         @node = document.createElement 'div'
@@ -51,9 +51,10 @@ class Batman.View extends Batman.Object
       @_setNodeOwner(node)
       updateHTML = (html) =>
         if html?
-          Batman.setInnerHTML(@get('node'), html)
+          Batman.setInnerHTML(@node, html)
           @forget('html', updateHTML)
       @observeAndFire 'html', updateHTML
+      node
 
   class @YieldStorage extends Batman.Hash
     @wrapAccessor (core) ->
@@ -80,7 +81,7 @@ class Batman.View extends Batman.Object
       if node = @get('node')
         @render node
       else
-        @observe 'node', (node) => @render(node)
+        @observeOnce 'node', (node) => @render(node)
 
   render: (node) ->
     return if @_rendered
@@ -90,7 +91,7 @@ class Batman.View extends Batman.Object
     # We use a renderer with the continuation style rendering engine to not
     # block user interaction for too long during the render.
     if node
-      @_renderer = new Batman.Renderer(node, null, @context, @)
+      @_renderer = new Batman.Renderer(node, @context, @)
       @_renderer.on 'rendered', =>
         @fire('ready', node)
 
