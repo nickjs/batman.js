@@ -82,7 +82,12 @@ class Batman.URI
       throw new Error("value must be an Object")
     switch valueType
       when 'Array'
-        (queryFromParams(v, "#{prefix}[]") for v in value).join("&")
+        (arrayResults = []
+        if (value.length == 0)
+          arrayResults.push queryFromParams(null, "#{prefix}[]")
+        else
+          arrayResults.push queryFromParams(v, "#{prefix}[]") for v in value
+        arrayResults).join("&")
       when 'Object'
         (queryFromParams(v, if prefix then "#{prefix}[#{encodeQueryComponent(k)}]" else encodeQueryComponent(k)) for k, v of value).join("&")
       else
