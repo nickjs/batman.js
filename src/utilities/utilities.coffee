@@ -126,8 +126,8 @@ _implementImmediates = (container) ->
       handle = getHandle()
       functions[handle] = f
       process.nextTick ->
-        f() for handle, f of functions
-        functions = {}
+        functions[handle]?()
+        delete functions[handle]
       handle
 
     Batman.clearImmediate = (handle) ->
