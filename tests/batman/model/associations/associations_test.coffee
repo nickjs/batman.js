@@ -133,3 +133,24 @@ asyncTest "inline saving can be disabled", 1, ->
     store.save (err, savedStore) =>
       equal @storeAdapter.storage.stores1["products"], undefined
       QUnit.start()
+
+asyncTest "no encoder is added to the model if saveInline is false", 1, ->
+  namespace = this
+
+  class @Store extends Batman.Model
+    @hasMany 'products',
+      namespace: namespace
+      saveInline: false
+
+  @storeAdapter = createStorageAdapter @Store, AsyncTestStorageAdapter,
+    "stores1": {id: 1, name: "Store One"}
+
+  class @Product extends Batman.Model
+    @encode 'name'
+
+  @productAdapter = createStorageAdapter @Product, AsyncTestStorageAdapter
+
+  @Store.find 1, (err, store) =>
+    throw err if err
+    equal typeof store._batman.get('encoders').get('products'), 'undefined'
+    QUnit.start()

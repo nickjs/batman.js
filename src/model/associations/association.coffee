@@ -12,7 +12,10 @@ class Batman.Association
     @options = Batman.extend defaultOptions, @defaultOptions, options
 
     # Setup encoders and accessors for this association.
-    @model.encode label, @encoder()
+    encoder = @encoder()
+    if !@options.saveInline
+      encoder.encode = false
+    @model.encode label, encoder
 
     # The accessor needs reference to this association object, so curry the association info into
     # the getAccessor, which has the model applied as the context.
