@@ -22,7 +22,7 @@ asyncTest 'data-bind-style should bind to a vanilla object', 4, ->
   source = '<input type="text" data-bind-style="object"></input>'
   context = Batman
     object:
-      'backgroundColor': 'blue'
+      backgroundColor: 'blue'
       color: 'green'
 
   helpers.render source, context, (node) ->
@@ -35,7 +35,7 @@ asyncTest 'data-bind-style should bind to a vanilla object', 4, ->
 
     QUnit.start()
 
-asyncTest 'data-bind-style should bind to a Batman object', 8, ->
+asyncTest 'data-bind-style should bind to a Batman object', ->
   source = '<input type="text" data-bind-style="object"></input>'
   context = Batman
     object: new Batman.Object
@@ -46,12 +46,15 @@ asyncTest 'data-bind-style should bind to a Batman object', 8, ->
     node = node[0]
     equal node.style['backgroundColor'], 'blue'
     equal node.style['color'], 'green'
+
     context.set 'object.color', 'blue'
     equal node.style['color'], 'blue'
     equal node.style['backgroundColor'], 'blue'
+
     context.unset 'object.color'
     equal node.style['color'], ''
     equal node.style['backgroundColor'], 'blue'
+
     context.set 'object', new Batman.Object color: 'yellow'
     equal node.style['color'], 'yellow'
     equal node.style['backgroundColor'], ''

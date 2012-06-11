@@ -39,7 +39,6 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
       for own key of value
         @bindSingleAttribute key, "#{@keyPath}.#{key}"
 
-
   handleArrayChanged: (array) =>
     # Only hashes are bound to, so iterate over their keys and bind each specific attribute to the hash's value at that key.
     @collection.forEach (key, value) =>
@@ -50,7 +49,9 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
 
   setStyle: (key, value) =>
     key = Batman.helpers.camelize(key.trim(), true)
-    @oldStyles[key] ?= @node.style[key]
+    unless @oldStyles[key]?
+      @oldStyles[key] = @node.style[key] || ""
+
     value = value.trim() if value?.trim
     value ?= ""
     @node.style[key] = value
