@@ -38,13 +38,8 @@ class Batman.Request extends Batman.Object
   @wrapAccessor 'method', (core) ->
     set: (k,val) -> core.set.call(@, k, val?.toUpperCase?())
 
-  url: ''
-  data: ''
   method: 'GET'
   hasFileUploads: -> dataHasFileUploads(@data)
-  response: null
-  status: null
-  headers: {}
   contentType: 'application/x-www-form-urlencoded'
 
   constructor: (options) ->
@@ -56,12 +51,12 @@ class Batman.Request extends Batman.Object
     super(options)
     @on k, handler for k, handler of handlers
 
-  @observeAll 'url', (url) ->
-    @_autosendTimeout = Batman.setImmediate =>
+    if @get('url')?.length > 0
       @send()
+    else
+      @observe 'url', (url) ->
+        @send() if url?
 
   # `send` is implmented in the platform layer files. One of those must be required for
   # `Batman.Request` to be useful.
   send: -> Batman.developer.error "Please source a dependency file for a request implementation"
-
-  cancel: -> Batman.clearImmediate(@_autosendTimeout) if @_autosendTimeout

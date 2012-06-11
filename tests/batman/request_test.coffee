@@ -9,7 +9,6 @@ QUnit.module 'Batman.Request'
   teardown: ->
     Batman.container.File = oldFile
     Batman.Request::send = oldSend
-    @request?.cancel()
 
 test 'hasFileUploads() returns false when the request data has no file uploads', ->
   req = new Batman.Request data:
@@ -33,36 +32,31 @@ test 'should not fire if not given a url', ->
   new Batman.Request
   ok !@sendSpy.called
 
-asyncTest 'should request a url with default get', 2, ->
+test 'should request a url with default get', 2, ->
   @request = new Batman.Request
     url: 'some/test/url.html'
-    send: @sendSpy
-  delay =>
-    req = @sendSpy.lastCallContext
-    equal req.url, 'some/test/url.html'
-    equal req.method, 'GET'
 
-asyncTest 'should request a url with a different method, converting the method to uppercase', 1, ->
+  req = @sendSpy.lastCallContext
+  equal req.url, 'some/test/url.html'
+  equal req.method, 'GET'
+
+test 'should request a url with a different method, converting the method to uppercase', 1, ->
   @request = new Batman.Request
     url: 'B/test/url.html'
     method: 'post'
-    send: @sendSpy
 
-  delay =>
-    req = @sendSpy.lastCallContext
-    equal req.method, 'POST'
+  req = @sendSpy.lastCallContext
+  equal req.method, 'POST'
 
-asyncTest 'should request a url with data', 1, ->
+test 'should request a url with data', 1, ->
   new Batman.Request
     url: 'some/test/url.html'
     data:
       a: "b"
       c: 1
-    send: @sendSpy
 
-  delay =>
-    req = @sendSpy.lastCallContext
-    deepEqual req.data, {a: "b", c: 1}
+  req = @sendSpy.lastCallContext
+  deepEqual req.data, {a: "b", c: 1}
 
 asyncTest 'should call the success callback if the request was successful', 2, ->
   postInstantiationObserver = createSpy()
@@ -70,7 +64,6 @@ asyncTest 'should call the success callback if the request was successful', 2, -
   req = new Batman.Request
     url: 'some/test/url.html'
     success: optionsHashObserver
-    send: @sendSpy
 
   req.on 'success', postInstantiationObserver
 
@@ -86,7 +79,6 @@ asyncTest 'should set headers', 2, ->
   new Batman.Request
     url: 'some/test/url.html'
     headers: {'test_header': 'test-value'}
-    send: @sendSpy
 
   delay =>
     req = @sendSpy.lastCallContext
