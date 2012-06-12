@@ -1,11 +1,16 @@
-{TestStorageAdapter} = if typeof require isnt 'undefined' then require './model_helper' else window
+{createStorageAdapter, AsyncTestStorageAdapter} = if typeof require isnt 'undefined' then require './model_helper' else window
 
 QUnit.module "Batman.Model dirty key tracking",
   setup: ->
     Batman.developer.suppress()
     class @Product extends Batman.Model
       @encode "foo"
-      @persist TestStorageAdapter
+
+    @productAdapter = createStorageAdapter @Product, AsyncTestStorageAdapter,
+      products1:
+        name: "Product One"
+        foo: null
+
   teardown: ->
     Batman.developer.unsuppress()
 
@@ -19,8 +24,13 @@ test "old values are tracked in the dirty keys hash", ->
   product.set 'foo', 'baz'
   equal(product.get('dirtyKeys.foo'), 'bar')
 
-test "creating instances by passing attributes sets those attributes as dirty", ->
+test "creating instances by passing defined attributes sets those attributes as dirty", ->
   product = new @Product foo: 'bar'
+  equal(product.get('dirtyKeys').length, 1)
+  equal(product.lifecycle.get('state'), 'dirty')
+
+test "creating instances by passing null attributes sets those attributes as dirty", ->
+  product = new @Product foo: null
   equal(product.get('dirtyKeys').length, 1)
   equal(product.lifecycle.get('state'), 'dirty')
 
@@ -32,6 +42,16 @@ asyncTest "saving clears dirty keys", ->
     notEqual(product.lifecycle.get('state'), 'dirty')
     QUnit.start()
 
+asyncTest "loading records with null attributes caches null as the clean value", ->
+  @Product.find 1, (err, product) ->
+    throw err if err
+    equal product.get('dirtyKeys').length, 0
+    product.set 'foo', 'bar'
+    equal product.get('dirtyKeys').length, 1
+    equal product.get('dirtyKeys.foo'), null
+
+    QUnit.start()
+
 asyncTest "no keys are dirty upon class load", ->
   @Product.load (err, products) ->
     throw err if err
@@ -41,14 +61,14 @@ asyncTest "no keys are dirty upon class load", ->
     QUnit.start()
 
 asyncTest "no keys are dirty upon class find", ->
-  @Product.find 10, (err, product) =>
+  @Product.find 1, (err, product) =>
     throw err if err
     equal(product.get('dirtyKeys').length, 0)
     equal(product.get('lifecycle.state'), 'clean')
     QUnit.start()
 
 asyncTest "no keys are dirty upon instance load", ->
-  @Product.find 10, (err, product) =>
+  @Product.find 1, (err, product) =>
     throw err if err
     product.load (err, product) ->
       equal(product.get('dirtyKeys').length, 0)
