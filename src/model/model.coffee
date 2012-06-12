@@ -244,6 +244,7 @@ class Batman.Model extends Batman.Object
   @accessor 'lifecycle', -> @lifecycle ||= new Batman.Model.InstanceLifecycleStateMachine('clean', @)
   @accessor 'attributes', -> @attributes ||= new Batman.Hash
   @accessor 'dirtyKeys', -> @dirtyKeys ||= new Batman.Hash
+  @accessor '_dirtiedKeys', -> @_dirtiedKeys ||= new Batman.SimpleSet
   @accessor 'errors', -> @errors ||= new Batman.ErrorsSet
   @accessor 'isNew', -> @isNew()
 
@@ -391,6 +392,7 @@ class Batman.Model extends Batman.Object
         @_doStorageOperation storageOperation, {data: options}, (err, record, env) =>
           unless err
             @get('dirtyKeys').clear()
+            @get('_dirtiedKeys').clear()
             if associations
               record._withoutDirtyTracking ->
                 associations.getByType('hasOne')?.forEach (association, label) -> association.apply(err, record)
@@ -460,7 +462,8 @@ class Batman.Model extends Batman.Object
   _willSet: (key) ->
     return true if @_pauseDirtyTracking
     if @get('lifecycle').startTransition 'set'
-      @getOrSet("dirtyKeys.#{key}", => @get(key))
+      unless @get('_dirtiedKeys').has(key)
+        @set "dirtyKeys.#{key}", @get(key)
       true
     else
       false
