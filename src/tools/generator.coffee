@@ -12,7 +12,7 @@ util = require 'util'
 cli  = require './cli'
 utils = require './utils'
 {spawn, exec} = require 'child_process'
-Batman = require '../lib/batman.js'
+Batman = require '../lib/dist/batman.node.js'
 
 cli.setUsage('batman [OPTIONS] generate app|model|controller|view <name>\n  batman [OPTIONS] new <app_name>')
 cli.parse
@@ -78,6 +78,8 @@ cli.main (args, options) ->
 
   # All the paths have been figured out above, so `appName` can be modified
   # Ensure that the app name is always camel cased
+  console.warn Batman
+  console.warn Batman.helpers
   options.appName = Batman.helpers.camelize(options.appName)
 
   # `replaceVars` is a super simple templating engine.

@@ -11,7 +11,7 @@
 
   utils = require('./utils');
 
-  Batman = require('../lib/batman.js');
+  Batman = require('../lib/dist/batman.node.js');
 
   getServer = function(options) {
     var server;
