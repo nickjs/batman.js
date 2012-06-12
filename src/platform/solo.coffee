@@ -408,7 +408,7 @@ Batman.Request::send = (data) ->
       @mixin
         xhr: xhr
         response: response
-        status: xhr?.status or 200
+        status: xhr?.status
         responseHeaders: @_parseResponseHeaders(xhr)
 
       @fire 'success', response

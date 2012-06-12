@@ -198,6 +198,18 @@ restStorageTestSuite = ->
       ok env.request instanceof Batman.Request
       QUnit.start()
 
+  asyncTest 'destroying in storage: it should not error if there is no content in the response', ->
+    MockRequest.expect
+      url: '/products/10'
+      method: 'DELETE'
+    , ''
+
+    product = new @Product(name: "test 12", id: 10)
+
+    @adapter.perform 'destroy', product, {}, (err, record, env) =>
+      ok !err
+      QUnit.start()
+
   asyncTest 'destroying in storage: response metadata should be available in the callbacks', ->
     MockRequest.expect
       url: '/products/10'

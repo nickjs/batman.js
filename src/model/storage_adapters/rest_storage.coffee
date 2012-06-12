@@ -158,10 +158,10 @@ class Batman.RestStorage extends Batman.StorageAdapter
         catch error
           env.error = error
           return next()
-    else
+    else if typeof env.data is 'object'
       json = env.data
 
-    env.json = json
+    env.json = json if json?
     next()
 
   extractFromNamespace: (data, namespace) ->
@@ -190,15 +190,16 @@ class Batman.RestStorage extends Batman.StorageAdapter
     next()
 
   @::after 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
-    json = env.json
-    namespace = if env.subject.prototype
-      @collectionJsonNamespace(env.subject)
-    else
-      @recordJsonNamespace(env.subject)
-    env.result = if namespace && env.json[namespace]?
-      env.json[namespace]
-    else
-      env.json
+    if env.json?
+      json = env.json
+      namespace = if env.subject.prototype
+        @collectionJsonNamespace(env.subject)
+      else
+        @recordJsonNamespace(env.subject)
+      env.result = if namespace && env.json[namespace]?
+        env.json[namespace]
+      else
+        env.json
     next()
 
   @HTTPMethods =
