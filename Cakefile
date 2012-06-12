@@ -130,17 +130,18 @@ task 'stats', 'compile the files and report on their final size', (options) ->
 task 'build:site', (options) ->
   temp    = require 'temp'
   tmpdir = temp.mkdirSync()
-  docFiles = ["docs/css/**/*.css", "docs/css/fonts/*", "docs/img/**/*", "docs/js/**/*.js", "docs/batman.html"]
-    .reduce( ((a, b) -> a.concat(glob.sync b)) , [] )
+  filesToCopy = ["docs/css", "docs/img", "docs/js", "docs/batman.html", "examples"]
     .map((f) -> path.join(__dirname, f))
-  console.warn docFiles
+  console.warn filesToCopy
   console.warn tmpdir
-  cmd = " #{("mkdir -p #{path.dirname(file.replace __dirname, tmpdir)} && cp #{file} #{file.replace __dirname, tmpdir}" for file in docFiles).join ' && '}
+  cmd = " #{("mkdir -p #{path.dirname(file.replace __dirname, tmpdir)} && cp -r #{file} #{file.replace __dirname, tmpdir}" for file in filesToCopy).join ' && '}
           && git checkout gh-pages
           && rm -rf docs
-          && cp -r #{tmpdir}/docs docs
-          && git add docs
-          && git commit -m 'Add new docs.'
+          && rm -rf examples
+          && cp -r #{tmpdir}/* .
+          && git add .
+          && git ls-files -d -z | xargs -0 git update-index --remove
+          && git commit -m 'Import docs and examples.'
           && git checkout master"
 
   exec cmd, (error, stdout, stderr) ->
