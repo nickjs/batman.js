@@ -4,6 +4,7 @@ class Batman.Association
   defaultOptions:
     saveInline: true
     autoload: true
+    nestUrl: false
 
   constructor: (@model, @label, options = {}) ->
     defaultOptions =
@@ -27,9 +28,9 @@ class Batman.Association
       set: model.defaultAccessor.set
       unset: model.defaultAccessor.unset
 
-    if @url
-      @model.url ||= (recordOptions) ->
-        return self.url(recordOptions)
+    if @options.nestUrl
+      developer.error "You must persist the the model #{@model.constructor.name} to use the url helpers on an association" if !@model.urlNestsUnder?
+      @model.urlNestsUnder Batman.helpers.underscore(@getRelatedModel().get('resourceName'))
 
   getRelatedModel: ->
     scope = @options.namespace or Batman.currentApp

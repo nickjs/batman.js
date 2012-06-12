@@ -18,15 +18,6 @@ class Batman.BelongsToAssociation extends Batman.SingularAssociation
     @primaryKey = @options.primaryKey or "id"
     @model.encode @foreignKey
 
-  url: (recordOptions) ->
-    if inverse = @inverse()
-      root = Batman.helpers.pluralize(@label)
-      id = recordOptions.data?[@foreignKey]
-      helper = if inverse.isSingular then "singularize" else "pluralize"
-      ending = Batman.helpers[helper](inverse.label)
-
-      return "/#{root}/#{id}/#{ending}"
-
   encoder: ->
     association = @
     encoder =

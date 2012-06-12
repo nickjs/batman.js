@@ -47,6 +47,22 @@ asyncTest "support custom model namespaces and class names", 2, ->
     equal store.get('id'), 3
     QUnit.start()
 
+test "supports the nestUrl option if the model is persisted ", ->
+  app = Batman.currentApp = {}
+
+  class app.Deck extends Batman.Model
+    @hasMany 'cards'
+
+  class app.Card extends Batman.Model
+    @persist Batman.RestStorage
+    @belongsTo 'deck', nestUrl: true
+
+  deck = new app.Deck(id: 10)
+  card = new app.Card(id: 20)
+  card.set 'deck_id', deck.get('id')
+
+  equal card.url(), 'decks/10/cards/20'
+
 asyncTest "associations can be inherited", 2, ->
   namespace = {}
   class namespace.Store extends Batman.Model
