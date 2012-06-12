@@ -130,14 +130,13 @@ task 'stats', 'compile the files and report on their final size', (options) ->
 task 'build:site', (options) ->
   temp    = require 'temp'
   tmpdir = temp.mkdirSync()
-  filesToCopy = ["docs/css", "docs/img", "docs/js", "docs/batman.html", "examples"]
+  filesToCopy = ["docs/css", "docs/img", "docs/js", "docs/batman.html", "examples", "lib"]
     .map((f) -> path.join(__dirname, f))
   console.warn filesToCopy
   console.warn tmpdir
   cmd = " #{("mkdir -p #{path.dirname(file.replace __dirname, tmpdir)} && cp -r #{file} #{file.replace __dirname, tmpdir}" for file in filesToCopy).join ' && '}
           && git checkout gh-pages
-          && rm -rf docs
-          && rm -rf examples
+          && rm -rf docs examples lib
           && cp -r #{tmpdir}/* .
           && git add .
           && git ls-files -d -z | xargs -0 git update-index --remove
