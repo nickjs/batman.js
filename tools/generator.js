@@ -13,7 +13,7 @@
 
   _ref = require('child_process'), spawn = _ref.spawn, exec = _ref.exec;
 
-  Batman = require('../lib/batman.js');
+  Batman = require('../lib/dist/batman.node.js');
 
   cli.setUsage('batman [OPTIONS] generate app|model|controller|view <name>\n  batman [OPTIONS] new <app_name>');
 
@@ -61,6 +61,8 @@
       destinationPath = process.cwd();
       Batman.mixin(options, utils.getConfig());
     }
+    console.warn(Batman);
+    console.warn(Batman.helpers);
     options.appName = Batman.helpers.camelize(options.appName);
     Batman.mixin(TemplateVars, {
       app: options.appName,

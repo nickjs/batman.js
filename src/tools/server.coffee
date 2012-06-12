@@ -11,7 +11,7 @@ path    = require 'path'
 fs      = require 'fs'
 cli     = require './cli'
 utils   = require './utils'
-Batman  = require '../lib/batman.js'
+Batman  = require '../lib/dist/batman.node.js'
 
 # Creates a connect server. This file is required by the main batman executable,
 # but it can also be required by clients wishing to extend the connect stack for
