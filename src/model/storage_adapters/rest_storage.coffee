@@ -47,6 +47,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
   defaultRequestOptions:
     type: 'json'
+    autosend: false
   _implicitActionNames: ['create', 'read', 'update', 'destroy', 'readAll']
   serializeAsForm: true
 
@@ -108,6 +109,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         next()
 
     env.request = new Batman.Request(options)
+    env.request.send()
 
   perform: (key, record, options, callback) ->
     options ||= {}

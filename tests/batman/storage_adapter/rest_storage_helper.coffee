@@ -33,34 +33,43 @@ class MockRequest extends MockClass
 
   constructor: (requestOptions) ->
     super()
+    requestOptions.autosend ?= true
     for key in CALLBACKS
       @[key](requestOptions[key]) if requestOptions[key]?
     @fireLoading()
     allExpected = @constructor.getExpectedForUrl(requestOptions.url)
     expected = allExpected.shift()
-    setTimeout =>
-      if ! expected?
-        @fireError {message: "Unrecognized mocked request!", request: @}
-      else
-        {request, response} = expected
-
-        for k in ['method', 'data', 'contentType']
-          if request[k]? && !QUnit.equiv(request[k], requestOptions[k])
-            throw "Wrong #{k} for expected request! Expected #{request[k]}, got #{requestOptions[k]}."
-
-        if response.error
-          if typeof response.error is 'string'
-            @fireError {message: response.error, request: @}
-          else
-            response.error.request = @
-            @status = response.error.status
-            @response = response.error.response
-            @fireError response.error
+    @send = =>
+      respond = =>
+        if ! expected?
+          @fireError {message: "Unrecognized mocked request!", request: @}
         else
-          @response = response
-          @fireSuccess response
-      @fireLoaded response
-    , 1
+          {request, response} = expected
+
+          for k in ['method', 'data', 'contentType']
+            if request[k]? && !QUnit.equiv(request[k], requestOptions[k])
+              throw "Wrong #{k} for expected request! Expected #{request[k]}, got #{requestOptions[k]}."
+
+          if response.error
+            if typeof response.error is 'string'
+              @fireError {message: response.error, request: @}
+            else
+              response.error.request = @
+              @status = response.error.status
+              @response = response.error.response
+              @fireError response.error
+          else
+            @response = response
+            @fireSuccess response
+        @fireLoaded response
+
+      if expected?.respondSynchronously
+        respond()
+      else
+        setTimeout respond, 0
+
+    if requestOptions.autosend
+      @send()
 
   get: (k) ->
     throw "Can't get anything other than 'response' and 'status' on the Requests" unless k in ['response', 'status']
@@ -89,6 +98,20 @@ restStorageTestSuite = ->
       url: '/products'
       method: 'GET'
     , JSON.stringify product: {name: "test", cost: 20}
+
+    @adapter.perform 'readAll', @Product, {}, (err, readProducts) ->
+      throw err if err
+      ok readProducts
+      equal readProducts.length, 1
+      equal readProducts[0]?.get("name"), "test"
+      QUnit.start()
+
+  asyncTest 'can readAll when the response returns synchronously', 3, ->
+    MockRequest.expect
+      url: '/products'
+      method: 'GET'
+      respondSynchronously: true
+    , JSON.stringify products: [ name: "test", cost: 20 ]
 
     @adapter.perform 'readAll', @Product, {}, (err, readProducts) ->
       throw err if err
