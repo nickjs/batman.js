@@ -87,3 +87,11 @@ test "should return undefined when given undefined parameters", ->
 
 test "should return undefined when given null parameters", ->
   equal typeof @query.get('products').get(null), 'undefined'
+
+test "should find root level routes with hashes", ->
+  equal @query.get('withHash.foo.path'), '/#foo'
+  equal @query.withHash('foo').path(), '/#foo'
+
+test "should find named routes with hashes", ->
+  equal @query.get('products.withHash.foo.path'), '/products#foo'
+  equal @query.products().withHash('foo').path(), '/products#foo'

@@ -16,17 +16,23 @@ class Batman.NamedRouteQuery extends Batman.Object
 
   @accessor 'path', -> @path()
 
-  @accessor 'routeMap', 'args', 'cardinality', Batman.Property.defaultAccessor
+  @accessor 'routeMap', 'args', 'cardinality', 'hashValue', Batman.Property.defaultAccessor
 
   @accessor
     get: (key) ->
-      return if !key?
+      return unless key?
       if typeof key is 'string'
         @nextQueryForName(key)
       else
         @nextQueryWithArgument(key)
-    set: ->
     cache: false
+
+  @accessor 'withHash', -> new Batman.Accessible (hashValue) => @withHash(hashValue)
+
+  withHash: (hashValue) ->
+    clone = @clone()
+    clone.set 'hashValue', hashValue
+    clone
 
   nextQueryForName: (key) ->
     if map = @get('routeMap').childrenByName[key]
@@ -46,6 +52,7 @@ class Batman.NamedRouteQuery extends Batman.Object
       if (argumentValue = @get('args')[index])?
         params[argumentName] = @_toParam(argumentValue)
 
+    params['#'] = @get('hashValue') if @get('hashValue')?
     @get('route').pathFromParams(params)
 
   toString: -> @path()
