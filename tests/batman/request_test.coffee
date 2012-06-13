@@ -32,6 +32,15 @@ test 'should not fire if not given a url', ->
   new Batman.Request
   ok !@sendSpy.called
 
+test 'should not send if autosend is false', ->
+  new Batman.Request(url: 'some/test/url', autosend: false)
+  ok !@sendSpy.called
+
+test 'should not send if autosend is false and the url changes', ->
+  request = new Batman.Request(url: 'some/test/url', autosend: false)
+  request.set 'url', 'another/test/url'
+  ok !@sendSpy.called
+
 test 'should request a url with default get', 2, ->
   @request = new Batman.Request
     url: 'some/test/url.html'
