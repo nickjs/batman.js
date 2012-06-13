@@ -135,6 +135,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     @forget()
     @_batman.properties?.forEach (key, property) -> property.die()
     @fire('die')
+    @dead = true
     return true
 
   parseFilter: ->
