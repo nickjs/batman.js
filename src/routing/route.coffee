@@ -63,8 +63,14 @@ class Batman.Route extends Batman.Object
     for key in @testKeys
       delete params[key]
 
+    if params['#']
+      hash = params['#']
+      delete params['#']
+
     query = Batman.URI.queryFromParams(params)
+
     path += "?#{query}" if query
+    path += "##{hash}" if hash
 
     path
 
