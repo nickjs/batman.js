@@ -19,16 +19,16 @@ Batman.DOM.events =
 
   change: (node, callback, context) ->
     eventNames = switch node.nodeName.toUpperCase()
-      when 'TEXTAREA' then ['keyup', 'change']
+      when 'TEXTAREA' then ['input', 'keyup', 'change']
       when 'INPUT'
         if node.type.toLowerCase() in Batman.DOM.textInputTypes
           oldCallback = callback
           callback = (node, event) ->
             return if event.type is 'keyup' and Batman.DOM.events.isEnter(event)
             oldCallback(arguments...)
-          ['keyup', 'change']
+          ['input', 'keyup', 'change']
         else
-          ['change']
+          ['input', 'change']
       else ['change']
 
     for eventName in eventNames
