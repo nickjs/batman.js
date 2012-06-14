@@ -10,6 +10,7 @@ class Batman.Controller extends Batman.Object
       else
         Batman.developer.error("Please define `routingKey` on the prototype of #{Batman.functionName(@constructor)} in order for your controller to be minification safe.") if Batman.config.minificationErrors
         Batman.functionName(@constructor).replace(/Controller$/, '')
+
   @accessor '_renderContext', -> Batman.RenderContext.root().descend(@)
 
   _optionsFromFilterArguments = (options, nameOrFunction) ->
@@ -37,12 +38,17 @@ class Batman.Controller extends Batman.Object
     filters = @_batman.afterFilters ||= new Batman.SimpleHash
     filters.set(options.block, options)
 
+  @afterFilter (params) ->
+    if @scrollToHash && params['#']?
+      Batman.DOM.scrollIntoView(params['#'])
+
   constructor: ->
     @_actionFrames = []
     super
 
   renderCache: new Batman.RenderCache
   defaultRenderYield: 'main'
+  scrollToHash: true
 
   # You shouldn't call this method directly. It will be called by the dispatcher when a route is called.
   # If you need to call a route manually, use `Batman.redirect()`.

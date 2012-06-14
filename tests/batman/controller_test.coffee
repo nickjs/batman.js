@@ -293,3 +293,20 @@ test 'actions executed by other actions have their filters run', ->
   @controller.dispatch 'test'
   ok beforeSpy.called
   ok afterSpy.called
+
+test 'dispatching params with a hash scrolls to that hash', ->
+  @controller.show = -> @render false
+
+  spyOnDuring Batman.DOM, 'scrollIntoView', (spy) =>
+    spy.fixedReturn = true
+    @controller.dispatch 'show', {'#': 'foo'}
+    deepEqual spy.lastCallArguments, ['foo']
+
+test 'dispatching params with a hash does not scroll to that hash if scrollToHash is false', ->
+  @controller.scrollToHash = false
+  @controller.show = -> @render false
+
+  spyOnDuring Batman.DOM, 'scrollIntoView', (spy) =>
+    spy.fixedReturn = true
+    @controller.dispatch 'show', {'#': 'foo'}
+    ok !spy.called
