@@ -39,8 +39,8 @@ class Batman.Controller extends Batman.Object
     filters.set(options.block, options)
 
   @afterFilter (params) ->
-    if @scrollToHash && params['#']?
-      Batman.DOM.scrollIntoView(params['#'])
+    if @autoScrollToHash && params['#']?
+      @scrollToHash(params['#'])
 
   constructor: ->
     @_actionFrames = []
@@ -48,7 +48,7 @@ class Batman.Controller extends Batman.Object
 
   renderCache: new Batman.RenderCache
   defaultRenderYield: 'main'
-  scrollToHash: true
+  autoScrollToHash: true
 
   # You shouldn't call this method directly. It will be called by the dispatcher when a route is called.
   # If you need to call a route manually, use `Batman.redirect()`.
@@ -135,6 +135,8 @@ class Batman.Controller extends Batman.Object
         Batman.DOM.Yield.withName(options.into).replace view.get('node')
         Batman.currentApp?.allowAndFire 'ready'
     view
+
+  scrollToHash: (hash = @get('params')['#'])-> Batman.DOM.scrollIntoView(hash)
 
   _runFilters: (action, params, filters) ->
     if filters = @constructor._batman?.get(filters)

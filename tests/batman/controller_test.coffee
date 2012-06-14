@@ -302,8 +302,8 @@ test 'dispatching params with a hash scrolls to that hash', ->
     @controller.dispatch 'show', {'#': 'foo'}
     deepEqual spy.lastCallArguments, ['foo']
 
-test 'dispatching params with a hash does not scroll to that hash if scrollToHash is false', ->
-  @controller.scrollToHash = false
+test 'dispatching params with a hash does not scroll to that hash if autoScrollToHash is false', ->
+  @controller.autoScrollToHash = false
   @controller.show = -> @render false
 
   spyOnDuring Batman.DOM, 'scrollIntoView', (spy) =>
