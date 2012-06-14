@@ -75,19 +75,22 @@ class Batman.Controller extends Batman.Object
   executeAction: (action, params = @get('params')) ->
     Batman.developer.assert @[action], "Error! Controller action #{@get 'routingKey'}.#{action} couldn't be found!"
 
-    @_actionFrames.push frame = {actionTaken: false, action: action}
+    frame = new Batman.ControllerActionFrame {actionTaken: false, action: action}, =>
+      @_runFilters action, params, 'afterFilters'
+      Batman.navigator?.redirect = oldRedirect
+
+    @_actionFrames.push frame
+    frame.actionStart({internal: true})
 
     oldRedirect = Batman.navigator?.redirect
     Batman.navigator?.redirect = @redirect
     @_runFilters action, params, 'beforeFilters'
 
     result = @[action](params)
+
     @render() if not frame.actionTaken
+    frame.actionFinish()
 
-    @_runFilters action, params, 'afterFilters'
-    Batman.navigator?.redirect = oldRedirect
-
-    @_actionFrames.pop()
     result
 
   redirect: (url) =>
@@ -97,7 +100,7 @@ class Batman.Controller extends Batman.Object
       if frame.actionTaken
         Batman.developer.warn "Warning! Trying to redirect but an action has already be taken during #{@get('routingKey')}.#{frame.action || @get('action')}}"
 
-      frame.actionTaken = true
+      frame.immediateActionTaken()
 
       if @_afterFilterRedirect
         Batman.developer.warn "Warning! Multiple actions trying to redirect!"
@@ -110,15 +113,18 @@ class Batman.Controller extends Batman.Object
       Batman.redirect url
 
   render: (options = {}) ->
-    frame = @_actionFrames?[@_actionFrames.length - 1]
+    if frame = @_actionFrames?[@_actionFrames.length - 1]
+      frame.actionStart()
+
+    # Ensure the frame is marked as having had an action executed so that render false prevents the implicit render.
+    if options is false
+      frame.actionFinish()
+      return
+
     action = frame?.action || @get('action')
 
     if options
       options.into ||= @defaultRenderYield
-
-    # Ensure the frame is marked as having had an action executed so that render false prevents the implicit render.
-    frame?.actionTaken = true
-    return if options is false
 
     if not options.view
       options.viewClass ||= Batman.currentApp?[Batman.helpers.camelize("#{@get('routingKey')}_#{action}_view")] || Batman.View
@@ -134,6 +140,7 @@ class Batman.Controller extends Batman.Object
       view.on 'ready', =>
         Batman.DOM.Yield.withName(options.into).replace view.get('node')
         Batman.currentApp?.allowAndFire 'ready'
+        frame?.actionFinish()
     view
 
   scrollToHash: (hash = @get('params')['#'])-> Batman.DOM.scrollIntoView(hash)

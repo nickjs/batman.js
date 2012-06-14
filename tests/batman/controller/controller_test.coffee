@@ -294,6 +294,22 @@ test 'actions executed by other actions have their filters run', ->
   ok beforeSpy.called
   ok afterSpy.called
 
+test 'afterFilters should only fire after renders are complete', 2, ->
+  afterSpy = createSpy()
+
+  class TestController extends Batman.Controller
+    @afterFilter 'show', afterSpy
+    show: -> @render()
+
+  @controller = new TestController
+
+  mockClassDuring Batman ,'View', MockView, (mockClass) =>
+    @controller.dispatch 'show'
+    view = mockClass.lastInstance
+    ok !afterSpy.called
+    view.fireReady()
+    ok afterSpy.called
+
 test 'dispatching params with a hash scrolls to that hash', ->
   @controller.show = -> @render false
 
