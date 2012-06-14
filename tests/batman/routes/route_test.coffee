@@ -6,7 +6,10 @@ test "routes should match and dispatch", 3, ->
   ok @route.test "/why/where/what"
   ok !@route.test "/when/how"
 
-  @route.dispatch path = "/why/where/what"
+  [path, params] = @route.pathAndParamsFromArgument "/why/where/what"
+
+  @route.dispatch params
+
   deepEqual spy.lastCallArguments, [{path}]
 
 test "routes should test against params hashes", 4, ->
@@ -20,7 +23,9 @@ test "routes should test against params hashes", 4, ->
 test "routes with extra parameters should match and dispatch", 1, ->
   @route = new Batman.CallbackActionRoute "/why/where/what", {handy: true, callback: spy = createSpy()}
 
-  @route.dispatch path = "/why/where/what"
+  [path, params] = @route.pathAndParamsFromArgument "/why/where/what"
+
+  @route.dispatch params
   deepEqual spy.lastCallArguments, [{path, handy:true}]
 
 test "routes with named parameters should match and dispatch", 5, ->
@@ -31,7 +36,9 @@ test "routes with named parameters should match and dispatch", 5, ->
   ok !@route.test "/products/"
   ok !@route.test "/products"
 
-  @route.dispatch "/products/10"
+  [path, params] = @route.pathAndParamsFromArgument "/products/10"
+
+  @route.dispatch params
   deepEqual spy.lastCallArguments, [{id: '10', path: "/products/10"}]
 
 test "routes with splat parameters should match and dispatch", 9, ->
@@ -44,13 +51,17 @@ test "routes with splat parameters should match and dispatch", 9, ->
   ok !@route.test "/books/"
   ok !@route.test "/books/a/b/c"
 
-  @route.dispatch path = "/books/non-fiction/biography/all"
+  [path, params] = @route.pathAndParamsFromArgument "/books/non-fiction/biography/all"
+
+  @route.dispatch params
   deepEqual spy.lastCallArguments, [{categories: 'non-fiction/biography', path}]
 
-  @route.dispatch path = "/books/non-fiction/all"
+  [path, params] = @route.pathAndParamsFromArgument "/books/non-fiction/all"
+  @route.dispatch params
   deepEqual spy.lastCallArguments, [{categories: 'non-fiction', path}]
 
-  @route.dispatch path = "/books//all"
+  [path, params] = @route.pathAndParamsFromArgument "/books//all"
+  @route.dispatch params
   deepEqual spy.lastCallArguments, [{categories: '', path}]
 
 test "routes should build paths without named parameters", 1, ->
@@ -129,7 +140,9 @@ test "controller/action routes should call the controller's dispatch function", 
     action: 'edit'
     app: App
 
-  @route.dispatch "/products/10/edit"
+  [path, params] = @route.pathAndParamsFromArgument "/products/10/edit"
+  @route.dispatch params
+
   equal productSpy.lastCallArguments[0], "edit"
   equal productSpy.lastCallArguments[1].id, "10"
 
@@ -138,6 +151,7 @@ test "controller/action routes should call the controller's dispatch function", 
     action: 'duplicate'
     app: App
 
-  @route.dispatch "/saved_searches/20/duplicate"
+  [path, params] = @route.pathAndParamsFromArgument "/saved_searches/20/duplicate"
+  @route.dispatch params
   equal searchSpy.lastCallArguments[0], "duplicate"
   equal searchSpy.lastCallArguments[1].id, "20"

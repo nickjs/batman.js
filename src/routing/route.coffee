@@ -81,15 +81,19 @@ class Batman.Route extends Batman.Object
 
     @get('regexp').test(path)
 
-  dispatch: (pathOrParams) ->
-    return false unless @test(pathOrParams)
+  pathAndParamsFromArgument: (pathOrParams) ->
     if typeof pathOrParams is 'string'
       params = @paramsFromPath(pathOrParams)
       path = pathOrParams
     else
       params = pathOrParams
       path = @pathFromParams(pathOrParams)
+
+    [path, params]
+
+  dispatch: (params) ->
+    return false unless @test(params)
+
     @get('callback')(params)
-    return path
 
   callback: -> throw new Batman.DevelopmentError "Override callback in a Route subclass"

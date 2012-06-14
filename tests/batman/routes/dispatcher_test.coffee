@@ -74,6 +74,7 @@ mockRoute = ->
     dispatch: createSpy((path) -> return path)
     pathFromParams: createSpy()
     paramsFromPath: createSpy()
+    pathAndParamsFromArgument: createSpy () -> []
 
 oldRedirect = Batman.redirect
 
@@ -111,14 +112,35 @@ test "dispatch updates the currentRoute on the app", ->
 
 test "dispatch updates the currentURL on the app", ->
   route = mockRoute()
+  route.pathAndParamsFromArgument = () -> ['/matched/route', {path: '/matched/route'}]
+
   @routeMap.routeForParams = -> route
 
   @dispatcher.dispatch('/matched/route')
   equal @App.get('currentURL'), '/matched/route'
 
+test "dispatch updates the currentURL, currentRoute and currentParams on the app before callback is fired", ->
+  currentURL = null
+  currentRoute = null
+
+  route = mockRoute()
+  route.pathAndParamsFromArgument = () -> ['/matched/route', {path: '/matched/route', foo: 'bar'}]
+
+  @routeMap.routeForParams = -> route
+
+  route.dispatch = (pathOrParams) =>
+    currentURL = @App.get('currentURL')
+    currentRoute = @App.get('currentRoute')
+
+  @dispatcher.dispatch('/matched/route')
+
+  equal currentURL, '/matched/route'
+  equal currentRoute, route
+  equal @App.currentParams.replace.lastCallArguments[0].foo, 'bar'
+
 test "dispatch updates the currentParams on the app", ->
   route = mockRoute()
-  route.paramsFromPath = -> foo: 'bar'
+  route.pathAndParamsFromArgument = () -> ['/matched/route', {foo: 'bar'}]
   @routeMap.routeForParams = -> route
 
   @dispatcher.dispatch foo: 'bar'
