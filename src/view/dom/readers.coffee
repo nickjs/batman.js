@@ -41,6 +41,12 @@ Batman.DOM.readers =
 
   hideif: -> Batman.DOM.readers.showif(arguments..., yes)
 
+  insertif: (node, key, context, parentRenderer, invert) ->
+    new Batman.DOM.InsertionBinding(node, key, context, parentRenderer, false, invert)
+    true
+
+  removeif: -> Batman.DOM.readers.insertif(arguments..., yes)
+
   route: ->
     new Batman.DOM.RouteBinding(arguments...)
     true

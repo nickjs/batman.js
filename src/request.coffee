@@ -41,6 +41,7 @@ class Batman.Request extends Batman.Object
   method: 'GET'
   hasFileUploads: -> dataHasFileUploads(@data)
   contentType: 'application/x-www-form-urlencoded'
+  autosend: true
 
   constructor: (options) ->
     handlers = {}
@@ -52,7 +53,8 @@ class Batman.Request extends Batman.Object
     @on k, handler for k, handler of handlers
 
     if @get('url')?.length > 0
-      @send()
+      if @autosend
+        @send()
     else
       @observe 'url', (url) ->
         @send() if url?

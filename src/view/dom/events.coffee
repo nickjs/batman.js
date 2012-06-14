@@ -19,23 +19,23 @@ Batman.DOM.events =
 
   change: (node, callback, context) ->
     eventNames = switch node.nodeName.toUpperCase()
-      when 'TEXTAREA' then ['keyup', 'change']
+      when 'TEXTAREA' then ['input', 'keyup', 'change']
       when 'INPUT'
         if node.type.toLowerCase() in Batman.DOM.textInputTypes
           oldCallback = callback
-          callback = (e) ->
-            return if e.type == 'keyup' && 13 <= e.keyCode <= 14
+          callback = (node, event) ->
+            return if event.type is 'keyup' and Batman.DOM.events.isEnter(event)
             oldCallback(arguments...)
-          ['keyup', 'change']
+          ['input', 'keyup', 'change']
         else
-          ['change']
+          ['input', 'change']
       else ['change']
 
     for eventName in eventNames
       Batman.addEventListener node, eventName, (args...) ->
         callback node, args..., context
 
-  isEnter: (ev) -> ev.keyCode is 13 || ev.which is 13 || ev.keyIdentifier is 'Enter' || ev.key is 'Enter'
+  isEnter: (ev) -> (13 <= ev.keyCode <= 14) || (13 <= ev.which <= 14) || ev.keyIdentifier is 'Enter' || ev.key is 'Enter'
 
   submit: (node, callback, context) ->
     if Batman.DOM.nodeIsEditable(node)

@@ -101,6 +101,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
   request: (env, next) ->
     options = Batman.extend env.options,
+      autosend: false
       success: (data) -> env.data = data
       error: (error) -> env.error = error
       loaded: ->
@@ -108,6 +109,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         next()
 
     env.request = new Batman.Request(options)
+    env.request.send()
 
   perform: (key, record, options, callback) ->
     options ||= {}
