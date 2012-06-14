@@ -39,3 +39,18 @@ asyncTest 'it should leave a comment node so bindings are properly destroyed', 1
     Batman.DOM.destroyNode(node)
     ok spy.called
     QUnit.start()
+
+asyncTest 'nodes after the binding should be rendered if the keypath starts as true', 1, ->
+  source = '<div data-insertif="foo"></div><p class="test" data-bind="bar"></p>'
+  context = Batman foo: true, bar: 'bar'
+  helpers.render source, false, context, (node) ->
+    equal $('.test', node).html(), 'bar'
+    QUnit.start()
+
+asyncTest 'nodes after the binding should be rendered if the keypath starts as false', 1, ->
+  source = '<div data-insertif="foo"></div><p class="test" data-bind="bar"></p>'
+  context = Batman foo: false, bar: 'bar'
+  helpers.render source, false, context, (node) ->
+    equal $('.test', node).html(), 'bar'
+    QUnit.start()
+

@@ -1,9 +1,13 @@
 class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
   isTwoWay: false
+  bindImmediately: false
   constructor: (node, className, key, context, parentRenderer, @invert = false) ->
     @placeholderNode = document.createComment "detached node #{@get('_batmanID')}"
-    super
-    Batman.DOM.trackBinding(@, @placeholderNode) if @placeholderNode?
+    result = super
+    Batman.DOM.onParseExit @node, =>
+      @bind()
+      Batman.DOM.trackBinding(@, @placeholderNode) if @placeholderNode?
+    result
 
   dataChange: (value) ->
     parentNode = @placeholderNode.parentNode || @node.parentNode
