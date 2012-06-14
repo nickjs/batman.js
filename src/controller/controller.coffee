@@ -75,7 +75,8 @@ class Batman.Controller extends Batman.Object
   executeAction: (action, params = @get('params')) ->
     Batman.developer.assert @[action], "Error! Controller action #{@get 'routingKey'}.#{action} couldn't be found!"
 
-    frame = new Batman.ControllerActionFrame {actionTaken: false, action: action}, =>
+    parentFrame = @_actionFrames[@_actionFrames.length - 1]
+    frame = new Batman.ControllerActionFrame {parentFrame, action}, =>
       @_runFilters action, params, 'afterFilters'
       Batman.navigator?.redirect = oldRedirect
 

@@ -10,13 +10,21 @@ class Batman.ControllerActionFrame extends Batman.Object
   actionStart: (options = {}) ->
     if !options.internal
       @actionTaken = true
-    @remainingActions++
+    @_changeActionsCounter(1)
+    true
 
   actionFinish: ->
-    @remainingActions--
-    if @remainingActions == 0
-      @fire 'complete'
+    @_changeActionsCounter(-1)
+    true
 
   immediateActionTaken: (options) ->
     @actionStart(options)
     @actionFinish(options)
+    true
+
+  _changeActionsCounter: (delta) ->
+    @remainingActions += delta
+    if @remainingActions == 0
+      @fire 'complete'
+    @parentFrame?._changeActionsCounter(delta)
+    return
