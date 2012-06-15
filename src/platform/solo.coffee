@@ -443,8 +443,8 @@ prefixes = ['Webkit', 'Moz', 'O', 'ms', '']
 Batman.mixins.animation =
   initialize: ->
     for prefix in prefixes
-      @style["#{prefix}Transform"] = 'scale(0, 0)'
-      @style.opacity = 0
+      @style["#{prefix}Transform"] = 'scale(1, 1)'
+      @style.opacity = 1
 
       @style["#{prefix}TransitionProperty"] = "#{if prefix then '-' + prefix.toLowerCase() + '-' else ''}transform, opacity"
       @style["#{prefix}TransitionDuration"] = "0.8s, 0.55s"
