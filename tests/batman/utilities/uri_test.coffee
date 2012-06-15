@@ -17,9 +17,9 @@ test "constructs with a full URI string", ->
   equal uri.path, '/one+two/three%20four/index.html'
   equal uri.directory, '/one+two/three%20four/'
   equal uri.file, 'index.html'
-  equal uri.query, 'a+phrase=this+phrase&some%20thing=this%20thing&foo&bar='
+  equal uri.queryString(), 'a+phrase=this+phrase&some+thing=this+thing&foo&bar='
   equal uri.hash, 'blahblah'
-  deepEqual uri.queryParams(),
+  deepEqual uri.queryParams,
     'a phrase': 'this phrase'
     'some thing': 'this thing'
     foo: null
@@ -39,13 +39,46 @@ test "constructs with just a path and query", ->
   equal uri.path, '/foo/bar'
   equal uri.directory, '/foo/'
   equal uri.file, 'bar'
-  equal uri.query, 'num=1'
+  equal uri.queryString(), 'num=1'
   equal uri.hash, ''
-  deepEqual uri.queryParams(), num: '1'
+  deepEqual uri.queryParams, num: '1'
+
+test "toString() returns URI to string", ->
+  uri = new Batman.URI("http://www.example.com")
+  equal uri.toString(), "http://www.example.com"
+
+test "toString() returns complex URI to string", ->
+  uri = new Batman.URI("http://usr:pwd@www.test.com:81/dir/dir.2/index.htm?q1=0&&test1&test2=value#top")
+  equal uri.toString(), "http://usr:pwd@www.test.com:81/dir/dir.2/index.htm?q1=0&test1&test2=value#top"
+
+test "toString() with params returns URI to string including all params", ->
+  uri = new Batman.URI("http://www.example.com?foo=bar")
+  equal uri.toString(), "http://www.example.com?foo=bar"
+
+test "modifying params updates params from query string", ->
+  uri = new Batman.URI("http://www.example.com?foo=bar&foo2=foo")
+  uri.queryParams.foo2 = 'bar2'
+  equal uri.toString(), "http://www.example.com?foo=bar&foo2=bar2"
+
+test "adding params updates params from query string", ->
+  uri = new Batman.URI("http://www.example.com")
+  uri.queryParams.foo = 'bar'
+  equal uri.toString(), "http://www.example.com?foo=bar"
+
+test "deleting params removes params from query string", ->
+  uri = new Batman.URI("http://www.example.com?foo=bar")
+  delete uri.queryParams.foo
+  equal uri.toString(), "http://www.example.com"
+
+test "multiple modifications to query string work properly", ->
+  uri = new Batman.URI("http://www.example.com?foo=bar&monkeys=false")
+  uri.queryParams.foo = "bar2"
+  uri.queryParams.bar = "foo"
+  delete uri.queryParams.monkeys
+  equal uri.toString(), "http://www.example.com?foo=bar2&bar=foo"
 
 test ".paramsFromQuery(query) returns a params object from the given query string", ->
   params = Batman.URI.paramsFromQuery 'a+phrase=this+phrase&some%20thing=this%20thing&foo&bar='
-
   deepEqual params,
     'a phrase': 'this phrase'
     'some thing': 'this thing'

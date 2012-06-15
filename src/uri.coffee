@@ -20,7 +20,25 @@ class Batman.URI
     while (i--)
       @[attributes[i]] = matches[i] or ''
 
-  queryParams: -> @constructor.paramsFromQuery(@query)
+    @queryParams = @constructor.paramsFromQuery(@query)
+
+    delete @query
+
+  queryString: ->
+    string = for k,v of @queryParams
+      k = @constructor.encodeQueryComponent k
+      v = @constructor.encodeQueryComponent v if v
+      if v? then "#{k}=#{v}" else k
+    string.join("&")
+
+  toString: ->
+    query = @queryString()
+    [
+      @protocol, "://",
+      @user, ":#{@password}" if @password, "@" if @user,
+      @hostname, ":#{@port}" if @port,
+      @path, "?#{query}" if query, "##{@hash}" if @hash
+    ].join("")
 
   ###
   # query parsing

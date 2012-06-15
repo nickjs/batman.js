@@ -46,7 +46,7 @@ class Batman.Route extends Batman.Object
       name = namedArguments[index]
       params[name] = match
 
-    Batman.extend params, uri.queryParams()
+    Batman.extend params, uri.queryParams
 
   pathFromParams: (argumentParams) ->
     params = Batman.extend {}, argumentParams
