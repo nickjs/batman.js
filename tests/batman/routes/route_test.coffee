@@ -91,6 +91,14 @@ test "routes should build paths with query parameters", 3, ->
   @route = new Batman.Route "/welcome", {}
   equal @route.pathFromParams({"the phrase": "a phrase with spaces"}), "/welcome?the+phrase=a+phrase+with+spaces"
 
+test "routes should build paths with hashes", 1, ->
+  @route = new Batman.Route "/books/:id", {}
+  equal @route.pathFromParams({id: 1, '#': 'foo'}), "/books/1#foo"
+
+test "routes should build paths with query parameters and hashes", 1, ->
+  @route = new Batman.Route "/books/:id", {}
+  equal @route.pathFromParams({id: 1, page: 3, limit: 10, '#': 'foo'}), "/books/1?page=3&limit=10#foo"
+
 test "routes should parse paths with query parameters", ->
   route = new Batman.Route "/welcome", {}
   path = "/welcome?the%20phrase=a+phrase+with+spaces+and+a+plus+%2B"

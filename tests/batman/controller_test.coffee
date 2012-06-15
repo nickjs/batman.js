@@ -201,23 +201,69 @@ test 'redirecting a dispatch prevents implicit render', 2, ->
   @controller.dispatch 'test1'
   @controller.dispatch 'test2'
 
-test '[before/after]Filter', 3, ->
+test 'filters specifying no restrictions should be called on all actions', 2, ->
+  spy = createSpy()
   class FilterController extends Batman.Controller
-    @beforeFilter only: 'withBefore', except: 'withoutBefore', ->
-      ok true, 'beforeFilter called'
-    @afterFilter 'testAfter'
+    @beforeFilter spy
 
-    withBefore: ->
-      @render false
-    withoutBefore: ->
-      @render false
-    testAfter: ->
-      ok true, 'afterFilter called'
+    show: -> @render false
+    index: -> @render false
 
   controller = new FilterController
 
-  controller.dispatch 'withoutBefore'
+  controller.dispatch 'show'
+  equal spy.callCount, 1
+  controller.dispatch 'index'
+  equal spy.callCount, 2
+
+test 'filters specifying only should only be called on those actions', 2, ->
+  spy = createSpy()
+
+  class FilterController extends Batman.Controller
+    @beforeFilter only: 'withBefore', spy
+
+    withBefore: -> @render false
+    all: -> @render false
+
+  controller = new FilterController
+
   controller.dispatch 'withBefore'
+  equal spy.callCount, 1
+  controller.dispatch 'all'
+  equal spy.callCount, 1
+
+test 'filters specifying except should not be called on those actions', 2, ->
+  spy = createSpy()
+  class FilterController extends Batman.Controller
+    @beforeFilter except: 'index', spy
+
+    show: -> @render false
+    index: -> @render false
+
+  controller = new FilterController
+
+  controller.dispatch 'show'
+  equal spy.callCount, 1
+  controller.dispatch 'index'
+  equal spy.callCount, 1
+
+test 'filters specifying options in arrays should apply to all/none of those options', 3, ->
+  spy = createSpy()
+  class FilterController extends Batman.Controller
+    @beforeFilter except: ['index', 'edit'], spy
+
+    show: -> @render false
+    index: -> @render false
+    edit: -> @render false
+
+  controller = new FilterController
+
+  controller.dispatch 'edit'
+  equal spy.callCount, 0
+  controller.dispatch 'show'
+  equal spy.callCount, 1
+  controller.dispatch 'index'
+  equal spy.callCount, 1
 
 test 'actions executed by other actions implicitly render', ->
   mockClassDuring Batman ,'View', MockView, (mockClass) =>
@@ -233,7 +279,8 @@ test 'actions executed by other actions implicitly render', ->
 test 'actions executed by other actions have their filters run', ->
   beforeSpy = createSpy()
   afterSpy = createSpy()
-  class TestController extends @controller.constructor
+
+  class TestController extends Batman.Controller
     @beforeFilter 'show', beforeSpy
     @afterFilter 'show', afterSpy
 
@@ -246,3 +293,20 @@ test 'actions executed by other actions have their filters run', ->
   @controller.dispatch 'test'
   ok beforeSpy.called
   ok afterSpy.called
+
+test 'dispatching params with a hash scrolls to that hash', ->
+  @controller.show = -> @render false
+
+  spyOnDuring Batman.DOM, 'scrollIntoView', (spy) =>
+    spy.fixedReturn = true
+    @controller.dispatch 'show', {'#': 'foo'}
+    deepEqual spy.lastCallArguments, ['foo']
+
+test 'dispatching params with a hash does not scroll to that hash if autoScrollToHash is false', ->
+  @controller.autoScrollToHash = false
+  @controller.show = -> @render false
+
+  spyOnDuring Batman.DOM, 'scrollIntoView', (spy) =>
+    spy.fixedReturn = true
+    @controller.dispatch 'show', {'#': 'foo'}
+    ok !spy.called

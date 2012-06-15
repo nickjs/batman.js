@@ -5,6 +5,9 @@ Batman.DOM =
   # List of input type="types" for which we can use keyup events to track
   textInputTypes: ['text', 'search', 'tel', 'url', 'email', 'password']
 
+  scrollIntoView: (elementID) ->
+    document.getElementById(elementID)?.scrollIntoView?()
+
   partial: (container, path, context, renderer) ->
     renderer.prevent 'rendered'
 
