@@ -3,9 +3,8 @@ class Batman.RenderContext
   @deProxy: (object) -> if object? && object.isContextProxy then object.get('proxiedObject') else object
   @root: ->
     if Batman.currentApp?
-      Batman.currentApp.get('_renderContext')
-    else
-      @base
+      root = Batman.currentApp.get('_renderContext')
+    root ?= @base
 
   windowWrapper: if window? then {window} else {}
   constructor: (@object, @parent) ->
@@ -79,4 +78,4 @@ class Batman.RenderContext
     constructor: (@renderContext, @keyPath, @localKey) ->
       @binding = new Batman.DOM.AbstractBinding(undefined, @keyPath, @renderContext)
 
-Batman.RenderContext.base = new Batman.RenderContext(window: Batman.container)
+Batman.RenderContext.base = new Batman.RenderContext(Batman.RenderContext::windowWrapper)

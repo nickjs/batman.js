@@ -51,8 +51,15 @@ class Batman.Dispatcher extends Batman.Object
   dispatch: (params) ->
     inferredParams = @constructor.paramsFromArgument(params)
     route = @routeForParams(inferredParams)
+
     if route
-      path = route.dispatch(inferredParams)
+      [path, params] = route.pathAndParamsFromArgument(inferredParams)
+
+      @set 'app.currentRoute', route
+      @set 'app.currentURL', path
+      @get('app.currentParams').replace(params or {})
+
+      route.dispatch(params)
     else
       # No route matching the parameters was found, but an object which might be for
       # use with the params replacer has been passed. If its an object like a model
@@ -63,10 +70,6 @@ class Batman.Dispatcher extends Batman.Object
       else
         @get('app.currentParams').clear()
 
-      return Batman.redirect('/404') unless path is '/404' or params is '/404'
-
-    @set 'app.currentURL', path
-    @set 'app.currentRoute', route
-    @get('app.currentParams').replace(route?.paramsFromPath(path) or {})
+      return Batman.redirect('/404') unless params is '/404'
 
     path
