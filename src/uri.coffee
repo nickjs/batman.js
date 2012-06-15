@@ -22,6 +22,11 @@ class Batman.URI
 
     @queryParams = @constructor.paramsFromQuery(@query)
 
+    delete @authority
+    delete @userInfo
+    delete @relative
+    delete @directory
+    delete @file
     delete @query
 
   queryString: ->
@@ -32,13 +37,32 @@ class Batman.URI
     string.join("&")
 
   toString: ->
-    query = @queryString()
     [
-      @protocol, "://",
-      @user, ":#{@password}" if @password, "@" if @user,
-      @hostname, ":#{@port}" if @port,
-      @path, "?#{query}" if query, "##{@hash}" if @hash
+      "#{@protocol}:" if @protocol, "//",
+      @authority(),
+      @relative(),
     ].join("")
+
+  userInfo: ->
+    [@user, ":#{@password}" if @password].join("")
+
+  authority: ->
+    [@userInfo(), "@" if @user or @password, @hostname, ":#{@port}" if @port].join("")
+
+  relative: ->
+    query = @queryString()
+    [@path, "?#{query}" if query, "##{@hash}" if @hash].join("")
+
+  directory: ->
+    splitPath = @path.split('/')
+    if splitPath.length > 1
+      splitPath.slice(0, splitPath.length - 1).join('/') + "/"
+    else
+      ""
+
+  file: ->
+    splitPath = @path.split("/")
+    splitPath[splitPath.length - 1]
 
   ###
   # query parsing
