@@ -20,21 +20,21 @@
           <input type="checkbox" class="new-item" data-bind="char.isBatman" /> is batman
           <button type="submit">Add</button>
         </form>
-        <ul id="items">
+          <ul id="items">
             <li data-foreach-char="Character.all">
                 <span data-bind="char.name"></span> <span data-bind="char.isBatman"></span>
                 <a data-event-click="char.destroy">Delete</a>
                 <div data-view="GoogleMapsView" data-bind-data-address="char.address"></div>
             </li>
             <li><span data-bind="'characters' | pluralize Character.all.length"></span></li>
-        </ul>                
+        </ul>
+       
     </div>
 
     <script type="text/coffeescript">
                 
     # Create our application and namespace.
-    class BatMap extends Batman.App
-      @global yes
+    window.BatMap = class BatMap extends Batman.App
 
       # setup our root route. When the app starts up, it will automatically call AppController::index
       @root 'app#index'
@@ -44,46 +44,37 @@
 
     class BatMap.GoogleMapsView extends Batman.View
       html: '<div style="width: 200px; height: 200px;"></div>'
-      address: '' 
+      address: ''
       zoom: 12
 
-      render: ->
-        @node = $(@get('node'))
-        @address = @node.data('address')
-        @geocoder = new google.maps.Geocoder();
-        
-        @geocoder.geocode {'address': @address}, (results, status) =>
+      render: ->  
+        super     
+        @on 'ready', =>
+          @node = $(@get('node'))
+          @address = @node.data('address')
+          @geocoder = new google.maps.Geocoder();
+          @geocoder.geocode {'address': @address}, (results, status) =>
+            if status is google.maps.GeocoderStatus.OK
+              myOptions =
+                zoom: @zoom
+                center: results[0].geometry.location
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+                disableDefaultUI: true
 
-          if status is google.maps.GeocoderStatus.OK
-            myOptions = 
-              zoom: @zoom
-              center: results[0].geometry.location
-              mapTypeId: google.maps.MapTypeId.ROADMAP
-              disableDefaultUI: true
+              map = new google.maps.Map(@node.children("div")[0], myOptions)
+              map.setCenter(results[0].geometry.location)
+              new google.maps.Marker position: results[0].geometry.location, map: map
 
-            map = new google.maps.Map(@node.children("div")[0], myOptions)
-            map.setCenter(results[0].geometry.location)
-            new google.maps.Marker position: results[0].geometry.location, map: map
-
-        super
-
-
-    class BatMap.Character extends Batman.Model
-      @global yes
-
+    Character = class BatMap.Character extends Batman.Model
+      @resourceName: 'character'
       @persist Batman.LocalStorage
       @encode 'name', 'isBatman', 'address'
 
-      name: ''
-      isBatman: false
-      address: ''
-
-    class BatMap.AppController extends Batman.Controller
-      emptyChar: null
-
+    AppController = class BatMap.AppController extends Batman.Controller
+      routingKey: 'app'
+      
       index: ->
         @set 'emptyChar', new Character
-
         # add some example characters to show off.
         Character.load (error, characters) ->
           # you always want to make sure you handle errors (more elegantly than this) when writing connection code
@@ -95,8 +86,8 @@
             new Character(name: 'Alfred Pennyworth', address: "Sydney, NSW").save(callback)
         @render false
 
-      create: =>
-        @emptyChar.save (error, record) =>
+      create:->
+        @get('emptyChar').save (error, record) =>
           throw error if error
           @set 'emptyChar', new Character
 
