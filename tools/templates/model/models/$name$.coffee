@@ -1,5 +1,5 @@
 class $App$.$Name$ extends Batman.Model
-
+  @resourceName: '$name$'
   # This model could be persisted locally with
   #
   # @persist Batman.LocalStorage
