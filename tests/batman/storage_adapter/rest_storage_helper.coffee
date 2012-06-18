@@ -76,6 +76,9 @@ class MockRequest extends MockClass
     @[k]
 
 restStorageTestSuite = ->
+
+  sharedStorageTestSuite(restStorageTestSuite.sharedSuiteHooks)
+
   test 'default options should be independent', ->
     otherAdapter = new @adapter.constructor(@Product)
     notEqual otherAdapter.defaultRequestOptions, @adapter.defaultRequestOptions
@@ -249,7 +252,7 @@ restStorageTestSuite = ->
       ok env.request instanceof Batman.Request
       QUnit.start()
 
-  asyncTest 'it should POST JSON instead of serialized parameters when configured to do so', ->
+  asyncTest 'creating in storage: it should POST JSON instead of serialized parameters when configured to do so', ->
     @adapter.serializeAsForm = false
 
     MockRequest.expect
@@ -265,7 +268,23 @@ restStorageTestSuite = ->
       ok record
       QUnit.start()
 
-  sharedStorageTestSuite(restStorageTestSuite.sharedSuiteHooks)
+  asyncTest 'custom REST actions on storage: it should send JSON instead of serialized parameters when configured to do so', ->
+    @adapter.serializeAsForm = false
+    product = new @Product(name: "test", id: 10)
+    counter = 0
+    for method in ['PUT', 'POST']
+      MockRequest.expect
+        url: '/products/10/extra'
+        method: method
+        data: '{"foo":"bar"}'
+        contentType: 'application/json'
+      , productJSON
+
+      counter += 1
+      @adapter.perform method.toLowerCase(), product, {action: 'extra', data: {foo: 'bar'}}, (err, record) =>
+        throw err if err
+        ok record
+        QUnit.start() if --counter == 0
 
   asyncTest 'custom REST actions on storage: records should callback with the response', 4, ->
     product = new @Product(name: "test", id: 10)

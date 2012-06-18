@@ -139,14 +139,18 @@ class Batman.RestStorage extends Batman.StorageAdapter
     else
       data = json
 
+    env.options.data = data
+    next()
+
+  @::before 'create', 'update', 'put', 'post', @skipIfError (env, next) ->
     if @serializeAsForm
       # Leave the POJO in the data for the request adapter to serialize to a body
       env.options.contentType = @constructor.PostBodyContentType
     else
-      data = JSON.stringify(data)
-      env.options.contentType = @constructor.JSONContentType
+      if env.options.data?
+        env.options.data = JSON.stringify(env.options.data)
+        env.options.contentType = @constructor.JSONContentType
 
-    env.options.data = data
     next()
 
   @::after 'all', @skipIfError (env, next) ->
