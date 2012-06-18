@@ -30,15 +30,11 @@ class Batman.URI
     delete @query
 
   queryString: ->
-    string = for k,v of @queryParams
-      k = @constructor.encodeQueryComponent k
-      v = @constructor.encodeQueryComponent v if v
-      if v? then "#{k}=#{v}" else k
-    string.join("&")
+    @constructor.queryFromParams(@queryParams)
 
   toString: ->
     [
-      "#{@protocol}:" if @protocol, "//",
+      "#{@protocol}:" if @protocol, "//" if @authority(),
       @authority(),
       @relative(),
     ].join("")

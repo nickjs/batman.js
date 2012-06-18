@@ -121,17 +121,33 @@ test "modified path is reflected in file()", ->
   uri.path = "/monkeys/bananas"
   equal uri.file(), "bananas"
 
+test "path only URI has correct aggregate values", ->
+  uriStr = "/foo/bar/monkeys/bananas?want=yes"
+  uri = new Batman.URI(uriStr)
+  equal uri.authority(), ""
+  equal uri.userInfo(), ""
+  equal uri.relative(), uriStr
+  equal uri.directory(), "/foo/bar/monkeys/"
+  equal uri.file(), "bananas"
+  equal uri.queryString(), "want=yes"
+
 test "toString() returns URI to string", ->
-  uri = new Batman.URI("http://www.example.com")
-  equal uri.toString(), "http://www.example.com"
+  uriStr = "http://www.example.com"
+  uri = new Batman.URI(uriStr)
+  equal uri.toString(), uriStr
 
 test "toString() returns complex URI to string", ->
   uri = new Batman.URI("http://usr:pwd@www.test.com:81/dir/dir.2/index.htm?q1=0&&test1&test2=value#top")
   equal uri.toString(), "http://usr:pwd@www.test.com:81/dir/dir.2/index.htm?q1=0&test1&test2=value#top"
 
 test "toString() with params returns URI to string including all params", ->
-  uri = new Batman.URI("http://www.example.com?foo=bar")
-  equal uri.toString(), "http://www.example.com?foo=bar"
+  uriStr = "http://www.example.com?foo=bar"
+  uri = new Batman.URI(uriStr)
+  equal uri.toString(), uriStr
+
+test "toString() with path only URI", ->
+  uri = new Batman.URI(@pathAndQuery)
+  equal uri.toString(), @pathAndQuery
 
 test "modifying params updates params from query string", ->
   uri = new Batman.URI("http://www.example.com?foo=bar&foo2=foo")
