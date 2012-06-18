@@ -20,7 +20,45 @@ class Batman.URI
     while (i--)
       @[attributes[i]] = matches[i] or ''
 
-  queryParams: -> @constructor.paramsFromQuery(@query)
+    @queryParams = @constructor.paramsFromQuery(@query)
+
+    delete @authority
+    delete @userInfo
+    delete @relative
+    delete @directory
+    delete @file
+    delete @query
+
+  queryString: ->
+    @constructor.queryFromParams(@queryParams)
+
+  toString: ->
+    [
+      "#{@protocol}:" if @protocol, "//" if @authority(),
+      @authority(),
+      @relative(),
+    ].join("")
+
+  userInfo: ->
+    [@user, ":#{@password}" if @password].join("")
+
+  authority: ->
+    [@userInfo(), "@" if @user or @password, @hostname, ":#{@port}" if @port].join("")
+
+  relative: ->
+    query = @queryString()
+    [@path, "?#{query}" if query, "##{@hash}" if @hash].join("")
+
+  directory: ->
+    splitPath = @path.split('/')
+    if splitPath.length > 1
+      splitPath.slice(0, splitPath.length - 1).join('/') + "/"
+    else
+      ""
+
+  file: ->
+    splitPath = @path.split("/")
+    splitPath[splitPath.length - 1]
 
   ###
   # query parsing

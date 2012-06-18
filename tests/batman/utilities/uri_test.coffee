@@ -7,19 +7,19 @@ test "constructs with a full URI string", ->
   uri = new Batman.URI(@complexURI)
   equal uri.source, @complexURI
   equal uri.protocol, 'http'
-  equal uri.authority, 'james:secret@www.example.com:81'
-  equal uri.userInfo, 'james:secret'
+  equal uri.authority(), 'james:secret@www.example.com:81'
+  equal uri.userInfo(), 'james:secret'
   equal uri.user, 'james'
   equal uri.password, 'secret'
   equal uri.hostname, 'www.example.com'
   equal uri.port, '81'
-  equal uri.relative, '/one+two/three%20four/index.html?a+phrase=this+phrase&some%20thing=this%20thing&foo&bar=#blahblah'
+  equal uri.relative(), '/one+two/three%20four/index.html?a+phrase=this+phrase&some+thing=this+thing&foo&bar=#blahblah'
   equal uri.path, '/one+two/three%20four/index.html'
-  equal uri.directory, '/one+two/three%20four/'
-  equal uri.file, 'index.html'
-  equal uri.query, 'a+phrase=this+phrase&some%20thing=this%20thing&foo&bar='
+  equal uri.directory(), '/one+two/three%20four/'
+  equal uri.file(), 'index.html'
+  equal uri.queryString(), 'a+phrase=this+phrase&some+thing=this+thing&foo&bar='
   equal uri.hash, 'blahblah'
-  deepEqual uri.queryParams(),
+  deepEqual uri.queryParams,
     'a phrase': 'this phrase'
     'some thing': 'this thing'
     foo: null
@@ -29,23 +29,150 @@ test "constructs with just a path and query", ->
   uri = new Batman.URI(@pathAndQuery)
   equal uri.source, @pathAndQuery
   equal uri.protocol, ''
-  equal uri.authority, ''
-  equal uri.userInfo, ''
+  equal uri.authority(), ''
+  equal uri.userInfo(), ''
   equal uri.user, ''
   equal uri.password, ''
   equal uri.hostname, ''
   equal uri.port, ''
-  equal uri.relative, '/foo/bar?num=1'
+  equal uri.relative(), '/foo/bar?num=1'
   equal uri.path, '/foo/bar'
-  equal uri.directory, '/foo/'
-  equal uri.file, 'bar'
-  equal uri.query, 'num=1'
+  equal uri.directory(), '/foo/'
+  equal uri.file(), 'bar'
+  equal uri.queryString(), 'num=1'
   equal uri.hash, ''
-  deepEqual uri.queryParams(), num: '1'
+  deepEqual uri.queryParams, num: '1'
+
+test "construct protocol independent URI and toString() it", ->
+  uri = new Batman.URI("//www.example.com")
+  equal uri.toString(), '//www.example.com'
+
+test "construct http URI, make it protocol independent and toString() it", ->
+  uri = new Batman.URI("http://www.example.com")
+  uri.protocol = null
+  equal uri.toString(), '//www.example.com'
+
+test "authority() returns user name, password, host name and port", ->
+  uri = new Batman.URI("http://www.example.com")
+  equal uri.authority(), "www.example.com"
+  uri = new Batman.URI("http://www.example.com:8080?foo=bar")
+  equal uri.authority(), "www.example.com:8080"
+  uri = new Batman.URI("http://bob:foo@www.example.com:8080")
+  equal uri.authority(), "bob:foo@www.example.com:8080"
+
+test "modified host name and port are reflected in authority()", ->
+  uri = new Batman.URI("http://www.example.com")
+  uri.hostname = "www.foo.com"
+  equal uri.authority(), "www.foo.com"
+  uri.port = "8080"
+  equal uri.authority(), "www.foo.com:8080"
+
+test "userInfo() returns user", ->
+  uri = new Batman.URI("http://user@example.com")
+  equal uri.userInfo(), "user"
+
+test "userInfo() returns user and password", ->
+  uri = new Batman.URI("http://user:password@example.com")
+  equal uri.userInfo(), "user:password"
+
+test "modified user and password are reflected in userInfo()", ->
+  uri = new Batman.URI("http://user:password@example.com")
+  uri.user = 'bob'
+  equal uri.userInfo(), "bob:password"
+  uri.password = "foo"
+  equal uri.userInfo(), "bob:foo"
+
+test "relative() returns path", ->
+  uri = new Batman.URI("http://www.example.com/foo/bar")
+  equal uri.relative(), "/foo/bar"
+
+test "relative() returns path with query params and hash", ->
+  uri = new Batman.URI("http://www.example.com/foo/bar?p=1#foo")
+  equal uri.relative(), "/foo/bar?p=1#foo"
+
+test "modified path, query params and hash are reflected in relative()", ->
+  uri = new Batman.URI("http://www.example.com/foo/bar")
+  uri.path = "/monkeys"
+  equal uri.relative(), "/monkeys"
+  uri.queryParams.banana = "yes"
+  equal uri.relative(), "/monkeys?banana=yes"
+  uri.hash = "foo"
+  equal uri.relative(), "/monkeys?banana=yes#foo"
+
+test "directory() returns path up to last / separated token", ->
+  uri = new Batman.URI("http://www.example.com/foo/bar/choo")
+  equal uri.directory(), "/foo/bar/"
+
+test "modified path is reflected in directory()", ->
+  uri = new Batman.URI("http://www.example.com/foo/bar/choo")
+  equal uri.directory(), "/foo/bar/"
+  uri.path = "/monkeys/bananas"
+  equal uri.directory(), "/monkeys/"
+
+test "file() returns last / separated token in path", ->
+  uri = new Batman.URI("http://www.example.com/foo/bar/choo")
+  equal uri.file(), "choo"
+  uri = new Batman.URI("http://www.example.com/foo/bar/choo?foo=bar")
+  equal uri.file(), "choo"
+
+test "modified path is reflected in file()", ->
+  uri = new Batman.URI("http://www.example.com/foo/bar/choo")
+  equal uri.file(), "choo"
+  uri.path = "/monkeys/bananas"
+  equal uri.file(), "bananas"
+
+test "path only URI has correct aggregate values", ->
+  uriStr = "/foo/bar/monkeys/bananas?want=yes"
+  uri = new Batman.URI(uriStr)
+  equal uri.authority(), ""
+  equal uri.userInfo(), ""
+  equal uri.relative(), uriStr
+  equal uri.directory(), "/foo/bar/monkeys/"
+  equal uri.file(), "bananas"
+  equal uri.queryString(), "want=yes"
+
+test "toString() returns URI to string", ->
+  uriStr = "http://www.example.com"
+  uri = new Batman.URI(uriStr)
+  equal uri.toString(), uriStr
+
+test "toString() returns complex URI to string", ->
+  uri = new Batman.URI("http://usr:pwd@www.test.com:81/dir/dir.2/index.htm?q1=0&&test1&test2=value#top")
+  equal uri.toString(), "http://usr:pwd@www.test.com:81/dir/dir.2/index.htm?q1=0&test1&test2=value#top"
+
+test "toString() with params returns URI to string including all params", ->
+  uriStr = "http://www.example.com?foo=bar"
+  uri = new Batman.URI(uriStr)
+  equal uri.toString(), uriStr
+
+test "toString() with path only URI", ->
+  uri = new Batman.URI(@pathAndQuery)
+  equal uri.toString(), @pathAndQuery
+
+test "modifying params updates params from query string", ->
+  uri = new Batman.URI("http://www.example.com?foo=bar&foo2=foo")
+  uri.queryParams.foo2 = 'bar2'
+  equal uri.toString(), "http://www.example.com?foo=bar&foo2=bar2"
+
+test "adding params updates params from query string", ->
+  uri = new Batman.URI("http://www.example.com")
+  uri.queryParams.foo = 'bar'
+  equal uri.toString(), "http://www.example.com?foo=bar"
+
+test "deleting params removes params from query string", ->
+  uri = new Batman.URI("http://www.example.com?foo=bar")
+  delete uri.queryParams.foo
+  equal uri.toString(), "http://www.example.com"
+
+test "multiple modifications to query string work properly", ->
+  uri = new Batman.URI("http://www.example.com?foo=bar&monkeys=false")
+  uri.queryParams.foo = "bar2"
+  uri.queryParams.bar = "foo"
+  delete uri.queryParams.monkeys
+  equal uri.toString(), "http://www.example.com?foo=bar2&bar=foo"
 
 test ".paramsFromQuery(query) returns a params object from the given query string", ->
-  params = Batman.URI.paramsFromQuery 'a+phrase=this+phrase&some%20thing=this%20thing&foo&bar='
-
+  params = Batman.URI.paramsFromQuery 'a+phrase=this+phrase&some%20thing=this+thing&foo&bar='
   deepEqual params,
     'a phrase': 'this phrase'
     'some thing': 'this thing'
