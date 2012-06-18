@@ -6,7 +6,7 @@ class Batman.RenderContext
       root = Batman.currentApp.get('_renderContext')
     root ?= @base
 
-  windowWrapper: if window? then {window} else {}
+  windowWrapper: {window: Batman.container}
   constructor: (@object, @parent) ->
 
   findKey: (key) ->
