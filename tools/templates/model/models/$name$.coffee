@@ -8,9 +8,6 @@ class $App$.$Name$ extends Batman.Model
   #
   # @persist Batman.RestStorage
 
-  # Make this model available in the global scope with
-  # @global true
-
   # Add a computed property to this model with
   #
   # @accessor 'someKey',
