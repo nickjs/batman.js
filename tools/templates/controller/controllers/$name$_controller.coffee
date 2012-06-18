@@ -1,5 +1,5 @@
 class $App$.$Name$Controller extends Batman.Controller
-
+  routingKey: '$name$'
   index: (params) ->
 
   # Add actions to this controller by defining functions on it.

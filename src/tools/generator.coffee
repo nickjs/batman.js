@@ -78,8 +78,6 @@ cli.main (args, options) ->
 
   # All the paths have been figured out above, so `appName` can be modified
   # Ensure that the app name is always camel cased
-  console.warn Batman
-  console.warn Batman.helpers
   options.appName = Batman.helpers.camelize(options.appName)
 
   # `replaceVars` is a super simple templating engine.

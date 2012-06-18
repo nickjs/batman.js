@@ -61,8 +61,6 @@
       destinationPath = process.cwd();
       Batman.mixin(options, utils.getConfig());
     }
-    console.warn(Batman);
-    console.warn(Batman.helpers);
     options.appName = Batman.helpers.camelize(options.appName);
     Batman.mixin(TemplateVars, {
       app: options.appName,

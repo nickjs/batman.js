@@ -1,5 +1,5 @@
 class $App$.$Name$ extends Batman.Model
-
+  @resourceName: '$name$'
   # This model could be persisted locally with
   #
   # @persist Batman.LocalStorage
@@ -7,9 +7,6 @@ class $App$.$Name$ extends Batman.Model
   # or over a REST endpoint with
   #
   # @persist Batman.RestStorage
-
-  # Make this model available in the global scope with
-  # @global true
 
   # Add a computed property to this model with
   #
