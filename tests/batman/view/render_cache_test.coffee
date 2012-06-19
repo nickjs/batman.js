@@ -47,6 +47,17 @@ test "cache won't return items with the same cache key but with different length
 
   notEqual viewA, viewB
 
+test "cache won't cache options with cache: false", ->
+  equalCacheLength(@cache, 0)
+  viewInstance = @cache.viewForOptions Batman.extend {cache: false}, @exampleOptions
+  equalCacheLength(@cache, 0)
+
+test "cache won't cache view classes with cache: false on their prototype", ->
+  @MockView::cache = false
+  equalCacheLength(@cache, 0)
+  viewInstance = @cache.viewForOptions @exampleOptions
+  equalCacheLength(@cache, 0)
+
 test "cache evicts old items as new items come in past the size limit", ->
   @cache.maximumLength = 2
   editOptions = Batman.mixin {}, @exampleOptions, {source: "products/edit"}

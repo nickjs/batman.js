@@ -18,6 +18,7 @@ class Batman.View extends Batman.Object
       @get(@_argumentBindingKey(key))?.get('filteredValue')
 
   isView: true
+  cache: true
   _rendered: false
   # Set the source attribute to an html file to have that file loaded.
   source: ''
