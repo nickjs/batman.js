@@ -81,7 +81,7 @@ class Batman.Controller extends Batman.Object
       Batman.navigator?.redirect = oldRedirect
 
     @_actionFrames.push frame
-    frame.actionStart({internal: true})
+    frame.startOperation({internal: true})
 
     oldRedirect = Batman.navigator?.redirect
     Batman.navigator?.redirect = @redirect
@@ -89,8 +89,8 @@ class Batman.Controller extends Batman.Object
 
     result = @[action](params)
 
-    @render() if not frame.actionTaken
-    frame.actionFinish()
+    @render() if not frame.operationOccurred
+    frame.finishOperation()
 
     result
 
@@ -98,10 +98,10 @@ class Batman.Controller extends Batman.Object
     frame = @_actionFrames[@_actionFrames.length - 1]
 
     if frame
-      if frame.actionTaken
+      if frame.operationOccurred
         Batman.developer.warn "Warning! Trying to redirect but an action has already be taken during #{@get('routingKey')}.#{frame.action || @get('action')}}"
 
-      frame.immediateActionTaken()
+      frame.startAndFinishOperation()
 
       if @_afterFilterRedirect
         Batman.developer.warn "Warning! Multiple actions trying to redirect!"
@@ -115,11 +115,11 @@ class Batman.Controller extends Batman.Object
 
   render: (options = {}) ->
     if frame = @_actionFrames?[@_actionFrames.length - 1]
-      frame.actionStart()
+      frame.startOperation()
 
     # Ensure the frame is marked as having had an action executed so that render false prevents the implicit render.
     if options is false
-      frame.actionFinish()
+      frame.finishOperation()
       return
 
     action = frame?.action || @get('action')
@@ -141,7 +141,7 @@ class Batman.Controller extends Batman.Object
       view.on 'ready', =>
         Batman.DOM.Yield.withName(options.into).replace view.get('node')
         Batman.currentApp?.allowAndFire 'ready'
-        frame?.actionFinish()
+        frame?.finishOperation()
     view
 
   scrollToHash: (hash = @get('params')['#'])-> Batman.DOM.scrollIntoView(hash)

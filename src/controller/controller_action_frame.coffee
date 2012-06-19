@@ -1,30 +1,30 @@
 class Batman.ControllerActionFrame extends Batman.Object
-  actionTaken: false
-  remainingActions: 0
+  operationOccurred: false
+  remainingOperations: 0
   @::event('complete').oneShot = true
 
   constructor: (options, onComplete) ->
     super(options)
     @on 'complete', onComplete
 
-  actionStart: (options = {}) ->
+  startOperation: (options = {}) ->
     if !options.internal
-      @actionTaken = true
-    @_changeActionsCounter(1)
+      @operationOccurred = true
+    @_changeOperationsCounter(1)
     true
 
-  actionFinish: ->
-    @_changeActionsCounter(-1)
+  finishOperation: ->
+    @_changeOperationsCounter(-1)
     true
 
-  immediateActionTaken: (options) ->
-    @actionStart(options)
-    @actionFinish(options)
+  startAndFinishOperation: (options) ->
+    @startOperation(options)
+    @finishOperation(options)
     true
 
-  _changeActionsCounter: (delta) ->
-    @remainingActions += delta
-    if @remainingActions == 0
+  _changeOperationsCounter: (delta) ->
+    @remainingOperations += delta
+    if @remainingOperations == 0
       @fire 'complete'
-    @parentFrame?._changeActionsCounter(delta)
+    @parentFrame?._changeOperationsCounter(delta)
     return

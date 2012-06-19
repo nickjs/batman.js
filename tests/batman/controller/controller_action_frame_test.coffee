@@ -3,38 +3,38 @@ QUnit.module "Batman.ControllerActionFrame"
     @completeSpy = createSpy()
     @frame = new Batman.ControllerActionFrame({}, @completeSpy)
 suite = ->
-  test "starting an action marks actionTaken on the frame", ->
-    @frame.actionStart()
-    ok @frame.actionTaken
+  test "starting an operation marks operationOccurred on the frame", ->
+    @frame.startOperation()
+    ok @frame.operationOccurred
 
-  test "starting an action with {internal: true} does not mark actionTaken on the frame", ->
-    @frame.actionStart({internal: true})
-    ok !@frame.actionTaken
+  test "starting an operation with {internal: true} does not mark operationOccurred on the frame", ->
+    @frame.startOperation({internal: true})
+    ok !@frame.operationOccurred
 
-  test "taking one action fires the complete callback", ->
-    @frame.immediateActionTaken()
+  test "taking one operation fires the complete callback", ->
+    @frame.startAndFinishOperation()
     ok @completeSpy.called
 
-  test "starting one action does not fire the complete callback", ->
-    @frame.actionStart()
+  test "starting one operation does not fire the complete callback", ->
+    @frame.startOperation()
     ok !@completeSpy.called
 
-  test "finishing a started action fires the complete callback", ->
-    @frame.actionStart()
-    @frame.actionFinish()
+  test "finishing a started operation fires the complete callback", ->
+    @frame.startOperation()
+    @frame.finishOperation()
     ok @completeSpy.called
 
   test "finishing one of many outstanding started actions does not the complete callback", ->
-    @frame.actionStart()
-    @frame.actionStart()
-    @frame.actionFinish()
+    @frame.startOperation()
+    @frame.startOperation()
+    @frame.finishOperation()
     ok !@completeSpy.called
 
   test "finishing all of many outstanding started actions does not the complete callback", ->
-    @frame.actionStart()
-    @frame.actionStart()
-    @frame.actionFinish()
-    @frame.actionFinish()
+    @frame.startOperation()
+    @frame.startOperation()
+    @frame.finishOperation()
+    @frame.finishOperation()
     ok @completeSpy.called
 
 suite()
@@ -48,35 +48,35 @@ QUnit.module "Batman.ControllerActionFrame with parent frames"
 
 suite()
 
-test "taking one action fires the complete callback on the parent frame", ->
-  @frame.immediateActionTaken()
+test "taking one operation fires the complete callback on the parent frame", ->
+  @frame.startAndFinishOperation()
   ok @parentCompleteSpy.called
 
-test "starting one action does not fire the complete callback on the parent frame", ->
-  @frame.actionStart()
+test "starting one operation does not fire the complete callback on the parent frame", ->
+  @frame.startOperation()
   ok !@parentCompleteSpy.called
 
-test "finishing a started action fires the complete callback on the parent frame", ->
-  @frame.actionStart()
-  @frame.actionFinish()
+test "finishing a started operation fires the complete callback on the parent frame", ->
+  @frame.startOperation()
+  @frame.finishOperation()
   ok @parentCompleteSpy.called
 
 test "finishing one of many outstanding started actions does not the complete callback on the parent frame", ->
-  @frame.actionStart()
-  @frame.actionStart()
-  @frame.actionFinish()
+  @frame.startOperation()
+  @frame.startOperation()
+  @frame.finishOperation()
   ok !@parentCompleteSpy.called
 
 test "finishing all of many outstanding started actions does not the complete callback on the parent frame", ->
-  @frame.actionStart()
-  @frame.actionStart()
-  @frame.actionFinish()
-  @frame.actionFinish()
+  @frame.startOperation()
+  @frame.startOperation()
+  @frame.finishOperation()
+  @frame.finishOperation()
   ok @parentCompleteSpy.called
 
-test "finishing a started action does not fire the complete callback on the parent frame if the parent frame has outstanding started actions", ->
-  @parentFrame.actionStart()
-  @frame.actionStart()
-  @frame.actionFinish()
+test "finishing a started operation does not fire the complete callback on the parent frame if the parent frame has outstanding started actions", ->
+  @parentFrame.startOperation()
+  @frame.startOperation()
+  @frame.finishOperation()
   ok !@parentCompleteSpy.called
 
