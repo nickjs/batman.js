@@ -275,6 +275,7 @@ test 'actions executed by other actions implicitly render', ->
 
     view = mockClass.lastInstance # instantiated by the show implicit render
     equal view.constructorArguments[0].source, 'test/show', "The action is correctly different inside the inner execution"
+    view.fireReady()
 
 test 'actions executed by other actions have their filters run', ->
   beforeSpy = createSpy()
@@ -293,6 +294,69 @@ test 'actions executed by other actions have their filters run', ->
   @controller.dispatch 'test'
   ok beforeSpy.called
   ok afterSpy.called
+
+test 'afterFilters should only fire after renders are complete', 2, ->
+  afterSpy = createSpy()
+
+  class TestController extends Batman.Controller
+    @afterFilter 'show', afterSpy
+    show: -> @render()
+
+  @controller = new TestController
+
+  mockClassDuring Batman ,'View', MockView, (mockClass) =>
+    @controller.dispatch 'show'
+    view = mockClass.lastInstance
+    ok !afterSpy.called
+    view.fireReady()
+    ok afterSpy.called
+
+test 'afterFilters on outer actions should fire after afterFilters on inner actions', 1, ->
+  order = []
+  class TestController extends Batman.Controller
+    @afterFilter 'show', -> order.push 1
+    @afterFilter 'test', -> order.push 2
+    show: -> @render false
+    test: ->
+      @render false
+      @executeAction 'show'
+
+  @controller = new TestController
+  @controller.dispatch 'test'
+  deepEqual order, [1, 2]
+
+test 'afterFilters on outer actions should only fire after inner renders are complete', 2, ->
+  afterSpy = createSpy()
+
+  class TestController extends Batman.Controller
+    @afterFilter 'test', afterSpy
+    show: -> @render()
+    test: ->
+      @render false
+      @executeAction 'show'
+
+  @controller = new TestController
+
+  mockClassDuring Batman ,'View', MockView, (mockClass) =>
+    @controller.dispatch 'test'
+    view = mockClass.lastInstance
+    ok !afterSpy.called
+    view.fireReady()
+    ok afterSpy.called
+
+test 'afterFilters on outer actions should fire after afterFilters on inner actions', 1, ->
+  order = []
+  class TestController extends Batman.Controller
+    @afterFilter 'show', -> order.push 1
+    @afterFilter 'test', -> order.push 2
+    show: -> @render false
+    test: ->
+      @render false
+      @executeAction 'show'
+
+  @controller = new TestController
+  @controller.dispatch 'test'
+  deepEqual order, [1, 2]
 
 test 'dispatching params with a hash scrolls to that hash', ->
   @controller.show = -> @render false
