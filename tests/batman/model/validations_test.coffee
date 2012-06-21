@@ -61,6 +61,21 @@ validationsTestSuite = ->
         equal errors.length, 0
         QUnit.start()
 
+  asyncTest "regexp", ->
+    class Product extends Batman.Model
+      @validate 'name', {pattern: /[0-9]+/}
+
+    p = new Product
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+
+      p.set 'name', "123"
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        QUnit.start()
+
   asyncTest "custom async validations which don't rely on model state", ->
     letItPass = true
     class Product extends Batman.Model
