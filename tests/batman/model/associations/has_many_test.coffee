@@ -25,10 +25,28 @@ QUnit.module "Batman.Model hasMany Associations"
         name: "Product One"
         id: 1
         store_id: 1
+        productVariants: [{
+          id:3
+          price:50
+          product_id:1
+        },{
+          id:4
+          price:60
+          product_id:1
+        }]
       products2:
         name: "Product Two"
         id: 2
         store_id: 1
+        productVariants: [{
+          id:1
+          price:50
+          product_id:2
+        },{
+          id:2
+          price:60
+          product_id:2
+        }]
       products3:
         name: "Product Three"
         id: 3
@@ -48,6 +66,22 @@ QUnit.module "Batman.Model hasMany Associations"
       @belongsTo 'product', namespace: namespace
 
     @variantsAdapter = createStorageAdapter @ProductVariant, AsyncTestStorageAdapter,
+      product_variants1:
+        id:1
+        price:50
+        product_id:2
+      product_variants2:
+        id:2
+        price:60
+        product_id:2
+      product_variants3:
+        id:3
+        price:50
+        product_id:1
+      product_variants4:
+        id:4
+        price:60
+        product_id:1
       product_variants5:
         id:5
         price:50
@@ -354,7 +388,8 @@ asyncTest "unsaved hasMany models should decode their child records based on ID"
 asyncTest "unsaved hasMany models should decode their existing child records based on ID", ->
   @ProductVariant.load (err, variants) =>
     product = new @Product
-    product.get('productVariants').add(variant) for variant in variants
+    for variant in variants when variant.get('id') in [5,6]
+      product.get('productVariants').add(variant)
 
     five = product.get('productVariants').indexedByUnique('id').get(5)
     six = product.get('productVariants').indexedByUnique('id').get(6)
@@ -483,6 +518,15 @@ asyncTest "hasMany supports custom foreign keys", 1, ->
     products = shop.get('products')
     delay ->
       equal products.length, 3
+
+asyncTest "regression test: identity mapping works", ->
+  @ProductVariant.load (err, variants) =>
+    originalIDs = variants.map (v) -> v.get('id')
+    @Product.load (err, products) =>
+      currentIDs = variants.map (v) -> v.get('id')
+      deepEqual currentIDs, originalIDs
+      deepEqual @ProductVariant.get('loaded').mapToProperty('id').sort(), [1,2,3,4,5,6]
+      QUnit.start()
 
 QUnit.module "Batman.Model hasMany Associations with inverse of"
   setup: ->

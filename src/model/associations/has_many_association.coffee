@@ -42,7 +42,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
           for jsonObject in data
             record = new relatedModel()
             record._withoutDirtyTracking -> @fromJSON(jsonObject)
-            existingRecord = relatedModel.get('loaded').indexedByUnique(association.foreignKey).get(record.get('id'))
+            existingRecord = relatedModel.get('loaded').indexedByUnique('id').get(record.get('id'))
             if existingRecord?
               existingRecord._withoutDirtyTracking -> @fromJSON jsonObject
               record = existingRecord
