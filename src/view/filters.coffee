@@ -83,6 +83,8 @@ Batman.Filters =
     else
       Batman.helpers.pluralize(string)
 
+  humanize: buntUndefined (string, binding) -> Batman.helpers.humanize(string)
+
   join: buntUndefined (value, withWhat = '', binding) ->
     if !binding
       binding = withWhat

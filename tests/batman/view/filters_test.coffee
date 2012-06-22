@@ -181,6 +181,13 @@ asyncTest 'pluralize with a count without including the count', 2, ->
     equal node.html(), "foo"
     QUnit.start()
 
+asyncTest 'humanize', 1, ->
+  helpers.render '<div data-bind="foo | humanize"></div>',
+    foo: 'one_two_three'
+  , (node) ->
+    equal node.html(), "One two three"
+    QUnit.start()
+
 asyncTest 'join', 2, ->
   helpers.render '<div data-bind="foo | join"></div>',
     foo: ['a', 'b', 'c']
