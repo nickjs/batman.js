@@ -8,9 +8,10 @@ class Batman.RegExpValidator extends Batman.Validator
       super
 
     validateEach: (errors, record, key, callback) ->
-      value = record.get(key) ? ''
-      unless @regexp.test(value)
-        errors.add key, @format(key, 'not_matching')
+      value = record.get(key)
+      if value? && value != ''
+        unless @regexp.test(value)
+          errors.add key, @format(key, 'not_matching')
       callback()
 
 Batman.Validators.push Batman.RegExpValidator

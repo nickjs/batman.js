@@ -65,7 +65,7 @@ validationsTestSuite = ->
     class Product extends Batman.Model
       @validate 'name', {pattern: /[0-9]+/}
 
-    p = new Product
+    p = new Product(name: "foo")
     p.validate (err, errors) ->
       throw err if err
       equal errors.length, 1
@@ -74,7 +74,11 @@ validationsTestSuite = ->
       p.validate (err, errors) ->
         throw err if err
         equal errors.length, 0
-        QUnit.start()
+        p.unset 'name'
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
 
   asyncTest "custom async validations which don't rely on model state", ->
     letItPass = true
