@@ -3,9 +3,7 @@ class Batman.Validator extends Batman.Object
     super mixins...
 
   validate: (record) -> Batman.developer.error "You must override validate in Batman.Validator subclasses."
-  format: (key, messageKey, interpolations) ->
-    attribute: key,
-    message: Batman.t("errors.messages.#{messageKey}", interpolations)
+  format: (key, messageKey, interpolations) -> Batman.t("errors.messages.#{messageKey}", interpolations)
 
   @options: (options...) ->
     Batman.initializeObject @
