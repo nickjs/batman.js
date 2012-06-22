@@ -90,7 +90,7 @@ if !IN_NODE # jsdom doesn't support querySelector on elements, so these tests fa
       context.get('instanceOfUser.errors').add 'name', "can't be blank"
       delay =>
         equal node.find("div.errors li").length, 1
-        equal node.find("div.errors li").html(), "name can't be blank"
+        equal node.find("div.errors li").html(), "Name can't be blank"
 
 
   asyncTest 'it should only show the errors list when there are errors', 2, ->
@@ -147,4 +147,4 @@ if !IN_NODE # jsdom doesn't support querySelector on elements, so these tests fa
       context.get('instanceOfUser.errors').add 'name', "can't be blank"
       delay =>
         equal node.find("#testy li").length, 1
-        equal node.find("#testy li").html(), "name can't be blank"
+        equal node.find("#testy li").html(), "Name can't be blank"

@@ -195,7 +195,7 @@ asyncTest "errors set contents should be bindable", 4, ->
 
 test "ValidationError should get full message", ->
   error = new Batman.ValidationError("foo", "isn't valid")
-  equal error.get('fullMessage'), "foo isn't valid"
+  equal error.get('fullMessage'), "Foo isn't valid"
 
 test "ValidationError should humanize attribute in the full message", ->
   error = new Batman.ValidationError("fooBarBaz", "isn't valid")
