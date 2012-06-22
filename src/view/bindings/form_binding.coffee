@@ -33,6 +33,6 @@ class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
   errorsListHTML: ->
     """
     <ul>
-      <li data-foreach-error="#{@contextName}.errors" data-bind="error.attribute | append ' ' | append error.message"></li>
+      <li data-foreach-error="#{@contextName}.errors" data-bind="error.fullMessage"></li>
     </ul>
     """

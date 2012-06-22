@@ -193,3 +193,10 @@ asyncTest "errors set contents should be bindable", 4, ->
     equal @someObject.get('productNameErrorsLength'), 1, 'the foreign key should have updated'
     QUnit.start()
 
+test "ValidationError should get full message", ->
+  error = new Batman.ValidationError("foo", "isn't valid")
+  equal error.get('fullMessage'), "foo isn't valid"
+
+test "ValidationError should humanize attribute in the full message", ->
+  error = new Batman.ValidationError("fooBarBaz", "isn't valid")
+  equal error.get('fullMessage'), "Foo bar baz isn't valid"

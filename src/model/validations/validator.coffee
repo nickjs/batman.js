@@ -4,9 +4,8 @@ class Batman.Validator extends Batman.Object
 
   validate: (record) -> Batman.developer.error "You must override validate in Batman.Validator subclasses."
   format: (key, messageKey, interpolations) ->
-    Batman.t 'errors.format',
-      attribute: key,
-      message: Batman.t("errors.messages.#{messageKey}", interpolations)
+    attribute: key,
+    message: Batman.t("errors.messages.#{messageKey}", interpolations)
 
   @options: (options...) ->
     Batman.initializeObject @
