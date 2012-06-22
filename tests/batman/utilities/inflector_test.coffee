@@ -173,6 +173,11 @@ Irregularities =
   'sex'    : 'sexes'
   'move'   : 'moves'
 
+UnderscoreToHuman =
+  "employee_salary" : "Employee salary"
+  "employee_id"     : "Employee"
+  "underground"     : "Underground"
+
 testBothDirections = (singular, plural) ->
   test "#{singular} is pluralized to #{plural} and back again", ->
     equal Batman.helpers.inflector.pluralize(singular), plural
@@ -200,4 +205,10 @@ QUnit.module 'Batman.Inflector ordinalization'
 
 test "Inflector ordinalizes", ->
   for number, ordinalized of OrdinalNumbers
-    equal ordinalized, Batman.helpers.inflector.ordinalize(number)
+    equal Batman.helpers.inflector.ordinalize(number), ordinalized
+
+QUnit.module 'Batman.helpers humanization'
+
+test "helpers humanize", ->
+  for underscored, human of UnderscoreToHuman
+    equal Batman.helpers.humanize(underscored), human
