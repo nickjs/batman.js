@@ -1,7 +1,7 @@
 class Batman.Inflector
   plural:   (regex, replacement) -> @_plural.unshift [regex, replacement]
   singular: (regex, replacement) -> @_singular.unshift [regex, replacement]
-  human:    (regex, replacement) -> @_human.unshit [regex, replacement]
+  human:    (regex, replacement) -> @_human.unshift [regex, replacement]
   uncountable: (strings...) -> @_uncountable = @_uncountable.concat(strings.map((x) -> new RegExp("#{x}$", 'i')))
   irregular: (singular, plural) ->
     if singular.charAt(0) == plural.charAt(0)
