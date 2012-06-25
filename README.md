@@ -210,9 +210,6 @@ Here's a simple app class:
 
 ```coffeescript
 class BatBelt extends Batman.App
-  @controller 'app', 'gadgets'
-  @model 'gadget'
-
   @root 'app#index'
   @route 'faq/:questionID', 'app#faq'
   @resources 'gadgets'
@@ -239,21 +236,22 @@ The `@resources` macro takes a resource name which should ideally be the undersc
 @route 'gadgets/:id/edit', 'gadgets#edit'
 ```
 
-`@resources` can also take an array of labels to set up routing for multiple models at once:
+`@resources` can also take a list of labels to set up routing for multiple models at once:
 
 ```coffeescript
-@resources ['stores', 'products', 'customers']
+@resources 'stores', 'products', 'customers'
 ```
 
 In addition to setting up these routes, the call to `@resources` keeps track of the fact that the `Gadget` model can be accessed in these ways. This lets you load these routes in your controllers or views by using model instances and classes on their own:
 
 ```coffeescript
-class BatBelt.GadgetsController extends Batman.Controller
-  someEventHandler: (node, event) ->
-    BatBelt.Gadget.find 1, (err, gadget) =>
-      @redirect gadget unless err? # redirects to "/gadgets/1"
-  someOtherHandler: (node, event) ->
-    @redirect BatBelt.Gadget # redirects to "/gadgets"
+BatBelt.Gadget.find 1, (err, gadget) =>
+  @redirect gadget unless err? # redirects to "/gadgets/1"
+```
+or
+
+```coffeescript
+@redirect BatBelt.Gadget # redirects to "/gadgets"
 ```
 
 ### Controllers
@@ -263,6 +261,7 @@ batman.js controllers are singleton classes with one or more instance methods th
 ```coffeescript
 class BatBelt.AppController extends Batman.Controller
   index: ->
+
   faq: (params) ->
     @set('question', @get('questions').get(params.questionID)
 ```
@@ -412,7 +411,7 @@ If you have a REST backend you want to connect to, `Batman.RestStorage` is a sim
 class Product extends Batman.Model
   @persist Batman.RestStorage
   @url = "/admin/products"
-  url: -> "/admin/products/#{@id}"
+  url: -> "/admin/products/#{@get('id')}"
 ```
 
 #### Associations
@@ -502,7 +501,7 @@ git clone https://github.com/Shopify/batman.git
 
 #### 2. Run the tests
 
-You can test batman.js locally either on the command line or in the browser and both should work. Tests are written in Coffeescript using [QUnit](http://docs.jquery.com/QUnit#API_documentation).
+You can test batman.js locally either on the command line or in the browser and both should work. Tests are written in CoffeeScript using [QUnit](http://docs.jquery.com/QUnit#API_documentation).
 
 To run on the command line, run the following command from the project root:
 
@@ -520,7 +519,7 @@ coffee tests/serve.coffee
 
 #### 3. Write some test-driven code
 
-The tests are in `tests/batman`. You'll need to source any new test files in `tests/batman/test.html`.
+The tests are in `tests/batman`. All test files in there are automatically included into the browser.
 
 #### 4. Create a pull request
 
@@ -528,4 +527,4 @@ If it's good code that fits with the goals of the project, we'll merge it in!
 
 # License
 
-batman.js is copyright 2011 by [Shopify](http://www.shopify.com), released under the MIT License (see LICENSE for details).
+batman.js is copyright 2012 by [Shopify](http://www.shopify.com), released under the MIT License (see LICENSE for details).
