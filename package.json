@@ -7,15 +7,15 @@
     "James MacAulay <james@shopify.com> (http://github.com/jamesmacaulay)",
     "Kamil Tusznio <kamil.tusznio@shopify.com> (http://github.com/ktusznio)"
   ],
-  "version": "0.10.0",
+  "version": "0.11.0",
   "homepage": "http://batmanjs.org",
   "repository": {
     "type": "git",
     "url": "git://github.com/Shopify/batman.git"
   },
   "main": "./lib/dist/batman.node.js",
-  "bin" : {
-    "batman" : "./tools/batman"
+  "bin": {
+    "batman": "./tools/batman"
   },
   "scripts": {
     "test": "./node_modules/.bin/cake test",
