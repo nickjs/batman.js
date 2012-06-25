@@ -1,3 +1,60 @@
+## 0.10.0 (May 30th, 2012)
+
+Major Release
+
+ - Refactor StateMachine class to be its own class with transitions, callbacks, and predicates
+ - Reimplement the Model lifecycle as a StateMachine residing at .get('lifecycle')
+ - Implement load pipelining to multiplex multiple `load` calls to the same outgoing request if a second call is issued while a first is pending
+ - Add the `@option` class macro to Views to allow the declaration of `data-view-myargument="keypath"` argument passing to custom views
+ - Make the Model `@encode` macro use the default unit function for the absent options if only an `encode` or `decode` option is passed.
+ - Make `@urlNestsUnder` allow multiple levels of nesting
+ - Add a `RenderCache` clas which will cache major views rendered by `Controller::render`
+ - Make `Controller` use previously rendered views from the `RenderCache` instead of rendering new ones
+ - Remove the ability for views to be "container nodes". Views now have one root node always.
+ - Make View insertion and removal indempotent, including with regards to yields. This means that if a view is removed from the DOM, it will retract nodes yielded elsewhere, and when reinserted, it will reinsert those yields into contentfors.
+ - Add `View::inInDOM()` to ask a view if it is currently in the DOM or not, which indicates if it is safe to destroy.
+ - Add behaviour to `SelectBinding` to update the JS land value with the first selected option if no JS land value was present.
+ - Add `SetIndex#forEach` for looping over sets corresponding to particular values.
+ - Add `Controller#executeAction` for executing other actions within a parent action
+ - Add `Enumerable#inGroupsOf` for getting an enumerable partitioned into groups of a particular length
+ - Make `Batman.helpers.pluralize` act more like the Rails version and not include the count when called in JS land.
+ - Expose `RestStorageAdapter`'s environment allowing access to the meta information surrounding a request.
+ - Move `Paginator` into an extra so people not using don't pay the filesize penalty
+ - Remove unimplemented ability to have multiple storage adapters on Models.
+ - Add `get`, `put`, `post`, and `delete` actions to `RestStorage` for doing "non-standard" requests while still using the nice request adapter pipeline
+ - Add `Model.request` for sending nonstandard requests instead of having to use raw `Batman.Request`s
+ - Add ability for `NamedRouteQuery` to accept arguments which aren't full objects and are the value of the params. "data-route='routes.customers[1]' instead of "data-route='routes.customers[customer]'"
+ - Add the `$extend` helper, which is a lightweight `$mixin` which doesn't use `set`.
+ - Add ability to not include the count in the `pluralize` helper
+ - Add minification saftey warnings and the requirement for `resourceName` to be defined on Model subclasses and `routingKey` to be defined on Controller subclasses
+ - Add the `isNew` accessor to Models
+ - Add a Batman.URI class
+ - Add node v0.7 compatibility and remove v0.4 compatibility
+ - Unified params serialization to use `Batman.URI.paramsFromQuery`
+ - Let the implicit `@render` call in controller actions be configurable via `Controller::defaultRenderYield`
+ - Add `observeOnce` for observing a property change and then immediately removing the observer after the first time it fires.
+
+Meta
+
+ - Update QUnit to `1.5`
+ - Updated to CoffeeScript `1.3.2`
+ - Updated Alfred example to the TodoMVC version
+ - Break out classes into seperate files compiled by snockets.
+
+Bugfixes:
+
+ - Fix serialization of null to end up as null in JSON or absent in post bodies (#364, #365)
+ - Fix filter argument parsing to support string literals and object literals in more cases (#373)
+ - Make select bindings more cautious about updating the JS land property on first bind (#377, #378)
+ - Fix click event propagation around `RouteBindings`
+ - Make `NamedRouteQuery` not loudly error with undefined params.
+ - Fix `Model.get('all')` to always load even if other `load`s have occurred already (#401)
+ - Stop Model operations from adding erroneous sources to enclosing accessors. (#406)
+ - Fix Request sending in IE8 when the `File` object doesn't exist.
+ - Fix a bug where filter args could be carried over between executions (#438)
+ - Fix file uploads using jQuery
+ - Ensure filters receive undefined for absent arguments
+
 ## 0.9.0 (April 1, 2012)
 
 Really Major Release
