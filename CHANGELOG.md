@@ -1,3 +1,35 @@
+## 0.11.0 (June 25th, 2012)
+
+Minor Release (but it changes major node versions)
+
+ - Improve `$setImmediate` performance on node
+ - Remove the "bind to an object full of keys pointing to keypaths" functionality from `StyleBinding` due to complexity and underuse.
+ - Add `Hash.meta.toArray` accessors and enumerability
+ - Make `RestStorage` respect URLs passed to it in options, say, from `Model.Request`
+ - Add `SetComplement` for getting a set of items in one set but not another. This *complements* SetIntersect and SetUnion quite nicely if you ask me.
+ - Make `Set` use a user land quality test for membership checks. This means two objects which aren't `===` can define `isEqual` to return true and only one will end up in a `Set`.
+ - Ensure records can save successfully after failing validation once before.
+ - Rename `Object._objectID` to `Object._batmanID`
+ - Remove `Batman.Request::cancel` and the extra `setImmediate` required for its implementation.
+ - Add `data-insertif` and `data-removeif` bindings which downright remove nodes from the DOM instead of CSS'ing them away.
+ - Make the automatic application of resource URLs on the server to Models no longer automatic and instead an option on the association macro
+ - Add special behaviour for `params['#']` in controller actions to scroll to an element with that ID if it exists
+ - Make Controller after filters run truely after the action's operations have completed. This is to say after render and DOM insertion.
+ - Make `URI` mutable and add a `toString` to get back the URI string.
+ - Allow view classes to declare they aren't cacheable.
+ - Add a regexp validator accessible with `@validates 'foo', pattern: /foo/`
+ - Give `ValidationError`s a `fullMessage` accessor which does the i18n stuff.
+ - Add the `humanize` helper to `Batman.helpers` and to `Batman.Filters`
+
+Bugfixes:
+
+ - Prevent unloaded but autoloading associations from autoloading during encoding.
+ - Fix dirtyKey tracking when the value is set to `null` or `undefined` after having an initial value.
+ - Properly propagate changes into JS land when text is pasted into inputs when supported by browsers.
+ - Make `currentURL`, `currentRoute` and `currentParams` available during beforeFilters.
+ - Fix the generators to a) work and b) generate more modern code.
+ - Fix a bug in the `HasManyAssociation` decoder which could result in duplicate entries being added to the identity map when nested associations were decoded.
+
 ## 0.10.0 (May 30th, 2012)
 
 Major Release
