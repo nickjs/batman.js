@@ -18,6 +18,7 @@ QUnit.module 'Batman.View'
 
   teardown: ->
     Batman.Request = oldRequest
+    Batman.ViewStore.fetchFromRemote = true
 
 test 'should pull in the source for a view from a path', 1, ->
   equal MockRequest.lastConstructorArguments[0].url, "/views/#{@options.source}.html"
@@ -62,7 +63,7 @@ asyncTest 'should call the ready function once its contents have been loaded', 1
   delay =>
     ok observer.called
 
-asyncTest 'should allow prefetching of view sources', 2, ->
+asyncTest '.store should allow prefetching of view sources', 2, ->
   Batman.View.store.prefetch('view')
   equal MockRequest.lastConstructorArguments[0].url, "/views/view.html"
   delay =>
@@ -70,7 +71,7 @@ asyncTest 'should allow prefetching of view sources', 2, ->
     view = new Batman.View({source: 'view'})
     equal view.get('html'), 'prefetched contents'
 
-test "should pull unrendered data-defineview'd views from the DOM", ->
+test ".store should pull unrendered data-defineview'd views from the DOM", ->
   $('#qunit-fixture').html  """
     <div data-defineview="foo">foo!</div>
   """
@@ -79,7 +80,7 @@ test "should pull unrendered data-defineview'd views from the DOM", ->
   equal Batman.View.store.get('foo'), 'foo!'
   equal MockRequest.instances.length, 1
 
-test "should pull absolutely path'd data-defineview'd views from the DOM", ->
+test ".store should pull absolutely path'd data-defineview'd views from the DOM", ->
   $('#qunit-fixture').html  """
     <div data-defineview="/bar">bar!</div>
   """
@@ -88,6 +89,11 @@ test "should pull absolutely path'd data-defineview'd views from the DOM", ->
   equal Batman.View.store.get('bar'), 'bar!'
   equal Batman.View.store.get('/bar'), 'bar!'
   equal MockRequest.instances.length, 1
+
+test ".store should raise if remote fetching is disabled", ->
+  Batman.ViewStore.fetchFromRemote = false
+  QUnit.raises ->
+    Batman.View.store.get('remote')
 
 test 'should not autogenerate a node if the node property is false', 1, ->
   MockRequest.reset()

@@ -1,5 +1,6 @@
 class Batman.ViewStore extends Batman.Object
   @prefix: 'views'
+  @fetchFromRemote: true
 
   constructor: ->
     super
@@ -22,7 +23,10 @@ class Batman.ViewStore extends Batman.Object
       return @_viewContents[path] if @_viewContents[path]
       return if @_requestedPaths.has(path)
       return contents if contents = @_sourceFromDOM(path)
-      @fetchView(path)
+      if @constructor.fetchFromRemote
+        @fetchView(path)
+      else
+        throw new Error("Couldn't find view source for \'#{path}\'!")
       return
     set: (path, content) ->
       return @set("/#{path}", content) unless path[0] is '/'
