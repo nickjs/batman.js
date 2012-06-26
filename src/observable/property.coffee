@@ -164,7 +164,7 @@ class Batman.Property
       @changeEvent().clearHandlers()
   observeAndFire: (handler) ->
     @observe(handler)
-    handler.call( @base, @value, @value, @key)
+    handler.call(@base, @value, @value, @key)
   observe: (handler) ->
     @changeEvent().addHandler(handler)
     @getValue() unless @sources?
