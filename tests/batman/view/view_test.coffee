@@ -8,6 +8,7 @@ count = 0
 
 QUnit.module 'Batman.View'
   setup: ->
+    Batman.View.store = new Batman.ViewStore
     MockRequest.reset()
     @options =
       source: "test_path#{++count}"
@@ -68,6 +69,25 @@ asyncTest 'should allow prefetching of view sources', 2, ->
     MockRequest.lastInstance.fireSuccess('prefetched contents')
     view = new Batman.View({source: 'view'})
     equal view.get('html'), 'prefetched contents'
+
+test "should pull unrendered data-defineview'd views from the DOM", ->
+  $('#qunit-fixture').html  """
+    <div data-defineview="foo">foo!</div>
+  """
+
+  equal MockRequest.instances.length, 1
+  equal Batman.View.store.get('foo'), 'foo!'
+  equal MockRequest.instances.length, 1
+
+test "should pull absolutely path'd data-defineview'd views from the DOM", ->
+  $('#qunit-fixture').html  """
+    <div data-defineview="/bar">bar!</div>
+  """
+
+  equal MockRequest.instances.length, 1
+  equal Batman.View.store.get('bar'), 'bar!'
+  equal Batman.View.store.get('/bar'), 'bar!'
+  equal MockRequest.instances.length, 1
 
 test 'should not autogenerate a node if the node property is false', 1, ->
   MockRequest.reset()

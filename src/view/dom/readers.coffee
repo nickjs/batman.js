@@ -60,8 +60,8 @@ Batman.DOM.readers =
     true
 
   defineview: (node, name, context, renderer) ->
-    Batman.onParseExit(node, -> Batman.destroyNode(node))
-    Batman.View.store.set(Batman.Navigator.normalizePath(name), node.innerHTML)
+    Batman.onParseExit(node, -> node.parentNode?.removeChild(node))
+    Batman.DOM.defineView(name, node)
     false
 
   renderif: (node, key, context, renderer) ->

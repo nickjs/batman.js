@@ -21,6 +21,7 @@ class Batman.ViewStore extends Batman.Object
       return @get("/#{path}") unless path[0] is '/'
       return @_viewContents[path] if @_viewContents[path]
       return if @_requestedPaths.has(path)
+      return contents if contents = @_sourceFromDOM(path)
       @fetchView(path)
       return
     set: (path, content) ->
@@ -31,3 +32,10 @@ class Batman.ViewStore extends Batman.Object
   prefetch: (path) ->
     @get(path)
     true
+
+  _sourceFromDOM: (path) ->
+    relativePath = path.slice(1)
+    if node = Batman.DOM.querySelector(document, "[data-defineview*='#{relativePath}']")
+      Batman.setImmediate -> node.parentNode?.removeChild(node)
+      Batman.DOM.defineView(path, node)
+

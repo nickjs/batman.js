@@ -69,6 +69,11 @@ Batman.DOM =
 
   forgetParseExit: Batman.forgetParseExit = (node, callback) -> Batman.removeData(node, 'onParseExit', true)
 
+  defineView: (name, node) ->
+    contents = node.innerHTML
+    Batman.View.store.set(Batman.Navigator.normalizePath(name), contents)
+    contents
+
   # Memory-safe setting of a node's innerHTML property
   setInnerHTML: Batman.setInnerHTML = (node, html) ->
     childNodes = (child for child in node.childNodes)
