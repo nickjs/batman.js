@@ -62,11 +62,11 @@ class Batman.RouteMapBuilder
       callback?.call(childBuilder)
 
       for action, included of actions when included
-        route = @constructor.ROUTES[action]
-        as = route.name(resourceRoot)
-        path = route.path(resourceRoot)
+        routeTemplate = @constructor.ROUTES[action]
+        as = routeTemplate.name(resourceRoot)
+        path = routeTemplate.path(resourceRoot)
         routeOptions = Batman.extend {controller, action, path, as}, options
-        childBuilder[route.cardinality](action, routeOptions)
+        childBuilder[routeTemplate.cardinality](action, routeOptions)
 
     true
 
@@ -103,14 +103,14 @@ class Batman.RouteMapBuilder
       options = {}
     options = Batman.extend {}, @baseOptions, options
     options[cardinality] = true
-    route = @constructor.ROUTES[cardinality]
+    routeTemplate = @constructor.ROUTES[cardinality]
     resourceRoot = options.controller
     for name in names
       routeOptions = Batman.extend {action: name}, options
       unless routeOptions.path?
-        routeOptions.path = route.path(resourceRoot, name)
+        routeOptions.path = routeTemplate.path(resourceRoot, name)
       unless routeOptions.as?
-        routeOptions.as = route.name(resourceRoot, name)
+        routeOptions.as = routeTemplate.name(resourceRoot, name)
       @_addRoute(routeOptions)
     true
 
@@ -125,13 +125,11 @@ class Batman.RouteMapBuilder
     @routeMap.addRoute(name, route)
 
   _nameFromPath: (path) ->
-    underscored = path
+    path = path
       .replace(Batman.Route.regexps.namedOrSplat, '')
-      .replace(/\/+/g, '_')
-      .replace(/(^_)|(_$)/g, '')
-
-    name = Batman.helpers.camelize(underscored)
-    name.charAt(0).toLowerCase() + name.slice(1)
+      .replace(/\/+/g, '.')
+      .replace(/(^\.)|(\.$)/g, '')
+    path
 
   _nestingPath: ->
     unless @parent

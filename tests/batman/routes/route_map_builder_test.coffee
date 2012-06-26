@@ -66,7 +66,7 @@ test "autogenerates names for routes from the path if not given", ->
 
   @builder.route '/foo/bar', ->
   [name, route] = @routeMap.addRoute.lastCallArguments
-  equal name, 'fooBar'
+  equal name, 'foo.bar'
 
   @builder.route '/somethings/:id', ->
   [name, route] = @routeMap.addRoute.lastCallArguments
@@ -74,7 +74,7 @@ test "autogenerates names for routes from the path if not given", ->
 
   @builder.route '/somethings/:id/new', ->
   [name, route] = @routeMap.addRoute.lastCallArguments
-  equal name, 'somethingsNew'
+  equal name, 'somethings.new'
 
 QUnit.module "Batman.RouteMapBuilder defining resource routes"
   setup: simpleSetup
