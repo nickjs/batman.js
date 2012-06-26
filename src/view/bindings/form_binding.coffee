@@ -24,7 +24,7 @@ class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
         new Batman.DOM.AddClassBinding(node, @errorClass, @get('keyPath') + " | get 'errors.#{field}.length'", @renderContext, @renderer)
 
   setupErrorsList: ->
-    if @errorsListNode = @get('node').querySelector?(@get('errorsListSelector'))
+    if @errorsListNode = Batman.DOM.querySelector(@get('node'), @get('errorsListSelector'))
       Batman.setInnerHTML @errorsListNode, @errorsListHTML()
 
       unless @errorsListNode.getAttribute 'data-showif'

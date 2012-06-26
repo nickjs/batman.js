@@ -8,6 +8,20 @@ Batman.DOM =
   scrollIntoView: (elementID) ->
     document.getElementById(elementID)?.scrollIntoView?()
 
+  querySelectorAll: if jQuery
+      (node, selector) -> jQuery(selector, node)
+    else if document.querySelectorAll?
+      (node, selector) -> node.querySelectorAll(selector)
+    else
+      -> Batman.developer.error("Please include either jQuery or a querySelectorAll polyfill, or set Batman.DOM.querySelectorAll to return an empty array.")
+
+  querySelector: if jQuery
+      (node, selector) -> jQuery(selector, node)[0]
+    else if document.querySelector?
+      (node, selector) -> node.querySelector(selector)
+    else
+      -> Batman.developer.error("Please include either jQuery or a querySelector polyfill, or set Batman.DOM.querySelector to an empty function.")
+
   partial: (container, path, context, renderer) ->
     renderer.prevent 'rendered'
 
