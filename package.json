@@ -33,7 +33,7 @@
     "muffin": "~>0.6.0",
     "uglify-js": "1.2.5",
     "temp": "~>0.2.0",
-    "qqunit": "~>0.4.0",
+    "qqunit": "~>0.4.1",
     "percolate": "~>0.4.0",
     "connect-assets": "~>2.2.0",
     "liquor": "~>0.0.0"
