@@ -94,10 +94,10 @@ basicSetTestSuite = ->
   test "add(items...) fires length observers", ->
     @set.observe 'length', spy = createSpy()
     @set.add('foo')
-    deepEqual spy.lastCallArguments, [1, 0]
+    deepEqual spy.lastCallArguments, [1, 0, 'length']
 
     @set.add('baz', 'bar')
-    deepEqual spy.lastCallArguments, [3, 1]
+    deepEqual spy.lastCallArguments, [3, 1, 'length']
 
     equal spy.callCount, 2
     @set.add('bar')
@@ -119,7 +119,7 @@ basicSetTestSuite = ->
     @set.observe 'length', spy = createSpy()
     @set.add('foo')
     @set.remove('foo')
-    deepEqual spy.lastCallArguments, [0, 1]
+    deepEqual spy.lastCallArguments, [0, 1, 'length']
 
     equal spy.callCount, 2
     @set.remove('foo')

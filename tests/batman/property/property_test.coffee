@@ -239,7 +239,7 @@ test ".isolate() and .expose() use a count to determine if this property will up
 
   bar.expose()
   equal observer.callCount, 1
-  deepEqual observer.lastCallArguments, ['baz2', @mutableSomething]
+  deepEqual observer.lastCallArguments, ['baz2', @mutableSomething, 'bar']
   equal bar.getValue(), 'baz2'
 
   bar.isolate()
@@ -259,7 +259,7 @@ test ".isolate() and .expose() use a count to determine if this property will up
   bar.expose()
   equal bar.getValue(), 'baz4'
   equal observer.callCount, 2
-  deepEqual observer.lastCallArguments, ['baz4', 'baz2']
+  deepEqual observer.lastCallArguments, ['baz4', 'baz2', 'bar']
 
 test ".isolate() and .expose() use a count to determine if this property will fire change events when it is set to a new value", ->
   bar = @baseWithNestedAccessors.property('bar')
@@ -277,8 +277,8 @@ test ".isolate() and .expose() use a count to determine if this property will fi
   baz.expose()
   equal barObserver.callCount, 1
   equal bazObserver.callCount, 1
-  deepEqual barObserver.lastCallArguments, ['baz2', @mutableSomething]
-  deepEqual bazObserver.lastCallArguments, ['baz2', @mutableSomething]
+  deepEqual barObserver.lastCallArguments, ['baz2', @mutableSomething, 'bar']
+  deepEqual bazObserver.lastCallArguments, ['baz2', @mutableSomething, 'baz']
   equal baz.getValue(), 'baz2'
   equal bar.getValue(), 'baz2'
 
@@ -307,8 +307,8 @@ test ".isolate() and .expose() use a count to determine if this property will fi
   equal bar.getValue(), 'baz4'
   equal barObserver.callCount, 2
   equal bazObserver.callCount, 2
-  deepEqual barObserver.lastCallArguments, ['baz4', 'baz2']
-  deepEqual bazObserver.lastCallArguments, ['baz4', 'baz2']
+  deepEqual barObserver.lastCallArguments, ['baz4', 'baz2', 'bar']
+  deepEqual bazObserver.lastCallArguments, ['baz4', 'baz2', 'baz']
 
 test ".expose() will only trigger a .refresh() if updates have come in from sources while it was isolated", ->
   bar = @baseWithNestedAccessors.property('bar')
@@ -444,7 +444,7 @@ QUnit.module 'Batman.Property promises',
 test "passing a promise function to a classAccessor declaration wraps the class's accessor", ->
   @SpecialThing.classAccessor 'classFoo', promise: (deliver) -> deliver("error", "result")
   equal @SpecialThing.get('classFoo'), "result"
-  
+
 test "passing a promise function to an accessor declaration wraps the class's default accessor", ->
   @thing.accessor 'foo', promise: (deliver) -> deliver("error", "result")
 
@@ -453,7 +453,7 @@ test "passing a promise function to an accessor declaration wraps the class's de
   equal @SpecialThing.unsetter.callCount, 0
 
   equal @thing.get('foo'), "result"
-  
+
   equal @SpecialThing.getter.callCount, 1
   equal @SpecialThing.setter.callCount, 0
   equal @SpecialThing.unsetter.callCount, 0
@@ -471,7 +471,7 @@ test "asynchronous delivery calls the wrapped setter", ->
   @thing.accessor 'foo', promise: (d) -> deliver = d
 
   equal @thing.get('foo'), undefined
-  
+
   equal @SpecialThing.getter.callCount, 1
   equal @SpecialThing.setter.callCount, 0
   equal @SpecialThing.unsetter.callCount, 0
@@ -485,7 +485,7 @@ test "asynchronous delivery calls the wrapped setter", ->
 
 test "multiple gets before delivery don't call the fetcher multiple times", ->
   @thing.accessor 'foo', promise: fetcher = createSpy()
-  
+
   equal @thing.get('foo'), undefined
   equal @thing.get('foo'), undefined
   equal @thing.get('foo'), undefined

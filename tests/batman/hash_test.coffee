@@ -312,9 +312,9 @@ test "clear() fires key observers exactly once each, and exactly one 'change' an
     @hash.clear()
 
     equal objKeyObserver.callCount, 1
-    deepEqual objKeyObserver.lastCallArguments, [undefined, 1]
+    deepEqual objKeyObserver.lastCallArguments, [undefined, 1, objKey]
     equal fooObserver.callCount, 1
-    deepEqual fooObserver.lastCallArguments, [undefined, 'bar']
+    deepEqual fooObserver.lastCallArguments, [undefined, 'bar', 'foo']
     equal changeHandler.callCount, 1
     deepEqual changeHandler.lastCallArguments, [@hash, @hash]
     equal itemsWereRemovedHandler.callCount, 1
@@ -398,10 +398,10 @@ test "update(pojo) updates the keys and values with those of the given object", 
   deepEqual @hash.toObject(), foo: 'foo2', bar: 'bar1', size: 'medium'
 
   equal fooObserver.callCount, 1
-  deepEqual fooObserver.lastCallArguments, ['foo2', 'foo1']
+  deepEqual fooObserver.lastCallArguments, ['foo2', 'foo1', 'foo']
   equal barObserver.callCount, 0
   equal sizeObserver.callCount, 1
-  deepEqual sizeObserver.lastCallArguments, ['medium', undefined]
+  deepEqual sizeObserver.lastCallArguments, ['medium', undefined, 'size']
   equal changeHandler.callCount, 1
   deepEqual changeHandler.lastCallArguments, [@hash, @hash]
   equal itemsWereAddedHandler.callCount, 1
@@ -426,15 +426,15 @@ test "replace(pojo) replaces the keys and values with those of the given object"
   deepEqual @hash.toObject(), foo: 'foo2', material: 'silk', size: 'medium'
 
   equal fooObserver.callCount, 1
-  deepEqual fooObserver.lastCallArguments, ['foo2', 'foo1']
+  deepEqual fooObserver.lastCallArguments, ['foo2', 'foo1', 'foo']
   equal barObserver.callCount, 1
-  deepEqual barObserver.lastCallArguments, [undefined, 'bar1']
+  deepEqual barObserver.lastCallArguments, [undefined, 'bar1', 'bar']
   equal bazObserver.callCount, 1
-  deepEqual bazObserver.lastCallArguments, [undefined, 'baz1']
+  deepEqual bazObserver.lastCallArguments, [undefined, 'baz1', 'baz']
   equal materialObserver.callCount, 1
-  deepEqual materialObserver.lastCallArguments, ['silk', undefined]
+  deepEqual materialObserver.lastCallArguments, ['silk', undefined, 'material']
   equal sizeObserver.callCount, 1
-  deepEqual sizeObserver.lastCallArguments, ['medium', undefined]
+  deepEqual sizeObserver.lastCallArguments, ['medium', undefined, 'size']
   equal changeHandler.callCount, 1
   deepEqual changeHandler.lastCallArguments, [@hash, @hash]
   equal itemsWereAddedHandler.callCount, 1

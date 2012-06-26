@@ -108,12 +108,12 @@ test "working with Hashes", ->
   obj.observe 'hash.foo.bar', hashFooBarSpy = createSpy()
   obj.set 'hash.foo.bar', 'new value'
   equal hashFooBarSpy.callCount, 1
-  deepEqual hashFooBarSpy.lastCallArguments, ['new value', 'nested value']
+  deepEqual hashFooBarSpy.lastCallArguments, ['new value', 'nested value', 'hash.foo.bar']
 
   obj.hash.observe 'foo.bar', fooBarSpy = createSpy()
   obj.hash.set 'foo.bar', 'newer value'
   equal fooBarSpy.callCount, 1
-  deepEqual fooBarSpy.lastCallArguments, ['newer value', 'flat value']
+  deepEqual fooBarSpy.lastCallArguments, ['newer value', 'flat value', 'foo.bar']
 
 test "working with SimpleHashes", ->
   obj = new Batman.Object
@@ -131,4 +131,4 @@ test "working with SimpleHashes", ->
   obj.observe 'hash.foo.bar', hashFooBarSpy = createSpy()
   obj.set 'hash.foo.bar', 'new value'
   equal hashFooBarSpy.callCount, 1
-  deepEqual hashFooBarSpy.lastCallArguments, ['new value', 'nested value']
+  deepEqual hashFooBarSpy.lastCallArguments, ['new value', 'nested value', 'hash.foo.bar']
