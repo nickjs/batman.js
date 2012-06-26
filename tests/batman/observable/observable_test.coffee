@@ -186,15 +186,19 @@ test "getOrSet(key, valueFunction) does conditional assignment with the return v
 ###
 # observe(key, callback)
 ###
-test "observe(key, callback) stores the callback such that it is called with (value, oldValue) when the value of the key changes", ->
+test "observe(key, callback) stores the callback such that it is called with (value, oldValue, key) when the value of the key changes", ->
   callback = createSpy()
   ok @obj.observe('foo', callback) is @obj
   equal callback.called, false
   foo = @obj.foo
+
   @obj.set 'foo', 'newVal'
-  [newValue, oldValue] = callback.lastCallArguments
+
+  ok callback.called
+  [newValue, oldValue, key] = callback.lastCallArguments
   equal newValue, 'newVal'
   ok oldValue is foo
+  equal key, 'foo'
 
 test "observe(key, callback) with a deep keypath will fire with the new value when the final key value is changed directly", ->
   @obj.observe 'foo.bar.baz.qux', callback = createSpy()
@@ -202,9 +206,10 @@ test "observe(key, callback) with a deep keypath will fire with the new value wh
   @obj.foo.bar.baz.set 'qux', 'newVal'
 
   ok callback.called
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal newVal, 'newVal'
   equal oldVal, 'quxVal'
+  equal key, 'foo.bar.baz.qux'
 
 test "observe(key, callback) with a deep keypath will fire with the new value when the final key value is changed via the same deep keypath", ->
   @obj.observe 'foo.bar.baz.qux', callback = createSpy()
@@ -212,18 +217,21 @@ test "observe(key, callback) with a deep keypath will fire with the new value wh
   @obj.set 'foo.bar.baz.qux', 'newVal'
 
   ok callback.called
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal newVal, 'newVal'
   equal oldVal, 'quxVal'
+  equal key, 'foo.bar.baz.qux'
+
 test "observe(key, callback) with a deep keypath will fire with the new value when the final key value is changed via an equivalent subset of that deep keypath", ->
   @obj.observe 'foo.bar.baz.qux', callback = createSpy()
 
   @obj.foo.set 'bar.baz.qux', 'newVal'
 
   ok callback.called
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal newVal, 'newVal'
   equal oldVal, 'quxVal'
+  equal key, 'foo.bar.baz.qux'
 
 test "observe(key, callback) with a deep keypath will fire with undefined if the key segment chain is broken", ->
   @obj.observe 'foo.bar.baz.qux', callback = createSpy()
@@ -231,9 +239,10 @@ test "observe(key, callback) with a deep keypath will fire with undefined if the
   @obj.set 'foo', 'newVal'
 
   ok callback.called
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal typeof(newVal), 'undefined'
   equal oldVal, 'quxVal'
+  equal key, 'foo.bar.baz.qux'
 
 test "observe(key, callback) with a deep keypath will fire with the new value if an intermediary key is changed such that the keypath resolves to a new value", ->
   @obj.observe 'foo.bar.baz.qux', callback = createSpy()
@@ -244,9 +253,10 @@ test "observe(key, callback) with a deep keypath will fire with the new value if
         qux: 'newVal'
 
   ok callback.called
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal newVal, 'newVal'
   equal oldVal, 'quxVal'
+  equal key, 'foo.bar.baz.qux'
 
 test "observe(key, callback) with a deep keypath will fire with a previous value that has been removed and re-added", ->
   @obj.observe 'foo.bar.baz.qux', callback = createSpy()
@@ -255,16 +265,18 @@ test "observe(key, callback) with a deep keypath will fire with a previous value
   @obj.unset 'foo.bar'
 
   equal callback.callCount, 1
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal typeof(newVal), 'undefined'
   equal oldVal, 'quxVal'
+  equal key, 'foo.bar.baz.qux'
 
   @obj.set 'foo.bar', bar
 
   equal callback.callCount, 2
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal newVal, 'quxVal'
   equal typeof(oldVal), 'undefined'
+  equal key, 'foo.bar.baz.qux'
 
 test "observe(key, callback) with a deep keypath will not fire if a previous portion of the path is modified", ->
   @obj.observe 'foo.bar.baz.qux', callback = createSpy()
@@ -274,9 +286,10 @@ test "observe(key, callback) with a deep keypath will not fire if a previous por
   bar.unset 'baz'
 
   equal callback.callCount, 1
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal typeof(newVal), 'undefined'
   equal oldVal, 'quxVal'
+  equal key, 'foo.bar.baz.qux'
 
 test "observe(key, callback) with a deep keypath will fire when a portion of a previously removed and re-added portion is modified", ->
   @obj.observe 'foo.bar.baz.qux', callback = createSpy()
@@ -287,9 +300,10 @@ test "observe(key, callback) with a deep keypath will fire when a portion of a p
   @obj.set 'foo.bar.baz.qux', 'newVal'
 
   equal callback.callCount, 3
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal newVal, 'newVal'
   equal oldVal, 'quxVal'
+  equal key, 'foo.bar.baz.qux'
 
 test "observe(key, callback) called twice to attach two different observers on the same deep keypath will only fire those observers once each for any given change", ->
   @obj.observe 'foo.bar.baz.qux', callback1 = createSpy()
@@ -313,29 +327,34 @@ test "observe(key, callback) will only fire once and will not break when there's
   @obj.foo.set 'bar', newBar
 
   equal callback.callCount, 1
-  [newVal, oldVal] = callback.lastCallArguments
+  [newVal, oldVal, key] = callback.lastCallArguments
   equal newVal, 'newVal'
   ok oldVal == oldBar, "oldVal is not oldBar"
-
-
+  equal key, 'foo.bar.baz.foo.bar'
 ###
 # observeAndFire(key, callback)
 ###
 test "observeAndFire(key, callback) adds the callback and then calls it immediately", ->
   callback = createSpy()
   @obj.observeAndFire 'foo.bar.baz.qux', callback
-  deepEqual callback.lastCallArguments, ['quxVal', 'quxVal']
+  deepEqual callback.lastCallArguments, ['quxVal', 'quxVal', 'foo.bar.baz.qux']
 
 ###
 # observeOnce(key, callback)
 ###
 test "observeOnce(key, callback) adds the callback and removes it after the first fire", ->
   callback = createSpy()
+  oldVal = @obj.get 'foo'
   @obj.observeOnce 'foo', callback
+
   @obj.set 'foo', 'batman'
   @obj.set 'foo', 'gotham'
 
   equal callback.callCount, 1
+  [newValue, oldValue, key] = callback.lastCallArguments
+  equal newValue, 'batman'
+  equal oldVal, oldValue
+  equal key, 'foo'
 
 ###
 # forget(key [, callback])
@@ -347,8 +366,8 @@ test "forget(key, callback) for a simple key will remove the specified callback 
   @obj.observe 'foo', callback2
 
   @obj.forget 'foo', callback2
-
   @obj.set 'foo', 'newVal'
+
   equal callback1.callCount, 1
   equal callback2.callCount, 0
 
@@ -362,7 +381,6 @@ test "forget(key) for a simple key with no callback specified will forget all ob
   @obj.observe 'someOtherKey', callback3
 
   @obj.forget 'foo'
-
   @obj.set 'foo', 'newVal'
 
   equal callback1.callCount, 0
