@@ -9,9 +9,6 @@ class Batman.ViewStore extends Batman.Object
   propertyClass: Batman.Property
 
   fetchView: (path) ->
-    Batman.developer.do ->
-      unless typeof Batman.View::prefix is 'undefined'
-        Batman.developer.warn "Batman.View.prototype.prefix has been removed, please use Batman.ViewStore.prefix instead."
     new Batman.Request
       url: Batman.Navigator.normalizePath(@constructor.prefix, "#{path}.html")
       type: 'html'
