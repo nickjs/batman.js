@@ -43,8 +43,8 @@ class Batman.Controller extends Batman.Object
       @scrollToHash(params['#'])
 
   constructor: ->
-    @_actionFrames = []
     super
+    @_resetActionFrames()
 
   renderCache: new Batman.RenderCache
   defaultRenderYield: 'main'
@@ -57,7 +57,7 @@ class Batman.Controller extends Batman.Object
     params.action ||= action
     params.target ||= @
 
-    @_actionFrames = []
+    @_resetActionFrames()
     @set 'action', action
     @set 'params', params
 
@@ -78,6 +78,7 @@ class Batman.Controller extends Batman.Object
     parentFrame = @_actionFrames[@_actionFrames.length - 1]
     frame = new Batman.ControllerActionFrame {parentFrame, action}, =>
       @_runFilters action, params, 'afterFilters'
+      @_resetActionFrames()
       Batman.navigator?.redirect = oldRedirect
 
     @_actionFrames.push frame
@@ -99,11 +100,11 @@ class Batman.Controller extends Batman.Object
 
     if frame
       if frame.operationOccurred
-        Batman.developer.warn "Warning! Trying to redirect but an action has already be taken during #{@get('routingKey')}.#{frame.action || @get('action')}}"
+        Batman.developer.warn "Warning! Trying to redirect but an action has already be taken during #{@get('routingKey')}.#{frame.action || @get('action')}"
 
       frame.startAndFinishOperation()
 
-      if @_afterFilterRedirect
+      if @_afterFilterRedirect?
         Batman.developer.warn "Warning! Multiple actions trying to redirect!"
       else
         @_afterFilterRedirect = url
@@ -146,6 +147,7 @@ class Batman.Controller extends Batman.Object
 
   scrollToHash: (hash = @get('params')['#'])-> Batman.DOM.scrollIntoView(hash)
 
+  _resetActionFrames: -> @_actionFrames = []
   _runFilters: (action, params, filters) ->
     if filters = @constructor._batman?.get(filters)
       filters.forEach (_, options) =>

@@ -42,6 +42,10 @@ class Batman.RenderCache extends Batman.Hash
       return false if incomingOptions[key] != storageOptions[key]
     return true
 
+  reset: ->
+    for key in @keyQueue.slice(0)
+      @unset(key)
+
   _addOrBubbleKey: (key) ->
     @_removeKeyFromQueue(key)
     @keyQueue.unshift key

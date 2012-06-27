@@ -7,21 +7,23 @@ class MockView extends MockClass
   set: ->
   inUse: -> false
 
+oldNavigator = Batman.navigator
+
 QUnit.module 'Batman.Controller'
+  setup: ->
+    @controller = new TestController
+    @controller.renderCache.reset()
+    Batman.DOM.Yield.reset()
+    MockView.reset()
+  teardown: ->
+    delete Batman.currentApp
+    Batman.navigator = oldNavigator
 
 test "get('routingKey') should use the prototype level routingKey property", ->
   class ProductsController extends Batman.Controller
     routingKey: 'products'
 
   equal (new ProductsController).get('routingKey'), 'products'
-
-QUnit.module 'Batman.Controller render'
-  setup: ->
-    Batman.Controller::renderCache = new Batman.RenderCache
-    @controller = new TestController
-    Batman.DOM.Yield.reset()
-  teardown: ->
-    delete Batman.currentApp
 
 test 'it should render a Batman.View if `view` isn\'t given in the options to render', ->
   mockClassDuring Batman ,'View', MockView, (mockClass) =>
@@ -154,52 +156,39 @@ test '@render false disables implicit render', 2, ->
     @controller.dispatch 'test'
     ok ! replace.called
 
-test 'event handlers can render after an action', 6, ->
-  testView = new MockView
-  @controller.test = ->
-    ok true, 'action called'
-    @render view: testView
+test 'redirecting using @redirect() in an action prevents implicit render', 2, ->
+  Batman.navigator = {redirect: createSpy()}
+  mockClassDuring Batman ,'View', MockView, (mockClass) =>
+    @controller.test = -> @redirect '/'
+    @controller.dispatch 'test'
+    ok !mockClass.lastInstance
+    ok Batman.navigator.redirect.called
 
-  testView2 = new MockView
-  @controller.handleEvent = ->
-    ok true, 'event called'
-    @render view: testView2
+test 'redirecting using Batman.redirect in an action prevents implicit render', 2, ->
+  Batman.navigator = {redirect: createSpy()}
+  mockClassDuring Batman ,'View', MockView, (mockClass) =>
+    @controller.test = -> Batman.redirect '/'
+    @controller.dispatch 'test'
+    ok !mockClass.lastInstance
+    ok Batman.navigator.redirect.called
 
-  testView3 = new MockView
-  @controller.handleAnotherEvent = ->
-    ok true, 'another event called'
-    @render view: testView3
-
+test '@redirect-ing after a dispatch fires no warnings', ->
+  Batman.navigator = {redirect: createSpy()}
+  @controller.test = -> @render false
   @controller.dispatch 'test'
-  spyOnDuring Batman.DOM.Yield.withName('main'), 'replace', (replace) =>
-    testView.fire 'ready'
+  @controller.redirect '/'
+  ok Batman.navigator.redirect.called
+
+test '@render-ing after a dispatch fires no warnings', 2, ->
+  @controller.test = -> @render false
+  @controller.dispatch 'test'
+
+  testView = new MockView
+  @controller.render view: testView
+  spyOnDuring Batman.DOM.Yield.withName('main'), 'replace', (replace) ->
+    equal replace.callCount, 0
+    testView.fireReady()
     equal replace.callCount, 1
-
-    @controller.handleEvent()
-    testView2.fire 'ready'
-    equal replace.callCount, 2
-
-    @controller.handleAnotherEvent()
-    testView3.fire 'ready'
-    equal replace.callCount, 3
-
-test 'redirecting a dispatch prevents implicit render', 2, ->
-  Batman.navigator = new Batman.HashbangNavigator
-  Batman.navigator.redirect = ->
-    ok true, 'redirecting history manager'
-  @controller.render = ->
-    ok true, 'redirecting controller'
-  @controller.render = ->
-    throw "shouldn't be called"
-
-  @controller.test1 = ->
-    @redirect 'foo'
-
-  @controller.test2 = ->
-    Batman.redirect 'foo2'
-
-  @controller.dispatch 'test1'
-  @controller.dispatch 'test2'
 
 test 'filters specifying no restrictions should be called on all actions', 2, ->
   spy = createSpy()
