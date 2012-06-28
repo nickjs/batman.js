@@ -30,7 +30,8 @@ Batman.Filters =
   and: (lhs, rhs) ->
     lhs && rhs
 
-  or: defaultAndOr
+  or: (lhs, rhs, binding) ->
+    lhs || rhs
 
   not: (value, binding) ->
     ! !!value
@@ -46,7 +47,11 @@ Batman.Filters =
       value = value.substr(0, length-end.length) + end
     value
 
-  default: defaultAndOr
+  default: (value, defaultValue, binding) ->
+    if value? && value != ''
+      value
+    else
+      defaultValue
 
   prepend: (value, string, binding) ->
     string + value

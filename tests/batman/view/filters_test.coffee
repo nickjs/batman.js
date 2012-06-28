@@ -231,21 +231,56 @@ asyncTest 'and', 4, ->
     equal node[3].checked, false
     QUnit.start()
 
-asyncTest 'or', 4, ->
+asyncTest 'or', 6, ->
   context = Batman
     hotdog: true
     mushroom: false
+    empty: ''
+    zero: 0
 
-  source =  '<input type="checkbox" data-bind="hotdog | or hotdog"/>' +
-            '<input type="checkbox" data-bind="hotdog | or mushroom"/>' +
-            '<input type="checkbox" data-bind="mushroom | or hotdog"/>' +
-            '<input type="checkbox" data-bind="mushroom | or mushroom"/>'
+  source =  """
+    <input type="checkbox" data-bind="hotdog | or hotdog"/>
+    <input type="checkbox" data-bind="hotdog | or mushroom"/>
+    <input type="checkbox" data-bind="mushroom | or hotdog"/>
+    <input type="checkbox" data-bind="mushroom | or mushroom"/>
+    <input type="checkbox" data-bind="empty | or hotdog"/>
+    <input type="checkbox" data-bind="zero | or hotdog"/>
+  """
 
   helpers.render source, context, (node) ->
     equal node[0].checked, true
     equal node[1].checked, true
     equal node[2].checked, true
     equal node[3].checked, false
+    equal node[4].checked, true
+    equal node[5].checked, true
+    QUnit.start()
+
+asyncTest 'default', ->
+  context = Batman
+    hotdog: true
+    mushroom: false
+    empty: ''
+    undef: undefined
+    nulll: null
+    zero: 0
+
+  source =  """
+    <input type="checkbox" data-bind="hotdog | default false"></input>
+    <input type="checkbox" data-bind="mushroom | default true"></input>
+    <input type="text" data-bind="zero | default 'default' | append ''"></input>
+    <input type="text" data-bind="empty | default 'default'"></input>
+    <input type="text" data-bind="nulll | default 'default'"></input>
+    <input type="text" data-bind="undef | default 'default'"></input>
+  """
+
+  helpers.render source, context, (node) ->
+    equal node[0].checked, true
+    equal node[1].checked, false
+    equal node[2].value, '0'
+    equal node[3].value, 'default',4
+    equal node[4].value, 'default', 5
+    equal node[5].value, 'default', 6
     QUnit.start()
 
 asyncTest 'map', 1, ->
