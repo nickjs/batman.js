@@ -4,12 +4,13 @@ QUnit.module "Batman.Model dirty key tracking",
   setup: ->
     Batman.developer.suppress()
     class @Product extends Batman.Model
-      @encode "foo"
+      @encode "foo", "bar"
 
     @productAdapter = createStorageAdapter @Product, AsyncTestStorageAdapter,
       products1:
         name: "Product One"
         foo: null
+        bar: 'qux'
 
   teardown: ->
     Batman.developer.unsuppress()
@@ -18,11 +19,24 @@ test "no keys are dirty upon creation", ->
   product = new @Product
   equal product.get('dirtyKeys').length, 0
 
-test "old values are tracked in the dirty keys hash", ->
+test "old values are tracked in the dirty keys hash on new records", ->
   product = new @Product
   product.set 'foo', 'bar'
   product.set 'foo', 'baz'
-  equal(product.get('dirtyKeys.foo'), 'bar')
+  product.set 'foo', 'qux'
+  equal(product.get('dirtyKeys.foo'), undefined)
+  equal(product.get('dirtyKeys').length, 1)
+
+asyncTest "old values are tracked in the dirty keys hash on loaded records", ->
+  @Product.load (err, products) ->
+    throw err if err
+    product = products.pop()
+    equal(product.get('dirtyKeys').length, 0)
+    product.set 'bar', 1
+    product.set 'bar', 2
+    equal(product.get('dirtyKeys.bar'), 'qux')
+    equal(product.get('dirtyKeys').length, 1)
+    QUnit.start()
 
 test "creating instances by passing defined attributes sets those attributes as dirty", ->
   product = new @Product foo: 'bar'

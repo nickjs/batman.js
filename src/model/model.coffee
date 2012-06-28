@@ -464,6 +464,7 @@ class Batman.Model extends Batman.Object
     if @get('lifecycle').startTransition 'set'
       unless @get('_dirtiedKeys').has(key)
         @set "dirtyKeys.#{key}", @get(key)
+        @get('_dirtiedKeys').add(key)
       true
     else
       false
