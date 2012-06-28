@@ -70,10 +70,13 @@ test 'it should render a Batman.View subclass with the ControllerAction name on 
   view = MockView.lastInstance
   equal view.constructorArguments[0].source, 'test/show'
 
-  spyOnDuring Batman.DOM.Yield.withName('main'), 'replace', (replace) =>
-    view.fireReady()
-    deepEqual view.get.lastCallArguments, ['node']
-    deepEqual replace.lastCallArguments, ['view contents']
+test 'it should render a Batman.View subclass with the ControllerAction name if the routing key is nested', ->
+  Batman.currentApp = mockApp = Batman _renderContext: Batman.RenderContext.base
+  mockApp.AdminProductsShowView = MockView
+  @controller.set 'routingKey', 'admin/products'
+  @controller.dispatch 'show'
+  view = MockView.lastInstance
+  equal view.constructorArguments[0].source, 'admin/products/show'
 
 test 'it should cache the rendered Batman.Views if rendered from different action', ->
   Batman.currentApp = mockApp = Batman _renderContext: Batman.RenderContext.base

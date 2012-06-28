@@ -129,7 +129,7 @@ class Batman.Controller extends Batman.Object
       options.into ||= @defaultRenderYield
 
     if not options.view
-      options.viewClass ||= Batman.currentApp?[Batman.helpers.camelize("#{@get('routingKey')}_#{action}_view")] || Batman.View
+      options.viewClass ||= @_viewClassForAction(action)
       options.context ||= @get('_renderContext')
       options.source ||= Batman.helpers.underscore(@get('routingKey') + '/' + action)
       view = @renderCache.viewForOptions(options)
@@ -148,6 +148,10 @@ class Batman.Controller extends Batman.Object
   scrollToHash: (hash = @get('params')['#'])-> Batman.DOM.scrollIntoView(hash)
 
   _resetActionFrames: -> @_actionFrames = []
+  _viewClassForAction: (action) ->
+    classPrefix = @get('routingKey').replace('/', '_')
+    Batman.currentApp?[Batman.helpers.camelize("#{classPrefix}_#{action}_view")] || Batman.View
+
   _runFilters: (action, params, filters) ->
     if filters = @constructor._batman?.get(filters)
       filters.forEach (_, options) =>
