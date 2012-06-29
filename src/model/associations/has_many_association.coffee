@@ -29,7 +29,8 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
           jsonArray = []
           relationSet.forEach (relation) ->
             relationJSON = relation.toJSON()
-            relationJSON[association.foreignKey] = record.get(association.primaryKey)
+            if !association.inverse() || association.inverse().options.encodeForeignKey
+              relationJSON[association.foreignKey] = record.get(association.primaryKey)
             jsonArray.push relationJSON
 
         delete association._beingEncoded
