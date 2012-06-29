@@ -8,6 +8,7 @@ class Batman.BelongsToAssociation extends Batman.SingularAssociation
   defaultOptions:
     saveInline: false
     autoload: true
+    encodeForeignKey: true
 
   constructor: (model, label, options) ->
     if options?.polymorphic
@@ -16,7 +17,7 @@ class Batman.BelongsToAssociation extends Batman.SingularAssociation
     super
     @foreignKey = @options.foreignKey or "#{@label}_id"
     @primaryKey = @options.primaryKey or "id"
-    @model.encode @foreignKey
+    @model.encode @foreignKey if @options.encodeForeignKey
 
   encoder: ->
     association = @

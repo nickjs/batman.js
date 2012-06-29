@@ -4,10 +4,12 @@
 class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
   isPolymorphic: true
   proxyClass: Batman.PolymorphicBelongsToProxy
+  defaultOptions: Batman.mixin({}, Batman.BelongsToAssociation::defaultOptions, {encodeForeignTypeKey: true})
+
   constructor: ->
     super
     @foreignTypeKey = @options.foreignTypeKey or "#{@label}_type"
-    @model.encode @foreignTypeKey
+    @model.encode @foreignTypeKey if @options.encodeForeignTypeKey
     @typeIndicies = {}
 
   getRelatedModel: false

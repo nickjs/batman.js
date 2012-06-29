@@ -85,6 +85,14 @@ asyncTest "belongsTo associations are saved", 6, ->
       deepEqual product2.toJSON(), storedJSON
       QUnit.start()
 
+test "belongsTo associations don't encode their foreignKeys if not asked to", ->
+  class Product extends Batman.Model
+    @encode 'id', 'name'
+    @belongsTo 'store', {namespace: @namespace, autoload: false, encodeForeignKey: false}
+
+  @product = new Product(id: 1, name: "Chair", store_id: 1)
+  deepEqual @product.toJSON(), {id: 1, name: "Chair"}
+
 asyncTest "belongsTo parent models are added to the identity map", 1, ->
   @Product.find 4, (err, product) =>
     throw err if err

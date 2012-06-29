@@ -40,6 +40,14 @@ asyncTest "belongsTo associations are saved", ->
     deepEqual storedJSON, metafield.toJSON()
     QUnit.start()
 
+test "belongsTo associations don't encode their foreignTypeKeys if not asked to", ->
+  class Product extends Batman.Model
+    @encode 'id', 'name'
+    @belongsTo 'store', {namespace: @namespace, autoload: false, encodeForeignTypeKey: false}
+
+  @product = new Product(id: 1, name: "Chair", store_id: 1, store_type: "Store")
+  deepEqual @product.toJSON(), {id: 1, name: "Chair", store_id: 1}
+
 asyncTest "belongsTo supports inline saving", 1, ->
   namespace = @namespace
   class @InlineMetafield extends Batman.Model
