@@ -24,7 +24,7 @@
             <li data-foreach-char="Character.all">
                 <span data-bind="char.name"></span> <span data-bind="char.isBatman"></span>
                 <a data-event-click="char.destroy">Delete</a>
-                <div data-view="GoogleMapsView" data-bind-data-address="char.address"></div>
+                <div data-view="GoogleMapsView" data-view-address="char.address" ></div>
             </li>
             <li><span data-bind="'characters' | pluralize Character.all.length"></span></li>
         </ul>
@@ -43,27 +43,14 @@
         console.log "BatMap ready"
 
     class BatMap.GoogleMapsView extends Batman.View
-      html: '<div style="width: 200px; height: 200px;"></div>'
-      address: ''
-      zoom: 12
+      @option 'address'
 
-      render: ->  
-        super     
-        @on 'ready', =>
-          @node = $(@get('node'))
-          @address = @node.data('address')
-          @geocoder = new google.maps.Geocoder();
-          @geocoder.geocode {'address': @address}, (results, status) =>
-            if status is google.maps.GeocoderStatus.OK
-              myOptions =
-                zoom: @zoom
-                center: results[0].geometry.location
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-                disableDefaultUI: true
-
-              map = new google.maps.Map(@node.children("div")[0], myOptions)
-              map.setCenter(results[0].geometry.location)
-              new google.maps.Marker position: results[0].geometry.location, map: map
+      @accessor 'imageSrc'
+        get: -> "http://maps.googleapis.com/maps/api/staticmap?center=#{@get('address')}&zoom=14&size=400x400&sensor=false"
+          
+      render: ->
+        img = $('<img>').attr('src', @get('imageSrc'))
+        $(@get('node')).append(img)
 
     Character = class BatMap.Character extends Batman.Model
       @resourceName: 'character'
@@ -81,12 +68,12 @@
           throw error if error
           unless characters and characters.length
             callback = (error) -> throw error if error
-            new Character(name: 'Bruce Wayne', isBatman: true, address: "11 Wall Street New York, NY").save(callback)
+            new Character(name: 'Bruce Wayne', isBatman: true, address: "New York, NY").save(callback)
             new Character(name: 'Dick Grayson', address: "Alcatraz").save(callback)
             new Character(name: 'Alfred Pennyworth', address: "Sydney, NSW").save(callback)
         @render false
 
-      create:->
+      create: ->
         @get('emptyChar').save (error, record) =>
           throw error if error
           @set 'emptyChar', new Character
