@@ -41,7 +41,7 @@
       cli.getUsage();
     }
     source = path.join(__dirname, 'templates', options.template);
-    if (!path.existsSync(source)) {
+    if (!fs.existsSync(source)) {
       this.fatal("template " + options.template + " not found");
     }
     TemplateVars = {};
@@ -52,7 +52,7 @@
         options.appName = options.name;
       }
       destinationPath = path.join(process.cwd(), options.appName);
-      if (path.existsSync(destinationPath)) {
+      if (fs.existsSync(destinationPath)) {
         this.fatal('Destination already exists!');
       } else {
         fs.mkdirSync(destinationPath, 0x1ed);
@@ -109,7 +109,7 @@
         stat = fs.statSync(sourceFile);
         if (stat.isDirectory()) {
           dir = path.join(destinationPath, aPath, resultName);
-          if (!path.existsSync(dir)) {
+          if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, 0x1ed);
           }
           return walk(path.join(aPath, file));

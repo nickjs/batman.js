@@ -51,7 +51,7 @@ cli.main (args, options) ->
   # Grab a reference to the batman template directory
   source = path.join(__dirname, 'templates', options.template)
 
-  if !path.existsSync(source)
+  if !fs.existsSync(source)
     @fatal "template #{options.template} not found"
 
   # Start the goodness. Define a place to put variables available in the template
@@ -66,7 +66,7 @@ cli.main (args, options) ->
 
     # Make the project directory in the current directory.
     destinationPath = path.join(process.cwd(), options.appName)
-    if path.existsSync(destinationPath)
+    if fs.existsSync(destinationPath)
       @fatal 'Destination already exists!'
     else
       fs.mkdirSync(destinationPath, 0o755)
@@ -124,7 +124,7 @@ cli.main (args, options) ->
       # If the file is a directory, create it in the destination, and then walk it in the template.
       if stat.isDirectory()
         dir = path.join(destinationPath, aPath, resultName)
-        if !path.existsSync(dir)
+        if !fs.existsSync(dir)
           fs.mkdirSync(dir, 0o755)
         # Descend into this sub dir in the template directory.
         walk path.join(aPath, file)
