@@ -587,12 +587,15 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   <h4>typeOf returns &quot;String&quot; for both strings and Object strings</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">primitive</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">objectified</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">String</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="k">typeof</span> <span class="nx">objectified</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="k">typeof</span> <span class="nx">primitive</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;string&quot;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="k">typeof</span> <span class="nx">objectified</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;object&quot;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">typeOf</span><span class="p">(</span><span class="nx">primitive</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;String&quot;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">typeOf</span><span class="p">(</span><span class="nx">objectified</span><span class="p">)</span>
-</pre></div></div><div class="out"></div></code>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;String&quot;</span>
+</pre></div></div></code>
   </pre>
 </div>
 <div class="console-session">
@@ -696,11 +699,15 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="nx">fly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">funky</span><span class="o">:</span> <span class="kc">true</span>
   <span class="p">}</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">{</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">unmixin</span><span class="p">(</span><span class="nx">subject</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">fit</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="p">},</span> <span class="p">{</span>
+    <span class="nx">fly</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">{</span>
     <span class="nx">funky</span><span class="o">:</span> <span class="kc">true</span>
   <span class="p">}</span> <span class="c1">// unmixin returns the subject</span>
-</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">subject</span>
-</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">{</span>
+</pre></div></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">{</span>
     <span class="nx">funky</span><span class="o">:</span> <span class="kc">true</span>
   <span class="p">}</span> <span class="c1">// the subject is destructively modified.</span>
 </pre></div></div></code>
@@ -754,7 +761,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">imitation</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
   <span class="p">})</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;b&quot;</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">last</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;b&quot;</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -933,7 +941,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">singularize</span><span class="p">(</span><span class="s2">&quot;octopi&quot;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;octopus&quot;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">singularize</span><span class="p">(</span><span class="s2">&quot;sheep&quot;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">singularize</span><span class="p">(</span><span class="s2">&quot;word&quot;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;sheep&quot;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">singularize</span><span class="p">(</span><span class="s2">&quot;word&quot;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;word&quot;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">singularize</span><span class="p">(</span><span class="s2">&quot;CamelOctopi&quot;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;CamelOctopus&quot;</span>
@@ -951,7 +960,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">pluralize</span><span class="p">(</span><span class="s2">&quot;octopus&quot;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;octopi&quot;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">pluralize</span><span class="p">(</span><span class="s2">&quot;sheep&quot;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">pluralize</span><span class="p">(</span><span class="s2">&quot;words&quot;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;sheep&quot;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">pluralize</span><span class="p">(</span><span class="s2">&quot;words&quot;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;words&quot;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">pluralize</span><span class="p">(</span><span class="s2">&quot;CamelOctopus&quot;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;CamelOctopi&quot;</span>
@@ -1042,7 +1052,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <div class="console-session">
   <h4>events can be tested for presence</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span> <span class="o">=</span> <span class="nx">$mixin</span><span class="p">({},</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span><span class="p">.</span><span class="nx">hasEvent</span><span class="p">(</span><span class="s1">&#39;detonate&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;detonate&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;detonated&quot;</span><span class="p">);</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span><span class="p">.</span><span class="nx">hasEvent</span><span class="p">(</span><span class="s1">&#39;detonate&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span><span class="p">.</span><span class="nx">hasEvent</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
@@ -1167,7 +1180,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   <span class="p">})</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span><span class="p">.</span><span class="nx">prevent</span><span class="p">(</span><span class="s1">&#39;detonate&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;detonate&#39;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="mi">0</span> <span class="c1">// The event handler wasn&#39;t fired.</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">length</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">0</span> <span class="c1">// The event handler wasn&#39;t fired.</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span><span class="p">.</span><span class="nx">allowAndFire</span><span class="p">(</span><span class="s1">&#39;detonate&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">length</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span> <span class="c1">// The event handler was fired.</span>
@@ -1211,7 +1225,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   <span class="p">})</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">340</span>
-</pre></div></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="mi">120</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;bpm&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">120</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -1230,7 +1245,12 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </div>
 <div class="console-session">
   <h4>get retrieves properties on Batman objects when . property access doesn&#39;t</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;undefined&quot;</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">song</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">({</span>
+    <span class="nx">length</span><span class="o">:</span> <span class="mi">340</span><span class="p">,</span>
+    <span class="nx">bpm</span><span class="o">:</span> <span class="mi">120</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="k">typeof</span> <span class="nx">song</span><span class="p">.</span><span class="nx">length</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;undefined&quot;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">340</span>
 </pre></div></div></code>
@@ -1472,7 +1492,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="nx">length</span><span class="o">:</span> <span class="mi">340</span><span class="p">,</span>
     <span class="nx">bpm</span><span class="o">:</span> <span class="mi">120</span>
   <span class="p">})</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">observerB</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">observerA</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">log</span><span class="p">([</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">]);</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">observerB</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">log</span><span class="p">([</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">]);</span>
   <span class="p">})</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">observe</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="nx">observerA</span><span class="p">)</span>
@@ -1512,7 +1535,11 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </div>
 <div class="console-session">
   <h4>getOrSet sets the property if it is falsey</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">getOrSet</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">song</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">length</span><span class="o">:</span> <span class="mi">340</span><span class="p">,</span>
+    <span class="nx">bpm</span><span class="o">:</span> <span class="mi">120</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">getOrSet</span><span class="p">(</span><span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="s2">&quot;Elvis&quot;</span><span class="p">;</span>
   <span class="p">})</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;Elvis&quot;</span>
@@ -1554,10 +1581,26 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <div class="console-session">
   <h4>@accessor can be called on a class to define how a property is calculated</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">post</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">({</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Post</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Post</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Post</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">Post</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">Post</span><span class="p">.</span><span class="nx">accessor</span><span class="p">(</span><span class="s1">&#39;summary&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">Post</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nb">Object</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">post</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">({</span>
     <span class="nx">body</span><span class="o">:</span> <span class="s2">&quot;Why Batman is Useful: A lengthy post on an important subject&quot;</span>
   <span class="p">})</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;Why Batman...&quot;</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;summary&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;Why Batman...&quot;</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -1566,14 +1609,30 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <div class="console-session">
   <h4>@accessor can define a transform on several properties</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">tim</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">({</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">User</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">User</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">User</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">User</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">User</span><span class="p">.</span><span class="nx">accessor</span><span class="p">(</span><span class="s1">&#39;fullName&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstName&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;lastName&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">User</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nb">Object</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">tim</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">({</span>
     <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;Tim&quot;</span><span class="p">,</span>
     <span class="nx">lastName</span><span class="o">:</span> <span class="s2">&quot;Thomas&quot;</span>
   <span class="p">})</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">tim</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;fullName&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;Tim Thomas&quot;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">tim</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;firstName&#39;</span><span class="p">,</span> <span class="s2">&quot;Timmy&quot;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;Timmy Thomas&quot;</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">tim</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;fullName&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;Timmy Thomas&quot;</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -1669,7 +1728,29 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <div class="console-session">
   <h4>@accessor usually caches results</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">counter</span> <span class="o">=</span> <span class="mi">0</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">example</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">()</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Example</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Example</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Example</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">Example</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">Example</span><span class="p">.</span><span class="nx">accessor</span><span class="p">(</span><span class="s1">&#39;cachedCounter&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="o">++</span><span class="nx">counter</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="nx">Example</span><span class="p">.</span><span class="nx">accessor</span><span class="p">(</span><span class="s1">&#39;notCachedCounter&#39;</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">++</span><span class="nx">counter</span><span class="p">;</span>
+      <span class="p">},</span>
+      <span class="nx">cache</span><span class="o">:</span> <span class="kc">false</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">Example</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nb">Object</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">example</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Example</span><span class="p">()</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">example</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cachedCounter&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">example</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cachedCounter&#39;</span><span class="p">)</span>
@@ -1720,7 +1801,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nb">Object</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">instance</span> <span class="o">=</span> <span class="nx">SingletonDooDad</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;instance&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">SingletonDooDad</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;instance&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="nx">instance</span>
-</pre></div></div><div class="out"></div></code>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span> <span class="c1">// A second get returns the same instance</span>
+</pre></div></div></code>
   </pre>
 </div>
 <h3 id="batman-object-mixin">@mixin(objects...) : prototype</h3>
@@ -1943,11 +2025,29 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </div>
 <div class="console-session">
   <h4>defining an accessor on an instance does not affect the other instances</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">post</span><span class="p">.</span><span class="nx">accessor</span><span class="p">(</span><span class="s1">&#39;longSummary&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Post</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Post</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Post</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">Post</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">Post</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nb">Object</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">post</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">({</span>
+    <span class="nx">body</span><span class="o">:</span> <span class="s2">&quot;Why Batman is Useful: A lengthy post on an important subject&quot;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">otherPost</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">({</span>
+    <span class="nx">body</span><span class="o">:</span> <span class="s2">&quot;Why State Machines Are Useful: Another lengthy post&quot;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">post</span><span class="p">.</span><span class="nx">accessor</span><span class="p">(</span><span class="s1">&#39;longSummary&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span><span class="p">;</span>
   <span class="p">})</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">post</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;longSummary&#39;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">otherPost</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;longSummary&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;Why Batman is Useful...&quot;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">otherPost</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;longSummary&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="k">void</span> <span class="mi">0</span>
 </pre></div></div></code>
   </pre>
@@ -1978,7 +2078,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   <span class="p">},</span> <span class="p">{</span>
     <span class="nx">canHiss</span><span class="o">:</span> <span class="kc">true</span>
   <span class="p">})</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">snake</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;canSlither&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">snake</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;canHiss&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
 </pre></div></div></code>
@@ -2001,12 +2102,16 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <div class="console-session">
   <h4>new SimpleSet constructor can be called without arguments</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div></code>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">toArray</span><span class="p">()</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[]</span>
+</pre></div></div></code>
   </pre>
 </div>
 <div class="console-session">
   <h4>new SimpleSet constructor can be passed items to add to the set.</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">sort</span><span class="p">()</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -2023,7 +2128,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
-</pre></div></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -2072,7 +2178,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <div class="console-session">
   <h4>SimpleSet::remove returns only the new items that were previously in the set</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">).</span><span class="nx">sort</span><span class="p">()</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">toArray</span><span class="p">()</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>
 </pre></div></div></code>
@@ -2147,7 +2254,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   <h4>SimpleSet::isEmpty returns true if the set has no items</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">()</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">()</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">()</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
 </pre></div></div></code>
@@ -2178,7 +2286,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <div class="console-session">
   <h4>SimpleSet::replace empties the set and then adds items from a different collection</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">secondSet</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">secondSet</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">secondSet</span><span class="p">).</span><span class="nx">sort</span><span class="p">()</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">]</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">sort</span><span class="p">()</span>
@@ -2237,12 +2346,17 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <div class="console-session">
   <h4>new Set constructor can be called without arguments</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"></div></code>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">toArray</span><span class="p">()</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[]</span>
+</pre></div></div></code>
   </pre>
 </div>
 <div class="console-session">
   <h4>new Set constructor can be passed items to add to the set.</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">sort</span><span class="p">()</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -2265,7 +2379,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="k">return</span> <span class="nx">log</span><span class="p">(</span><span class="nx">newArray</span><span class="p">.</span><span class="nx">sort</span><span class="p">());</span>
   <span class="p">})</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">last</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">]</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">last</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">]</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span>
@@ -2529,7 +2644,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;willWinTheCup?&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">team</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;players&#39;</span><span class="p">).</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;Henrik Sedin&#39;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">last</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">team</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;players&#39;</span><span class="p">).</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;Daniel Sedin&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">last</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
@@ -2550,15 +2666,34 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">()</span>
-</pre></div></div><div class="out"></div></code>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
+</pre></div></div></code>
   </pre>
 </div>
 <div class="console-session">
   <h4>Set::isEmpty registers the set as a source of an accessor</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Team</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="p">(</span><span class="nx">Team</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Team</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Team</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">games</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="nx">Team</span><span class="p">.</span><span class="nx">accessor</span><span class="p">(</span><span class="s1">&#39;seasonStarted?&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">games</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">Team</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nb">Object</span><span class="p">))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Team</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;seasonStarted?&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
-</pre></div></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;seasonStarted?&#39;</span><span class="p">)</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">team</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;games&#39;</span><span class="p">).</span><span class="nx">add</span><span class="p">({</span>
+    <span class="nx">win</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;seasonStarted?&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
 </pre></div></div></code>
   </pre>
@@ -2725,7 +2860,9 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   <span class="nx">MyApp</span><span class="p">.</span><span class="nx">run</span><span class="p">()</span>
 </pre></div></code></pre>
 <h4 id="batman-app-run-starting-an-application-with-jquery">starting an application with jQuery</h4>
-<pre><code class="coffeescript"></code></pre>
+<pre><code class="coffeescript"><div class="highlight"><pre><span class="nx">$</span> <span class="o">-&gt;</span>
+  <span class="nx">MyApp</span><span class="p">.</span><span class="nx">run</span><span class="p">()</span>
+</pre></div></code></pre>
 <h3 id="batman-app-stop">@stop() : App</h3>
 <p><code>@stop</code> stops the <code>App</code> it&#39;s called upon. The URL will stop being monitored and no more actions will be dispatched. In usual Batman development you shouldn&#39;t have to call this.
 
@@ -2740,7 +2877,30 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <div class="console-session">
   <h4>App.controllers references a directory of controller instances</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">_functionName</span><span class="p">(</span><span class="nx">controller</span><span class="p">.</span><span class="nx">constructor</span><span class="p">)</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Alfred</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Alfred</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Alfred</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">Alfred</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">Alfred</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">App</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Alfred</span><span class="p">.</span><span class="nx">TodosController</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">TodosController</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">TodosController</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">TodosController</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">TodosController</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">Controller</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span> <span class="o">=</span> <span class="nx">Alfred</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;controllers.todos&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">_functionName</span><span class="p">(</span><span class="nx">controller</span><span class="p">.</span><span class="nx">constructor</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;TodosController&quot;</span>
 </pre></div></div></code>
   </pre>
@@ -2779,7 +2939,12 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>Each <code>Batman.Controller</code> should have a number of instance level functions which can fetch the data needed and often render a view (or views) to display that data. These functions can be declared in typical CoffeeScript fashion like so:
 
 </p>
-<pre><code class="coffeescript"></code></pre>
+<pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">Alfred</span><span class="p">.</span><span class="nx">TodosController</span>
+
+  <span class="nv">index: </span><span class="nf">(params) -&gt;</span>
+
+  <span class="nv">show: </span><span class="nf">(params) -&gt;</span>
+</pre></div></code></pre>
 <p>Each action function receives the parameters from the dispatcher which are pulled out of the navigated-to URL. This includes both named route parameters (<code>/:foo</code> style) as well as arbitrary query paramters (<code>?foo=bar</code> style).
 
 </p>
@@ -2789,8 +2954,32 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <div class="console-session">
   <h4>@beforeFilter allows declaration of filters to execute before an action</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;before!&#39;</span>
-</pre></div></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;action!&#39;</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">TestController</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">TestController</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">TestController</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">TestController</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">TestController</span><span class="p">.</span><span class="nx">beforeFilter</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;before!&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="nx">TestController</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;action!&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="k">return</span> <span class="nx">TestController</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">Controller</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span> <span class="o">=</span> <span class="nx">TestController</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;sharedController&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;before!&#39;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;action!&#39;</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -2819,7 +3008,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="k">return</span> <span class="nx">TodoController</span><span class="p">;</span>
 
   <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">Controller</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="s1">&#39;show&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span> <span class="o">=</span> <span class="nx">TodoController</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;sharedController&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="s1">&#39;show&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;todo&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="p">{</span>
     <span class="nx">isDone</span><span class="o">:</span> <span class="kc">true</span>
@@ -2918,7 +3108,22 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <div class="console-session">
   <h4>primary key can be set using @set</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"></div></code>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Shop</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Shop</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Shop</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">Shop</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">Shop</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;primaryKey&#39;</span><span class="p">,</span> <span class="s1">&#39;shop_id&#39;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">Shop</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">Shop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;primaryKey&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;shop_id&#39;</span>
+</pre></div></div></code>
   </pre>
 </div>
 <p>The <code>primaryKey</code> is what Batman uses to compare instances to see if they represent the same domain-level object: if two records have the same value at the key specified by <code>primaryKey</code>, only one will be in the identity map. The key specified by <code>primaryKey</code> is also used by the associations system when determining if a record is related to another record, and by the remote storage adapters to generate URLs for records.
@@ -2940,7 +3145,21 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <div class="console-session">
   <h4>models can be told to persist via a storage adapter</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">hasStorage</span><span class="p">()</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Shop</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Shop</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Shop</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">Shop</span><span class="p">.</span><span class="nx">__super__</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">Shop</span><span class="p">.</span><span class="nx">persist</span><span class="p">(</span><span class="nx">TestStorageAdapter</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">Shop</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Shop</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">hasStorage</span><span class="p">()</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
 </pre></div></div></code>
   </pre>
@@ -2961,7 +3180,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="k">return</span> <span class="nx">Shop</span><span class="p">;</span>
 
   <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">adapter</span> <span class="k">instanceof</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">StorageAdapter</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -3070,7 +3290,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Snowdevil&quot;</span><span class="p">,</span>
     <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;snowdevil.ca&quot;</span>
   <span class="p">})</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">{</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">{</span>
     <span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Snowdevil&quot;</span><span class="p">,</span>
     <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;snowdevil.ca&quot;</span>
   <span class="p">}</span>
@@ -3486,7 +3707,19 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p><code>Batman.View</code>s have another purpose however: they can be used to create reusable, configurable components which can then be created and reused inside the templates. Examples include a Google Maps component, perhaps a lightbox, a segmented button control, or maybe a class to manage the interactions around flash messages. The flow with these <code>View</code>s is different: they aren&#39;t instantiated by controller, but instead by the template using a <code>data-view</code> binding. They are subclasses of <code>Batman.View</code> which enhance the standard functionality to do something useful. Lets look at some examples of how developers might use <code>data-view</code>:
 
 </p>
-<pre><code class="html"></code></pre>
+<pre><code class="html"><div class="highlight"><pre><span class="c">&lt;!-- You might want to use a View to make flash messages. This one might apply some CSS styles to make the message clearer to the user, or use some JavaScript to add a close button which hides the div --&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">data-view=</span><span class="s">&quot;FlashMessageView&quot;</span><span class="nt">&gt;</span>Order successfully saved!<span class="nt">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- You might want to use a View instead of CSS3 nth-child selectors to apply some styles to round the corners of the the first and last list items in this &lt;ul&gt; to make it look like a nice segmented button --&gt;</span>
+<span class="nt">&lt;ul</span> <span class="na">data-view=</span><span class="s">&quot;SegmentedButtonView&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;li&gt;</span>Rounded<span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;li&gt;</span>Not rounded<span class="nt">&lt;/li&gt;</span>
+  <span class="nt">&lt;li&gt;</span>Rounded<span class="nt">&lt;/li&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+
+<span class="c">&lt;!-- Someone who didn&#39;t know jQuery might want to implement the placeholder attribute of inputs in a View which might detect if the code is running in a browser which doesn&#39;t support placeholder and polyfills the functionality if so --&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">data-view=</span><span class="s">&quot;PlaceHolderInputView&quot;</span><span class="nt">&gt;&lt;/input&gt;</span>
+</pre></div></code></pre>
 <p>Each of these doo-dads implements some handy functionality which the template can pull in where ever it likes to spice up the experience. <code>FlashMessageView</code>, <code>SegmentedButtonView</code>, and <code>PlaceHolderInputView</code> are all <code>Batman.View</code> subclasses which have some custom code in them which does cool stuff to whatever node they are applied to. The basic flow for implementation is this:
 
 </p>
@@ -3506,11 +3739,29 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>For demonstration we&#39;ll use jQuery to implement the guts of the view. If we were using only jQuery in this project, we might implement this same functionality by giving our node a unique ID or class, and then using jQuery somewhere to select it and add teh classes and close button. With Batman, the selection step is done for us, and all we have to do is apply the functionality. Your <code>Batman.View</code> will receive a <code>node</code> for wrapping which can be found in in the <code>node</code> property on the view instance.
 
 </p>
-<pre><code class="coffeescript"></code></pre>
+<pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">FlashMessageView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
+  <span class="nv">constructor: </span><span class="o">-&gt;</span>
+    <span class="k">super</span>
+    <span class="nx">@get</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">)</span> <span class="c1">#=&gt; DOMElement</span>
+</pre></div></code></pre>
 <p>So, let&#39;s apply some <code>jQuery</code>s to the node to accomplish the useful stuff. The first idea is to apply these enhancements when the view is created like so:
 
 </p>
-<pre><code class="coffeescript"></code></pre>
+<pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">FlashMessageView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
+  <span class="nv">constructor: </span><span class="o">-&gt;</span>
+    <span class="k">super</span> <span class="c1"># process arguments and stuff</span>
+    <span class="nv">node = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@get</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">))</span>
+    <span class="c1"># Add our flash box classes</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;flash box warning&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Create a button and append it</span>
+    <span class="nv">button = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;button&gt;X&lt;/button&gt;&quot;</span><span class="p">)</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">button</span><span class="p">)</span>
+
+    <span class="c1"># Tell the button to hide the flash box when it&#39;s clicked.</span>
+    <span class="nx">button</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">hide</span><span class="p">(</span><span class="s1">&#39;fast&#39;</span><span class="p">)</span>
+</pre></div></code></pre>
 <p>There are a couple things we need to change with this. First, applying the logic in the constructor isn&#39;t the best idea. I deceived you; my apologies. Instead, it should be in the overridden <code>render</code> function on the <code>View</code>, or in a handler on one of the <code>View</code>&#39;s handlers. This is better because, perhaps unbeknownst to you, Batman should be able to instantiate <code>Batman.View</code>s <strong>without a <code>node</code></strong>. The <code>node</code> for a view is not always be available upon construction, so construction, rendering, and insertion are all separate happenings on a <code>View</code>. Depending on what you are doing, your logic should happen before or after one of these stages.
 
 </p>
@@ -3521,7 +3772,21 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>Lets move the <code>FlashMessageView</code>&#39;s enhancements to the <code>ready</code> function where they belong:
 
 </p>
-<pre><code class="coffeescript"></code></pre>
+<pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">FlashMessageView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">ready: </span><span class="o">-&gt;</span>
+    <span class="nv">node = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@get</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">))</span>
+    <span class="c1"># Add our flash box classes</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;flash box warning&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Create a button and append it</span>
+    <span class="nv">button = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;button&gt;X&lt;/button&gt;&quot;</span><span class="p">)</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">button</span><span class="p">)</span>
+
+    <span class="c1"># Tell the button to hide the flash box when it&#39;s clicked.</span>
+    <span class="nx">button</span><span class="p">.</span><span class="kc">on</span> <span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+      <span class="nx">node</span><span class="p">.</span><span class="nx">hide</span><span class="p">(</span><span class="s1">&#39;fast&#39;</span><span class="p">)</span>
+</pre></div></code></pre>
 <h4 id="what-are-views-if-you-want-to-do-something-to-a-views-html-before-rendering-override-the-render-method">If you want to do something to a view&#39;s HTML before rendering, override the <code>render</code> method.</h4>
 <p>For things like adding new nodes with bindings on them or munging the existing source of the given <code>node</code>, put the logic in an overridden <code>render</code> method.
 
@@ -3529,7 +3794,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p><em>Note</em>: an overridden <code>render</code> function must call super. Calling super is important because the behaviour from the super class still needs to happen. Imagine the flash message had a binding in it:
 
 </p>
-<pre><code class="html"></code></pre>
+<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">data-view=</span><span class="s">&quot;FlashMessageView&quot;</span><span class="nt">&gt;</span>
+  Order #<span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;order.number&quot;</span><span class="nt">&gt;</span> saved successfully!
+<span class="nt">&lt;/div&gt;</span>
+</pre></div></code></pre>
 <p>The super implementation will set up any bindings within the view&#39;s HTML, that is to say the HTML which is within the node where <code>data-view</code> occurs. <code>super</code> also fires the view&#39;s <code>ready</code> event, which is critical.
 
 </p>
@@ -3596,7 +3864,15 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>One way to do this is by configuring an instance of the <code>GoogleMapsView</code> inside the controller, and then referencing that instance with a <code>data-view</code> binding in the template. For simplicity&#39;s sake we&#39;ll have the view use the static image API from Google Maps which makes things really easy. This API just returns images for a <code>latitude</code> and <code>longitude</code> given a <code>zoom</code>, <code>width</code>, and <code>height</code>. So, we&#39;ll make our <code>View</code> class take those as properties, and then stick them in the <code>src</code> for an <code>&lt;img&gt;</code> tag.
 
 </p>
-<pre><code class="coffeescript"></code></pre>
+<pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">GoogleMapsView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
+  <span class="nx">@accessor</span> <span class="s1">&#39;imageSrc&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="s2">&quot;http://maps.googleapis.com/maps/api/staticmap?center=#{@get(&#39;latitude&#39;)},#{@get(&#39;longitude&#39;)}&amp;zoom=#{@get(&#39;zoom&#39;)}&amp;size=#{@get(&#39;width&#39;)}x#{@get(&#39;height&#39;)}&amp;sensor=false&quot;</span>
+
+  <span class="nv">node: </span><span class="kc">false</span>
+  <span class="nv">html: </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;img data-bind-src=&quot;</span><span class="nx">imageSrc</span><span class="s2">&quot;</span>
+<span class="s2">  &quot;&quot;&quot;</span>
+</pre></div></code></pre>
 <p>So, when this <code>View</code> subclass is instantiated, it expects to be given <code>latitude</code>, <code>longitude</code>, <code>zoom</code>, <code>width</code>, and <code>height</code> properties like so:
 
 </p>
@@ -3676,22 +3952,26 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>Bindings are declared as attributes on nodes under the <code>data</code> namespace. In practice, it looks like this:
 
 </p>
-<pre><code class="html"></code></pre>
+<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">data-bind=</span><span class="s">&quot;name&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</pre></div></code></pre>
 <p>This instantiates a binding on the <code>div</code> node which will update the node&#39;s <code>innerHTML</code> with the value found at the <code>name</code> keypath in the <a href="#batman-view-bindings-binding-contexts">current context</a>. Whenever the <code>name</code> key changes, the div&#39;s <code>innerHTML</code> will update to the new value.
 
 </p>
 <p>Nodes can have multiple bindings like this:
 
 </p>
-<pre><code class="html"></code></pre>
+<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;p</span> <span class="na">data-bind=</span><span class="s">&quot;body&quot;</span> <span class="na">data-showif=</span><span class="s">&quot;isPublished&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+</pre></div></code></pre>
 <p>or attribute bindings like this:
 
 </p>
-<pre><code class="html"></code></pre>
+<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;p</span> <span class="na">data-bind-id=</span><span class="s">&quot;currentID&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+</pre></div></code></pre>
 <p>and bindings can be on inputs which the user can change, like this:
 
 </p>
-<pre><code class="html"></code></pre>
+<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;title&quot;</span><span class="nt">&gt;&lt;/input&gt;</span>
+</pre></div></code></pre>
 <p>When the <code>title</code> property changes on the JavaScript object this <code>input</code> is bound to, the <code>input</code>&#39;s value will be updated. When the user types into the <code>input</code> (and <code>change</code> or <code>keyup</code> events are triggered), the <code>title</code> property in JavaScript land will be updated.
 
 </p>
@@ -3699,7 +3979,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>A +keypath+ is the value of the HTML attribute a binding references. Importantly, keypaths can have multiple segments:
 
 </p>
-<pre><code class="html"></code></pre>
+<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;p</span> <span class="na">data-bind=</span><span class="s">&quot;order.customer.name&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+</pre></div></code></pre>
 <p>The keypath in the above HTML is <code>order.customer.name</code>. When you create a binding to a keypath like this (with dot separating segments), the binding will update the HTML value when +any+ of those segments change. In the above example, this means the <code>p</code> tag&#39;s <code>innerHTML</code> will be updated when:
 
 </p>
@@ -3753,7 +4034,21 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>The following are all valid albeit contrived bindings:
 
 </p>
-<pre><code class="html"></code></pre>
+<pre><code class="html"><div class="highlight"><pre><span class="c">&lt;!-- String literal used as an argument --&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">data-bind=</span><span class="s">&quot;body | append &#39; ... &#39;&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- Boolean literal used as an argument --&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">data-showif=</span><span class="s">&quot;shouldShow | default true&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- Number literal used as an argument --&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">data-bind=</span><span class="s">&quot;body | truncate 100&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- String literal used as the value --&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">data-bind=</span><span class="s">&quot;&#39;Hardcoded&#39;&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- Boolean literal used as the value --&gt;</span>
+<span class="nt">&lt;p</span> <span class="na">data-showif=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
+</pre></div></code></pre>
 <h3 id="batman-view-bindings-data-bind">data-bind</h3>
 <p><code>data-bind</code> creates a two way binding between a property on a <code>Batman.Object</code> and an HTML element. Bindings created via <code>data-bind</code> will update the HTML element with the value of the JS land property as soon as they are created and each time the property changes after, and if the HTML element can be observed for changes, it will update the JS land property with the value from the HTML.
 
