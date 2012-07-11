@@ -1,6 +1,6 @@
 {
   "name": "batman",
-  "description": "A full-stack JavaScript framework that helps you build rich, single-page applications with power and speed.",
+  "description": "A client side JavaScript framework that helps you build rich, single-page applications with power and speed.",
   "author": "Nick Small <nick@shopify.com> (http://github.com/nciagra)",
   "contributors": [
     "Harry Brundage <harry.brundage@shopify.com> (http://github.com/hornairs)",
