@@ -408,7 +408,6 @@ class Batman.Model extends Batman.Object
       else
         callback?(new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}"))
 
-  # `destroy` destroys a record in all the stores.
   destroy: (options, callback) =>
     if !callback
       [options, callback] = [{}, options]
@@ -424,9 +423,6 @@ class Batman.Model extends Batman.Object
     else
       callback?(new Batman.StateMachine.InvalidTransitionError("Can't destroy while in state #{@get('lifecycle.state')}"))
 
-  # `validate` performs the record level validations determining the record's validity. These may be asynchronous,
-  # in which case `validate` has no useful return value. Results from asynchronous validations can be received by
-  # listening to the `afterValidation` lifecycle callback.
   validate: (callback) ->
     errors = @get('errors')
     errors.clear()
@@ -436,7 +432,7 @@ class Batman.Model extends Batman.Object
       callback?(undefined, errors)
       return true
 
-    count = validators.length
+    count = validators.reduce ((acc, validator) -> acc + validator.keys.length), 0
     finishedValidation = ->
       if --count == 0
         callback?(undefined, errors)

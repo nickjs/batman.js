@@ -9,6 +9,16 @@ validationsTestSuite = ->
       equal p.get('lifecycle.state'), oldState
       QUnit.start()
 
+  asyncTest "validate(callback) will call the callback only after all keys have been validated", ->
+    class Product extends Batman.Model
+      @validate 'name', 'price', presence: yes
+
+    p = new Product
+    p.validate (error, errors) ->
+      throw error if error
+      equal errors.length, 2
+      QUnit.start()
+
   asyncTest "length", 2, ->
     class Product extends Batman.Model
       @validate 'exact', length: 5
