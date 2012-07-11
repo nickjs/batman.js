@@ -22,8 +22,6 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
     association = @
     return {
       encode: (relationSet, _, __, record) ->
-        return if association._beingEncoded
-        association._beingEncoded = true
         return unless association.options.saveInline
         if relationSet?
           jsonArray = []
@@ -33,7 +31,6 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
               relationJSON[association.foreignKey] = record.get(association.primaryKey)
             jsonArray.push relationJSON
 
-        delete association._beingEncoded
         jsonArray
 
       decode: (data, key, _, __, parentRecord) ->
