@@ -16,7 +16,9 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       if relations = @getFromAttributes(base)
         relations.forEach (model) =>
           model.set @foreignKey, base.get(@primaryKey)
-      base.set @label, @setForRecord(base)
+      base.set @label, set = @setForRecord(base)
+      if base.lifecycle.get('state') == 'creating'
+        set.markAsLoaded()
 
   encoder: ->
     association = @
@@ -55,7 +57,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
             if association.options.inverseOf
               record.set association.options.inverseOf, parentRecord
 
-          existingRelations.set 'loaded', true
+          existingRelations.markAsLoaded()
         else
           Batman.developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"
         existingRelations

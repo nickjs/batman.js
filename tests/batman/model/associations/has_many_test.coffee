@@ -99,12 +99,36 @@ asyncTest "hasMany associations are loaded", 4, ->
       products.forEach (product) => ok product instanceof @Product
       deepEqual products.map((x) -> x.get('id')), [1,2,3]
 
-asyncTest "AssociationSet fires loaded event and sets loaded accessor", 3, ->
+asyncTest "AssociationSet fires loaded event and sets loaded accessor", 2, ->
   @Store.find 1, (err, store) ->
-    deepEqual store.get('products').get('loaded'), false
+    equal store.get('products').get('loaded'), false
     store.get('products').on 'loaded', ->
-      deepEqual store.get('products').get('loaded'), true
-      ok true, 'loaded fired'
+      equal store.get('products').get('loaded'), true
+      QUnit.start()
+
+asyncTest "AssociationSet becomes loaded when a new record is saved", 2, ->
+  store = new @Store(name: "Test")
+
+  equal store.get('products').get('loaded'), false
+  store.save =>
+    equal store.get('products').get('loaded'), true
+    QUnit.start()
+
+asyncTest "AssociationSet does not become loaded when an existing record is saved and the response includes no information about the association", 2, ->
+  namespace = @
+  namespace.Store = class @Store extends Batman.Model
+    @encode 'id', 'name'
+    @hasMany 'products', namespace: namespace, autoload: false
+
+  @storeAdapter = createStorageAdapter @Store, AsyncTestStorageAdapter,
+    stores1:
+      name: "Store One"
+      id: 1
+
+  @Store.find 1, (err, store) ->
+    equal store.get('products').get('loaded'), false
+    store.save (err, store) ->
+      equal store.get('products').get('loaded'), false
       QUnit.start()
 
 asyncTest "hasMany associations are loaded using encoders", 1, ->
