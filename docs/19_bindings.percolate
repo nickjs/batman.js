@@ -365,6 +365,7 @@ The `raw` filter renders the value unescaped.
 ```html
 <span data-bind="someHTMLyString | raw"></span>
 ```
+
 ### get(value, key) : value
 
 ### value[key] : value
@@ -393,7 +394,9 @@ Shorthand for the `get` filter.
 
 ### pluralize(value, count) : string
 
-### join(value, seperator = '') : string
+### humanize(string) : string
+
+### join(value, separator = '') : string
 
 ### sort(value) : value
 
@@ -405,7 +408,7 @@ Shorthand for the `get` filter.
 
 ### meta(value, keypath) : value
 
-### iterpolate(string, valuesObject) : string
+### interpolate(string, valuesObject) : string
 
 ### withArguments(function, curriedArguments...) : function
 
