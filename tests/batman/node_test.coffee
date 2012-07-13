@@ -1,5 +1,10 @@
 return unless IN_NODE
 
+{spawn} = require 'child_process'
+temp    = require 'temp'
+path    = require 'path'
+tmpdir = temp.mkdirSync()
+
 oldGetModule = Batman.Request::getModule
 
 QUnit.module 'Batman.Request'
@@ -41,3 +46,22 @@ test 'accepts GET data as string', 1, ->
     data: 'foo=bar'
   req = @requestSpy.lastCallArguments.shift()
   equal req.path, '/some/test/url.html?foo=bar'
+
+QUnit.module 'Batman command line helpers'
+
+batman = path.resolve __dirname, '..', '..', 'tools', 'batman'
+console.warn batman
+asyncTest "boot up", ->
+  proc = spawn batman
+  proc.on 'exit', (code) ->
+    equal code, 0
+    QUnit.start()
+
+asyncTest "generate application", ->
+  dir = temp.mkdirSync()
+  cmd = "cd #{dir} && #{batman} new test"
+  proc = spawn 'sh', ['-c', cmd]
+  proc.on 'exit', (code) ->
+    equal code, 0
+    QUnit.start()
+
