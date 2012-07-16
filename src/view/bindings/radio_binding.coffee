@@ -1,16 +1,14 @@
 #= require ./abstract_binding
 
 class Batman.DOM.RadioBinding extends Batman.DOM.AbstractBinding
-  isInputBinding: true
+  constructor: (node) ->
+    super
+    @set 'filteredValue', node.value if node.checked
+
   dataChange: (value) ->
-    # don't overwrite `checked` attributes in the HTML unless a bound
-    # value is defined in the context. if no bound value is found, bind
-    # to the key if the node is checked.
-    if (boundValue = @get('filteredValue'))?
-      @node.checked = boundValue == @node.value
-    else if @node.checked
-      @set 'filteredValue', @node.value
+    boundValue = @get 'filteredValue'
+    @node.checked = (boundValue is Batman.DOM.attrReaders._parseAttribute(@node.value)) if boundValue?
 
   nodeChange: (node) ->
     if @isTwoWay()
-      @set('filteredValue', Batman.DOM.attrReaders._parseAttribute(node.value))
+      @set 'filteredValue', Batman.DOM.attrReaders._parseAttribute(node.value)
