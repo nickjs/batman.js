@@ -12,12 +12,19 @@ class Batman.Association
       name: Batman.helpers.camelize(Batman.helpers.singularize(@label))
     @options = Batman.extend defaultOptions, @defaultOptions, options
 
+    if @options.nestUrl
+      developer.error "You must persist the the model #{@model.constructor.name} to use the url helpers on an association" if !@model.urlNestsUnder?
+      @model.urlNestsUnder Batman.helpers.underscore(@getRelatedModel().get('resourceName'))
+
+    if @options.extend?
+      Batman.extend @, @options.extend
+
     # Setup encoders and accessors for this association.
     encoder =
       encode: if @options.saveInline then @encoder() else false
       decode: @decoder()
 
-    @model.encode label, encoder
+    @model.encode @label, encoder
 
     # The accessor needs reference to this association object, so curry the association info into
     # the getAccessor, which has the model applied as the context.
@@ -28,13 +35,6 @@ class Batman.Association
       get: getAccessor
       set: model.defaultAccessor.set
       unset: model.defaultAccessor.unset
-
-    if @options.nestUrl
-      developer.error "You must persist the the model #{@model.constructor.name} to use the url helpers on an association" if !@model.urlNestsUnder?
-      @model.urlNestsUnder Batman.helpers.underscore(@getRelatedModel().get('resourceName'))
-
-    if @options.extend?
-      Batman.extend @, @options.extend
 
   getRelatedModel: ->
     scope = @options.namespace or Batman.currentApp

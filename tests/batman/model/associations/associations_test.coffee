@@ -63,6 +63,27 @@ test "supports the nestUrl option if the model is persisted ", ->
 
   equal card.url(), 'decks/10/cards/20'
 
+asyncTest "support custom exensions which get applied before accessors or encoders", 2, ->
+  namespace = {}
+  class namespace.Walmart extends Batman.Model
+    @encode 'name', 'id'
+
+  class Product extends Batman.Model
+    @encode 'name', 'id'
+    @belongsTo 'store',
+      namespace: namespace
+      name: 'Walmart'
+      extend: {label: 'foo'}
+
+  productAdapter = createStorageAdapter Product, AsyncTestStorageAdapter,
+    'products2': {name: "Product Two", id: 2, foo: {id:3, name:"JSON Store"}}
+
+  Product.find 2, (err, product) ->
+    store = product.get('foo')
+    ok store instanceof namespace.Walmart
+    equal store.get('id'), 3
+    QUnit.start()
+
 asyncTest "associations can be inherited", 2, ->
   namespace = {}
   class namespace.Store extends Batman.Model
