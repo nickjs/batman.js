@@ -18,7 +18,7 @@ cli.setUsage('batman [OPTIONS] generate app|model|controller|view <name>\n  batm
 cli.parse
   app: ['-n', "The name of your Batman application (if generating an application component). This can also be stored in a .batman file in the project root.", "string"]
 
-
+existsSync = if fs.existsSync? then fs.existsSync else path.existsSync
 cli.main (args, options) ->
   # Argument Fandangling
   # --------------------
@@ -51,7 +51,7 @@ cli.main (args, options) ->
   # Grab a reference to the batman template directory
   source = path.join(__dirname, 'templates', options.template)
 
-  if !fs.existsSync(source)
+  if !existsSync(source)
     @fatal "template #{options.template} not found"
 
   # Start the goodness. Define a place to put variables available in the template
@@ -66,7 +66,7 @@ cli.main (args, options) ->
 
     # Make the project directory in the current directory.
     destinationPath = path.join(process.cwd(), options.appName)
-    if fs.existsSync(destinationPath)
+    if existsSync(destinationPath)
       @fatal 'Destination already exists!'
     else
       fs.mkdirSync(destinationPath, 0o755)
@@ -124,7 +124,7 @@ cli.main (args, options) ->
       # If the file is a directory, create it in the destination, and then walk it in the template.
       if stat.isDirectory()
         dir = path.join(destinationPath, aPath, resultName)
-        if !fs.existsSync(dir)
+        if !existsSync(dir)
           fs.mkdirSync(dir, 0o755)
         # Descend into this sub dir in the template directory.
         walk path.join(aPath, file)

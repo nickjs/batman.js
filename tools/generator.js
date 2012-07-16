@@ -1,5 +1,5 @@
 (function() {
-  var Batman, cli, exec, fs, path, spawn, util, utils, _ref;
+  var Batman, cli, exec, existsSync, fs, path, spawn, util, utils, _ref;
 
   fs = require('fs');
 
@@ -21,6 +21,8 @@
     app: ['-n', "The name of your Batman application (if generating an application component). This can also be stored in a .batman file in the project root.", "string"]
   });
 
+  existsSync = fs.existsSync != null ? fs.existsSync : path.existsSync;
+
   cli.main(function(args, options) {
     var TemplateVars, command, count, destinationPath, replaceVars, source, transforms, walk,
       _this = this;
@@ -41,7 +43,7 @@
       cli.getUsage();
     }
     source = path.join(__dirname, 'templates', options.template);
-    if (!fs.existsSync(source)) {
+    if (!existsSync(source)) {
       this.fatal("template " + options.template + " not found");
     }
     TemplateVars = {};
@@ -52,7 +54,7 @@
         options.appName = options.name;
       }
       destinationPath = path.join(process.cwd(), options.appName);
-      if (fs.existsSync(destinationPath)) {
+      if (existsSync(destinationPath)) {
         this.fatal('Destination already exists!');
       } else {
         fs.mkdirSync(destinationPath, 0x1ed);
@@ -109,7 +111,7 @@
         stat = fs.statSync(sourceFile);
         if (stat.isDirectory()) {
           dir = path.join(destinationPath, aPath, resultName);
-          if (!fs.existsSync(dir)) {
+          if (!existsSync(dir)) {
             fs.mkdirSync(dir, 0x1ed);
           }
           return walk(path.join(aPath, file));
