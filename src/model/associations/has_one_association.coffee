@@ -17,18 +17,19 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
 
   encoder: ->
     association = @
-    return {
-      encode: (val, key, object, record) ->
-        return unless association.options.saveInline
-        if json = val.toJSON()
-          json[association.foreignKey] = record.get(association.primaryKey)
-        json
-      decode: (data, _, __, ___, parentRecord) ->
-        relatedModel = association.getRelatedModel()
-        record = new (relatedModel)()
-        record._withoutDirtyTracking -> @fromJSON(data)
-        if association.options.inverseOf
-          record.set association.options.inverseOf, parentRecord
-        record = relatedModel._mapIdentity(record)
-        record
-    }
+    (val, key, object, record) ->
+      return unless association.options.saveInline
+      if json = val.toJSON()
+        json[association.foreignKey] = record.get(association.primaryKey)
+      json
+
+  decoder: ->
+    association = @
+    (data, _, __, ___, parentRecord) ->
+      relatedModel = association.getRelatedModel()
+      record = new (relatedModel)()
+      record._withoutDirtyTracking -> @fromJSON(data)
+      if association.options.inverseOf
+        record.set association.options.inverseOf, parentRecord
+      record = relatedModel._mapIdentity(record)
+      record

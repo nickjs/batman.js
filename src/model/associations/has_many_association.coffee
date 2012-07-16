@@ -22,44 +22,42 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
 
   encoder: ->
     association = @
-    return {
-      encode: (relationSet, _, __, record) ->
-        return unless association.options.saveInline
-        if relationSet?
-          jsonArray = []
-          relationSet.forEach (relation) ->
-            relationJSON = relation.toJSON()
-            if !association.inverse() || association.inverse().options.encodeForeignKey
-              relationJSON[association.foreignKey] = record.get(association.primaryKey)
-            jsonArray.push relationJSON
+    (relationSet, _, __, record) ->
+      if relationSet?
+        jsonArray = []
+        relationSet.forEach (relation) ->
+          relationJSON = relation.toJSON()
+          if !association.inverse() || association.inverse().options.encodeForeignKey
+            relationJSON[association.foreignKey] = record.get(association.primaryKey)
+          jsonArray.push relationJSON
 
-        jsonArray
+      jsonArray
 
-      decode: (data, key, _, __, parentRecord) ->
-        if relatedModel = association.getRelatedModel()
-          existingRelations = association.getFromAttributes(parentRecord) || association.setForRecord(parentRecord)
-          newRelations = existingRelations.filter((relation) -> relation.isNew()).toArray()
-          for jsonObject in data
-            record = new relatedModel()
-            record._withoutDirtyTracking -> @fromJSON(jsonObject)
-            existingRecord = relatedModel.get('loaded').indexedByUnique('id').get(record.get('id'))
-            if existingRecord?
-              existingRecord._withoutDirtyTracking -> @fromJSON jsonObject
-              record = existingRecord
-            else
-              if newRelations.length > 0
-                savedRecord = newRelations.shift()
-                savedRecord._withoutDirtyTracking -> @fromJSON jsonObject
-                record = savedRecord
-            record = relatedModel._mapIdentity(record)
-            existingRelations.add record
+  decoder: ->
+    association = @
+    (data, key, _, __, parentRecord) ->
+      if relatedModel = association.getRelatedModel()
+        existingRelations = association.getFromAttributes(parentRecord) || association.setForRecord(parentRecord)
+        newRelations = existingRelations.filter((relation) -> relation.isNew()).toArray()
+        for jsonObject in data
+          record = new relatedModel()
+          record._withoutDirtyTracking -> @fromJSON(jsonObject)
+          existingRecord = relatedModel.get('loaded').indexedByUnique('id').get(record.get('id'))
+          if existingRecord?
+            existingRecord._withoutDirtyTracking -> @fromJSON jsonObject
+            record = existingRecord
+          else
+            if newRelations.length > 0
+              savedRecord = newRelations.shift()
+              savedRecord._withoutDirtyTracking -> @fromJSON jsonObject
+              record = savedRecord
+          record = relatedModel._mapIdentity(record)
+          existingRelations.add record
 
-            if association.options.inverseOf
-              record.set association.options.inverseOf, parentRecord
+          if association.options.inverseOf
+            record.set association.options.inverseOf, parentRecord
 
-          existingRelations.markAsLoaded()
-        else
-          Batman.developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"
-        existingRelations
-    }
-
+        existingRelations.markAsLoaded()
+      else
+        Batman.developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"
+      existingRelations

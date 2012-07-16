@@ -74,26 +74,21 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
           inverse = assoc
       inverse
 
-  encoder: ->
+  decoder: ->
     association = @
-    encoder =
-      encode: false
-      decode: (data, key, response, ___, childRecord) ->
-        foreignTypeValue = response[association.foreignTypeKey] || childRecord.get(association.foreignTypeKey)
-        relatedModel = association.getRelatedModelForType(foreignTypeValue)
-        record = new relatedModel()
-        record._withoutDirtyTracking -> @fromJSON(data)
-        record = relatedModel._mapIdentity(record)
-        if association.options.inverseOf
-          if inverse = association.inverseForType(foreignTypeValue)
-            if inverse instanceof Batman.PolymorphicHasManyAssociation
-              # Rely on the parent's set index to get this out.
-              childRecord.set(association.foreignKey, record.get(association.primaryKey))
-              childRecord.set(association.foreignTypeKey, foreignTypeValue)
-            else
-              record.set(inverse.label, childRecord)
-        childRecord.set(association.label, record)
-        record
-    if @options.saveInline
-      encoder.encode = (val) -> val.toJSON()
-    encoder
+    (data, key, response, ___, childRecord) ->
+      foreignTypeValue = response[association.foreignTypeKey] || childRecord.get(association.foreignTypeKey)
+      relatedModel = association.getRelatedModelForType(foreignTypeValue)
+      record = new relatedModel()
+      record._withoutDirtyTracking -> @fromJSON(data)
+      record = relatedModel._mapIdentity(record)
+      if association.options.inverseOf
+        if inverse = association.inverseForType(foreignTypeValue)
+          if inverse instanceof Batman.PolymorphicHasManyAssociation
+            # Rely on the parent's set index to get this out.
+            childRecord.set(association.foreignKey, record.get(association.primaryKey))
+            childRecord.set(association.foreignTypeKey, foreignTypeValue)
+          else
+            record.set(inverse.label, childRecord)
+      childRecord.set(association.label, record)
+      record

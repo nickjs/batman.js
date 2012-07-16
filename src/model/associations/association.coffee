@@ -13,9 +13,10 @@ class Batman.Association
     @options = Batman.extend defaultOptions, @defaultOptions, options
 
     # Setup encoders and accessors for this association.
-    encoder = @encoder()
-    if !@options.saveInline
-      encoder.encode = false
+    encoder =
+      encode: if @options.saveInline then @encoder() else false
+      decode: @decoder()
+
     @model.encode label, encoder
 
     # The accessor needs reference to this association object, so curry the association info into
@@ -44,8 +45,6 @@ class Batman.Association
   getFromAttributes: (record) -> record.get("attributes.#{@label}")
   setIntoAttributes: (record, value) -> record.get('attributes').set(@label, value)
 
-  encoder: -> Batman.developer.error "You must override encoder in Batman.Association subclasses."
-  setIndex: -> Batman.developer.error "You must override setIndex in Batman.Association subclasses."
   inverse: ->
     if relatedAssocs = @getRelatedModel()._batman.get('associations')
       if @options.inverseOf

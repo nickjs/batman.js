@@ -28,12 +28,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
 
   encoder: ->
     association = @
-    encoder = super
-    encoder.encode = (relationSet, _, __, record) ->
-      return if association._beingEncoded
-      association._beingEncoded = true
-
-      return unless association.options.saveInline
+    (relationSet, _, __, record) ->
       if relationSet?
         jsonArray = []
         relationSet.forEach (relation) ->
@@ -42,7 +37,4 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
           relationJSON[association.foreignTypeKey] = association.modelType()
           jsonArray.push relationJSON
 
-      delete association._beingEncoded
       jsonArray
-    encoder
-
