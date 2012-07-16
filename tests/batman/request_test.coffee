@@ -142,8 +142,17 @@ test 'should serialize object data to FormData objects', ->
 test 'should serialize nested object and array data to FormData objects', ->
   object =
     foo:
-      bar: ["baz", "qux"]
-    corge: [{ding: "dong"}, {walla: "walla"}]
+      bar: ["baz", null, "qux", undefined]
+    corge: [{ding: "dong"}, {walla: "walla"}, {null: null}, {undefined: undefined}]
 
   formData = Batman.Request.objectToFormData(object)
-  deepEqual formData.appended, [["foo[bar][]", "baz"], ["foo[bar][]", "qux"], ["corge[][ding]", "dong"], ["corge[][walla]", "walla"]]
+  deepEqual formData.appended, [
+    ["foo[bar][]", "baz"]
+    ["foo[bar][]", ""]
+    ["foo[bar][]", "qux"]
+    ["foo[bar][]", ""]
+    ["corge[][ding]", "dong"]
+    ["corge[][walla]", "walla"]
+    ["corge[][null]", ""]
+    ["corge[][undefined]", ""]
+  ]

@@ -16,7 +16,7 @@ class Batman.Request extends Batman.Object
             acc.concat pairForList("#{key}[]", element)
           , [])
         else
-          [[key, object]]
+          [[key, if object? then object else ""]]
 
     formData = new Batman.container.FormData()
     for [key, val] in pairForList("", data, true)
