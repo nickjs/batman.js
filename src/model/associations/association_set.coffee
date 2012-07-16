@@ -3,7 +3,7 @@
 class Batman.AssociationSet extends Batman.SetSort
   constructor: (@foreignKeyValue, @association) ->
     base = new Batman.Set
-    super(base, 'hashKey')
+    super(base, '_batmanID')
   loaded: false
   load: (callback) ->
     return callback(undefined, @) unless @foreignKeyValue?

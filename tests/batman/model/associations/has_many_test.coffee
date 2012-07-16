@@ -543,6 +543,16 @@ asyncTest "hasMany supports custom foreign keys", 1, ->
     delay ->
       equal products.length, 3
 
+test "hasMany supports custom proxy classes", 1, ->
+  namespace = @
+  class CoolAssociationSet extends Batman.AssociationSet
+  class Shop extends Batman.Model
+    @encode 'id'
+    @hasMany 'products', {namespace: namespace, extend: {proxyClass: CoolAssociationSet}}
+
+  shop = new Shop()
+  ok shop.get('products') instanceof CoolAssociationSet
+
 asyncTest "regression test: identity mapping works", ->
   @ProductVariant.load (err, variants) =>
     originalIDs = variants.map (v) -> v.get('id')

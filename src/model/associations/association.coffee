@@ -33,6 +33,9 @@ class Batman.Association
       developer.error "You must persist the the model #{@model.constructor.name} to use the url helpers on an association" if !@model.urlNestsUnder?
       @model.urlNestsUnder Batman.helpers.underscore(@getRelatedModel().get('resourceName'))
 
+    if @options.extend?
+      Batman.extend @, @options.extend
+
   getRelatedModel: ->
     scope = @options.namespace or Batman.currentApp
     className = @options.name

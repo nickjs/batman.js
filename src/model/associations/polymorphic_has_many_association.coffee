@@ -1,6 +1,7 @@
 #= require ./has_many_association
 
 class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
+  proxyClass: Batman.PolymorphicAssociationSet
   isPolymorphic: true
   constructor: (model, label, options) ->
     options.inverseOf = @foreignLabel = options.as

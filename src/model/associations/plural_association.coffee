@@ -1,13 +1,13 @@
 #= require ./association
 
 class Batman.PluralAssociation extends Batman.Association
+  proxyClass: Batman.AssociationSet
   isSingular: false
-
   setForRecord: Batman.Property.wrapTrackingPrevention (record) ->
     if id = record.get(@primaryKey)
       @setIndex().get(id)
     else
-      new Batman.AssociationSet(undefined, @)
+      new @proxyClass(undefined, @)
 
   getAccessor: (self, model, label) ->
     return unless self.getRelatedModel()

@@ -163,6 +163,16 @@ asyncTest "belongsTo supports custom foreign keys", 1, ->
     delay ->
       equal store.get('name'), 'Store One'
 
+test "belongsTo supports custom proxy classes", 1, ->
+  namespace = @
+  class CoolBelongsToProxy extends Batman.BelongsToProxy
+  class Shirt extends Batman.Model
+    @encode 'id'
+    @belongsTo 'store', namespace: namespace, extend: {proxyClass: CoolBelongsToProxy}
+
+  shirt = new Shirt()
+  ok shirt.get('store') instanceof CoolBelongsToProxy
+
 QUnit.module "Batman.Model belongsTo Associations with inverseOf to a hasMany"
   setup: ->
     namespace = @namespace = this

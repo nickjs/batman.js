@@ -148,6 +148,16 @@ asyncTest "hasOne supports custom foreign keys", 1, ->
     delay ->
       equal product.get('name'), 'Product One'
 
+test "hasOne supports custom proxy classes", 1, ->
+  namespace = @
+  class CoolHasOneProxy extends Batman.HasOneProxy
+  class Shop extends Batman.Model
+    @encode 'id', 'name'
+    @hasOne 'product', {namespace: namespace, extend: {proxyClass: CoolHasOneProxy}}
+
+  shop = new Shop()
+  ok shop.get('product') instanceof CoolHasOneProxy
+
 QUnit.module "Batman.Model hasOne Associations with inverseOf"
   setup: ->
     namespace = {}

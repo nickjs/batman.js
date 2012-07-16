@@ -6,4 +6,4 @@ class Batman.PolymorphicAssociationSetIndex extends Batman.SetIndex
 
   _resultSetForKey: (key) ->
     @_storage.getOrSet key, =>
-      new Batman.PolymorphicAssociationSet(key, @type, @association)
+      new @association.proxyClass(key, @type, @association)

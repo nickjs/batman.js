@@ -6,7 +6,7 @@ class Batman.AssociationSetIndex extends Batman.SetIndex
 
   _resultSetForKey: (key) ->
     @_storage.getOrSet key, =>
-      new Batman.AssociationSet(key, @association)
+      new @association.proxyClass(key, @association)
 
   _setResultSet: (key, set) ->
     @_storage.set key, set
