@@ -176,3 +176,18 @@ test "passing false should not attach an encoder or decoder for that key", ->
 
   encoded = new TestProduct(name: "snowboard", date: "10/10/2010")
   deepEqual encoded.toJSON(), {date: "10/10/2010"}
+
+test "passing an as option should put the encoded value in that key in the outgoing json", ->
+  class TestProduct extends Batman.Model
+    @encode 'shouldDestroy', {as: '_destroy'}
+
+  p = new TestProduct(shouldDestroy: true)
+  deepEqual p.toJSON(), {_destroy: true}
+
+test "passing an as option should put the dencoded value in that key on the record", ->
+  class TestProduct extends Batman.Model
+    @encode 'shouldDestroy', {as: '_destroy'}
+
+  p = new TestProduct()
+  p.fromJSON({_destroy: true})
+  equal p.get('shouldDestroy'), true

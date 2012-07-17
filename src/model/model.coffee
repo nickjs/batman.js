@@ -39,11 +39,10 @@ class Batman.Model extends Batman.Object
       when 'Function'
         encoder.encode = encoderOrLastKey
       else
-        encoder.encode = encoderOrLastKey.encode if encoderOrLastKey.encode?
-        encoder.decode = encoderOrLastKey.decode if encoderOrLastKey.decode?
+        encoder = encoderOrLastKey
 
     for key in keys
-      encoderForKey = Batman.extend {}, @defaultEncoder, encoder
+      encoderForKey = Batman.extend {as: key}, @defaultEncoder, encoder
       @::_batman.encoders.set key, encoderForKey
     return
 
@@ -294,7 +293,7 @@ class Batman.Model extends Batman.Object
         if encoder.encode && typeof val isnt 'undefined'
           encodedVal = encoder.encode(val, key, obj, @)
           if typeof encodedVal isnt 'undefined'
-            obj[key] = encodedVal
+            obj[encoder.as] = encodedVal
 
     obj
 
@@ -310,8 +309,8 @@ class Batman.Model extends Batman.Object
         obj[key] = value
     else
       encoders.forEach (key, encoder) =>
-        if encoder.decode and typeof data[key] isnt 'undefined'
-          obj[key] = encoder.decode(data[key], key, data, obj, @)
+        if encoder.decode and typeof data[encoder.as] isnt 'undefined'
+          obj[key] = encoder.decode(data[encoder.as], encoder.as, data, obj, @)
 
     if @constructor.primaryKey isnt 'id'
       obj.id = data[@constructor.primaryKey]
