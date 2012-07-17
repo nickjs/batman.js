@@ -60,8 +60,8 @@ test "models without any decoders should decode all keys", ->
   class TestProduct extends Batman.Model
 
   # No encoders.
-  oldDecoders = Batman.Model::_batman.decoders
-  Batman.Model::_batman.decoders = new Batman.SimpleHash
+  oldDecoders = Batman.Model::_batman.encoders
+  Batman.Model::_batman.encoders = new Batman.SimpleHash
   p = new TestProduct
   Batman.developer.suppress ->
     p.fromJSON {name: "Cool Snowboard", cost: 12.99, rails_is_silly: "yup"}
@@ -69,7 +69,7 @@ test "models without any decoders should decode all keys", ->
   equal p.get('name'), "Cool Snowboard"
   equal p.get('cost'), 12.99
   equal p.get('rails_is_silly'), 'yup'
-  Batman.Model::_batman.decoders = oldDecoders
+  Batman.Model::_batman.encoders = oldDecoders
 
 test "key ending with ? marked for encoding should be encoded", ->
   p = new @FlakyProduct {name: "Vintage Snowboard", cost: 122.99, "broken?": true}

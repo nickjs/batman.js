@@ -32,7 +32,6 @@ class Batman.Model extends Batman.Object
   @encode: (keys..., encoderOrLastKey) ->
     Batman.initializeObject @prototype
     @::_batman.encoders ||= new Batman.SimpleHash
-    @::_batman.decoders ||= new Batman.SimpleHash
     encoder = {}
     switch Batman.typeOf(encoderOrLastKey)
       when 'String'
@@ -43,15 +42,9 @@ class Batman.Model extends Batman.Object
         encoder.encode = encoderOrLastKey.encode if encoderOrLastKey.encode?
         encoder.decode = encoderOrLastKey.decode if encoderOrLastKey.decode?
 
-    encoder = Batman.extend {}, @defaultEncoder, encoder
-
-    for operation in ['encode', 'decode']
-      for key in keys
-        hash = @::_batman["#{operation}rs"]
-        if encoder[operation]
-          hash.set(key, encoder[operation])
-        else
-          hash.unset(key)
+    for key in keys
+      encoderForKey = Batman.extend {}, @defaultEncoder, encoder
+      @::_batman.encoders.set key, encoderForKey
     return
 
   # Set up the unit functions as the default for both
@@ -298,8 +291,8 @@ class Batman.Model extends Batman.Object
     unless !encoders or encoders.isEmpty()
       encoders.forEach (key, encoder) =>
         val = @get key
-        if typeof val isnt 'undefined'
-          encodedVal = encoder(val, key, obj, @)
+        if encoder.encode && typeof val isnt 'undefined'
+          encodedVal = encoder.encode(val, key, obj, @)
           if typeof encodedVal isnt 'undefined'
             obj[key] = encodedVal
 
@@ -310,22 +303,21 @@ class Batman.Model extends Batman.Object
   fromJSON: (data) ->
     obj = {}
 
-    decoders = @_batman.get('decoders')
-    # If no decoders were specified, do the best we can to interpret the given JSON by camelizing
-    # each key and just setting the values.
-    if !decoders or decoders.isEmpty()
+    encoders = @_batman.get('encoders')
+    # If no decoders were specified, do the best we can to interpret the given JSON each key and just setting the values.
+    if !encoders or encoders.isEmpty() or !encoders.some((key, encoder) -> encoder.decode?)
       for key, value of data
         obj[key] = value
     else
-      # If we do have decoders, use them to get the data.
-      decoders.forEach (key, decoder) =>
-        obj[key] = decoder(data[key], key, data, obj, @) unless typeof data[key] is 'undefined'
+      encoders.forEach (key, encoder) =>
+        if encoder.decode and typeof data[key] isnt 'undefined'
+          obj[key] = encoder.decode(data[key], key, data, obj, @)
 
     if @constructor.primaryKey isnt 'id'
       obj.id = data[@constructor.primaryKey]
 
     Batman.developer.do =>
-      if (!decoders) || decoders.length <= 1
+      if (!encoders) || encoders.length <= 1
         Batman.developer.warn "Warning: Model #{Batman.functionName(@constructor)} has suspiciously few decoders!"
 
     # Mixin the buffer object to use optimized and event-preventing sets used by `mixin`.

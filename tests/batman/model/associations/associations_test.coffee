@@ -189,5 +189,5 @@ asyncTest "no encoder is added to the model if saveInline is false", 1, ->
 
   @Store.find 1, (err, store) =>
     throw err if err
-    equal typeof store._batman.get('encoders').get('products'), 'undefined'
+    equal typeof store._batman.get('encoders').get('products').encoder, 'undefined'
     QUnit.start()
