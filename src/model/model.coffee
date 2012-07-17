@@ -289,11 +289,12 @@ class Batman.Model extends Batman.Object
     encoders = @_batman.get('encoders')
     unless !encoders or encoders.isEmpty()
       encoders.forEach (key, encoder) =>
-        val = @get key
-        if encoder.encode && typeof val isnt 'undefined'
-          encodedVal = encoder.encode(val, key, obj, @)
-          if typeof encodedVal isnt 'undefined'
-            obj[encoder.as] = encodedVal
+        if encoder.encode
+          val = @get key
+          if typeof val isnt 'undefined'
+            encodedVal = encoder.encode(val, key, obj, @)
+            if typeof encodedVal isnt 'undefined'
+              obj[encoder.as] = encodedVal
 
     obj
 
