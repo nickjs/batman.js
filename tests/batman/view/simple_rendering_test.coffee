@@ -441,6 +441,25 @@ asyncTest 'should bind to the value of radio buttons', ->
     equal context.get('ad.sale_type'), 'fixed'
     QUnit.start()
 
+asyncTest 'should bind to true and false values', ->
+  source = '<input id="on" type="radio" data-bind="ad.published" name="published" value="true" />
+            <input id="off" type="radio" data-bind="ad.published" name="published" value="false" />'
+
+  context = Batman
+    ad: Batman()
+
+  helpers.render source, context, (node) ->
+    published = node[0]
+    hidden = node[1]
+
+    ok !published.checked and hidden.checked
+
+    context.set 'ad.published', true
+    ok published.checked and !hidden.checked
+
+    helpers.triggerChange hidden
+    equal context.get 'ad.published', false
+
 QUnit.module "Batman.View: mixin and context bindings"
 
 asyncTest 'it should allow mixins to be applied', 1, ->
