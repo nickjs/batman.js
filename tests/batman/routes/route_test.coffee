@@ -163,3 +163,24 @@ test "controller/action routes should call the controller's dispatch function", 
   @route.dispatch params
   equal searchSpy.lastCallArguments[0], "duplicate"
   equal searchSpy.lastCallArguments[1].id, "20"
+
+test "routes should build paths with optional segments", 3, ->
+  route = new Batman.Route "/calendar(/:type(/:date))", {}
+
+  equal route.pathFromParams({}), "/calendar"
+  equal route.pathFromParams({type: "m"}), "/calendar/m"
+  equal route.pathFromParams({type: "m", date: "2012-11"}), "/calendar/m/2012-11"
+
+test "routes with optional segments should parse params", ->
+  type = 'm'
+  date = '2012-11'
+  route = new Batman.Route "/calendar(/:type(/:date))", {}
+
+  path = "/calendar/#{type}/#{date}"
+  deepEqual route.paramsFromPath(path), { path, type, date }
+
+  path = "/calendar/#{type}"
+  deepEqual route.paramsFromPath(path), { path, type, date: undefined }
+
+  path = "/calendar"
+  deepEqual route.paramsFromPath(path), { path, type: undefined, date: undefined }

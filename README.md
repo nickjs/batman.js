@@ -227,6 +227,16 @@ For the FAQ route, `'app#faq'` specifies the `faq` function on `BatBelt.AppContr
 
 `@root 'app#index'` is just a shorthand for `@route '/', 'app#index'`.
 
+You can also mark a segment of your route as optional, allowing URLs to match with or without those optional segments. Eg. `@route 'calendar(/:type(/:date))', calendar#index` will match all of the following URLs:
+
+```
+/calendar
+/calendar/y
+/calendar/m/2012-11
+```
+
+When the segments are missing, your controller action is handed an `undefined` value for that param.
+
 The `@resources` macro takes a resource name which should ideally be the underscored-pluralized name of one of your models. It sets up three routes, as if you'd used the `@route` macro like so:
 
 ```coffeescript
