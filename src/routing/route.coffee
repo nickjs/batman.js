@@ -64,8 +64,7 @@ class Batman.Route extends Batman.Object
         delete params[name]
         path = newPath
 
-
-    path = path.replace(regexps.openOptParam, '').replace(regexps.closeOptParam, '').replace(/\/+$/, '')
+    path = path.replace(regexps.openOptParam, '').replace(regexps.closeOptParam, '').replace(/([^\/])\/+$/, '$1')
 
     for key in @testKeys
       delete params[key]
