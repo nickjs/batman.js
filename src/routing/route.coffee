@@ -8,7 +8,9 @@ class Batman.Route extends Batman.Object
     queryParam: '(?:\\?.+)?'
     namedOrSplat: /[:|\*]([\w\d]+)/g
     namePrefix: '[:|\*]'
-    escapeRegExp: /[-[\]{}()+?.,\\^$|#\s]/g
+    escapeRegExp: /[-[\]{}+?.,\\^$|#\s]/g
+    openOptParam: /\(/g
+    closeOptParam: /\)/g
 
   optionKeys: ['member', 'collection']
   testKeys: ['controller', 'action']
@@ -21,6 +23,7 @@ class Batman.Route extends Batman.Object
     regexp = ///
       ^
       #{pattern
+          .replace(regexps.openOptParam, '(?:').replace(regexps.closeOptParam, ')?')  # allow (/:foo) wrappers to indicate optional param
           .replace(regexps.namedParam, '([^\/]+)')
           .replace(regexps.splatParam, '(.*?)') }
       #{regexps.queryParam}
@@ -51,14 +54,17 @@ class Batman.Route extends Batman.Object
   pathFromParams: (argumentParams) ->
     params = Batman.extend {}, argumentParams
     path = @get('templatePath')
+    regexps = @constructor.regexps
 
     # Replace the names in the template with their values from params
     for name in @get('namedArguments')
-      regexp = ///#{@constructor.regexps.namePrefix}#{name}///
+      regexp = ///#{regexps.namePrefix}#{name}///
       newPath = path.replace regexp, (if params[name]? then params[name] else '')
       if newPath != path
         delete params[name]
         path = newPath
+
+    path = path.replace(regexps.openOptParam, '').replace(regexps.closeOptParam, '').replace(/([^\/])\/+$/, '$1')
 
     for key in @testKeys
       delete params[key]
