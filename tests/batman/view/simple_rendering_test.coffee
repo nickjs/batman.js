@@ -423,9 +423,12 @@ asyncTest 'should bind radio buttons to a value', ->
     QUnit.start()
 
 asyncTest 'should bind to the value of radio buttons', ->
-  source = '<input id="fixed" type="radio" data-bind="ad.sale_type" name="sale_type" value="fixed"/>
+  source = '''
+    <input id="fixed" type="radio" data-bind="ad.sale_type" name="sale_type" value="fixed"/>
     <input id="free" type="radio" data-bind="ad.sale_type" name="sale_type" value="free"/>
-    <input id="trade" type="radio" data-bind="ad.sale_type" name="sale_type" value="trade" checked/>'
+    <input id="trade" type="radio" data-bind="ad.sale_type" name="sale_type" value="trade" checked/>
+  '''
+
   context = Batman
     ad: Batman()
 
@@ -434,31 +437,42 @@ asyncTest 'should bind to the value of radio buttons', ->
     free = node[1]
     trade = node[2]
 
-    ok (!fixed.checked and !free.checked and trade.checked)
+    ok !fixed.checked
+    ok !free.checked
+    ok trade.checked
     equal context.get('ad.sale_type'), 'trade', 'checked attribute binds'
 
+    fixed.checked = true
     helpers.triggerChange(fixed)
     equal context.get('ad.sale_type'), 'fixed'
     QUnit.start()
 
 asyncTest 'should bind to true and false values', ->
-  source = '<input id="on" type="radio" data-bind="ad.published" name="published" value="true" />
-            <input id="off" type="radio" data-bind="ad.published" name="published" value="false" />'
+  source = '''
+    <input type="radio" data-bind="ad.published" name="published" value="false" checked />
+    <input type="radio" data-bind="ad.published" name="published" value="true"/>
+  '''
 
   context = Batman
     ad: Batman()
 
   helpers.render source, context, (node) ->
-    published = node[0]
-    hidden = node[1]
+    hidden = node[0]
+    published = node[1]
 
-    ok !published.checked and hidden.checked
+    ok !published.checked
+    ok hidden.checked
 
+    strictEqual context.get('ad.published'), false
     context.set 'ad.published', true
-    ok published.checked and !hidden.checked
+    ok published.checked
+    ok !hidden.checked
 
+    hidden.checked = true
     helpers.triggerChange hidden
-    equal context.get 'ad.published', false
+    equal context.get('ad.published'), false
+
+    QUnit.start()
 
 QUnit.module "Batman.View: mixin and context bindings"
 
