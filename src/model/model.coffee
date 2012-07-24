@@ -2,15 +2,12 @@
 #= require ../state_machine
 
 class Batman.Model extends Batman.Object
-
-  # ## Model API
-  # Override this property if your model is indexed by a key other than `id`
-  @primaryKey: 'id'
-
   # Override this property to define the key which storage adapters will use to store instances of this model under.
   #  - For RestStorage, this ends up being part of the url built to store this model
   #  - For LocalStorage, this ends up being the namespace in localStorage in which JSON is stored
   @storageKey: null
+
+  @primaryKey: 'id'
 
   # Pick one or many mechanisms with which this model should be persisted. The mechanisms
   # can be already instantiated or just the class defining them.
@@ -46,7 +43,6 @@ class Batman.Model extends Batman.Object
       @::_batman.encoders.set key, encoderForKey
     return
 
-  # Set up the unit functions as the default for both
   @defaultEncoder:
     encode: (x) -> x
     decode: (x) -> x
@@ -95,7 +91,6 @@ class Batman.Model extends Batman.Object
         Batman.developer.error("Please define #{Batman.functionName(@)}.resourceName in order for your model to be minification safe.") if Batman.config.minificationErrors
         Batman.helpers.underscore(Batman.functionName(@))
 
-  # ### Query methods
   @classAccessor 'all',
     get: ->
       @_batman.check(@)
@@ -126,7 +121,6 @@ class Batman.Model extends Batman.Object
     record.load callback
     return record
 
-  # `load` fetches records from all sources possible
   @load: (options, callback) ->
     if typeof options in ['function', 'undefined']
       callback = options
@@ -145,7 +139,6 @@ class Batman.Model extends Batman.Object
     else
       callback(new Batman.StateMachine.InvalidTransitionError("Can't load while in state #{lifecycle.get('state')}"))
 
-  # `create` takes an attributes hash, creates a record from it, and saves it given the callback.
   @create: (attrs, callback) ->
     if !callback
       [attrs, callback] = [{}, attrs]
@@ -153,8 +146,6 @@ class Batman.Model extends Batman.Object
     obj.save(callback)
     obj
 
-  # `findOrCreate` takes an attributes hash, optionally containing a primary key, and returns to you a saved record
-  # representing those attributes, either from the server or from the identity map.
   @findOrCreate: (attrs, callback) ->
     record = new this(attrs)
     if record.isNew()
@@ -164,6 +155,11 @@ class Batman.Model extends Batman.Object
       callback(undefined, foundRecord)
 
     record
+
+  @createFromJSON: (json) ->
+    record = new this
+    record._withoutDirtyTracking -> @fromJSON(json)
+    @_mapIdentity(record)
 
   @_mapIdentity: (record) ->
     if typeof (id = record.get('id')) == 'undefined' || id == ''

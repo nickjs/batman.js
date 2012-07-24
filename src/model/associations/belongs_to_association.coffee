@@ -24,9 +24,7 @@ class Batman.BelongsToAssociation extends Batman.SingularAssociation
     association = @
     (data, _, __, ___, childRecord) ->
       relatedModel = association.getRelatedModel()
-      record = new relatedModel()
-      record._withoutDirtyTracking -> @fromJSON(data)
-      record = relatedModel._mapIdentity(record)
+      record = relatedModel.createFromJSON(data)
       if association.options.inverseOf
         if inverse = association.inverse()
           if inverse instanceof Batman.HasManyAssociation
