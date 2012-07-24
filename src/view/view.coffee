@@ -4,6 +4,15 @@
 # A `Batman.View` can function two ways: a mechanism to load and/or parse html files
 # or a root of a subclass hierarchy to create rich UI classes, like in Cocoa.
 class Batman.View extends Batman.Object
+
+  class @YieldStorage extends Batman.Hash
+    @wrapAccessor (core) ->
+      get: (key) ->
+        val = core.get.call(@, key)
+        if !val?
+          val = @set key, []
+        val
+
   @store: new Batman.ViewStore()
   @option: (keys...) ->
     keys.forEach (key) =>
@@ -20,10 +29,6 @@ class Batman.View extends Batman.Object
   isView: true
   cache: true
   _rendered: false
-  # Set the source attribute to an html file to have that file loaded.
-  source: ''
-  # Set the html to a string of html to have that html parsed.
-  html: ''
   # Set an existing DOM node to parse immediately.
   node: null
 
@@ -57,15 +62,10 @@ class Batman.View extends Batman.Object
       @observeAndFire 'html', updateHTML
       node
 
-  class @YieldStorage extends Batman.Hash
-    @wrapAccessor (core) ->
-      get: (key) ->
-        val = core.get.call(@, key)
-        if !val?
-          val = @set key, []
-        val
-
   @accessor 'yields', -> new @constructor.YieldStorage
+  @accessor 'fetched?', -> @get('source')?
+  @accessor 'readyToRender', ->
+    @get('node') && (if @get('fetched?') then @get('html')?.length > 0 else true)
 
   constructor: (options = {}) ->
     context = options.context
@@ -77,24 +77,15 @@ class Batman.View extends Batman.Object
     options.context = context.descend(@)
     super(options)
 
-    # Start the rendering by asking for the node
     Batman.Property.withoutTracking =>
-      if node = @get('node')
-        @render node
-      else
-        @observeOnce 'node', (node) => @render(node)
+      @observeAndFire 'readyToRender', (ready) =>
+        @render() if ready
 
-  render: (node) ->
+  render: ->
     return if @_rendered
     @_rendered = true
-    @event('ready').resetOneShot()
-
-    # We use a renderer with the continuation style rendering engine to not
-    # block user interaction for too long during the render.
-    if node
-      @_renderer = new Batman.Renderer(node, @context, @)
-      @_renderer.on 'rendered', =>
-        @fire('ready', node)
+    @_renderer = new Batman.Renderer(node = @get('node'), @get('context'), @)
+    @_renderer.on 'rendered', => @fire('ready', node)
 
   isInDOM: ->
     if (node = @get('node'))

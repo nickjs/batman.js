@@ -49,6 +49,19 @@ test 'should update a new, set node node with the contents of its view if the no
   @view.set('node', node)
   equal node.innerHTML, 'view contents'
 
+test "should not render if the node is set but the html hasn't come back", 1, ->
+  node = document.createElement('div')
+  @view.render = createSpy()
+  @view.set('node', node)
+  ok !@view.render.called
+
+test "should render if the node is set and no html needs to come back", 1, ->
+  @view = new Batman.View(source: undefined, html: undefined)
+  @view.render = createSpy()
+  node = document.createElement('div')
+  @view.set('node', node)
+  ok @view.render.called
+
 asyncTest 'should fire the ready event once its contents have been loaded', 1, ->
   @view.on 'ready', observer = createSpy()
 
