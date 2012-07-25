@@ -21,7 +21,7 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
       path = @pathFromValue(value)
 
     if @onATag
-      if path?
+      if path? and Batman.navigator?
         path = Batman.navigator.linkTo path
       else
         path = "#"
