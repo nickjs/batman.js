@@ -56,7 +56,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
       relatedModel ||= scope?[Batman.helpers.camelize(type)]
     Batman.developer.do ->
       if Batman.currentApp? and not relatedModel
-        Batman.developer.warn "Related model #{type} for polymorhic association not found."
+        Batman.developer.warn "Related model #{type} for polymorphic association not found."
     relatedModel
 
   setIndexForType: (type) ->
