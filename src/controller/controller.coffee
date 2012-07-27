@@ -100,7 +100,7 @@ class Batman.Controller extends Batman.Object
 
     if frame
       if frame.operationOccurred
-        Batman.developer.warn "Warning! Trying to redirect but an action has already be taken during #{@get('routingKey')}.#{frame.action || @get('action')}"
+        Batman.developer.warn "Warning! Trying to redirect but an action has already been taken during #{@get('routingKey')}.#{frame.action || @get('action')}"
 
       frame.startAndFinishOperation()
 
