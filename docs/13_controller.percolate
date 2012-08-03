@@ -20,9 +20,16 @@ class Alfred.TodosController
 
 Each action function receives the parameters from the dispatcher which are pulled out of the navigated-to URL. This includes both named route parameters (`/:foo` style) as well as arbitrary query paramters (`?foo=bar` style).
 
-### @beforeFilter(options : [String|Object], filter : [String|Function])
+### @beforeFilter([options : [String|Object]], filter : [String|Function])
 
-`@beforeFilter` allows the declaration of a function to be executed before the body of an action during action execution. `@beforeFilter` accepts either a string or options object representing which action(s) to execute the filter before, and then a string naming a function or function proper to execute.
+`@beforeFilter` allows controllers to declare that a function should be executed before the body of an action during action execution. `@beforeFilter` optionally accepts some options representing which action(s) to execute the filter before, and then a string naming a function or function proper to execute.
+
+The `options` argument can take three forms to imply different things:
+
+  - `undefined`: implies that this filter function should be executed before all actions
+  - a String: implies that this filter function should be executed before the action named by the string
+  - an Object: implies that this filter function should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.
+
 
 !!!
 test "@beforeFilter allows declaration of filters to execute before an action", ->
@@ -51,7 +58,6 @@ test "@beforeFilter allows declaration of named filters to execute before an act
   deepEqual controller.get('todo'), {isDone: true}
 !!!
 
-
 !!!
 test "@beforeFilter allows whitelisting or blacklisting filters to execute before an action", ->
   show(class TodoController extends Batman.Controller
@@ -68,4 +74,98 @@ test "@beforeFilter allows whitelisting or blacklisting filters to execute befor
   deepEqual controller.get('newTodo'), {isDone: false}
 !!!
 
-### @afterFilter
+!!!
+test "@beforeFilter allows declaration of filters to execute before all actions", ->
+  show(class TestController extends Batman.Controller
+    @beforeFilter -> log 'before!'
+    index: ->
+      log 'action!'
+      @render false
+  )
+  show controller = TestController.get('sharedController')
+  show controller.dispatch 'index'
+  equal logged[0], 'before!'
+  equal logged[1], 'action!'
+!!!
+
+### @afterFilter([options : [String|Object]], filter : [String|Function])
+
+`@afterFilter` allows controllers to declare that a function should be run after the action body and all operations have completed during action execution. Functions declared by `@afterFilter` will thus be run after the code of the action body and also after any redirects or renders have taken place and completed. `@beforeFilter` optionally accepts some options representing which action(s) to execute the filter before, and then a string naming a function or function proper to execute. See `Batman.Controller.beforeFilter` for documentation on the structure of the options.
+
+!!!
+test "@afterFilter allows declaration of filters to execute before an action", ->
+  show(class TestController extends Batman.Controller
+    @afterFilter 'index', -> log 'after!'
+    index: ->
+      log 'action!'
+      @render false
+  )
+  show controller = TestController.get('sharedController')
+  show controller.dispatch 'index'
+  equal logged[0], 'action!'
+  equal logged[1], 'after!'
+!!!
+
+!!!
+asyncTest "@afterFilter filters are executed after renders have completed", ->
+  class MockView extends MockClass
+    @chainedCallback 'ready'
+    get: createSpy().whichReturns("view contents")
+    set: ->
+    inUse: -> false
+
+  show(class TestController extends Batman.Controller
+    @afterFilter 'index', -> log 'after!'
+    index: ->
+      log 'action!'
+      @render viewClass: MockView
+  )
+  show controller = TestController.get('sharedController')
+  show controller.dispatch 'index'
+  equal logged[0], 'action!'
+  equal logged[1], undefined
+  MockView.lastInstance.fireReady()
+  delay ->
+    equal logged[1], 'after!'
+!!!
+
+!!!
+test "@afterFilter allows declaration of named filters to execute before an action", ->
+  show(class TodoController extends Batman.Controller
+    @afterFilter 'create', 'notify'
+    create: -> @render false
+    notify: -> log "Todo created successfully."
+  )
+  show controller = TodoController.get('sharedController')
+  show controller.dispatch 'create'
+  equal logged.last, 'Todo created successfully.'
+!!!
+
+!!!
+test "@afterFilter allows whitelisting or blacklisting filters to execute before an action", ->
+  show(class TodoController extends Batman.Controller
+    @afterFilter {only: ['create', 'update']}, 'notify'
+    index: -> @render false
+    create: -> @render false
+    notify: -> log "Todo created successfully."
+  )
+  show controller = TodoController.get('sharedController')
+  show controller.dispatch 'index'
+  equal logged.last, undefined
+  show controller.dispatch 'create'
+  equal logged.last, 'Todo created successfully.'
+!!!
+
+!!!
+test "@afterFilter allows declaration of filters to execute before all actions", ->
+  show(class TestController extends Batman.Controller
+    @afterFilter -> log 'after!'
+    index: ->
+      log 'action!'
+      @render false
+  )
+  show controller = TestController.get('sharedController')
+  show controller.dispatch 'index'
+  equal logged[0], 'action!'
+  equal logged[1], 'after!'
+!!!
