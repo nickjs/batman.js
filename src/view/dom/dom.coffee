@@ -1,26 +1,17 @@
 #= require_tree ../../event_emitter
 #= require_tree ../../observable
 
+# Some helpers which are defined in the platform adapters:
+#
+# querySelector
+# querySelectorAll
+#
 Batman.DOM =
   # List of input type="types" for which we can use keyup events to track
   textInputTypes: ['text', 'search', 'tel', 'url', 'email', 'password']
 
   scrollIntoView: (elementID) ->
     document.getElementById(elementID)?.scrollIntoView?()
-
-  querySelectorAll: if window?.jQuery?
-      (node, selector) -> jQuery(selector, node)
-    else if document?.querySelectorAll?
-      (node, selector) -> node.querySelectorAll(selector)
-    else
-      -> Batman.developer.error("Please include either jQuery or a querySelectorAll polyfill, or set Batman.DOM.querySelectorAll to return an empty array.")
-
-  querySelector: if window?.jQuery?
-      (node, selector) -> jQuery(selector, node)[0]
-    else if document?.querySelector?
-      (node, selector) -> node.querySelector(selector)
-    else
-      -> Batman.developer.error("Please include either jQuery or a querySelector polyfill, or set Batman.DOM.querySelector to an empty function.")
 
   partial: (container, path, context, renderer) ->
     renderer.prevent 'rendered'
@@ -74,35 +65,16 @@ Batman.DOM =
     Batman.View.store.set(Batman.Navigator.normalizePath(name), contents)
     contents
 
-  # Memory-safe setting of a node's innerHTML property
-  setInnerHTML: Batman.setInnerHTML = (node, html) ->
-    childNodes = (child for child in node.childNodes)
-    Batman.DOM.willRemoveNode(child) for child in childNodes
-    result = node.innerHTML = html
-    Batman.DOM.didRemoveNode(child) for child in childNodes
-    result
-
   setStyleProperty: Batman.setStyleProperty = (node, property, value, importance) ->
     if node.style.setAttribute
       node.style.setAttribute(property, value, importance)
     else
       node.style.setProperty(property, value, importance)
 
-  # Memory-safe removal of a node from the DOM
-  removeNode: Batman.removeNode = (node) ->
-    Batman.DOM.willRemoveNode(node)
-    node.parentNode?.removeChild node
-    Batman.DOM.didRemoveNode(node)
-
   destroyNode: Batman.destroyNode = (node) ->
     Batman.DOM.willDestroyNode(node)
     Batman.removeNode(node)
     Batman.DOM.didDestroyNode(node)
-
-  appendChild: Batman.appendChild = (parent, child) ->
-    Batman.DOM.willInsertNode(child)
-    parent.appendChild(child)
-    Batman.DOM.didInsertNode(child)
 
   removeOrDestroyNode: Batman.removeOrDestroyNode = (node) ->
     view = Batman._data(node, 'view')

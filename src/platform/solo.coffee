@@ -1,4 +1,5 @@
 #= require ./lib/reqwest
+#= require ./lib/dom_helpers
 
 Batman.Request::_parseResponseHeaders = (xhr) ->
   headers = xhr.getAllResponseHeaders().split('\n').reduce((acc, header) ->
