@@ -229,15 +229,15 @@ _Note_: `data-view` bindings accept both `View` instances and `View` subclasses.
 
 A couple notes:
 
-_Views can specify their `html` in their class bodies_:
+ + Views can specify their `html` or `source` in their class bodies:
 
 ```coffeescript
 class CloseButtonView extends Batman.View
   html: '<button><img src="/images/close.png"></button>'
 ```
 
-_Views can obliterate their node's contents before rendering with a `Batman.DOM.setInnerHTML @get('node'), ""`_
-_Views have access to the render context, stored in the `context` property on the view instance._
+ + Views can obliterate their node's contents before rendering with a `Batman.DOM.setInnerHTML @get('node'), ""`
+ + Views have access to the render context, stored in the `context` property on the view instance.
 
 ```coffeescript
 class CloseButtonView extends Batman.View

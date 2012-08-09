@@ -34,13 +34,13 @@ When the `title` property changes on the JavaScript object this `input` is bound
 
 ### Binding Keypaths
 
-A +keypath+ is the value of the HTML attribute a binding references. Importantly, keypaths can have multiple segments:
+A `keypath` is the value of the HTML attribute a binding references. Importantly, keypaths can have multiple segments:
 
 ```html
 <p data-bind="order.customer.name"></p>
 ```
 
-The keypath in the above HTML is `order.customer.name`. When you create a binding to a keypath like this (with dot separating segments), the binding will update the HTML value when +any+ of those segments change. In the above example, this means the `p` tag's `innerHTML` will be updated when:
+The keypath in the above HTML is `order.customer.name`. When you create a binding to a keypath like this (with dot separating segments), the binding will update the HTML value when _any_ of those segments change. In the above example, this means the `p` tag's `innerHTML` will be updated when:
 
  1. the order changes,
  2. the order's customer changes,
@@ -84,7 +84,7 @@ Note that filtered keypaths can not propagate DOM land changes because values ca
 <input data-bind="post.body | truncate 100"></input>
 ```
 
-The `<input>`'s value can be updated when the `post.body` property changes but if a user types into this input field, they will edit the truncated body. If Batman updated the `post.body` property with the contents of the input, all characters which had been truncated will be lost to the nether. To avoid this loss of information and inconsistency, bindings to filtered keypaths will +only update from JavaScript land to HTML+, and never vice versa.
+The `<input>`'s value can be updated when the `post.body` property changes but if a user types into this input field, they will edit the truncated body. If Batman updated the `post.body` property with the contents of the input, all characters which had been truncated will be lost to the nether. To avoid this loss of information and inconsistency, bindings to filtered keypaths will _only update from JavaScript land to HTML_, and never vice versa.
 
 ### Keypath Literals
 
@@ -117,7 +117,7 @@ The following are all valid albeit contrived bindings:
 
  + `<input type="checkbox">`: the binding will edit the `checked` property of the checkbox and populate the keypath with a boolean.
  + `<input type="text">` and similar, `<textarea`>: the binding will edit the `value` property of the input and populate the keypath with the string found at `value`.
- + `<input type="file">`: the binding will +not+ edit the `value` property of the input, but it will update the keypath with a host `File` object or objects if the node has the `multiple` attribute.
+ + `<input type="file">`: the binding will _not_ edit the `value` property of the input, but it will update the keypath with a host `File` object or objects if the node has the `multiple` attribute.
  + `<select>`: the binding will edit the `selected` property of each `<option>` tag within the `<select>` match the property at the keypath. If the `<select>` has the multiple attribute, the value at the keypath can be an array of selected `<option>` values. You can also use `data-bind-selected` bindings on the individual options to toggle option selectedness.
  + All other tags: the binding will edit the `innerHTML` property of the tag and will not populate the keypath.
 

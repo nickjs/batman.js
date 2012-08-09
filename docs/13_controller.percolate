@@ -20,6 +20,10 @@ class Alfred.TodosController
 
 Each action function receives the parameters from the dispatcher which are pulled out of the navigated-to URL. This includes both named route parameters (`/:foo` style) as well as arbitrary query paramters (`?foo=bar` style).
 
+### `routingKey` and Minification
+
+For functionality like contextual redirects and automatic view source and class inference, Batman needs to know the name of all your `Controller` subclasses. The usual way to do this is by using `Function::name` which Batman will use in development, but this is often mangled in minified production environments. For this reason, Batman will error out on boot if a `Controller` subclass' `routingKey` is not defined on the prototype. The `routingKey` is a `String` which remains unmangled after minification and thus allows Batman to continue using the aforementioned features. To disable this requirement (if you know your code won't ever be minified), set `Batman.config.minificationErrors` to false.
+
 ### @beforeFilter([options : [String|Object]], filter : [String|Function])
 
 `@beforeFilter` allows controllers to declare that a function should be executed before the body of an action during action execution. `@beforeFilter` optionally accepts some options representing which action(s) to execute the filter before, and then a string naming a function or function proper to execute.
@@ -169,3 +173,22 @@ test "@afterFilter allows declaration of filters to execute before all actions",
   equal logged[0], 'action!'
   equal logged[1], 'after!'
 !!!
+
+### autoScrollToHash[= true] : boolean
+
+`autoScrollToHash` is a boolean property on the instance level of a controller describing weather or not the controller should automatically scroll the browser window to the element with ID equal to the `hash` parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing. `autoScrollToHash` is true by default.
+
+### defaultRenderYield[= 'main'] : String
+
+`defaultRenderYield` is a `String` representing which yield a controller should automatically render into if no yield is mentioned explicitly. `defaultRenderYield` is `'main'` normally, which means calls to `@render()` or actions which rely on the implicit rendering render their views into the `main` yield (and end up where ever `data-yield="main"` is found in your HTML).
+
+
+### Controller Actions
+
+### executeAction
+
+### render
+
+### redirect
+
+### scrollToHash
