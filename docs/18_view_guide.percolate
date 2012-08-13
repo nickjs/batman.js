@@ -2,7 +2,7 @@
 
 The basic flow of interactions with a Batman application is this: a user triggers an event, which dispatches a route, which routes to a controller action, which gets executed, and finally renders a template. The template is an HTML file in the `app/views` folder with the same name as the action being executed. These templates leverage the power of the Batman view binding system using `data-bind` and kin to display some data to the user and prompt them for the next event.
 
-The controller does all this by instantiating a new `Batman.View`, setting its `html` property to the contents of the template, and telling the view to `render()`. When the view's `html` property is set, the view inserts it into it's `node`, and when `render` is called, it traverses that HTML to find and create your bindings. A vanilla `Batman.View` instance's `render` function does this by instantiating a new `Batman.Renderer` and asking it to do its magic on the view's `html`. The view then emits a `ready` event and then sits around waiting for the user to do something.
+The controller does all this by instantiating a new `Batman.View`, setting its `html` property to the contents of the template, and telling the view to `render()`. When the view's `html` property is set, the view inserts it into its `node`, and when `render` is called, it traverses that HTML to find and create your bindings. A vanilla `Batman.View` instance's `render` function does this by instantiating a new `Batman.Renderer` and asking it to do its magic on the view's `html`. The view then emits a `ready` event and then sits around waiting for the user to do something.
 
 #### Do More
 
