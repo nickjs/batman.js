@@ -12,7 +12,7 @@ These callbacks follow the nodejs convention for their signatures. They should r
 
 ### The Identity Map
 
-Batman uses an identity map when fetching and storing records to do it's best to only ever represent a backend record with exactly one client side record. This means that if you use `Model.find` twice to fetch a record with the same ID, you will get back the same (`===`) instance in each callback. This is useful because it means that any state the instance might be in is available and preserved no matter which piece of code asked for it, and so that bindings to the instance update no matter which piece of code actually updates the model.
+Batman uses an identity map when fetching and storing records to do its best to only ever represent a backend record with exactly one client side record. This means that if you use `Model.find` twice to fetch a record with the same ID, you will get back the same (`===`) instance in each callback. This is useful because it means that any state the instance might be in is available and preserved no matter which piece of code asked for it, and so that bindings to the instance update no matter which piece of code actually updates the model.
 
 Practically, the identity map is an implementation detail on Batman's end and developers shouldn't have to actually interact with it, but the knowledge that you have the "one true instance" is helpful when reasoning about code and bindings.
 

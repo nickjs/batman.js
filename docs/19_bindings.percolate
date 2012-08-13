@@ -150,7 +150,7 @@ _Note_: `data-target-attribute` is unavailable, because DOM changes to node attr
 
 ### data-showif / data-hideif
 
-`data-showif` and `data-hideif` bind to keypaths and show or hide the node they appear on based on the truthiness of the result. `data-showif` will show a node if the given keypath evaluates to something truthy, and `data-hideif` will leave a node visible until it's given keypath becomes truthy, at which point the node will be hidden. `data-showif` and `data-hideif` show and hide nodes by adding `display: none !important;` to the node's `style` attribute.
+`data-showif` and `data-hideif` bind to keypaths and show or hide the node they appear on based on the truthiness of the result. `data-showif` will show a node if the given keypath evaluates to something truthy, and `data-hideif` will leave a node visible until its given keypath becomes truthy, at which point the node will be hidden. `data-showif` and `data-hideif` show and hide nodes by adding `display: none !important;` to the node's `style` attribute.
 
 For example, the if the HTML below were rendered where the keypath `product.published` evaluated to true, the `<button>` will be visible.
 

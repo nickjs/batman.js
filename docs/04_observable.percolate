@@ -96,7 +96,7 @@ test "unset removes the property at a keypath", ->
 
 Adds a handler to call when the value of the property at the `key` changes upon `set`ting. Accepts keypaths.
 
-`observe` is the very core of Batman's usefulness. As long as `set` is used everywhere to do property mutation, any object can be observed for changes to its properties. This is critical to the concept of bindings, which Batman uses for it's views.
+`observe` is the very core of Batman's usefulness. As long as `set` is used everywhere to do property mutation, any object can be observed for changes to its properties. This is critical to the concept of bindings, which Batman uses for its views.
 
 The `observerCallback` gets called whenever the `key` changes with the arguments `newValue, oldValue`.
 
