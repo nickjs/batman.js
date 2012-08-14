@@ -92,7 +92,7 @@ test 'unmixin removes keys found on the unmixined objects on the subject', ->
 
 The `forEach` Batman helper is a universal iteration helper. When passed an `iterable` object, the helper will call the `iterator` (optionally in the `context`) for each item in the `iterable`. The `iterable` can be:
 
- 1. something which has its own `forEach`, in which case the `iterator` whill just be passed to `iterable.forEach`.
+ 1. something which has its own `forEach`, in which case the `iterator` will just be passed to `iterable.forEach`.
  2. an array like object, in which case a JavaScript `for(;;)` loop will be used to iterate over each entry
  3. or an object, in which case a JavaScript `for-in` loop will be used to iterate over each entry.
 
