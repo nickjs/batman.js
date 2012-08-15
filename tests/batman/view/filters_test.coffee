@@ -145,7 +145,7 @@ asyncTest 'trim', 1, ->
   helpers.render '<div data-bind="foo | trim"></div>',
     foo: '    fooo      '
   , (node) ->
-    equal node[0].innerText, "fooo"
+    equal node[0].innerHTML, "fooo"
     QUnit.start()
 
 asyncTest 'downcase', 1, ->
