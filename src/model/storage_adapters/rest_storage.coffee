@@ -58,7 +58,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
   collectionJsonNamespace: (constructor) -> Batman.helpers.pluralize(@storageKey(constructor.prototype))
 
   _execWithOptions: (object, key, options) -> if typeof object[key] is 'function' then object[key](options) else object[key]
-  _defaultCollectionUrl: (model) -> "/#{@storageKey(model.prototype)}"
+  _defaultCollectionUrl: (model) -> "#{@storageKey(model.prototype)}"
   _addParams: (url, options) ->
     if options && options.action && !(options.action in @_implicitActionNames)
       url += '/' + options.action.toLowerCase()

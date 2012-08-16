@@ -364,6 +364,11 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     url = @adapter.urlForRecord product, {}
     equal url, "/some/url#{urlSuffix}"
 
+  test 'absent record urls should be defaulted in the options', 1, ->
+    product = new @Product(id: 1)
+    url = @adapter.urlForRecord product, {}
+    equal url, "/products/1#{urlSuffix}"
+
   test 'function record urls should be given the options for the storage operation', 1, ->
     product = new @Product
     opts = {foo: true}
@@ -381,6 +386,10 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     @Product.url = -> '/some/url'
     url = @adapter.urlForCollection @Product, {}
     equal url, "/some/url#{urlSuffix}"
+
+  test 'absent model urls should be defaulted in the options', 1, ->
+    url = @adapter.urlForCollection @Product, {}
+    equal url, "/products#{urlSuffix}"
 
   test 'function model urls should be given the options for the storage operation', 1, ->
     opts = {foo: true}
