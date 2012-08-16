@@ -391,6 +391,11 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     url = @adapter.urlForCollection @Product, {}
     equal url, "/products#{urlSuffix}"
 
+  test 'absent model urls should have the urlPrefix added if present', 1, ->
+    @Product.urlPrefix = "/admin"
+    url = @adapter.urlForCollection @Product, {}
+    equal url, "/admin/products#{urlSuffix}"
+
   test 'function model urls should be given the options for the storage operation', 1, ->
     opts = {foo: true}
     @Product.url = (passedOpts) ->
