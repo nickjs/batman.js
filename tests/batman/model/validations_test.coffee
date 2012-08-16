@@ -148,6 +148,20 @@ validationsTestSuite = ->
         equal errors.length, 1
         QUnit.start()
 
+  asyncTest "numeric with string", ->
+    class Product extends Batman.Model
+      @validate 'number', numeric: yes
+
+    p = new Product number: "5"
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+      p.set 'number', "not_a_number"
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 1
+        QUnit.start()
+
   asyncTest "numeric with allow blank", ->
     class Product extends Batman.Model
       @validate 'number', numeric: yes, allowBlank: yes
