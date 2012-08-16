@@ -391,7 +391,7 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
 
   test 'records should take a urlPrefix option', 1, ->
     product = new @Product
-    product.url = '/some/url'
+    product.url = 'some/url'
     product.urlPrefix = '/admin'
     url = @adapter.urlForRecord product, {}
     equal url, "/admin/some/url#{urlSuffix}"
@@ -404,7 +404,7 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     equal url, "/some/url.foo#{urlSuffix}"
 
   test 'models should be able to specify a urlPrefix', 1, ->
-    @Product.url = '/some/url'
+    @Product.url = 'some/url'
     @Product.urlPrefix = '/admin'
     url = @adapter.urlForCollection @Product, {}
     equal url, "/admin/some/url#{urlSuffix}"
@@ -414,6 +414,13 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     @Product.urlSuffix = '.foo'
     url = @adapter.urlForCollection @Product, {}
     equal url, "/some/url.foo#{urlSuffix}"
+
+  test 'absolute urls starting with a / should not have the url prefix applied', 1, ->
+    product = new @Product
+    product.url = '/some/url'
+    product.urlPrefix = '/admin'
+    url = @adapter.urlForRecord product, {}
+    equal url, "/some/url#{urlSuffix}"
 
   test 'nonstandard actions can be passed to models without url functions defined', 1, ->
     product = new @Product(id: 1)
