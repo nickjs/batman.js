@@ -86,7 +86,7 @@ Batman.Filters =
         binding = count
         count = undefined
 
-    if count
+    if count?
       Batman.helpers.pluralize(count, string, undefined, includeCount)
     else
       Batman.helpers.pluralize(string)

@@ -188,6 +188,14 @@ asyncTest 'pluralize with a count without including the count', 2, ->
     equal node.html(), "foo"
     QUnit.start()
 
+asyncTest 'pluralize with a count of 0', 1, ->
+  helpers.render '<div data-bind="object | pluralize count"></div>',
+    object: 'foo'
+    count: 0
+  , (node) ->
+    equal node.html(), "0 foos"
+    QUnit.start()
+
 asyncTest 'humanize', 1, ->
   helpers.render '<div data-bind="foo | humanize"></div>',
     foo: 'one_two_three'
