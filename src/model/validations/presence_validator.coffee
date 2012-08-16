@@ -1,11 +1,13 @@
 #= require ./validators
 
 class Batman.PresenceValidator extends Batman.Validator
-  @options 'presence'
+  @triggers 'presence'
   validateEach: (errors, record, key, callback) ->
     value = record.get(key)
-    if @options.presence && (!value? || value is '')
+    unless @isPresent(value)
       errors.add key, @format(key, 'blank')
     callback()
+
+  isPresent: (value) -> value? && value isnt ''
 
 Batman.Validators.push Batman.PresenceValidator

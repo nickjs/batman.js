@@ -65,13 +65,11 @@ class Batman.Model extends Batman.Object
     else
       # Given options, find the validations which match the given options, and add them to the validators
       # array.
-      options = optionsOrFunction
-      for validator in Batman.Validators
-        if (matches = validator.matches(options))
-          delete options[match] for match in matches
+      for validatorClass in Batman.Validators
+        if (matches = validatorClass.matches(optionsOrFunction))
           validators.push
             keys: keys
-            validator: new validator(matches)
+            validator: new validatorClass(matches)
 
   class Model.LifecycleStateMachine extends Batman.DelegatingStateMachine
     @transitions
