@@ -58,11 +58,23 @@ class Batman.RestStorage extends Batman.StorageAdapter
   collectionJsonNamespace: (constructor) -> Batman.helpers.pluralize(@storageKey(constructor.prototype))
 
   _execWithOptions: (object, key, options) -> if typeof object[key] is 'function' then object[key](options) else object[key]
-  _defaultCollectionUrl: (model) -> "/#{@storageKey(model.prototype)}"
+  _defaultCollectionUrl: (model) -> "#{@storageKey(model.prototype)}"
   _addParams: (url, options) ->
     if options && options.action && !(options.action in @_implicitActionNames)
       url += '/' + options.action.toLowerCase()
     url
+  _addUrlAffixes: (url, subject, env) ->
+    segments = [url, @urlSuffix(subject, env)]
+    if url.charAt(0) != '/'
+      prefix = @urlPrefix(subject, env)
+      if prefix.charAt(prefix.length - 1) != '/'
+        segments.unshift('/')
+      segments.unshift prefix
+
+    segments.join('')
+
+  urlPrefix: (object, env) -> @_execWithOptions(object, 'urlPrefix', env.options) || ''
+  urlSuffix: (object, env) -> @_execWithOptions(object, 'urlSuffix', env.options) || ''
 
   urlForRecord: (record, env) ->
     if record.url
@@ -79,9 +91,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         else
           throw new @constructor.StorageError("Couldn't get/set record primary key on #{env.action}!")
 
-    url = @_addParams(url, env.options)
-
-    @urlPrefix(record, env) + url + @urlSuffix(record, env)
+    @_addUrlAffixes(@_addParams(url, env.options), record, env)
 
   urlForCollection: (model, env) ->
     url = if model.url
@@ -89,15 +99,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     else
       @_defaultCollectionUrl(model, env.options)
 
-    url = @_addParams(url, env.options)
-
-    @urlPrefix(model, env) + url + @urlSuffix(model, env)
-
-  urlPrefix: (object, env) ->
-    @_execWithOptions(object, 'urlPrefix', env.options) || ''
-
-  urlSuffix: (object, env) ->
-    @_execWithOptions(object, 'urlSuffix', env.options) || ''
+    @_addUrlAffixes(@_addParams(url, env.options), model, env)
 
   request: (env, next) ->
     options = Batman.extend env.options,
