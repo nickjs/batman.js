@@ -257,6 +257,25 @@ test 'filters specifying options in arrays should apply to all/none of those opt
   controller.dispatch 'index'
   equal spy.callCount, 1
 
+test 'redirect from filter halts chain and does not call action or render', ->
+  beforeSpy1 = createSpy()
+  afterSpy = createSpy()
+  renderSpy = createSpy()
+  class FilterController extends Batman.Controller
+    @beforeFilter beforeSpy1
+    @beforeFilter ->
+      @redirect '/'
+    @afterFilter afterSpy
+
+    render: renderSpy
+    index: -> @render false
+
+  controller = new FilterController
+  controller.dispatch 'index'
+  equal beforeSpy1.callCount, 1
+  equal renderSpy.callCount, 0
+  equal afterSpy.callCount, 0
+
 test 'actions executed by other actions implicitly render', ->
   mockClassDuring Batman ,'View', MockView, (mockClass) =>
     @controller.test = ->

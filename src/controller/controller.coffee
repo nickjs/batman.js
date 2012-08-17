@@ -77,7 +77,7 @@ class Batman.Controller extends Batman.Object
 
     parentFrame = @_actionFrames[@_actionFrames.length - 1]
     frame = new Batman.ControllerActionFrame {parentFrame, action}, =>
-      @_runFilters action, params, 'afterFilters'
+      @_runFilters action, params, 'afterFilters' unless @_afterFilterRedirects
       @_resetActionFrames()
       Batman.navigator?.redirect = oldRedirect
 
@@ -87,8 +87,7 @@ class Batman.Controller extends Batman.Object
     oldRedirect = Batman.navigator?.redirect
     Batman.navigator?.redirect = @redirect
     @_runFilters action, params, 'beforeFilters'
-
-    result = @[action](params)
+    result = @[action](params) unless @_afterFilterRedirect
 
     @render() if not frame.operationOccurred
     frame.finishOperation()
@@ -157,6 +156,7 @@ class Batman.Controller extends Batman.Object
       filters.forEach (_, options) =>
         return if options.only and action not in options.only
         return if options.except and action in options.except
+        return if @_afterFilterRedirect
 
         block = options.block
         if typeof block is 'function' then block.call(@, params) else @[block]?(params)
