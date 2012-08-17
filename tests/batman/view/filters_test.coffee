@@ -155,25 +155,11 @@ asyncTest 'downcase', 1, ->
     equal node.html(), "bar"
     QUnit.start()
 
-asyncTest 'downcase with undefined', 1, ->
-  helpers.render '<div data-bind="foo | downcase"></div>',
-    foo: undefined
-  , (node) ->
-    equal node.html(), ""
-    QUnit.start()
-
 asyncTest 'upcase', 1, ->
   helpers.render '<div data-bind="foo | upcase"></div>',
     foo: 'bar'
   , (node) ->
     equal node.html(), "BAR"
-    QUnit.start()
-
-asyncTest 'upcase with undefined', 1, ->
-  helpers.render '<div data-bind="foo | upcase"></div>',
-    foo: undefined
-  , (node) ->
-    equal node.html(), ""
     QUnit.start()
 
 asyncTest 'pluralize with a count', 1, ->

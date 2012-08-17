@@ -73,10 +73,10 @@ Batman.Filters =
       value.replace searchFor, replaceWith, flags
 
   downcase: buntUndefined (value) ->
-    value?.toLowerCase()
+    value.toLowerCase()
 
   upcase: buntUndefined (value) ->
-    value?.toUpperCase()
+    value.toUpperCase()
 
   pluralize: buntUndefined (string, count, includeCount, binding) ->
     if !binding
