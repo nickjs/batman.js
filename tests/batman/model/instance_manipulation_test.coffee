@@ -254,6 +254,17 @@ asyncTest "save calls in an accessor will have no sources", ->
   obj.get('foo')
   equal obj.property('foo').sources.length, 0
 
+asyncTest "save calls call state transition callbacks before validation", ->
+  product = new @Product()
+  product.on 'enter creating', spy = createSpy()
+  @Product.validate 'foo', (errors, record, key, callback) ->
+    errors.add key, 'failure' unless spy.called
+    callback()
+  product.save (err, product, env) =>
+    throw err if err
+    ok !product.isNew()
+    QUnit.start()
+
 QUnit.module "Batman.Model instance destruction"
   setup: ->
     class @Product extends Batman.Model

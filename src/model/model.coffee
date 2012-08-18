@@ -356,19 +356,17 @@ class Batman.Model extends Batman.Object
     if !callback
       [options, callback] = [{}, options]
 
-    if @get('lifecycle').get('state') in ['destroying', 'destroyed']
-      callback?(new Error("Can't save a destroyed record!"))
-      return
     isNew = @isNew()
-    [startState, storageOperation, endState] = if isNew then ['create', 'create', 'created'] else ['save', 'update', 'saved']
-    @validate (error, errors) =>
-      if error || errors.length
-        @get('lifecycle').failedValidation()
-        callback?(error || errors, @)
-        return
-      creating = @isNew()
+    [startState, storageOperation, endState] = if isNew
+      ['create', 'create', 'created']
+    else
+      ['save', 'update', 'saved']
 
-      if @get('lifecycle').startTransition startState
+    if @get('lifecycle').startTransition startState
+      @validate (error, errors) =>
+        if error || errors.length
+          @get('lifecycle').failedValidation()
+          return callback?(error || errors, @)
 
         associations = @constructor._batman.get('associations')
         # Save belongsTo models immediately since we don't need this model's id
@@ -391,8 +389,8 @@ class Batman.Model extends Batman.Object
             else
               @get('lifecycle').error()
           callback?(err, record || @, env)
-      else
-        callback?(new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}"))
+    else
+      callback?(new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}"))
 
   destroy: (options, callback) =>
     if !callback
