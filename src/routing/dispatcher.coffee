@@ -70,6 +70,15 @@ class Batman.Dispatcher extends Batman.Object
       else
         @get('app.currentParams').clear()
 
-      return Batman.redirect('/404') unless params is '/404'
+      Batman.currentApp.fire 'error', {
+          type: '404'
+          preventDefault: =>
+            isPrevented = true
+        }
+
+      if isPrevented is true and params is '/404' 
+        return Batman.redirect('/404')
+      else
+        return @get 'app.currentURL'
 
     path
