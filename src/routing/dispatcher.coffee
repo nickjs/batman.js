@@ -70,6 +70,7 @@ class Batman.Dispatcher extends Batman.Object
       else
         @get('app.currentParams').clear()
 
+      isPrevented = false
       Batman.currentApp.fire 'error', {
           type: '404'
           preventDefault: =>
