@@ -176,14 +176,14 @@ validationsTestSuite = ->
         equal errors.length, 1
         QUnit.start()
 
-  asyncTest "association", ->
+  asyncTest "associated for hasMany", ->
     namespace = @
     class @Product extends Batman.Model
       @validate 'id', presence: true
 
     class @Collection extends Batman.Model
       @hasMany 'products', {namespace, autoload: false}
-      @validate 'products', association: true
+      @validate 'products', associated: true
 
     @collection = new @Collection
     @collection.get('products').add new @Product
@@ -201,24 +201,29 @@ validationsTestSuite = ->
           equal errors.length, 0
           QUnit.start()
 
-  asyncTest "association with allowBlank", ->
+  asyncTest "associated for belongsTo", ->
     namespace = @
     class @Product extends Batman.Model
-      @validate 'id', presence: true
+      @belongsTo 'collection', {namespace, autoload: false}
+      @validate 'collection', associated: true
 
     class @Collection extends Batman.Model
-      @hasMany 'products', {namespace, autoload: false}
-      @validate 'products', association: true, allowBlank: true
+      @validate 'id', presence: true
 
+    @product = new @Product
     @collection = new @Collection
-    @collection.validate (err, errors) =>
+    @product.validate (err, errors) =>
       throw err if err
       equal errors.length, 0
-      @collection.get('products').add new @Product
-      @collection.validate (err, errors) =>
+      @product.set 'collection', @collection
+      @product.validate (err, errors) =>
         throw err if err
         equal errors.length, 1
-        QUnit.start()
+        @collection.set('id', 2)
+        @product.validate (err, errors) =>
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
 
 QUnit.module "Batman.Model: Validations"
 
