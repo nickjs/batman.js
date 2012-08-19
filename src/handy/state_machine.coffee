@@ -1,4 +1,4 @@
-#= require ./object
+#= require ../object
 
 class Batman.StateMachine extends Batman.Object
   @InvalidTransitionError: (@message = "") ->

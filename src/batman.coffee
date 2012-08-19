@@ -10,10 +10,9 @@
 #= require ./developer
 #= require ./object
 #= require ./mixins
-#= require ./accessible
+#= require_tree ./handy
 #= require_tree ./set
 #= require_tree ./hash
-#= require ./request
 #= require ./app
 #= require_tree ./model
 #= require_tree ./controller
