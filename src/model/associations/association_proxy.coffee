@@ -1,9 +1,9 @@
-#= require ../../object
+#= require ../../handy/proxy
 
-class Batman.AssociationProxy extends Batman.Object
-  isProxy: true
-  constructor: (@association, @model) ->
+class Batman.AssociationProxy extends Batman.Proxy
   loaded: false
+  constructor: (@association, @model) ->
+    super()
 
   toJSON: ->
     target = @get('target')
@@ -31,7 +31,3 @@ class Batman.AssociationProxy extends Batman.Object
   @accessor 'target',
     get: -> @fetchFromLocal()
     set: (_, v) -> v # This just needs to bust the cache
-
-  @accessor
-    get: (k) -> @get('target')?.get(k)
-    set: (k, v) -> @get('target')?.set(k, v)
