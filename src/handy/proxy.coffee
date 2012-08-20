@@ -2,7 +2,7 @@ class Batman.Proxy extends Batman.Object
   isProxy: true
 
   constructor: (target) ->
-    super
+    super()
     @set 'target', target if target?
 
   @accessor 'target', Batman.Property.defaultAccessor
