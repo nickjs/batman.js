@@ -5,7 +5,7 @@ Batman.EventEmitter =
   hasEvent: (key) ->
     @_batman?.get?('events')?.hasOwnProperty(key)
   event: (key) ->
-    Batman.initializeObject @
+    Batman.initializeObject this
     eventClass = @eventClass or Batman.Event
     events = @_batman.events ||= {}
     if events.hasOwnProperty(key)
@@ -16,16 +16,16 @@ Batman.EventEmitter =
       newEvent = events[key] = new eventClass(this, key)
       newEvent.oneShot = existingEvent?.oneShot
       newEvent
-  on: (key, handler) ->
-    @event(key).addHandler(handler)
-  once: (key, originalHandler) ->
+  on: (keys..., handler) ->
+    @event(key).addHandler(handler) for key in keys
+  once: (key, handler) ->
     event = @event(key)
-    handler = ->
-      originalHandler.apply(@, arguments)
-      event.removeHandler(handler)
-    event.addHandler(handler)
+    handlerWrapper = ->
+      handler.apply(this, arguments)
+      event.removeHandler(handlerWrapper)
+    event.addHandler(handlerWrapper)
   registerAsMutableSource: ->
-    Batman.Property.registerSource(@)
+    Batman.Property.registerSource(this)
   mutation: (wrappedFunction) ->
     ->
       result = wrappedFunction.apply(this, arguments)
@@ -33,10 +33,10 @@ Batman.EventEmitter =
       result
   prevent: (key) ->
     @event(key).prevent()
-    @
+    this
   allow: (key) ->
     @event(key).allow()
-    @
+    this
   isPrevented: (key) ->
     @event(key).isPrevented()
   fire: (key, args...) ->
