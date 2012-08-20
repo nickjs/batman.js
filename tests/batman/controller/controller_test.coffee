@@ -1,3 +1,5 @@
+helpers = if typeof require is 'undefined' then window.viewHelpers else require '../view/view_helper'
+
 class TestController extends Batman.Controller
   show: ->
 

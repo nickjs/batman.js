@@ -176,7 +176,56 @@ validationsTestSuite = ->
         equal errors.length, 1
         QUnit.start()
 
-QUnit.module "Batman.Model: validations"
+  asyncTest "associated for hasMany", ->
+    namespace = @
+    class @Product extends Batman.Model
+      @validate 'id', presence: true
+
+    class @Collection extends Batman.Model
+      @hasMany 'products', {namespace, autoload: false}
+      @validate 'products', associated: true
+
+    @collection = new @Collection
+    @collection.get('products').add new @Product
+    @collection.get('products').add new @Product
+    @collection.validate (err, errors) =>
+      throw err if err
+      equal errors.length, 2
+      @collection.get('products.toArray.0').set('id', 1)
+      @collection.validate (err, errors) =>
+        throw err if err
+        equal errors.length, 1
+        @collection.get('products.toArray.1').set('id', 2)
+        @collection.validate (err, errors) =>
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
+  asyncTest "associated for belongsTo", ->
+    namespace = @
+    class @Product extends Batman.Model
+      @belongsTo 'collection', {namespace, autoload: false}
+      @validate 'collection', associated: true
+
+    class @Collection extends Batman.Model
+      @validate 'id', presence: true
+
+    @product = new @Product
+    @collection = new @Collection
+    @product.validate (err, errors) =>
+      throw err if err
+      equal errors.length, 0
+      @product.set 'collection', @collection
+      @product.validate (err, errors) =>
+        throw err if err
+        equal errors.length, 1
+        @collection.set('id', 2)
+        @product.validate (err, errors) =>
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
+QUnit.module "Batman.Model: Validations"
 
 validationsTestSuite()
 
