@@ -16,14 +16,15 @@ Batman.EventEmitter =
       newEvent = events[key] = new eventClass(this, key)
       newEvent.oneShot = existingEvent?.oneShot
       newEvent
-  on: (key, handler) ->
-    @event(key).addHandler(handler)
-  once: (key, originalHandler) ->
-    event = @event(key)
-    handler = ->
-      originalHandler.apply(@, arguments)
-      event.removeHandler(handler)
-    event.addHandler(handler)
+  on: (keys..., handler) ->
+    @event(key).addHandler(handler) for key in keys
+  once: (keys..., originalHandler) ->
+    for key in keys
+      event = @event(key)
+      handler = ->
+        originalHandler.apply(@, arguments)
+        event.removeHandler(handler)
+      event.addHandler(handler)
   registerAsMutableSource: ->
     Batman.Property.registerSource(@)
   mutation: (wrappedFunction) ->

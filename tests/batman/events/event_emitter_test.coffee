@@ -12,12 +12,26 @@ test "on attaches handlers which get called during firing", ->
   @rain.fire()
   ok spy.called
 
+test "on attaches handlers to many keys at once", ->
+  @ottawaWeather.on 'snow', 'sleet', 'hail', spy = createSpy()
+  @ottawaWeather.fire('snow')
+  @ottawaWeather.fire('sleet')
+  @ottawaWeather.fire('hail')
+  ok spy.callCount, 3
+
 test "once attaches handlers which get called during firing and then remove themselves", ->
   @ottawaWeather.once 'rain', spy = createSpy()
   @rain.fire()
   equal spy.callCount, 1
   @rain.fire()
   equal spy.callCount, 1
+
+test "once attaches handlers to many keys at once", ->
+  @ottawaWeather.once 'snow', 'sleet', 'hail', spy = createSpy()
+  @ottawaWeather.fire('snow')
+  @ottawaWeather.fire('sleet')
+  @ottawaWeather.fire('hail')
+  ok spy.callCount, 3
 
 test "hasEvent reports presence of events on the object itself", ->
   ok !@ottawaWeather.hasEvent('sunny')
@@ -59,4 +73,3 @@ test "events inherited from ancestors retain oneshot status", ->
 
   ok TestWeatherSystem::event('snow').oneShot
   ok (new TestWeatherSystem).event('snow').oneShot
-
