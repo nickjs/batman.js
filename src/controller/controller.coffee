@@ -29,14 +29,14 @@ class Batman.Controller extends Batman.Object
   @beforeFilter: ->
     Batman.initializeObject @
     options = _optionsFromFilterArguments(arguments...)
-    filters = @_batman.beforeFilters ||= new Batman.SimpleHash
-    filters.set(options.block, options)
+    filters = @_batman.beforeFilters ||= []
+    filters.push(options)
 
   @afterFilter: ->
     Batman.initializeObject @
     options = _optionsFromFilterArguments(arguments...)
-    filters = @_batman.afterFilters ||= new Batman.SimpleHash
-    filters.set(options.block, options)
+    filters = @_batman.afterFilters ||= []
+    filters.push(options)
 
   @afterFilter (params) ->
     if @autoScrollToHash && params['#']?
@@ -77,7 +77,7 @@ class Batman.Controller extends Batman.Object
 
     parentFrame = @_actionFrames[@_actionFrames.length - 1]
     frame = new Batman.ControllerActionFrame {parentFrame, action}, =>
-      @_runFilters action, params, 'afterFilters'
+      @_runFilters action, params, 'afterFilters' unless @_afterFilterRedirect
       @_resetActionFrames()
       Batman.navigator?.redirect = oldRedirect
 
@@ -85,10 +85,9 @@ class Batman.Controller extends Batman.Object
     frame.startOperation({internal: true})
 
     oldRedirect = Batman.navigator?.redirect
-    Batman.navigator?.redirect = @redirect
+    Batman.navigator?.redirect = @redirect    
     @_runFilters action, params, 'beforeFilters'
-
-    result = @[action](params)
+    result = @[action](params) unless @_afterFilterRedirect
 
     @render() if not frame.operationOccurred
     frame.finishOperation()
@@ -154,9 +153,10 @@ class Batman.Controller extends Batman.Object
 
   _runFilters: (action, params, filters) ->
     if filters = @constructor._batman?.get(filters)
-      filters.forEach (_, options) =>
-        return if options.only and action not in options.only
-        return if options.except and action in options.except
+      for options in filters
+        continue if options.only and action not in options.only
+        continue if options.except and action in options.except
+        return if @_afterFilterRedirect
 
         block = options.block
         if typeof block is 'function' then block.call(@, params) else @[block]?(params)

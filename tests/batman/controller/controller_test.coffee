@@ -259,6 +259,49 @@ test 'filters specifying options in arrays should apply to all/none of those opt
   controller.dispatch 'index'
   equal spy.callCount, 1
 
+test 'redirect() in beforeFilter halts chain and does not call action or render', 4, ->
+  beforeSpy1 = createSpy()
+  beforeSpy2 = createSpy()
+  renderSpy = createSpy()
+  afterSpy = createSpy()
+
+  class FilterController extends Batman.Controller
+    @beforeFilter beforeSpy1
+    @beforeFilter ->
+      @redirect '/'
+    @beforeFilter beforeSpy2
+    @afterFilter afterSpy
+
+    render: renderSpy
+    index: -> @render false
+
+  controller = new FilterController
+  controller.dispatch 'index'
+  equal beforeSpy1.callCount, 1
+  equal beforeSpy2.callCount, 0
+  equal renderSpy.callCount, 0
+  equal afterSpy.callCount, 0
+
+test 'redirect() in afterFilter halts chain', 3, ->
+  beforeSpy = createSpy()
+  afterSpy1 = createSpy()
+  afterSpy2 = createSpy()
+
+  class FilterController extends Batman.Controller
+    @beforeFilter beforeSpy
+    @afterFilter afterSpy1
+    @afterFilter ->
+      @redirect '/'
+    @afterFilter afterSpy2
+
+    index: -> @render false
+
+  controller = new FilterController
+  controller.dispatch 'index'
+  equal beforeSpy.callCount, 1
+  equal afterSpy1.callCount, 1
+  equal afterSpy2.callCount, 0
+
 test 'actions executed by other actions implicitly render', ->
   mockClassDuring Batman ,'View', MockView, (mockClass) =>
     @controller.test = ->
@@ -288,6 +331,44 @@ test 'actions executed by other actions have their filters run', ->
   @controller.dispatch 'test'
   ok beforeSpy.called
   ok afterSpy.called
+
+test 'beforeFilters and afterFilters are inherited when subclassing controllers', 8, ->
+  beforeSpy1 = createSpy()
+  beforeSpy2 = createSpy()
+  afterSpy1 = createSpy()
+  afterSpy2 = createSpy()
+
+  class TestParentController extends Batman.Controller
+    @beforeFilter beforeSpy1
+    @beforeFilter 'show', beforeSpy2
+    @afterFilter afterSpy1
+    @afterFilter 'show', afterSpy2
+
+    show: -> @render false
+
+  beforeSpy3 = createSpy()
+  beforeSpy4 = createSpy()
+  afterSpy3 = createSpy()
+  afterSpy4 = createSpy()
+  
+  class TestChildController extends TestParentController
+    @beforeFilter beforeSpy3
+    @beforeFilter 'show', beforeSpy4
+    @afterFilter afterSpy3
+    @afterFilter 'show', afterSpy4
+
+  controller = new TestChildController
+  controller.dispatch 'show'
+
+  equal beforeSpy1.callCount, 1
+  equal beforeSpy2.callCount, 1
+  equal beforeSpy3.callCount, 1
+  equal beforeSpy4.callCount, 1
+
+  equal afterSpy1.callCount, 1
+  equal afterSpy2.callCount, 1
+  equal afterSpy3.callCount, 1
+  equal afterSpy4.callCount, 1
 
 test 'afterFilters should only fire after renders are complete', 2, ->
   afterSpy = createSpy()
@@ -337,20 +418,6 @@ test 'afterFilters on outer actions should only fire after inner renders are com
     ok !afterSpy.called
     view.fireReady()
     ok afterSpy.called
-
-test 'afterFilters on outer actions should fire after afterFilters on inner actions', 1, ->
-  order = []
-  class TestController extends Batman.Controller
-    @afterFilter 'show', -> order.push 1
-    @afterFilter 'test', -> order.push 2
-    show: -> @render false
-    test: ->
-      @render false
-      @executeAction 'show'
-
-  @controller = new TestController
-  @controller.dispatch 'test'
-  deepEqual order, [1, 2]
 
 test 'dispatching params with a hash scrolls to that hash', ->
   @controller.show = -> @render false
