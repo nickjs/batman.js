@@ -6,11 +6,12 @@
 #
 
 #= require ./namespace
-#= require_tree ./utilities
+#= require ./utilities/utilities
+#= require ./utilities/string_helpers
 #= require ./developer
 #= require ./object
 #= require ./mixins
-#= require_tree ./handy
+#= require_tree ./utilities
 #= require_tree ./set
 #= require_tree ./hash
 #= require ./app

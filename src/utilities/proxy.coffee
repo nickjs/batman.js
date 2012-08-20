@@ -1,3 +1,5 @@
+#= require ../object
+
 class Batman.Proxy extends Batman.Object
   isProxy: true
 

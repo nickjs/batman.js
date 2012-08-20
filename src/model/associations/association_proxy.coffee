@@ -1,4 +1,4 @@
-#= require ../../handy/proxy
+#= require ../../utilities/proxy
 
 class Batman.AssociationProxy extends Batman.Proxy
   loaded: false

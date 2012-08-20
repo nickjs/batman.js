@@ -1,5 +1,5 @@
 #= require ../object
-#= require ../handy/state_machine
+#= require ../utilities/state_machine
 
 class Batman.Model extends Batman.Object
   # Override this property to define the key which storage adapters will use to store instances of this model under.
