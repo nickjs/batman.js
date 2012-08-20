@@ -26,13 +26,6 @@ test "once attaches handlers which get called during firing and then remove them
   @rain.fire()
   equal spy.callCount, 1
 
-test "once attaches handlers to many keys at once", ->
-  @ottawaWeather.once 'snow', 'sleet', 'hail', spy = createSpy()
-  @ottawaWeather.fire('snow')
-  @ottawaWeather.fire('sleet')
-  @ottawaWeather.fire('hail')
-  ok spy.callCount, 3
-
 test "hasEvent reports presence of events on the object itself", ->
   ok !@ottawaWeather.hasEvent('sunny')
   @ottawaWeather.on 'sunny', ->
