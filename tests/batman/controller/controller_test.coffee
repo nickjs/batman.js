@@ -257,7 +257,7 @@ test 'filters specifying options in arrays should apply to all/none of those opt
   controller.dispatch 'index'
   equal spy.callCount, 1
 
-test 'redirect() in beforeFilter halts chain and does not call action or render', ->
+test 'redirect() in beforeFilter halts chain and does not call action or render', 4, ->
   beforeSpy1 = createSpy()
   beforeSpy2 = createSpy()
   renderSpy = createSpy()
@@ -280,7 +280,7 @@ test 'redirect() in beforeFilter halts chain and does not call action or render'
   equal renderSpy.callCount, 0
   equal afterSpy.callCount, 0
 
-test 'redirect() in afterFilter halts chain', ->
+test 'redirect() in afterFilter halts chain', 3, ->
   beforeSpy = createSpy()
   afterSpy1 = createSpy()
   afterSpy2 = createSpy()
@@ -329,6 +329,44 @@ test 'actions executed by other actions have their filters run', ->
   @controller.dispatch 'test'
   ok beforeSpy.called
   ok afterSpy.called
+
+test 'beforeFilters and afterFilters are inherited when subclassing controllers', 8, ->
+  beforeSpy1 = createSpy()
+  beforeSpy2 = createSpy()
+  afterSpy1 = createSpy()
+  afterSpy2 = createSpy()
+
+  class TestParentController extends Batman.Controller
+    @beforeFilter beforeSpy1
+    @beforeFilter 'show', beforeSpy2
+    @afterFilter afterSpy1
+    @afterFilter 'show', afterSpy2
+
+    show: -> @render false
+
+  beforeSpy3 = createSpy()
+  beforeSpy4 = createSpy()
+  afterSpy3 = createSpy()
+  afterSpy4 = createSpy()
+  
+  class TestChildController extends TestParentController
+    @beforeFilter beforeSpy3
+    @beforeFilter 'show', beforeSpy4
+    @afterFilter afterSpy3
+    @afterFilter 'show', afterSpy4
+
+  controller = new TestChildController
+  controller.dispatch 'show'
+
+  equal beforeSpy1.callCount, 1
+  equal beforeSpy2.callCount, 1
+  equal beforeSpy3.callCount, 1
+  equal beforeSpy4.callCount, 1
+
+  equal afterSpy1.callCount, 1
+  equal afterSpy2.callCount, 1
+  equal afterSpy3.callCount, 1
+  equal afterSpy4.callCount, 1
 
 test 'afterFilters should only fire after renders are complete', 2, ->
   afterSpy = createSpy()
