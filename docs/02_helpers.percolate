@@ -4,7 +4,7 @@ Batman includes an number of useful, general purpose helper functions and refere
 
 ### container
 
-`Batman.container` points to either the `window` object if running the browser, or the `global` object if running in node. This is useful if you want to add something to the global scope in all environments.
+`Batman.container` points to either the `window` object if running in the browser, or the `global` object if running in node. This is useful if you want to add something to the global scope in all environments.
 
 ### typeOf(object) : string
 
