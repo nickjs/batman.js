@@ -18,6 +18,31 @@ class Batman.StorageAdapter extends Batman.Object
     constructor: (message) ->
       super(message || "Record couldn't be found in storage!")
 
+  class @NotAllowedError extends @StorageError
+    name: "NotAllowedError"
+    constructor: (message) ->
+      super(message || "Operation not allowed by the storage adapter!")
+
+  class @NotAcceptableError extends @StorageError
+    name: "NotAcceptableError"
+    constructor: (message) ->
+      super(message || "Storage operation permitted but the request was malformed!")
+
+  class @UnprocessableEntityError extends @StorageError
+    name: "UnprocessableEntityError"
+    constructor: (message) ->
+      super(message || "Storage adapter could not process the record!")
+
+  class @InternalStorageError extends @StorageError
+    name: "InternalStorageError"
+    constructor: (message) ->
+      super(message || "An error occured during the storage operation!")
+
+  class @NotImplementedError extends @StorageError
+    name: "NotImplementedError"
+    constructor: (message) ->
+      super(message || "This operation is not implemented by the storage adpater!")
+
   constructor: (model) ->
     super(model: model)
     constructor = @constructor
