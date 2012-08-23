@@ -71,16 +71,6 @@ class Batman.Model extends Batman.Object
             keys: keys
             validator: new validatorClass(matches)
 
-  class Model.LifecycleStateMachine extends Batman.DelegatingStateMachine
-    @transitions
-      load: {empty: 'loading', loaded: 'loading', loading: 'loading'}
-      loaded: {loading: 'loaded'}
-      error: {loading: 'error'}
-
-  @classAccessor 'lifecycle', ->
-    @_batman.check(@)
-    @_batman.lifecycle ||= new @LifecycleStateMachine('empty', @)
-
   @classAccessor 'resourceName',
     get: ->
       if @resourceName?
@@ -124,18 +114,15 @@ class Batman.Model extends Batman.Object
       callback = options
       options = {}
 
-    lifecycle = @get('lifecycle')
-    if lifecycle.load()
-      @_doStorageOperation 'readAll', {data: options}, (err, records, env) =>
-        if err?
-          lifecycle.error()
-          callback?(err, [])
-        else
-          mappedRecords = (@_mapIdentity(record) for record in records)
-          lifecycle.loaded()
-          callback?(err, mappedRecords, env)
-    else
-      callback(new Batman.StateMachine.InvalidTransitionError("Can't load while in state #{lifecycle.get('state')}"))
+    @fire 'loading', options
+    @_doStorageOperation 'readAll', {data: options}, (err, records, env) =>
+      if err?
+        @fire 'error', err
+        callback?(err, [])
+      else
+        mappedRecords = (@_mapIdentity(record) for record in records)
+        @fire 'loaded', mappedRecords, env
+        callback?(err, mappedRecords, env)
 
   @create: (attrs, callback) ->
     if !callback
