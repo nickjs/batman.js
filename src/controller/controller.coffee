@@ -54,8 +54,8 @@ class Batman.Controller extends Batman.Object
     (err, args...) =>
       if err
         handled = false
-        @constructor._batman.getAll('errorHandlers')?.forEach (hash) ->
-          hash.forEach (key, value) ->
+        @constructor._batman.getAll('errorHandlers')?.forEach (hash) =>
+          hash.forEach (key, value) =>
             if err instanceof key 
               handled = true
               handler.call(this, err) for handler in value
