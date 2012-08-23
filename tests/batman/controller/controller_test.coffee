@@ -465,7 +465,8 @@ test 'When wrapping a call with the errorHandler callback, any exception tracked
   controller = new @TestController
   controller.index = -> 
     namespace.Model.load @errorHandler callbackSpy
-  controller.index()
+    @render false
+  controller.dispatch('index')
 
   equal callbackSpy.callCount, 0
   equal handlerSpy.callCount, 1
@@ -484,7 +485,8 @@ test 'When wrapping a call with the errorHandler callback, any exception tracked
   controller = new @TestController
   controller.index = -> 
     namespace.Model.load @errorHandler callbackSpy
-  controller.index()
+    @render false
+  controller.dispatch('index')
 
   equal callbackSpy.callCount, 0
   equal handlerSpy.callCount, 1
@@ -505,9 +507,10 @@ test 'When wrapping a call with the errorHandler callback, any exception that is
   controller = new @TestController
   controller.index = ->
     namespace.Model.load @errorHandler callbackSpy
+    @render false
 
   raises ->
-    controller.index()
+    controller.dispatch('index')
   , Error
 
   equal callbackSpy.callCount, 0
@@ -526,8 +529,9 @@ test 'When wrapping a call with the errorHandler callback, no exception passes r
   controller = new @TestController
   controller.index = ->
     namespace.Model.load @errorHandler callbackSpy
+    @render false
   
-  controller.index()
+  controller.dispatch('index')
 
   equal handlerSpy.callCount, 0
   equal callbackSpy.callCount, 1
@@ -549,13 +553,14 @@ test 'subclass errors registered with superclass catchError cause the errorHandl
   controller = new @TestController 
   controller.index = ->
     namespace.Model.load @errorHandler callbackSpy
-  controller.index()
+    @render false
+  controller.dispatch('index')
 
   equal callbackSpy.callCount, 0
   equal handlerSpy.callCount, 1
   deepEqual handlerSpy.lastCallArguments, [error]
 
-test 'When wrapping a call with the errorHandler callback, parent class handlers are also called', 9, ->
+test 'When wrapping a call with the errorHandler callback, parent class handlers are also called', 7, ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
   handlerSpy2 = createSpy()
@@ -571,23 +576,102 @@ test 'When wrapping a call with the errorHandler callback, parent class handlers
     _customErrorHandler3: handlerSpy3
     _customErrorHandler2: handlerSpy2
     @catchError namespace.CustomError, with: @::_customErrorHandler3 
-    @catchError namespace.CustomError2, with: [@::_customErrorHandler2, @::_customErrorHandler3]
-
+    
   namespace = @
   controller = new SubclassController
   controller.index = -> 
     namespace.Model.load @errorHandler callbackSpy
-    namespace.Model.load2 @errorHandler callbackSpy
+    @render false
   
-  controller.index()
+  controller.dispatch('index')
 
   equal callbackSpy.callCount, 0
   equal handlerSpy.callCount, 1
-  equal handlerSpy2.callCount, 2
-  equal handlerSpy3.callCount, 2
+  equal handlerSpy2.callCount, 1
+  equal handlerSpy3.callCount, 1
   deepEqual handlerSpy.lastCallArguments, [@error]
-  deepEqual handlerSpy2.calls[0].arguments, [@error]
-  deepEqual handlerSpy2.calls[1].arguments, [@error2]  
-  deepEqual handlerSpy3.calls[0].arguments, [@error]
-  deepEqual handlerSpy3.calls[1].arguments, [@error2]  
+  deepEqual handlerSpy2.lastCallArguments, [@error]
+  deepEqual handlerSpy3.lastCallArguments, [@error]
+
+test 'When wrapping multiple calls with errorHandler callback, any successive calls to the errorHandler should be ignored if an error occured on the current frame', 4, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler]
+  @TestController.catchError @CustomError2, with: [@TestController::_customErrorHandler2]
+
+  namespace = @
+  controller = new @TestController
+  controller.index = ->
+    namespace.Model.load @errorHandler callbackSpy
+    namespace.Model.load2 @errorHandler callbackSpy
+    @render false
+
+  controller.dispatch('index')
+
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 0
+  equal callbackSpy.callCount, 0
+  deepEqual handlerSpy.lastCallArguments, [@error]
+
+test 'When wrapping multiple nested calls with errorHandler callback, nested errors should not be fired if parent errored', 4, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler]
+  @TestController.catchError @CustomError2, with: [@TestController::_customErrorHandler2]
+
+  namespace = @
+  controller = new @TestController
+  controller.index = ->
+    namespace.Model.load @errorHandler ->
+      namespace.Model.load2 @errorHandler callbackSpy
+      ok false # should not be called
+    @render false
+
+  controller.dispatch('index')
+
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 0
+  equal callbackSpy.callCount, 0
+  deepEqual handlerSpy.lastCallArguments, [@error]
+
+test 'When wrapping multiple nested calls with errorHandler callback, nested errors not be ignored by higher level errors', 5, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler]
+  @TestController.catchError @CustomError2, with: [@TestController::_customErrorHandler2]
+
+  namespace = @
+
+  @Model.load = (callback) ->
+    callback(undefined, [{id: 1}], 'foo')
+  @Model.load3 = (callback) ->
+    callback(namespace.error, undefined)
+  
+  controller = new @TestController
+  controller.index = ->
+    controllerNamespace = @
+    namespace.Model.load @errorHandler =>
+      ok true
+      namespace.Model.load2 @errorHandler callbackSpy
+    namespace.Model.load3 @errorHandler callbackSpy
+    @render false
+
+  controller.dispatch('index')
+
+  equal handlerSpy.callCount, 0
+  equal handlerSpy2.callCount, 1
+  equal callbackSpy.callCount, 0
+  deepEqual handlerSpy2.lastCallArguments, [@error2]
 

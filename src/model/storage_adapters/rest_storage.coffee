@@ -229,6 +229,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     next()
 
   @_statusCodeErrors:
+    '403': @NotAllowedError
     '404': @NotFoundError
     '406': @NotAcceptableError
     '422': @UnprocessableEntityError
@@ -238,6 +239,8 @@ class Batman.RestStorage extends Batman.StorageAdapter
   _errorFor: (error) ->
     return error if error instanceof Error or not error.request?
     if errorClass = @constructor._statusCodeErrors[error.request.status]
+      request = error.request
       error = new errorClass
+      error.request = request
     error 
 

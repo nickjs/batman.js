@@ -50,9 +50,12 @@ class Batman.Controller extends Batman.Object
       currentHandlers = @_batman.errorHandlers.get(error) ? []
       @_batman.errorHandlers.set(error, currentHandlers.concat(handlers)) 
 
-  errorHandler: (callback) ->
-    (err, args...) =>
+  errorHandler: (callback) =>
+    errorFrame = @_actionFrames?[@_actionFrames.length - 1]
+    (err, result, env) =>
       if err
+        return if errorFrame?.error
+        errorFrame?.error = err
         handled = false
         @constructor._batman.getAll('errorHandlers')?.forEach (hash) =>
           hash.forEach (key, value) =>
@@ -61,7 +64,7 @@ class Batman.Controller extends Batman.Object
               handler.call(this, err) for handler in value
         throw err unless handled
       else
-        callback?(args...)
+        callback?(result, env)
 
   constructor: ->
     super

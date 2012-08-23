@@ -21,7 +21,7 @@ class Batman.StorageAdapter extends Batman.Object
   class @NotAllowedError extends @StorageError
     name: "NotAllowedError"
     constructor: (message) ->
-      super(message || "Operation not allowed by the storage adapter!")
+      super(message || "Storage operation denied access to the operation!")
 
   class @NotAcceptableError extends @StorageError
     name: "NotAcceptableError"
