@@ -43,18 +43,22 @@ class Batman.Controller extends Batman.Object
       @scrollToHash(params['#'])
 
   @catchError: (errors..., options) ->
-    errorHandlers = @getOrSet 'errorHandlers', -> new Batman.SimpleHash
+    Batman.initializeObject @
+    @_batman.errorHandlers ?= new Batman.SimpleHash
     handlers = if options.with instanceof Array then options.with else Array(options.with)
-    errorHandlers.set(error, handlers) for error in errors
+    for error in errors
+      currentHandlers = @_batman.errorHandlers.get(error) ? []
+      @_batman.errorHandlers.set(error, currentHandlers.concat(handlers)) 
 
   errorHandler: (callback) ->
     (err, args...) =>
       if err
         handled = false
-        @constructor.get('errorHandlers')?.forEach (key, value) ->
-          if err instanceof key 
-            handled = true
-            handler.call(this, err) for handler in value
+        @constructor._batman.getAll('errorHandlers')?.forEach (hash) ->
+          hash.forEach (key, value) ->
+            if err instanceof key 
+              handled = true
+              handler.call(this, err) for handler in value
         throw err unless handled
       else
         callback?(args...)

@@ -452,47 +452,8 @@ QUnit.module 'Batman.Controller error handling'
 
     class @TestController extends Batman.Controller
       _customErrorHandler: (err) ->
-      _customErrorHandler2: (err) ->
-    
-    
-test 'Registering a single error with a single handler using catchError adds error to errorHandlers accessor', 2, ->
-  @TestController.catchError @CustomError, with: @TestController::_customErrorHandler
-
-  controller = new @TestController
-  errorHandlers = controller.constructor.get('errorHandlers') 
-
-  equal errorHandlers.length, 1
-  deepEqual errorHandlers.get(@CustomError), [@TestController::_customErrorHandler]
-
-test 'Registering multiple errors with a single handler using catchError', 3, ->
-  @TestController.catchError @CustomError, @CustomError2, with: @TestController::_customErrorHandler
-
-  controller = new @TestController
-  errorHandlers = controller.constructor.get('errorHandlers') 
-
-  equal errorHandlers.length, 2
-  deepEqual errorHandlers.get(@CustomError), [@TestController::_customErrorHandler]
-  deepEqual errorHandlers.get(@CustomError2), [@TestController::_customErrorHandler]
-
-test 'Registering a single error with multiple handlers using catchError', 2, ->
-  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler, @TestController::_customErrorHandler2]
-
-  controller = new @TestController
-  errorHandlers = controller.constructor.get('errorHandlers') 
-
-  equal errorHandlers.length, 1
-  deepEqual errorHandlers.get(@CustomError), [@TestController::_customErrorHandler, @TestController::_customErrorHandler2]
-
-test 'Registering multiple errors with multiple handlers using catchError', 3, ->
-  @TestController.catchError @CustomError, @CustomError2, with: [@TestController::_customErrorHandler, @TestController::_customErrorHandler2]
-
-  controller = new @TestController
-  errorHandlers = controller.constructor.get('errorHandlers') 
-
-  equal errorHandlers.length, 2
-  deepEqual errorHandlers.get(@CustomError), [@TestController::_customErrorHandler, @TestController::_customErrorHandler2]
-  deepEqual errorHandlers.get(@CustomError2), [@TestController::_customErrorHandler, @TestController::_customErrorHandler2]
-    
+      _customErrorHandler2: (err) ->    
+   
 test 'When wrapping a call with the errorHandler callback, any exception tracked with catchError will be handled by a single handler', 3, ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
@@ -572,7 +533,7 @@ test 'When wrapping a call with the errorHandler callback, no exception passes r
   equal callbackSpy.callCount, 1
   deepEqual callbackSpy.lastCallArguments, [[{id: 1}], 'foo']
 
-test 'subclass errors registered with superclass catchError cause the errorHandler callback to fire', ->
+test 'subclass errors registered with superclass catchError cause the errorHandler callback to fire', 3, ->
   class ReallyCustomError extends @CustomError
 
   callbackSpy = createSpy()
@@ -593,3 +554,40 @@ test 'subclass errors registered with superclass catchError cause the errorHandl
   equal callbackSpy.callCount, 0
   equal handlerSpy.callCount, 1
   deepEqual handlerSpy.lastCallArguments, [error]
+
+test 'When wrapping a call with the errorHandler callback, parent class handlers are also called', 9, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+  handlerSpy3 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler, @TestController::_customErrorHandler2]
+
+  namespace = @
+
+  class SubclassController extends @TestController
+    _customErrorHandler3: handlerSpy3
+    _customErrorHandler2: handlerSpy2
+    @catchError namespace.CustomError, with: @::_customErrorHandler3 
+    @catchError namespace.CustomError2, with: [@::_customErrorHandler2, @::_customErrorHandler3]
+
+  namespace = @
+  controller = new SubclassController
+  controller.index = -> 
+    namespace.Model.load @errorHandler callbackSpy
+    namespace.Model.load2 @errorHandler callbackSpy
+  
+  controller.index()
+
+  equal callbackSpy.callCount, 0
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 2
+  equal handlerSpy3.callCount, 2
+  deepEqual handlerSpy.lastCallArguments, [@error]
+  deepEqual handlerSpy2.calls[0].arguments, [@error]
+  deepEqual handlerSpy2.calls[1].arguments, [@error2]  
+  deepEqual handlerSpy3.calls[0].arguments, [@error]
+  deepEqual handlerSpy3.calls[1].arguments, [@error2]  
+
