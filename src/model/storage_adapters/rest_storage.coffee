@@ -224,8 +224,8 @@ class Batman.RestStorage extends Batman.StorageAdapter
         @request(env, next)
 
   @::after 'all', (env, next) ->
-    if env.error?
-      env.error = @_errorFor(env.error)
+    if env.error
+      env.error = @_errorFor(env.error, env)
     next()
 
   @_statusCodeErrors:
@@ -236,11 +236,12 @@ class Batman.RestStorage extends Batman.StorageAdapter
     '500': @InternalStorageError
     '501': @NotImplementedError
 
-  _errorFor: (error) ->
+  _errorFor: (error, env) ->
     return error if error instanceof Error or not error.request?
     if errorClass = @constructor._statusCodeErrors[error.request.status]
       request = error.request
       error = new errorClass
       error.request = request
+      error.env = env
     error 
 
