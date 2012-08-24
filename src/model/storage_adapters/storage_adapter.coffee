@@ -28,8 +28,8 @@ class Batman.StorageAdapter extends Batman.Object
     constructor: (message) ->
       super(message || "Storage operation permitted but the request was malformed!")
 
-  class @UnprocessableEntityError extends @StorageError
-    name: "UnprocessableEntityError"
+  class @UnprocessableRecordError extends @StorageError
+    name: "UnprocessableRecordError"
     constructor: (message) ->
       super(message || "Storage adapter could not process the record!")
 
