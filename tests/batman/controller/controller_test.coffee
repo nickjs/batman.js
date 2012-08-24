@@ -282,26 +282,6 @@ test 'redirect() in beforeFilter halts chain and does not call action or render'
   equal renderSpy.callCount, 0
   equal afterSpy.callCount, 0
 
-test 'redirect() in afterFilter halts chain', 3, ->
-  beforeSpy = createSpy()
-  afterSpy1 = createSpy()
-  afterSpy2 = createSpy()
-
-  class FilterController extends Batman.Controller
-    @beforeFilter beforeSpy
-    @afterFilter afterSpy1
-    @afterFilter ->
-      @redirect '/'
-    @afterFilter afterSpy2
-
-    index: -> @render false
-
-  controller = new FilterController
-  controller.dispatch 'index'
-  equal beforeSpy.callCount, 1
-  equal afterSpy1.callCount, 1
-  equal afterSpy2.callCount, 0
-
 test 'actions executed by other actions implicitly render', ->
   mockClassDuring Batman ,'View', MockView, (mockClass) =>
     @controller.test = ->
