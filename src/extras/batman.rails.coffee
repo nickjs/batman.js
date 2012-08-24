@@ -64,7 +64,7 @@ class Batman.RailsStorage extends Batman.RestStorage
     {error, response} = env
     if error
       # Rails validation errors
-      if error.request?.get('status') == 422
+      if error instanceof Batman.StorageAdapter.UnprocessableRecordError
         try
           validationErrors = @_errorsFrom422Response(response)
         catch extractionError

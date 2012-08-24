@@ -27,13 +27,13 @@ class Batman.Controller extends Batman.Object
     options
 
   @beforeFilter: ->
-    Batman.initializeObject @
+    Batman.initializeObject this
     options = _optionsFromFilterArguments(arguments...)
     filters = @_batman.beforeFilters ||= []
     filters.push(options)
 
   @afterFilter: ->
-    Batman.initializeObject @
+    Batman.initializeObject this
     options = _optionsFromFilterArguments(arguments...)
     filters = @_batman.afterFilters ||= []
     filters.push(options)
@@ -41,6 +41,30 @@ class Batman.Controller extends Batman.Object
   @afterFilter (params) ->
     if @autoScrollToHash && params['#']?
       @scrollToHash(params['#'])
+
+  @catchError: (errors..., options) ->
+    Batman.initializeObject this
+    @_batman.errorHandlers ||= new Batman.SimpleHash
+    handlers = if Batman.typeOf(options.with) is 'Array' then options.with else [options.with]
+    for error in errors
+      currentHandlers = @_batman.errorHandlers.get(error) || []
+      @_batman.errorHandlers.set(error, currentHandlers.concat(handlers)) 
+
+  errorHandler: (callback) =>
+    errorFrame = @_actionFrames?[@_actionFrames.length - 1]
+    (err, result, env) =>
+      if err
+        return if errorFrame?.error
+        errorFrame?.error = err
+        handled = false
+        @constructor._batman.getAll('errorHandlers')?.forEach (hash) =>
+          hash.forEach (key, value) =>
+            if err instanceof key 
+              handled = true
+              handler.call(this, err) for handler in value
+        throw err if not handled
+      else
+        callback?(result, env)
 
   constructor: ->
     super

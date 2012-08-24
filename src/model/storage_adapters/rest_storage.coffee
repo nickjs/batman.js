@@ -222,3 +222,26 @@ class Batman.RestStorage extends Batman.StorageAdapter
       @::[key] = @skipIfError (env, next) ->
         env.options.method ||= @constructor.HTTPMethods[key]
         @request(env, next)
+
+  @::after 'all', (env, next) ->
+    if env.error
+      env.error = @_errorFor(env.error, env)
+    next()
+
+  @_statusCodeErrors:
+    '403': @NotAllowedError
+    '404': @NotFoundError
+    '406': @NotAcceptableError
+    '422': @UnprocessableRecordError
+    '500': @InternalStorageError
+    '501': @NotImplementedError
+
+  _errorFor: (error, env) ->
+    return error if error instanceof Error or not error.request?
+    if errorClass = @constructor._statusCodeErrors[error.request.status]
+      request = error.request
+      error = new errorClass
+      error.request = request
+      error.env = env
+    error 
+
