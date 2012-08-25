@@ -175,13 +175,15 @@ asyncTest "embedded hasMany associations are loaded using encoders", 1, ->
     deepEqual variants.map((x) -> x.get('price')), [5000, 6000]
     QUnit.start()
 
-asyncTest "embedded associations loaded via encoders index the child record loaded set", 2, ->
+asyncTest "embedded associations loaded via encoders index the child record loaded set", 3, ->
   @Product.find 2, (err, product) =>
     throw err if err
     variants = product.get 'productVariants'
     equal variants.length, 2
-    @ProductVariant.createFromJSON(id: 100, price: 20.99, product_id: 2)
+    variant = @ProductVariant.createFromJSON(id: 100, price: 20.99, product_id: 2)
     equal variants.length, 3
+    @ProductVariant.get('loaded').remove(variant)
+    equal variants.length, 2
     QUnit.start()
 
 test "embedded associations loaded via encoders index the child record loaded set when the parent is decoded all at once", 2, ->
@@ -513,23 +515,6 @@ asyncTest "saved hasMany models should decode their child records based on ID", 
     equal six.get('price'), 60
     QUnit.start()
 
-asyncTest "hasMany associations render", 4, ->
-  @Store.find 1, (err, store) =>
-    throw err if err
-    source = '<div><span data-foreach-product="store.products" data-bind="product.name"></span></div>'
-    context = Batman(store: store)
-    helpers.render source, context, (node, view) =>
-      setTimeout =>
-        equal node.children().get(0)?.innerHTML, 'Product One'
-        equal node.children().get(1)?.innerHTML, 'Product Two'
-        equal node.children().get(2)?.innerHTML, 'Product Three'
-
-        addedProduct = new @Product(name: 'Product Four', store_id: store.get('id'))
-        addedProduct.save (err, savedProduct) ->
-          delay ->
-            equal node.children().get(3)?.innerHTML, 'Product Four'
-      , ASYNC_TEST_DELAY * 5
-
 asyncTest "hasMany adds new related model instances to its set", ->
   @Store.find 1, (err, store) =>
     throw err if err
@@ -537,6 +522,17 @@ asyncTest "hasMany adds new related model instances to its set", ->
     addedProduct.save (err, savedProduct) =>
       ok store.get('products').has(savedProduct)
       QUnit.start()
+
+asyncTest "hasMany removes destroyed related model instances from its set", ->
+  @Store.find 1, (err, store) =>
+    throw err if err
+    store.get('products').load (err, products) ->
+      throw err if err
+      destroyedProduct = products.toArray()[0]
+      destroyedProduct.destroy (err) ->
+        throw err if err
+        ok !store.get('products').has(destroyedProduct)
+        QUnit.start()
 
 asyncTest "hasMany loads records for each parent instance", 2, ->
   @storeAdapter.storage["stores2"] =
