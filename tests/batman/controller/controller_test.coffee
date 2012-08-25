@@ -655,3 +655,16 @@ test 'When wrapping multiple nested calls with errorHandler callback, nested err
   equal callbackSpy.callCount, 0
   deepEqual handlerSpy2.lastCallArguments, [@error2]
 
+test 'Calling handlerError directly with an error should result in the handlers being called', ->
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler]
+  controller = new @TestController  
+
+  equal controller.handleError(@error), true
+  equal controller.handleError(@error2), false
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 0
+  deepEqual handlerSpy.lastCallArguments, [@error]
