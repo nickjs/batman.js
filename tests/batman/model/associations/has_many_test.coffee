@@ -91,7 +91,7 @@ QUnit.module "Batman.Model hasMany Associations"
         price:60
         product_id:3
 
-asyncTest "hasMany associations are loaded", 4, ->
+asyncTest "hasMany associations are loaded foo", 4, ->
   @Store.find 1, (err, store) =>
     throw err if err
     products = store.get 'products'
@@ -113,6 +113,19 @@ asyncTest "AssociationSet becomes loaded when a new record is saved", 2, ->
   store.save =>
     equal store.get('products').get('loaded'), true
     QUnit.start()
+
+test "AssociationSet becomes loaded when the parent record is decoded", 1, ->
+  product = new @Product
+  product.fromJSON
+    name: "Product One"
+    id: 1
+    store_id: 1
+    productVariants: [
+      {id:3, price:50,product_id:1},
+      {id:4, price:60, product_id:1}
+    ]
+  variants = product.get 'productVariants'
+  ok variants.get('loaded')
 
 asyncTest "AssociationSet does not become loaded when an existing record is saved and the response includes no information about the association", 2, ->
   namespace = @
@@ -142,6 +155,15 @@ asyncTest "hasMany associations are loaded using encoders", 1, ->
     delay ->
       deepEqual products.map((x) -> x.get('name')), ["PRODUCT ONE", "PRODUCT TWO", "PRODUCT THREE"]
 
+asyncTest "associations loaded via encoders index the child record loaded set", 2, ->
+  @Store.find 1, (err, store) =>
+    throw err if err
+    products = store.get 'products'
+    delay =>
+      equal products.length, 3
+      @Product.createFromJSON(id: 100, name: 'New!', store_id: 1)
+      equal products.length, 4
+
 asyncTest "embedded hasMany associations are loaded using encoders", 1, ->
   @ProductVariant.encode 'price'
     encode: (x) -> x
@@ -152,6 +174,30 @@ asyncTest "embedded hasMany associations are loaded using encoders", 1, ->
     variants = product.get('productVariants')
     deepEqual variants.map((x) -> x.get('price')), [5000, 6000]
     QUnit.start()
+
+asyncTest "embedded associations loaded via encoders index the child record loaded set", 2, ->
+  @Product.find 2, (err, product) =>
+    throw err if err
+    variants = product.get 'productVariants'
+    equal variants.length, 2
+    @ProductVariant.createFromJSON(id: 100, price: 20.99, product_id: 2)
+    equal variants.length, 3
+    QUnit.start()
+
+test "embedded associations loaded via encoders index the child record loaded set when the parent is decoded all at once", 2, ->
+  product = new @Product
+  product.fromJSON
+    name: "Product One"
+    id: 1
+    store_id: 1
+    productVariants: [
+      {id:3, price:50,product_id:1},
+      {id:4, price:60, product_id:1}
+    ]
+  variants = product.get 'productVariants'
+  equal variants.length, 2
+  @ProductVariant.createFromJSON(id: 100, price: 20.99, product_id: 1)
+  equal variants.length, 3
 
 asyncTest "hasMany associations are not loaded when autoload is false", 1, ->
   ns = @namespace

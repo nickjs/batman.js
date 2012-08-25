@@ -3,11 +3,37 @@
 class Batman.PluralAssociation extends Batman.Association
   proxyClass: Batman.AssociationSet
   isSingular: false
-  setForRecord: Batman.Property.wrapTrackingPrevention (record) ->
-    if id = record.get(@primaryKey)
-      @setIndex().get(id)
+
+  constructor: ->
+    super
+    @_resetProxyHashes()
+
+  setForRecord: (record) ->
+    indexValue = @indexValueForRecord(record)
+    Batman.Property.withoutTracking =>
+      @_recordProxies.getOrSet record, =>
+        if indexValue?
+          existingValueSet = @_keyValueProxies.get(indexValue)
+          if existingValueSet?
+            return existingValueSet
+        newSet = new @proxyClass(indexValue, @)
+        if indexValue?
+          @_keyValueProxies.set indexValue, newSet
+        newSet
+    if indexValue?
+      @setIndex().get(indexValue)
     else
-      new @proxyClass(undefined, @)
+      @_recordProxies.get(record)
+
+  setForKey: Batman.Property.wrapTrackingPrevention (indexValue) ->
+    foundSet = undefined
+    @_recordProxies.forEach (record, set) =>
+      return if foundSet?
+      foundSet = set if @indexValueForRecord(record) == indexValue
+    if foundSet?
+      foundSet.foreignKeyValue = indexValue
+      return foundSet
+    @_keyValueProxies.getOrSet indexValue, => new @proxyClass(indexValue, @)
 
   getAccessor: (self, model, label) ->
     return unless self.getRelatedModel()
@@ -28,3 +54,13 @@ class Batman.PluralAssociation extends Batman.Association
   setIndex: ->
     @index ||= new Batman.AssociationSetIndex(@, @[@indexRelatedModelOn])
     @index
+
+  indexValueForRecord: (record) -> record.get(@primaryKey)
+
+  reset: ->
+    super
+    @_resetProxyHashes()
+
+  _resetProxyHashes: ->
+    @_recordProxies = new Batman.SimpleHash
+    @_keyValueProxies = new Batman.SimpleHash
