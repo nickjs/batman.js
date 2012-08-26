@@ -58,17 +58,52 @@ asyncTest "belongsTo associations return a proxy before load and the record afte
       QUnit.start()
 
 asyncTest "belongsTo associations are not loaded when autoload is off", 1, ->
-  class Product extends Batman.Model
+  namespace = @
+  class @Product extends Batman.Model
     @encode 'id', 'name'
-    @belongsTo 'store', {namespace: @namespace, autoload: false}
+    @belongsTo 'store', {namespace, autoload: false}
 
-  productAdapter = createStorageAdapter Product, AsyncTestStorageAdapter,
+  productAdapter = createStorageAdapter @Product, AsyncTestStorageAdapter,
     'products1': {name: "Product One", id: 1, store_id: 1}
 
-  Product.find 1, (err, product) =>
+  @Product.find 1, (err, product) =>
     store = product.get 'store'
-    equal (typeof store), 'undefined'
-    QUnit.start()
+    delay ->
+      ok !store.get('loaded')
+
+asyncTest "belongsTo associations with autoload is off put the record at the property when loaded", 1, ->
+  namespace = @
+  class @Product extends Batman.Model
+    @encode 'id', 'name'
+    @belongsTo 'store', {namespace, autoload: false}
+
+  productAdapter = createStorageAdapter @Product, AsyncTestStorageAdapter,
+    'products1': {name: "Product One", id: 1, store_id: 1}
+
+  @Product.find 1, (err, product) =>
+    product.get('store').load (err, store) =>
+      throw err if err
+      ok product.get('store') instanceof @Store
+      QUnit.start()
+
+asyncTest "belongsTo association proxies index the local loaded set when autoload is off", 3, ->
+  namespace = @
+  class @Product extends Batman.Model
+    @encode 'id', 'name'
+    @belongsTo 'store', {namespace, autoload: false}
+
+  productAdapter = createStorageAdapter @Product, AsyncTestStorageAdapter,
+    'products1': {name: "Product One", id: 1, store_id: 1}
+
+  @Product.find 1, (err, product) =>
+    store = product.get 'store'
+    ok store instanceof Batman.BelongsToProxy
+    ok !store.get('loaded')
+    @Store.load (err) =>
+      throw err if err
+      store = product.get 'store'
+      ok store instanceof @Store
+      QUnit.start()
 
 asyncTest "belongsTo associations are saved", 6, ->
   store = new @Store id: 1, name: 'Zellers'
