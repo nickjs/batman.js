@@ -65,6 +65,15 @@ asyncTest "hasOne associations are loaded via JSON", 3, ->
       equal product.get('id'), 3
       equal product.get('name'), "JSON Product"
 
+asyncTest "hasOne associations are not loaded via JSON when serialized as null", 1, ->
+  @storeAdapter.storage['stores2']['product'] = null
+  @productAdapter.storage = {}
+  @Store.find 2, (err, store) =>
+    product = store.get 'product'
+    delay ->
+      debugger
+      ok !product.get('loaded')
+
 asyncTest "hasOne associations loaded via JSON should not do an implicit remote fetch", 3, ->
   @Store.find 2, (err, store) =>
     product = store.get 'product'
