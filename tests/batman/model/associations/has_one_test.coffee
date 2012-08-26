@@ -71,7 +71,6 @@ asyncTest "hasOne associations are not loaded via JSON when serialized as null",
   @Store.find 2, (err, store) =>
     product = store.get 'product'
     delay ->
-      debugger
       ok !product.get('loaded')
 
 asyncTest "hasOne associations loaded via JSON should not do an implicit remote fetch", 3, ->
