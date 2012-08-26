@@ -11,10 +11,10 @@ class Batman.Model extends Batman.Object
 
   # Pick one or many mechanisms with which this model should be persisted. The mechanisms
   # can be already instantiated or just the class defining them.
-  @persist: (mechanism, options) ->
+  @persist: (mechanism, options...) ->
     Batman.initializeObject @prototype
     mechanism = if mechanism.isStorageAdapter then mechanism else new mechanism(@)
-    Batman.mixin mechanism, options if options
+    Batman.mixin mechanism, options... if options.length > 0
     @::_batman.storage = mechanism
     mechanism
 
