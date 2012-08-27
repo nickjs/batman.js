@@ -91,7 +91,7 @@ QUnit.module "Batman.Model hasMany Associations"
         price:60
         product_id:3
 
-asyncTest "hasMany associations are loaded foo", 4, ->
+asyncTest "hasMany associations are loaded", 4, ->
   @Store.find 1, (err, store) =>
     throw err if err
     products = store.get 'products'
