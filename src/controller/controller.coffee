@@ -27,13 +27,13 @@ class Batman.Controller extends Batman.Object
     options
 
   @beforeFilter: ->
-    Batman.initializeObject @
+    Batman.initializeObject this
     options = _optionsFromFilterArguments(arguments...)
     filters = @_batman.beforeFilters ||= []
     filters.push(options)
 
   @afterFilter: ->
-    Batman.initializeObject @
+    Batman.initializeObject this
     options = _optionsFromFilterArguments(arguments...)
     filters = @_batman.afterFilters ||= []
     filters.push(options)
@@ -41,6 +41,33 @@ class Batman.Controller extends Batman.Object
   @afterFilter (params) ->
     if @autoScrollToHash && params['#']?
       @scrollToHash(params['#'])
+
+  @catchError: (errors..., options) ->
+    Batman.initializeObject this
+    @_batman.errorHandlers ||= new Batman.SimpleHash
+    handlers = if Batman.typeOf(options.with) is 'Array' then options.with else [options.with]
+    for error in errors
+      currentHandlers = @_batman.errorHandlers.get(error) || []
+      @_batman.errorHandlers.set(error, currentHandlers.concat(handlers)) 
+
+  errorHandler: (callback) =>
+    errorFrame = @_actionFrames?[@_actionFrames.length - 1]
+    (err, result, env) =>
+      if err
+        return if errorFrame?.error
+        errorFrame?.error = err
+        throw err if not @handleError(err)
+      else
+        callback?(result, env)
+
+  handleError: (error) =>
+    handled = false
+    @constructor._batman.getAll('errorHandlers')?.forEach (hash) =>
+      hash.forEach (key, value) =>
+        if error instanceof key
+          handled = true
+          handler.call(this, error) for handler in value
+    handled
 
   constructor: ->
     super

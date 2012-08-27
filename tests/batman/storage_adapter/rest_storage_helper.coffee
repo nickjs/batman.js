@@ -342,6 +342,24 @@ restStorageTestSuite = ->
         ok err
         QUnit.start() if --counter == 0
 
+  asyncTest 'HTTP status codes results in appropriate errors', Object.keys(Batman.RestStorage._statusCodeErrors).length, ->
+    counter = 0
+    namespace = @
+    for statusCode, errorClass of Batman.RestStorage._statusCodeErrors
+      do (statusCode, errorClass) ->
+        MockRequest.expect 
+          url: '/products/10'
+          method: 'GET'
+        , error: 
+          status: statusCode
+
+        product = new namespace.Product(name: "test", id: 10)
+
+        counter += 1
+        namespace.adapter.perform 'read', product, {}, (err, record, env) =>
+          ok err instanceof errorClass
+          QUnit.start() if --counter == 0
+
   test "persisting a model with this adapter should add helpers for making gets, puts, posts, and deletes", ->
     @adapter.perform = perform = createSpy()
 

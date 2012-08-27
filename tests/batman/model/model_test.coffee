@@ -101,25 +101,16 @@ test 'the instantiated storage adapter should be returned when persisting', ->
 
   ok returned.isTestStorageAdapter
 
-test 'the storage adapter should be returned after persisting with Model.storageAdapter()', ->
-  returned = false
-  class StorageAdapter extends Batman.StorageAdapter
-    isTestStorageAdapter: true
-
-  class Product extends Batman.Model
-     @persist StorageAdapter
-
-  equal Product.storageAdapter().constructor, StorageAdapter
-
 test 'options passed to persist should be mixed in to the storage adapter once instantiated', ->
   returned = false
   class StorageAdapter extends Batman.StorageAdapter
     isTestStorageAdapter: true
 
   class Product extends Batman.Model
-     @persist StorageAdapter, {foo: 'bar'}
+     @persist StorageAdapter, {foo: 'bar'}, {corge: 'corge'}
 
   equal Product.storageAdapter().foo, 'bar'
+  equal Product.storageAdapter().corge, 'corge'
 
   class Order extends Batman.Model
   adapter = new StorageAdapter(Order)

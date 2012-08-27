@@ -12,13 +12,18 @@ class Batman.AssociationProxy extends Batman.Proxy
   load: (callback) ->
     @fetch (err, proxiedRecord) =>
       unless err
-        @set 'loaded', true
-        @set 'target', proxiedRecord
+        @_setTarget(proxiedRecord)
       callback?(err, proxiedRecord)
     @get('target')
 
+  loadFromLocal: ->
+    return unless @_canLoad()
+    if target = @fetchFromLocal()
+      @_setTarget(target)
+    target
+
   fetch: (callback) ->
-    unless (@get('foreignValue') || @get('primaryValue'))?
+    unless @_canLoad()
       return callback(undefined, undefined)
     record = @fetchFromLocal()
     if record
@@ -31,3 +36,11 @@ class Batman.AssociationProxy extends Batman.Proxy
   @accessor 'target',
     get: -> @fetchFromLocal()
     set: (_, v) -> v # This just needs to bust the cache
+
+  _canLoad: ->
+    (@get('foreignValue') || @get('primaryValue'))?
+
+  _setTarget: (target) ->
+    @set 'target', target
+    @set 'loaded', true
+    @fire 'loaded', target

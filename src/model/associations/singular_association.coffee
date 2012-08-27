@@ -11,10 +11,15 @@ class Batman.SingularAssociation extends Batman.Association
     # Make sure the related model has been loaded
     if self.getRelatedModel()
       proxy = @associationProxy(self)
-      Batman.Property.withoutTracking ->
-        if not proxy.get('loaded') and self.options.autoload
-          proxy.load()
-      proxy
+      record = false
+      parent = @
+      proxy._loadSetter ?= proxy.once 'loaded', (child) -> parent.set(self.label, child)
+      if not Batman.Property.withoutTracking(-> proxy.get('loaded'))
+        if self.options.autoload
+          Batman.Property.withoutTracking(-> proxy.load())
+        else
+          record = proxy.loadFromLocal()
+      record || proxy
 
   setIndex: ->
     @index ||= new Batman.UniqueAssociationSetIndex(@, @[@indexRelatedModelOn])
