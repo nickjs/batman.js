@@ -464,8 +464,6 @@ test "passing a promise function to an accessor declaration wraps the class's de
   equal @SpecialThing.setter.callCount, 0
   equal @SpecialThing.unsetter.callCount, 0
 
-
-
 test "asynchronous delivery calls the wrapped setter", ->
   deliver = null
   @thing.accessor 'foo', promise: (d) -> deliver = d
@@ -490,4 +488,15 @@ test "multiple gets before delivery don't call the fetcher multiple times", ->
   equal @thing.get('foo'), undefined
   equal @thing.get('foo'), undefined
 
+  equal fetcher.callCount, 1
+
+test "fetchers which deliver undefined don't retrigger fetch", ->
+  @thing.accessor 'foo', promise: fetcher = createSpy()
+
+  equal @thing.get('foo'), undefined
+
+  deliver = fetcher.lastCallArguments[0]
+  deliver.call(null, undefined)
+
+  equal @thing.get('foo'), undefined
   equal fetcher.callCount, 1
