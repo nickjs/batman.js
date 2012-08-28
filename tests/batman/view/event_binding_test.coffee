@@ -41,7 +41,7 @@ asyncTest 'it should use native property access instead of `get` to find event h
     bar: spy
 
     @accessor
-      get: (key) -> 
+      get: (key) ->
         @attrs.get(key)
       set: (key, value) ->
         @attrs.set(key, value)
@@ -186,3 +186,9 @@ asyncTest 'should pass the context to other events without special handlers', 3,
 
     QUnit.start()
 
+asyncTest 'it should not choke on proxied values which resolve to undefined', 1, ->
+  source = '<div data-context-foo="bar"><input data-event-keypress="foo" /></div>'
+  helpers.render source, {}, (node) ->
+    helpers.triggerKey(node[0].childNodes[0], 65)
+    ok true
+    QUnit.start()
