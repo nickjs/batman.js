@@ -30,8 +30,8 @@ class Batman.Route extends Batman.Object
       $
     ///
 
+    regexps.namedOrSplat.lastIndex = 0
     namedArguments = (matches[1] while matches = regexps.namedOrSplat.exec(pattern))
-
     properties = {templatePath, pattern, regexp, namedArguments, baseParams}
     for k in @optionKeys
       properties[k] = baseParams[k]
