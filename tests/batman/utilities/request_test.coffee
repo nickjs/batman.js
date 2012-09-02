@@ -94,10 +94,9 @@ asyncTest 'should set headers', 2, ->
     notEqual req.headers.test_header, undefined
     equal req.headers.test_header, 'test-value'
 
-if typeof Batman.container.FormData isnt 'undefined'
-  oldFormData = Batman.container.FormData
-else
-  oldFormData = {}
+old = {}
+for key in ['FormData', 'File']
+  old[key] = Batman.container[key] || {}
 
 class MockFormData extends MockClass
   constructor: ->
@@ -108,13 +107,16 @@ class MockFormData extends MockClass
     @appends++
     @appended.push [k, v]
 
+class MockFile
+
 QUnit.module 'Batman.Request: serializing to FormData'
   setup: ->
     Batman.container.FormData = MockFormData
+    Batman.container.File = MockFile
     MockFormData.reset()
 
   teardown: ->
-    Batman.container.FormData = oldFormData
+    Batman.extend Batman.container, old
 
 test 'should serialize array data to FormData objects', ->
   object =
@@ -156,3 +158,11 @@ test 'should serialize nested object and array data to FormData objects', ->
     ["corge[][null]", ""]
     ["corge[][undefined]", ""]
   ]
+
+test "should serialize files without touching them into FormData objects", ->
+  object =
+    image: new MockFile
+
+  formData = Batman.Request.objectToFormData(object)
+  equal formData.appended[0][0], 'image'
+  ok formData.appended[0][1] instanceof MockFile
