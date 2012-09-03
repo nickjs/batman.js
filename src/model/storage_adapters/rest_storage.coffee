@@ -1,6 +1,12 @@
 #= require ./storage_adapter
 
 class Batman.RestStorage extends Batman.StorageAdapter
+
+  class @CommunicationError extends @StorageError
+    name: 'CommunicationError'
+    constructor: (message) ->
+      super(message || "A communication error has occurred!")
+
   @JSONContentType: 'application/json'
   @PostBodyContentType: 'application/x-www-form-urlencoded'
 
@@ -229,6 +235,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     next()
 
   @_statusCodeErrors:
+    '0':   @CommunicationError
     '403': @NotAllowedError
     '404': @NotFoundError
     '406': @NotAcceptableError
