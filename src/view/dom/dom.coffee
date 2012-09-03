@@ -5,7 +5,10 @@
 #
 # querySelector
 # querySelectorAll
-#
+# appendChild
+# removeNode
+# setInnerHTML
+
 Batman.DOM =
   # List of input type="types" for which we can use keyup events to track
   textInputTypes: ['text', 'search', 'tel', 'url', 'email', 'password']
