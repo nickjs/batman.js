@@ -29,7 +29,7 @@
 
   if (typeof RUNNING_IN_BATMAN !== 'undefined') {
     defaultOptions = utils.getConfig();
-    cli.enable('daemon').setUsage('batman server [OPTIONS]').parse({
+    cli.setUsage('batman server [OPTIONS]').parse({
       host: ['h', "Host to run HTTP server on", "string", "127.0.0.1"],
       port: ['p', "Port to run HTTP server on", "number", 1047],
       build: ['b', "Build coffeescripts on the fly into the build dir (default is ./build) and serve them as js", "boolean", defaultOptions.build],
