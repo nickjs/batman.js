@@ -1,14 +1,20 @@
-#
-# batman.jquery.coffee
-# batman.js
-#
-# Created by Nick Small
-# Copyright 2011, Shopify
-#
-
-# Include this file instead of batman.nodep if your
-# project already uses jQuery. It will map a few
-# batman.js methods to existing jQuery methods.
+Batman.extend Batman.DOM,
+  querySelectorAll: (node, selector) -> jQuery(selector, node)
+  querySelector: (node, selector) -> jQuery(selector, node)[0]
+  setInnerHTML: (node, html) ->
+    childNodes = (child for child in node.childNodes)
+    Batman.DOM.willRemoveNode(child) for child in childNodes
+    result = jQuery(node).html(html)
+    Batman.DOM.didRemoveNode(child) for child in childNodes
+    result
+  removeNode: (node) ->
+    Batman.DOM.willRemoveNode(node)
+    jQuery(node).remove()
+    Batman.DOM.didRemoveNode(node)
+  appendChild: (parent, child) ->
+    Batman.DOM.willInsertNode(child)
+    jQuery(parent).append(child)
+    Batman.DOM.didInsertNode(child)
 
 Batman.Request::_parseResponseHeaders = (xhr) ->
   headers = xhr.getAllResponseHeaders().split('\n').reduce((acc, header) ->

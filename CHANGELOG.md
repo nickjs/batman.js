@@ -1,3 +1,11 @@
+## 0.13.0 (TBA)
+
+Major Release
+
+Breaking Changes:
+
+ - Removed top level DOM helpers from the `Batman` namespace and moved them to the `Batman.DOM` namespace. The moved helpers are `setInnerHTML`, `propagateBindingEvent`, `propagateBindingEvents`, `trackBinding`, `onParseExit`, `forgetParseExit`, `setStyleProperty`, `destroyNode`, `removeOrDestroyNode`, `insertBefore`, `addEventListener`, `removeEventListener`, `hasAddEventListener`, `preventDefault`, `stopPropagation`, and `appendChild`.
+
 ## 0.12.0 (August 23rd, 2012)
 
 Major Release

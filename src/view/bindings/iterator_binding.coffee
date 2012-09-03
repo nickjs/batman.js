@@ -21,15 +21,15 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @endNode = document.createComment "end #{@iteratorName}-#{@get('_batmanID')}"
     @endNode[Batman.expando] = sourceNode[Batman.expando]
     delete sourceNode[Batman.expando] if Batman.canDeleteExpando
-    Batman.insertBefore sourceNode.parentNode, @startNode, previousSiblingNode
-    Batman.insertBefore sourceNode.parentNode, @endNode, previousSiblingNode
+    Batman.DOM.insertBefore sourceNode.parentNode, @startNode, previousSiblingNode
+    Batman.DOM.insertBefore sourceNode.parentNode, @endNode, previousSiblingNode
 
     # Don't let the parent emit its rendered event until this iteration has set up
     @parentRenderer.prevent 'rendered'
 
     # Remove the original node once the parent has moved past it.
     Batman.DOM.onParseExit sourceNode.parentNode, =>
-      Batman.destroyNode sourceNode
+      Batman.DOM.destroyNode sourceNode
       @bind()
       @parentRenderer.allowAndFire 'rendered'
 
@@ -75,7 +75,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
             existingNode
           else
             @_newNodeForItem(newItem)
-          Batman.insertBefore @parentNode(), node, nodeAtIndex
+          Batman.DOM.insertBefore @parentNode(), node, nodeAtIndex
 
     unseenNodeMap.forEach (item, node) =>
       @_removeItem(item)
@@ -91,7 +91,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @parentRenderer.prevent 'rendered'
     renderer = new Batman.Renderer newNode, @renderContext.descend(newItem, @iteratorName), @parentRenderer.view
     renderer.on 'rendered', =>
-      Batman.propagateBindingEvents(newNode)
+      Batman.DOM.propagateBindingEvents(newNode)
       @fire 'nodeAdded', newNode, newItem
       @parentRenderer.allowAndFire 'rendered'
     newNode
@@ -106,6 +106,6 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   _removeItem: (item) ->
     node = @nodeMap.unset(item)
 
-    Batman.destroyNode(node)
+    Batman.DOM.destroyNode(node)
     @fire 'nodeRemoved', node, item
 

@@ -3,9 +3,9 @@
 class Batman.PushStateNavigator extends Batman.Navigator
   @isSupported: -> window?.history?.pushState?
   startWatching: ->
-    Batman.addEventListener window, 'popstate', @handleCurrentLocation
+    Batman.DOM.addEventListener window, 'popstate', @handleCurrentLocation
   stopWatching: ->
-    Batman.removeEventListener window, 'popstate', @handleCurrentLocation
+    Batman.DOM.removeEventListener window, 'popstate', @handleCurrentLocation
   pushState: (stateObject, title, path) ->
     window.history.pushState(stateObject, title, @linkTo(path))
   replaceState: (stateObject, title, path) ->

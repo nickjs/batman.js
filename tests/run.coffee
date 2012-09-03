@@ -6,9 +6,9 @@ qqunit = require 'qqunit'
 
 qqunit.Environment.jsdom.jQueryify window, path.join(__dirname, 'lib', 'jquery.js'), (window, jQuery) ->
   global.jQuery = jQuery
-
   # Load test helper
   try
+    require './lib/query_selector_polyfill'
     Helper = require './batman/test_helper'
     global[k] = v for own k,v of Helper
 

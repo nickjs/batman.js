@@ -22,6 +22,6 @@ class Batman.DOM.ShowHideBinding extends Batman.DOM.AbstractBinding
       if typeof (hide = Batman.data(@node, 'hide')) is 'function'
         hide.call @node
       else
-        Batman.setStyleProperty(@node, 'display', 'none', 'important')
+        Batman.DOM.setStyleProperty(@node, 'display', 'none', 'important')
 
       view?.fire 'disappear', @node

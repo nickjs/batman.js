@@ -82,7 +82,7 @@ class Batman.Renderer extends Batman.Object
         else if result instanceof Batman.RenderContext
           oldContext = @context
           @context = result
-          Batman.onParseExit(node, => @context = oldContext)
+          Batman.DOM.onParseExit(node, => @context = oldContext)
 
     if (nextNode = @nextNode(node, skipChildren)) then @parseNode(nextNode) else @finish()
 
@@ -92,16 +92,16 @@ class Batman.Renderer extends Batman.Object
       return children[0] if children?.length
 
     sibling = node.nextSibling # Grab the reference before onParseExit may remove the node
-    Batman.onParseExit(node)?.forEach (callback) -> callback()
-    Batman.forgetParseExit(node)
+    Batman.DOM.onParseExit(node)?.forEach (callback) -> callback()
+    Batman.DOM.forgetParseExit(node)
     return if @node == node
     return sibling if sibling
 
     nextParent = node
     while nextParent = nextParent.parentNode
       parentSibling = nextParent.nextSibling
-      Batman.onParseExit(nextParent)?.forEach (callback) -> callback()
-      Batman.forgetParseExit(nextParent)
+      Batman.DOM.onParseExit(nextParent)?.forEach (callback) -> callback()
+      Batman.DOM.forgetParseExit(nextParent)
       return if @node == nextParent
       return parentSibling if parentSibling
 

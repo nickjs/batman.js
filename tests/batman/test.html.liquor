@@ -13,6 +13,8 @@
 
     #{ js('/src/batman.js') }
 
+    #{ js('/src/platform/jquery.js') }
+
     #{ js('/src/extras/batman.rails.js') }
 
     #{ js('/src/extras/batman.i18n.js') }

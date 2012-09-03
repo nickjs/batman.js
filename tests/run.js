@@ -14,6 +14,7 @@
     var Helper, k, tests, v;
     global.jQuery = jQuery;
     try {
+      require('./lib/query_selector_polyfill');
       Helper = require('./batman/test_helper');
       for (k in Helper) {
         if (!__hasProp.call(Helper, k)) continue;

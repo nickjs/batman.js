@@ -1,3 +1,5 @@
+#= require ./lib/dom_helpers
+
 url = require 'url'
 querystring = require 'querystring'
 
