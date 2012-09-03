@@ -21,11 +21,11 @@ Batman.DOM =
       context: context
 
     view.on 'ready', ->
-      Batman.setInnerHTML container, ''
-      Batman.appendChild container, view.get('node')
+      Batman.DOM.setInnerHTML container, ''
+      Batman.DOM.appendChild container, view.get('node')
       renderer.allowAndFire 'rendered'
 
-  propagateBindingEvent: Batman.propagateBindingEvent = (binding, node) ->
+  propagateBindingEvent: (binding, node) ->
     while (current = (current || node).parentNode)
       parentBindings = Batman._data current, 'bindings'
       if parentBindings?
@@ -33,50 +33,50 @@ Batman.DOM =
           parentBinding.childBindingAdded?(binding)
     return
 
-  propagateBindingEvents: Batman.propagateBindingEvents = (newNode) ->
-    Batman.propagateBindingEvents(child) for child in newNode.childNodes
+  propagateBindingEvents: (newNode) ->
+    Batman.DOM.propagateBindingEvents(child) for child in newNode.childNodes
     if bindings = Batman._data newNode, 'bindings'
       for binding in bindings
-        Batman.propagateBindingEvent(binding, newNode)
+        Batman.DOM.propagateBindingEvent(binding, newNode)
     return
 
   # Adds a binding or binding-like object to the `bindings` set in a node's
   # data, so that upon node removal we can unset the binding and any other objects
   # it retains. Also notify any parent bindings of the appearance of new bindings underneath
-  trackBinding: Batman.trackBinding = (binding, node) ->
+  trackBinding: (binding, node) ->
     if bindings = Batman._data node, 'bindings'
       bindings.push(binding)
     else
       Batman._data node, 'bindings', [binding]
 
     Batman.DOM.fire('bindingAdded', binding)
-    Batman.propagateBindingEvent(binding, node)
+    Batman.DOM.propagateBindingEvent(binding, node)
     true
 
-  onParseExit: Batman.onParseExit = (node, callback) ->
+  onParseExit: (node, callback) ->
     set = Batman._data(node, 'onParseExit') || Batman._data(node, 'onParseExit', new Batman.SimpleSet)
     set.add callback if callback?
     set
 
-  forgetParseExit: Batman.forgetParseExit = (node, callback) -> Batman.removeData(node, 'onParseExit', true)
+  forgetParseExit: (node, callback) -> Batman.removeData(node, 'onParseExit', true)
 
   defineView: (name, node) ->
     contents = node.innerHTML
     Batman.View.store.set(Batman.Navigator.normalizePath(name), contents)
     contents
 
-  setStyleProperty: Batman.setStyleProperty = (node, property, value, importance) ->
+  setStyleProperty: (node, property, value, importance) ->
     if node.style.setAttribute
       node.style.setAttribute(property, value, importance)
     else
       node.style.setProperty(property, value, importance)
 
-  destroyNode: Batman.destroyNode = (node) ->
+  destroyNode: (node) ->
     Batman.DOM.willDestroyNode(node)
-    Batman.removeNode(node)
+    Batman.DOM.removeNode(node)
     Batman.DOM.didDestroyNode(node)
 
-  removeOrDestroyNode: Batman.removeOrDestroyNode = (node) ->
+  removeOrDestroyNode: (node) ->
     view = Batman._data(node, 'view')
     view ||= Batman._data(node, 'yielder')
     if view? && view.get('cached')
@@ -84,9 +84,9 @@ Batman.DOM =
     else
       Batman.DOM.destroyNode(node)
 
-  insertBefore: Batman.insertBefore = (parentNode, newNode, referenceNode = null) ->
+  insertBefore: (parentNode, newNode, referenceNode = null) ->
     if !referenceNode or parentNode.childNodes.length <= 0
-      Batman.appendChild parentNode, newNode
+      Batman.DOM.appendChild parentNode, newNode
     else
       Batman.DOM.willInsertNode(newNode)
       parentNode.insertBefore newNode, referenceNode
@@ -101,14 +101,13 @@ Batman.DOM =
         if isSetting then node.value = value
       else
         if isSetting
-          Batman.setInnerHTML node, if escapeValue then Batman.escapeHTML(value) else value
+          Batman.DOM.setInnerHTML node, if escapeValue then Batman.escapeHTML(value) else value
         else node.innerHTML
 
   nodeIsEditable: (node) ->
     node.nodeName.toUpperCase() in ['INPUT', 'TEXTAREA', 'SELECT']
 
-  # `Batman.addEventListener uses attachEvent when necessary
-  addEventListener: Batman.addEventListener = (node, eventName, callback) ->
+  addEventListener: (node, eventName, callback) ->
     # store the listener in Batman.data
     unless listeners = Batman._data node, 'listeners'
       listeners = Batman._data node, 'listeners', {}
@@ -116,13 +115,12 @@ Batman.DOM =
       listeners[eventName] = []
     listeners[eventName].push callback
 
-    if Batman.hasAddEventListener
+    if Batman.DOM.hasAddEventListener
       node.addEventListener eventName, callback, false
     else
       node.attachEvent "on#{eventName}", callback
 
-  # `Batman.removeEventListener` uses detachEvent when necessary
-  removeEventListener: Batman.removeEventListener = (node, eventName, callback) ->
+  removeEventListener: (node, eventName, callback) ->
     # remove the listener from Batman.data
     if listeners = Batman._data node, 'listeners'
       if eventListeners = listeners[eventName]
@@ -130,19 +128,17 @@ Batman.DOM =
         if index != -1
           eventListeners.splice(index, 1)
 
-    if Batman.hasAddEventListener
+    if Batman.DOM.hasAddEventListener
       node.removeEventListener eventName, callback, false
     else
       node.detachEvent 'on'+eventName, callback
 
-  hasAddEventListener: Batman.hasAddEventListener = !!window?.addEventListener
+  hasAddEventListener: !!window?.addEventListener
 
-  # `Batman.preventDefault` checks for preventDefault, since it's not
-  # always available across all browsers
-  preventDefault: Batman.preventDefault = (e) ->
+  preventDefault: (e) ->
     if typeof e.preventDefault is "function" then e.preventDefault() else e.returnValue = false
 
-  stopPropagation: Batman.stopPropagation = (e) ->
+  stopPropagation: (e) ->
     if e.stopPropagation then e.stopPropagation() else e.cancelBubble = true
 
   willInsertNode: (node) ->
@@ -202,7 +198,7 @@ Batman.DOM =
     if listeners = Batman._data node, 'listeners'
       for eventName, eventListeners of listeners
         eventListeners.forEach (listener) ->
-          Batman.removeEventListener node, eventName, listener
+          Batman.DOM.removeEventListener node, eventName, listener
 
     # remove all bindings and other data associated with this node
     Batman.removeData node                   # external data (Batman.data)

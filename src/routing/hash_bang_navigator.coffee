@@ -4,9 +4,9 @@ class Batman.HashbangNavigator extends Batman.Navigator
   HASH_PREFIX: '#!'
   if window? and 'onhashchange' of window
     @::startWatching = ->
-      Batman.addEventListener window, 'hashchange', @handleCurrentLocation
+      Batman.DOM.addEventListener window, 'hashchange', @handleCurrentLocation
     @::stopWatching = ->
-      Batman.removeEventListener window, 'hashchange', @handleCurrentLocation
+      Batman.DOM.removeEventListener window, 'hashchange', @handleCurrentLocation
   else
     @::startWatching = ->
       @interval = setInterval @handleCurrentLocation, 100

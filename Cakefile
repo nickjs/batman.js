@@ -35,7 +35,7 @@ task 'build', 'compile Batman.js and all the tools', (options) ->
     options: options
     map:
       'src/batman\.coffee'            : (matches) -> muffin.compileTree(matches[0], 'lib/batman.js', options)
-      'src/platform/(.+)\.coffee'     : (matches) -> muffin.compileTree(matches[0], "lib/batman.#{matches[1]}.js", options) unless matches[1] == 'node'
+      'src/platform/([^/]+)\.coffee'     : (matches) -> muffin.compileTree(matches[0], "lib/batman.#{matches[1]}.js", options) unless matches[1] == 'node'
       'src/extras/(.+)\.coffee'       : (matches) -> muffin.compileTree(matches[0], "lib/extras/#{matches[1]}.js", options)
       'tests/run\.coffee'             : (matches) -> muffin.compileTree(matches[0], 'tests/run.js', options)
 

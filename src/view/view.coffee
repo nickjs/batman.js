@@ -50,14 +50,14 @@ class Batman.View extends Batman.Object
         return unless html && html.length > 0
         @node = document.createElement 'div'
         @_setNodeOwner(@node)
-        Batman.setInnerHTML(@node, html)
+        Batman.DOM.setInnerHTML(@node, html)
       return @node
     set: (_, node) ->
       @node = node
       @_setNodeOwner(node)
       updateHTML = (html) =>
         if html?
-          Batman.setInnerHTML(@node, html)
+          Batman.DOM.setInnerHTML(@node, html)
           @forget('html', updateHTML)
       @observeAndFire 'html', updateHTML
       node

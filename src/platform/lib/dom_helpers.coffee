@@ -7,17 +7,17 @@ Batman.extend Batman.DOM,
       (node, selector) -> node.querySelector(selector)
     else
       -> Batman.developer.error("Please include either jQuery or a querySelector polyfill, or set Batman.DOM.querySelector to an empty function.")
-  setInnerHTML: Batman.setInnerHTML = (node, html) ->
+  setInnerHTML: (node, html) ->
     childNodes = (child for child in node.childNodes)
     Batman.DOM.willRemoveNode(child) for child in childNodes
     result = node.innerHTML = html
     Batman.DOM.didRemoveNode(child) for child in childNodes
     result
-  removeNode: Batman.removeNode = (node) ->
+  removeNode: (node) ->
     Batman.DOM.willRemoveNode(node)
     node.parentNode?.removeChild node
     Batman.DOM.didRemoveNode(node)
-  appendChild: Batman.appendChild = (parent, child) ->
+  appendChild: (parent, child) ->
     Batman.DOM.willInsertNode(child)
     parent.appendChild(child)
     Batman.DOM.didInsertNode(child)

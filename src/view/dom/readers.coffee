@@ -60,7 +60,7 @@ Batman.DOM.readers =
     true
 
   defineview: (node, name, context, renderer) ->
-    Batman.onParseExit(node, -> node.parentNode?.removeChild(node))
+    Batman.DOM.onParseExit(node, -> node.parentNode?.removeChild(node))
     Batman.DOM.defineView(name, node)
     false
 
@@ -69,10 +69,10 @@ Batman.DOM.readers =
     false
 
   yield: (node, key) ->
-    Batman.onParseExit node, -> Batman.DOM.Yield.withName(key).set 'containerNode', node
+    Batman.DOM.onParseExit node, -> Batman.DOM.Yield.withName(key).set 'containerNode', node
     true
   contentfor: (node, key, context, renderer, action = 'append') ->
-    Batman.onParseExit node, ->
+    Batman.DOM.onParseExit node, ->
       node.parentNode?.removeChild(node)
       renderer.view.pushYieldAction(key, action, node)
     true

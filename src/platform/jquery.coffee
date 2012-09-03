@@ -1,17 +1,17 @@
 Batman.extend Batman.DOM,
   querySelectorAll: (node, selector) -> jQuery(selector, node)
   querySelector: (node, selector) -> jQuery(selector, node)[0]
-  setInnerHTML: Batman.setInnerHTML = (node, html) ->
+  setInnerHTML: (node, html) ->
     childNodes = (child for child in node.childNodes)
     Batman.DOM.willRemoveNode(child) for child in childNodes
     result = jQuery(node).html(html)
     Batman.DOM.didRemoveNode(child) for child in childNodes
     result
-  removeNode: Batman.removeNode = (node) ->
+  removeNode: (node) ->
     Batman.DOM.willRemoveNode(node)
     jQuery(node).remove()
     Batman.DOM.didRemoveNode(node)
-  appendChild: Batman.appendChild = (parent, child) ->
+  appendChild: (parent, child) ->
     Batman.DOM.willInsertNode(child)
     jQuery(parent).append(child)
     Batman.DOM.didInsertNode(child)

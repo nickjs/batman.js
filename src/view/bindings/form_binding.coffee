@@ -13,7 +13,7 @@ class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
     @contextName = contextName
     delete @attributeName
 
-    Batman.DOM.events.submit @get('node'), (node, e) -> Batman.preventDefault e
+    Batman.DOM.events.submit @get('node'), (node, e) -> Batman.DOM.preventDefault e
     @setupErrorsList()
 
   childBindingAdded: (binding) =>
@@ -25,7 +25,7 @@ class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
 
   setupErrorsList: ->
     if @errorsListNode = Batman.DOM.querySelector(@get('node'), @get('errorsListSelector'))
-      Batman.setInnerHTML @errorsListNode, @errorsListHTML()
+      Batman.DOM.setInnerHTML @errorsListNode, @errorsListHTML()
 
       unless @errorsListNode.getAttribute 'data-showif'
         @errorsListNode.setAttribute 'data-showif', "#{@contextName}.errors.length"
