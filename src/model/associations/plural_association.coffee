@@ -3,21 +3,47 @@
 class Batman.PluralAssociation extends Batman.Association
   proxyClass: Batman.AssociationSet
   isSingular: false
-  setForRecord: Batman.Property.wrapTrackingPrevention (record) ->
-    if id = record.get(@primaryKey)
-      @setIndex().get(id)
+
+  constructor: ->
+    super
+    @_resetProxyHashes()
+
+  setForRecord: (record) ->
+    indexValue = @indexValueForRecord(record)
+    Batman.Property.withoutTracking =>
+      @_recordProxies.getOrSet record, =>
+        if indexValue?
+          existingValueSet = @_keyValueProxies.get(indexValue)
+          if existingValueSet?
+            return existingValueSet
+        newSet = new @proxyClass(indexValue, this)
+        if indexValue?
+          @_keyValueProxies.set indexValue, newSet
+        newSet
+    if indexValue?
+      @setIndex().get(indexValue)
     else
-      new @proxyClass(undefined, @)
+      @_recordProxies.get(record)
+
+  setForKey: Batman.Property.wrapTrackingPrevention (indexValue) ->
+    foundSet = undefined
+    @_recordProxies.forEach (record, set) =>
+      return if foundSet?
+      foundSet = set if @indexValueForRecord(record) == indexValue
+    if foundSet?
+      foundSet.foreignKeyValue = indexValue
+      return foundSet
+    @_keyValueProxies.getOrSet indexValue, => new @proxyClass(indexValue, this)
 
   getAccessor: (self, model, label) ->
     return unless self.getRelatedModel()
 
     # Check whether the relation has already been set on this model
-    if setInAttributes = self.getFromAttributes(@)
+    if setInAttributes = self.getFromAttributes(this)
       setInAttributes
     else
-      relatedRecords = self.setForRecord(@)
-      self.setIntoAttributes(@, relatedRecords)
+      relatedRecords = self.setForRecord(this)
+      self.setIntoAttributes(this, relatedRecords)
 
       Batman.Property.withoutTracking =>
         if self.options.autoload and not @isNew() and not relatedRecords.loaded
@@ -26,5 +52,15 @@ class Batman.PluralAssociation extends Batman.Association
       relatedRecords
 
   setIndex: ->
-    @index ||= new Batman.AssociationSetIndex(@, @[@indexRelatedModelOn])
+    @index ||= new Batman.AssociationSetIndex(this, @[@indexRelatedModelOn])
     @index
+
+  indexValueForRecord: (record) -> record.get(this.primaryKey)
+
+  reset: ->
+    super
+    @_resetProxyHashes()
+
+  _resetProxyHashes: ->
+    @_recordProxies = new Batman.SimpleHash
+    @_keyValueProxies = new Batman.SimpleHash

@@ -4,10 +4,14 @@ class Batman.AssociationSetIndex extends Batman.SetIndex
   constructor: (@association, key) ->
     super @association.getRelatedModel().get('loaded'), key
 
-  _resultSetForKey: (key) ->
-    @_storage.getOrSet key, =>
-      new @association.proxyClass(key, @association)
+  _resultSetForKey: (key) -> @association.setForKey(key)
 
-  _setResultSet: (key, set) ->
-    @_storage.set key, set
+  forEach: (iterator, ctx) ->
+    @association.proxies.forEach (record, set) =>
+      key = @association.indexValueForRecord(record)
+      iterator.call(ctx, key, set, this) if set.get('length') > 0
 
+  toArray: ->
+    results = []
+    @forEach (key) -> results.push(key)
+    results
