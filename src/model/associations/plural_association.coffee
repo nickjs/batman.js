@@ -55,7 +55,7 @@ class Batman.PluralAssociation extends Batman.Association
     @index ||= new Batman.AssociationSetIndex(this, @[@indexRelatedModelOn])
     @index
 
-  indexValueForRecord: (record) -> record.get(thisprimaryKey)
+  indexValueForRecord: (record) -> record.get(this.primaryKey)
 
   reset: ->
     super
