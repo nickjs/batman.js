@@ -13,5 +13,5 @@ class Batman.AssociationSetIndex extends Batman.SetIndex
 
   toArray: ->
     results = []
-    @forEach (key, set) -> results.push(key)
+    @forEach (key) -> results.push(key)
     results
