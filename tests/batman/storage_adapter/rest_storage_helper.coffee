@@ -342,6 +342,24 @@ restStorageTestSuite = ->
         ok err
         QUnit.start() if --counter == 0
 
+  asyncTest 'HTTP status codes results in appropriate errors', Object.keys(Batman.RestStorage._statusCodeErrors).length, ->
+    counter = 0
+    namespace = @
+    for statusCode, errorClass of Batman.RestStorage._statusCodeErrors
+      do (statusCode, errorClass) ->
+        MockRequest.expect 
+          url: '/products/10'
+          method: 'GET'
+        , error: 
+          status: statusCode
+
+        product = new namespace.Product(name: "test", id: 10)
+
+        counter += 1
+        namespace.adapter.perform 'read', product, {}, (err, record, env) =>
+          ok err instanceof errorClass
+          QUnit.start() if --counter == 0
+
   test "persisting a model with this adapter should add helpers for making gets, puts, posts, and deletes", ->
     @adapter.perform = perform = createSpy()
 
@@ -364,6 +382,11 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     url = @adapter.urlForRecord product, {}
     equal url, "/some/url#{urlSuffix}"
 
+  test 'absent record urls should be defaulted in the options', 1, ->
+    product = new @Product(id: 1)
+    url = @adapter.urlForRecord product, {}
+    equal url, "/products/1#{urlSuffix}"
+
   test 'function record urls should be given the options for the storage operation', 1, ->
     product = new @Product
     opts = {foo: true}
@@ -382,6 +405,15 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     url = @adapter.urlForCollection @Product, {}
     equal url, "/some/url#{urlSuffix}"
 
+  test 'absent model urls should be defaulted in the options', 1, ->
+    url = @adapter.urlForCollection @Product, {}
+    equal url, "/products#{urlSuffix}"
+
+  test 'absent model urls should have the urlPrefix added if present', 1, ->
+    @Product.urlPrefix = "/admin"
+    url = @adapter.urlForCollection @Product, {}
+    equal url, "/admin/products#{urlSuffix}"
+
   test 'function model urls should be given the options for the storage operation', 1, ->
     opts = {foo: true}
     @Product.url = (passedOpts) ->
@@ -391,7 +423,7 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
 
   test 'records should take a urlPrefix option', 1, ->
     product = new @Product
-    product.url = '/some/url'
+    product.url = 'some/url'
     product.urlPrefix = '/admin'
     url = @adapter.urlForRecord product, {}
     equal url, "/admin/some/url#{urlSuffix}"
@@ -404,7 +436,7 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     equal url, "/some/url.foo#{urlSuffix}"
 
   test 'models should be able to specify a urlPrefix', 1, ->
-    @Product.url = '/some/url'
+    @Product.url = 'some/url'
     @Product.urlPrefix = '/admin'
     url = @adapter.urlForCollection @Product, {}
     equal url, "/admin/some/url#{urlSuffix}"
@@ -414,6 +446,13 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     @Product.urlSuffix = '.foo'
     url = @adapter.urlForCollection @Product, {}
     equal url, "/some/url.foo#{urlSuffix}"
+
+  test 'absolute urls starting with a / should not have the url prefix applied', 1, ->
+    product = new @Product
+    product.url = '/some/url'
+    product.urlPrefix = '/admin'
+    url = @adapter.urlForRecord product, {}
+    equal url, "/some/url#{urlSuffix}"
 
   test 'nonstandard actions can be passed to models without url functions defined', 1, ->
     product = new @Product(id: 1)

@@ -1,23 +1,20 @@
 #= require ../object
-#= require ../state_machine
+#= require ../utilities/state_machine
 
 class Batman.Model extends Batman.Object
-
-  # ## Model API
-  # Override this property if your model is indexed by a key other than `id`
-  @primaryKey: 'id'
-
   # Override this property to define the key which storage adapters will use to store instances of this model under.
   #  - For RestStorage, this ends up being part of the url built to store this model
   #  - For LocalStorage, this ends up being the namespace in localStorage in which JSON is stored
   @storageKey: null
 
+  @primaryKey: 'id'
+
   # Pick one or many mechanisms with which this model should be persisted. The mechanisms
   # can be already instantiated or just the class defining them.
-  @persist: (mechanism, options) ->
+  @persist: (mechanism, options...) ->
     Batman.initializeObject @prototype
     mechanism = if mechanism.isStorageAdapter then mechanism else new mechanism(@)
-    Batman.mixin mechanism, options if options
+    Batman.mixin mechanism, options... if options.length > 0
     @::_batman.storage = mechanism
     mechanism
 
@@ -46,7 +43,6 @@ class Batman.Model extends Batman.Object
       @::_batman.encoders.set key, encoderForKey
     return
 
-  # Set up the unit functions as the default for both
   @defaultEncoder:
     encode: (x) -> x
     decode: (x) -> x
@@ -69,23 +65,11 @@ class Batman.Model extends Batman.Object
     else
       # Given options, find the validations which match the given options, and add them to the validators
       # array.
-      options = optionsOrFunction
-      for validator in Batman.Validators
-        if (matches = validator.matches(options))
-          delete options[match] for match in matches
+      for validatorClass in Batman.Validators
+        if (matches = validatorClass.matches(optionsOrFunction))
           validators.push
             keys: keys
-            validator: new validator(matches)
-
-  class Model.LifecycleStateMachine extends Batman.DelegatingStateMachine
-    @transitions
-      load: {empty: 'loading', loaded: 'loading', loading: 'loading'}
-      loaded: {loading: 'loaded'}
-      error: {loading: 'error'}
-
-  @classAccessor 'lifecycle', ->
-    @_batman.check(@)
-    @_batman.lifecycle ||= new @LifecycleStateMachine('empty', @)
+            validator: new validatorClass(matches)
 
   @classAccessor 'resourceName',
     get: ->
@@ -95,7 +79,6 @@ class Batman.Model extends Batman.Object
         Batman.developer.error("Please define #{Batman.functionName(@)}.resourceName in order for your model to be minification safe.") if Batman.config.minificationErrors
         Batman.helpers.underscore(Batman.functionName(@))
 
-  # ### Query methods
   @classAccessor 'all',
     get: ->
       @_batman.check(@)
@@ -126,26 +109,21 @@ class Batman.Model extends Batman.Object
     record.load callback
     return record
 
-  # `load` fetches records from all sources possible
   @load: (options, callback) ->
     if typeof options in ['function', 'undefined']
       callback = options
       options = {}
 
-    lifecycle = @get('lifecycle')
-    if lifecycle.load()
-      @_doStorageOperation 'readAll', {data: options}, (err, records, env) =>
-        if err?
-          lifecycle.error()
-          callback?(err, [])
-        else
-          mappedRecords = (@_mapIdentity(record) for record in records)
-          lifecycle.loaded()
-          callback?(err, mappedRecords, env)
-    else
-      callback(new Batman.StateMachine.InvalidTransitionError("Can't load while in state #{lifecycle.get('state')}"))
+    @fire 'loading', options
+    @_doStorageOperation 'readAll', {data: options}, (err, records, env) =>
+      if err?
+        @fire 'error', err
+        callback?(err, [])
+      else
+        mappedRecords = (@_mapIdentity(record) for record in records)
+        @fire 'loaded', mappedRecords, env
+        callback?(err, mappedRecords, env)
 
-  # `create` takes an attributes hash, creates a record from it, and saves it given the callback.
   @create: (attrs, callback) ->
     if !callback
       [attrs, callback] = [{}, attrs]
@@ -153,8 +131,6 @@ class Batman.Model extends Batman.Object
     obj.save(callback)
     obj
 
-  # `findOrCreate` takes an attributes hash, optionally containing a primary key, and returns to you a saved record
-  # representing those attributes, either from the server or from the identity map.
   @findOrCreate: (attrs, callback) ->
     record = new this(attrs)
     if record.isNew()
@@ -164,6 +140,11 @@ class Batman.Model extends Batman.Object
       callback(undefined, foundRecord)
 
     record
+
+  @createFromJSON: (json) ->
+    record = new this
+    record._withoutDirtyTracking -> @fromJSON(json)
+    @_mapIdentity(record)
 
   @_mapIdentity: (record) ->
     if typeof (id = record.get('id')) == 'undefined' || id == ''
@@ -362,19 +343,17 @@ class Batman.Model extends Batman.Object
     if !callback
       [options, callback] = [{}, options]
 
-    if @get('lifecycle').get('state') in ['destroying', 'destroyed']
-      callback?(new Error("Can't save a destroyed record!"))
-      return
     isNew = @isNew()
-    [startState, storageOperation, endState] = if isNew then ['create', 'create', 'created'] else ['save', 'update', 'saved']
-    @validate (error, errors) =>
-      if error || errors.length
-        @get('lifecycle').failedValidation()
-        callback?(error || errors, @)
-        return
-      creating = @isNew()
+    [startState, storageOperation, endState] = if isNew
+      ['create', 'create', 'created']
+    else
+      ['save', 'update', 'saved']
 
-      if @get('lifecycle').startTransition startState
+    if @get('lifecycle').startTransition startState
+      @validate (error, errors) =>
+        if error || errors.length
+          @get('lifecycle').failedValidation()
+          return callback?(error || errors, @)
 
         associations = @constructor._batman.get('associations')
         # Save belongsTo models immediately since we don't need this model's id
@@ -397,8 +376,8 @@ class Batman.Model extends Batman.Object
             else
               @get('lifecycle').error()
           callback?(err, record || @, env)
-      else
-        callback?(new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}"))
+    else
+      callback?(new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}"))
 
   destroy: (options, callback) =>
     if !callback

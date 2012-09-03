@@ -1,9 +1,12 @@
-#= require ./object
+#= require ../object
 #= require ./uri
 
 class Batman.Request extends Batman.Object
   @objectToFormData: (data) ->
     pairForList = (key, object, first = false) ->
+      if object instanceof Batman.container.File
+        return [[key, object]]
+
       list = switch Batman.typeOf(object)
         when 'Object'
           list = for k, v of object

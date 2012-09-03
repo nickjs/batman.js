@@ -1,9 +1,9 @@
-#= require ../../object
+#= require ../../utilities/proxy
 
-class Batman.AssociationProxy extends Batman.Object
-  isProxy: true
-  constructor: (@association, @model) ->
+class Batman.AssociationProxy extends Batman.Proxy
   loaded: false
+  constructor: (@association, @model) ->
+    super()
 
   toJSON: ->
     target = @get('target')
@@ -12,13 +12,18 @@ class Batman.AssociationProxy extends Batman.Object
   load: (callback) ->
     @fetch (err, proxiedRecord) =>
       unless err
-        @set 'loaded', true
-        @set 'target', proxiedRecord
+        @_setTarget(proxiedRecord)
       callback?(err, proxiedRecord)
     @get('target')
 
+  loadFromLocal: ->
+    return unless @_canLoad()
+    if target = @fetchFromLocal()
+      @_setTarget(target)
+    target
+
   fetch: (callback) ->
-    unless (@get('foreignValue') || @get('primaryValue'))?
+    unless @_canLoad()
       return callback(undefined, undefined)
     record = @fetchFromLocal()
     if record
@@ -32,6 +37,10 @@ class Batman.AssociationProxy extends Batman.Object
     get: -> @fetchFromLocal()
     set: (_, v) -> v # This just needs to bust the cache
 
-  @accessor
-    get: (k) -> @get('target')?.get(k)
-    set: (k, v) -> @get('target')?.set(k, v)
+  _canLoad: ->
+    (@get('foreignValue') || @get('primaryValue'))?
+
+  _setTarget: (target) ->
+    @set 'target', target
+    @set 'loaded', true
+    @fire 'loaded', target

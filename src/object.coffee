@@ -1,4 +1,3 @@
-#= require_tree ./utilities
 #= require ./_batman
 #= require ./event_emitter/event_emitter
 #= require ./observable/observable
@@ -42,17 +41,19 @@ class BatmanObject extends Object
     accessor
 
   promiseWrapper = (fetcher) ->
-    (core) ->
+    (defaultAccessor) ->
       get: (key) ->
-        val = core.get.apply(this, arguments)
-        return val if (typeof val isnt 'undefined')
-        returned = false
-        deliver = (err, result) =>
-          @set(key, result) if returned
-          val = result
-        fetcher.call(this, deliver, key)
-        returned = true
-        val
+        return existingValue if (existingValue = defaultAccessor.get.apply(this, arguments))?
+        asyncDeliver = false
+        newValue = undefined
+        @_batman["promise#{key}Fetched"] ?= do =>
+          deliver = (err, result) =>
+            @set(key, result) if asyncDeliver
+            newValue = result
+          fetcher.call(this, deliver, key)
+          true
+        asyncDeliver = true
+        newValue
       cache: true
 
   wrapSingleAccessor = (core, wrapper) ->

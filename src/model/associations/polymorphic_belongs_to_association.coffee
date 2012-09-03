@@ -79,9 +79,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
     (data, key, response, ___, childRecord) ->
       foreignTypeValue = response[association.foreignTypeKey] || childRecord.get(association.foreignTypeKey)
       relatedModel = association.getRelatedModelForType(foreignTypeValue)
-      record = new relatedModel()
-      record._withoutDirtyTracking -> @fromJSON(data)
-      record = relatedModel._mapIdentity(record)
+      record = relatedModel.createFromJSON(data)
       if association.options.inverseOf
         if inverse = association.inverseForType(foreignTypeValue)
           if inverse instanceof Batman.PolymorphicHasManyAssociation

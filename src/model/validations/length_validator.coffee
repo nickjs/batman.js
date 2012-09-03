@@ -1,8 +1,8 @@
 #= require ./validators
 
 class Batman.LengthValidator extends Batman.Validator
-    @options 'minLength', 'maxLength', 'length', 'lengthWithin', 'lengthIn'
-
+    @triggers 'minLength', 'maxLength', 'length', 'lengthWithin', 'lengthIn'
+    @options 'allowBlank'
     constructor: (options) ->
       if range = (options.lengthIn or options.lengthWithin)
         options.minLength = range[0]
@@ -14,7 +14,9 @@ class Batman.LengthValidator extends Batman.Validator
 
     validateEach: (errors, record, key, callback) ->
       options = @options
-      value = record.get(key) ? []
+      value = record.get(key)
+      return callback() if value != '' && @handleBlank(value)
+      value ?= []
       if options.minLength and value.length < options.minLength
         errors.add key, @format(key, 'too_short', {count: options.minLength})
       if options.maxLength and value.length > options.maxLength

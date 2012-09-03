@@ -4,7 +4,7 @@ Batman includes an number of useful, general purpose helper functions and refere
 
 ### container
 
-`Batman.container` points to either the `window` object if running the browser, or the `global` object if running in node. This is useful if you want to add something to the global scope in all environments.
+`Batman.container` points to either the `window` object if running in the browser, or the `global` object if running in node. This is useful if you want to add something to the global scope in all environments.
 
 ### typeOf(object) : string
 
@@ -80,19 +80,19 @@ test 'unmixin removes keys found on the unmixined objects on the subject', ->
 
 ### setImmediate(callback : Function) : object
 
-`setImmediate` (and it's sister `clearImmediate`) are a more efficient version of `setTimeout(callback, 0)`. Due to timer resolution issues, setTimeout passed a timeout of 0 doesn't actually execute the function as soon as the JS execution stack has been emptied, but at minimum 4ms and maxmium 25ms after. For this reason Batman provides a cross browser implementation of `setImmediate` which does it's best to call the callback immediately after the stack empties. Batman's `setImmediate` polyfill uses the native version if available, `window.postmessage` trickery if supported, and falls back on `setTimeout(->, 0)`.
+`setImmediate` (and its sister `clearImmediate`) are a more efficient version of `setTimeout(callback, 0)`. Due to timer resolution issues, setTimeout passed a timeout of 0 doesn't actually execute the function as soon as the JS execution stack has been emptied, but at minimum 4ms and maxmium 25ms after. For this reason Batman provides a cross browser implementation of `setImmediate` which does its best to call the callback immediately after the stack empties. Batman's `setImmediate` polyfill uses the native version if available, `window.postmessage` trickery if supported, and falls back on `setTimeout(->, 0)`.
 
 `setImmediate` returns a handle which can be passed to `clearImmediate` to cancel the future calling of the callback.
 
 ### clearImmediate(handle)
 
-`clearImmediate` stops the calling of a callback in the future when passed it's `handle` (which is returned from the `setImmediate` call used to enqueue it).
+`clearImmediate` stops the calling of a callback in the future when passed its `handle` (which is returned from the `setImmediate` call used to enqueue it).
 
 ### forEach(iterable : object, iterator : Function[, context : Object])
 
 The `forEach` Batman helper is a universal iteration helper. When passed an `iterable` object, the helper will call the `iterator` (optionally in the `context`) for each item in the `iterable`. The `iterable` can be:
 
- 1. something which has it's own `forEach`, in which case the `iterator` whill just be passed to `iterable.forEach`.
+ 1. something which has its own `forEach`, in which case the `iterator` will just be passed to `iterable.forEach`.
  2. an array like object, in which case a JavaScript `for(;;)` loop will be used to iterate over each entry
  3. or an object, in which case a JavaScript `for-in` loop will be used to iterate over each entry.
 

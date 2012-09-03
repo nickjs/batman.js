@@ -7,7 +7,7 @@
     "James MacAulay <james@shopify.com> (http://github.com/jamesmacaulay)",
     "Kamil Tusznio <kamil.tusznio@shopify.com> (http://github.com/ktusznio)"
   ],
-  "version": "0.11.2",
+  "version": "0.12.0",
   "homepage": "http://batmanjs.org",
   "repository": {
     "type": "git",
@@ -30,16 +30,16 @@
     "docco": "~>0.3.0",
     "glob": "~>3.0.1",
     "q": "~>0.8.0",
-    "muffin": "~>0.6.1",
+    "muffin": "~>0.6.2",
     "uglify-js": "1.2.5",
     "temp": "~>0.4.0",
     "qqunit": "~>0.4.2",
-    "percolate": "~>0.4.1",
+    "percolate": "~>0.4.2",
     "connect-assets": "~>2.2.0",
     "liquor": "~>0.0.0"
   },
   "engines": {
-    "node": "~>0.6.0 || ~>0.8.0"
+    "node": "~>0.6.0 || ~>0.8.0 || ~>0.9.0"
   },
   "optionalDependencies": {}
 }

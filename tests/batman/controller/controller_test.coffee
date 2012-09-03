@@ -1,3 +1,5 @@
+helpers = if typeof require is 'undefined' then window.viewHelpers else require '../view/view_helper'
+
 class TestController extends Batman.Controller
   show: ->
 
@@ -257,6 +259,29 @@ test 'filters specifying options in arrays should apply to all/none of those opt
   controller.dispatch 'index'
   equal spy.callCount, 1
 
+test 'redirect() in beforeFilter halts chain and does not call action or render', 4, ->
+  beforeSpy1 = createSpy()
+  beforeSpy2 = createSpy()
+  renderSpy = createSpy()
+  afterSpy = createSpy()
+
+  class FilterController extends Batman.Controller
+    @beforeFilter beforeSpy1
+    @beforeFilter ->
+      @redirect '/'
+    @beforeFilter beforeSpy2
+    @afterFilter afterSpy
+
+    render: renderSpy
+    index: -> @render false
+
+  controller = new FilterController
+  controller.dispatch 'index'
+  equal beforeSpy1.callCount, 1
+  equal beforeSpy2.callCount, 0
+  equal renderSpy.callCount, 0
+  equal afterSpy.callCount, 0
+
 test 'actions executed by other actions implicitly render', ->
   mockClassDuring Batman ,'View', MockView, (mockClass) =>
     @controller.test = ->
@@ -286,6 +311,44 @@ test 'actions executed by other actions have their filters run', ->
   @controller.dispatch 'test'
   ok beforeSpy.called
   ok afterSpy.called
+
+test 'beforeFilters and afterFilters are inherited when subclassing controllers', 8, ->
+  beforeSpy1 = createSpy()
+  beforeSpy2 = createSpy()
+  afterSpy1 = createSpy()
+  afterSpy2 = createSpy()
+
+  class TestParentController extends Batman.Controller
+    @beforeFilter beforeSpy1
+    @beforeFilter 'show', beforeSpy2
+    @afterFilter afterSpy1
+    @afterFilter 'show', afterSpy2
+
+    show: -> @render false
+
+  beforeSpy3 = createSpy()
+  beforeSpy4 = createSpy()
+  afterSpy3 = createSpy()
+  afterSpy4 = createSpy()
+  
+  class TestChildController extends TestParentController
+    @beforeFilter beforeSpy3
+    @beforeFilter 'show', beforeSpy4
+    @afterFilter afterSpy3
+    @afterFilter 'show', afterSpy4
+
+  controller = new TestChildController
+  controller.dispatch 'show'
+
+  equal beforeSpy1.callCount, 1
+  equal beforeSpy2.callCount, 1
+  equal beforeSpy3.callCount, 1
+  equal beforeSpy4.callCount, 1
+
+  equal afterSpy1.callCount, 1
+  equal afterSpy2.callCount, 1
+  equal afterSpy3.callCount, 1
+  equal afterSpy4.callCount, 1
 
 test 'afterFilters should only fire after renders are complete', 2, ->
   afterSpy = createSpy()
@@ -336,20 +399,6 @@ test 'afterFilters on outer actions should only fire after inner renders are com
     view.fireReady()
     ok afterSpy.called
 
-test 'afterFilters on outer actions should fire after afterFilters on inner actions', 1, ->
-  order = []
-  class TestController extends Batman.Controller
-    @afterFilter 'show', -> order.push 1
-    @afterFilter 'test', -> order.push 2
-    show: -> @render false
-    test: ->
-      @render false
-      @executeAction 'show'
-
-  @controller = new TestController
-  @controller.dispatch 'test'
-  deepEqual order, [1, 2]
-
 test 'dispatching params with a hash scrolls to that hash', ->
   @controller.show = -> @render false
 
@@ -366,3 +415,256 @@ test 'dispatching params with a hash does not scroll to that hash if autoScrollT
     spy.fixedReturn = true
     @controller.dispatch 'show', {'#': 'foo'}
     ok !spy.called
+
+QUnit.module 'Batman.Controller error handling'
+  setup: ->
+    class @CustomError extends Batman.Object
+    class @CustomError2 extends Batman.Object
+
+    @error = error = new @CustomError
+    @error2 = error2 = new @CustomError2
+
+    class @Model extends Batman.Object
+      @load: (callback) ->
+        callback(error, undefined)
+      @load2: (callback) ->
+        callback(error2, undefined)
+
+    class @TestController extends Batman.Controller
+      _customErrorHandler: (err) ->
+      _customErrorHandler2: (err) ->    
+   
+test 'When wrapping a call with the errorHandler callback, any exception tracked with catchError will be handled by a single handler', 3, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController.catchError @CustomError, with: @TestController::_customErrorHandler
+
+  namespace = @
+  controller = new @TestController
+  controller.index = -> 
+    namespace.Model.load @errorHandler callbackSpy
+    @render false
+  controller.dispatch('index')
+
+  equal callbackSpy.callCount, 0
+  equal handlerSpy.callCount, 1
+  deepEqual handlerSpy.lastCallArguments, [@error]
+  
+test 'When wrapping a call with the errorHandler callback, any exception tracked with catchError will be handled by multiple handlers', 5, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler, @TestController::_customErrorHandler2]
+
+  namespace = @
+  controller = new @TestController
+  controller.index = -> 
+    namespace.Model.load @errorHandler callbackSpy
+    @render false
+  controller.dispatch('index')
+
+  equal callbackSpy.callCount, 0
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 1
+  deepEqual handlerSpy.lastCallArguments, [@error]
+  deepEqual handlerSpy2.lastCallArguments, [@error]
+
+test 'When wrapping a call with the errorHandler callback, any exception that is not tracked with specific catchError will be re-thrown', 3, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController.catchError @CustomError, with: @TestController::_customErrorHandler
+  
+  @Model.load = (callback) ->
+    callback(new Error, undefined)
+  namespace = @
+  controller = new @TestController
+  controller.index = ->
+    namespace.Model.load @errorHandler callbackSpy
+    @render false
+
+  raises ->
+    controller.dispatch('index')
+  , Error
+
+  equal callbackSpy.callCount, 0
+  equal handlerSpy.callCount, 0
+
+test 'When wrapping a call with the errorHandler callback, no exception passes result to callback', 3, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController.catchError @CustomError, with: @TestController::_customErrorHandler
+  
+  @Model.load = (callback) ->
+    callback(undefined, [{id: 1}], 'foo')
+  namespace = @
+  controller = new @TestController
+  controller.index = ->
+    namespace.Model.load @errorHandler callbackSpy
+    @render false
+  
+  controller.dispatch('index')
+
+  equal handlerSpy.callCount, 0
+  equal callbackSpy.callCount, 1
+  deepEqual callbackSpy.lastCallArguments, [[{id: 1}], 'foo']
+
+test 'subclass errors registered with superclass catchError cause the errorHandler callback to fire', 3, ->
+  class ReallyCustomError extends @CustomError
+
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  error = new ReallyCustomError
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController.catchError @CustomError, with: @TestController::_customErrorHandler
+
+  @Model.load = (callback) ->
+    callback(error, undefined)
+  namespace = @
+  controller = new @TestController 
+  controller.index = ->
+    namespace.Model.load @errorHandler callbackSpy
+    @render false
+  controller.dispatch('index')
+
+  equal callbackSpy.callCount, 0
+  equal handlerSpy.callCount, 1
+  deepEqual handlerSpy.lastCallArguments, [error]
+
+test 'When wrapping a call with the errorHandler callback, parent class handlers are also called', 7, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+  handlerSpy3 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler, @TestController::_customErrorHandler2]
+
+  namespace = @
+
+  class SubclassController extends @TestController
+    _customErrorHandler3: handlerSpy3
+    _customErrorHandler2: handlerSpy2
+    @catchError namespace.CustomError, with: @::_customErrorHandler3 
+    
+  namespace = @
+  controller = new SubclassController
+  controller.index = -> 
+    namespace.Model.load @errorHandler callbackSpy
+    @render false
+  
+  controller.dispatch('index')
+
+  equal callbackSpy.callCount, 0
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 1
+  equal handlerSpy3.callCount, 1
+  deepEqual handlerSpy.lastCallArguments, [@error]
+  deepEqual handlerSpy2.lastCallArguments, [@error]
+  deepEqual handlerSpy3.lastCallArguments, [@error]
+
+test 'When wrapping multiple calls with errorHandler callback, any successive calls to the errorHandler should be ignored if an error occured on the current frame', 4, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler]
+  @TestController.catchError @CustomError2, with: [@TestController::_customErrorHandler2]
+
+  namespace = @
+  controller = new @TestController
+  controller.index = ->
+    namespace.Model.load @errorHandler callbackSpy
+    namespace.Model.load2 @errorHandler callbackSpy
+    @render false
+
+  controller.dispatch('index')
+
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 0
+  equal callbackSpy.callCount, 0
+  deepEqual handlerSpy.lastCallArguments, [@error]
+
+test 'When wrapping multiple nested calls with errorHandler callback, nested errors should not be fired if parent errored', 4, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler]
+  @TestController.catchError @CustomError2, with: [@TestController::_customErrorHandler2]
+
+  namespace = @
+  controller = new @TestController
+  controller.index = ->
+    namespace.Model.load @errorHandler ->
+      namespace.Model.load2 @errorHandler callbackSpy
+      ok false # should not be called
+    @render false
+
+  controller.dispatch('index')
+
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 0
+  equal callbackSpy.callCount, 0
+  deepEqual handlerSpy.lastCallArguments, [@error]
+
+test 'When wrapping multiple nested calls with errorHandler callback, nested errors not be ignored by higher level errors', 5, ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler]
+  @TestController.catchError @CustomError2, with: [@TestController::_customErrorHandler2]
+
+  namespace = @
+
+  @Model.load = (callback) ->
+    callback(undefined, [{id: 1}], 'foo')
+  @Model.load3 = (callback) ->
+    callback(namespace.error, undefined)
+  
+  controller = new @TestController
+  controller.index = ->
+    controllerNamespace = @
+    namespace.Model.load @errorHandler =>
+      ok true
+      namespace.Model.load2 @errorHandler callbackSpy
+    namespace.Model.load3 @errorHandler callbackSpy
+    @render false
+
+  controller.dispatch('index')
+
+  equal handlerSpy.callCount, 0
+  equal handlerSpy2.callCount, 1
+  equal callbackSpy.callCount, 0
+  deepEqual handlerSpy2.lastCallArguments, [@error2]
+
+test 'Calling handlerError directly with an error should result in the handlers being called', ->
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler]
+  controller = new @TestController  
+
+  equal controller.handleError(@error), true
+  equal controller.handleError(@error2), false
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 0
+  deepEqual handlerSpy.lastCallArguments, [@error]

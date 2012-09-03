@@ -54,6 +54,30 @@ test "updateAttributes will returns the updated record", ->
   product = new @Product(id: 10)
   equal product, product.updateAttributes {name: "foobar", id: 20}
 
+test "createFromJSON will create a record using encoders", ->
+  @Product.encode 'name', 'id'
+
+  product = @Product.createFromJSON(name: 'Test', id: 1, description: '  ')
+  ok product instanceof @Product
+  equal product.get('id'), 1
+  equal product.get('name'), 'Test'
+  equal product.get('description'), undefined
+
+test "createFromJSON leaves the record clean", ->
+  @Product.encode 'name', 'id'
+
+  product = @Product.createFromJSON(name: 'Test', id: 1, description: '  ')
+  equal product.get('lifecycle.state'), 'clean'
+  equal product.get('dirtyKeys').length, 0
+
+test "createFromJSON will return an existing instance if in the identity map", ->
+  @Product.encode 'name', 'id'
+
+  product = @Product.createFromJSON(name: 'Test', id: 1, description: '  ')
+
+  otherProduct = @Product.createFromJSON(id: 1)
+  strictEqual product, otherProduct
+
 test "primary key can be changed by setting primary key on the model class", ->
   @Product.set 'primaryKey', 'uuid'
   product = new @Product(uuid: "abc123")
@@ -77,25 +101,16 @@ test 'the instantiated storage adapter should be returned when persisting', ->
 
   ok returned.isTestStorageAdapter
 
-test 'the storage adapter should be returned after persisting with Model.storageAdapter()', ->
-  returned = false
-  class StorageAdapter extends Batman.StorageAdapter
-    isTestStorageAdapter: true
-
-  class Product extends Batman.Model
-     @persist StorageAdapter
-
-  equal Product.storageAdapter().constructor, StorageAdapter
-
 test 'options passed to persist should be mixed in to the storage adapter once instantiated', ->
   returned = false
   class StorageAdapter extends Batman.StorageAdapter
     isTestStorageAdapter: true
 
   class Product extends Batman.Model
-     @persist StorageAdapter, {foo: 'bar'}
+     @persist StorageAdapter, {foo: 'bar'}, {corge: 'corge'}
 
   equal Product.storageAdapter().foo, 'bar'
+  equal Product.storageAdapter().corge, 'corge'
 
   class Order extends Batman.Model
   adapter = new StorageAdapter(Order)

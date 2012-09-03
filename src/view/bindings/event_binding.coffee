@@ -31,8 +31,8 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
         if keys.length > 1
           functionKey = keys.pop()
           keyContext = Batman.getPath(this, ['keyContext'].concat(keys))
+          keyContext = Batman.RenderContext.deProxy(keyContext)
           if keyContext?
-            keyContext = Batman.RenderContext.deProxy(keyContext)
             return keyContext[functionKey]
 
       core.get.apply(@, arguments)

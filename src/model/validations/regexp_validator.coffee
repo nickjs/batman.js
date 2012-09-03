@@ -1,7 +1,8 @@
 #= require ./validators
 
 class Batman.RegExpValidator extends Batman.Validator
-    @options 'regexp', 'pattern'
+    @triggers 'regexp', 'pattern'
+    @options 'allowBlank'
 
     constructor: (options) ->
       @regexp = options.regexp ? options.pattern
@@ -9,9 +10,9 @@ class Batman.RegExpValidator extends Batman.Validator
 
     validateEach: (errors, record, key, callback) ->
       value = record.get(key)
-      if value? && value != ''
-        unless @regexp.test(value)
-          errors.add key, @format(key, 'not_matching')
+      return callback() if @handleBlank(value)
+      if !value? || value == '' || !@regexp.test(value)
+        errors.add key, @format(key, 'not_matching')
       callback()
 
 Batman.Validators.push Batman.RegExpValidator

@@ -1,7 +1,6 @@
 QUnit.module 'Batman.Navigator'
   setup: ->
 
-
 test "normalizePath(segments...) joins the segments with slashes, prepends a slash if necessary, and removes final trailing slashes", ->
   equal Batman.Navigator.normalizePath(''), '/'
   equal Batman.Navigator.normalizePath('','foo','','bar'), '/foo/bar'
@@ -11,3 +10,35 @@ test "normalizePath(segments...) joins the segments with slashes, prepends a sla
   equal Batman.Navigator.normalizePath('foo','bar','baz'), '/foo/bar/baz'
   equal Batman.Navigator.normalizePath('foo','//bar/baz/'), '/foo//bar/baz'
   equal Batman.Navigator.normalizePath('foo','bar/baz//'), '/foo/bar/baz'
+
+test "push with dispatch that includes nested push only pushes inner state", ->
+  navigator = new Batman.Navigator
+  navigator.app = new Batman.Object
+    dispatcher: 
+      pathFromParams: (params) -> params
+      dispatch: (params) ->
+        navigator.push '/redirected' if params is '/foo'
+        params
+
+  pushSpy = navigator.pushState = createSpy()
+  navigator.push '/foo'
+
+  ok pushSpy.callCount, 1
+  deepEqual pushSpy.lastCallArguments, [null, '', '/redirected']
+
+test "replace with dispatch that includes nested replace only replaces inner state", ->
+  navigator = new Batman.Navigator
+  navigator.app = new Batman.Object
+    dispatcher: 
+      pathFromParams: (params) -> params
+      dispatch: (params) ->
+        navigator.replace '/redirected' if params is '/foo'
+        params
+
+  replaceSpy = navigator.replaceState = createSpy()
+  navigator.replace '/foo'
+
+  ok replaceSpy.callCount, 1
+  deepEqual replaceSpy.lastCallArguments, [null, '', '/redirected']
+
+

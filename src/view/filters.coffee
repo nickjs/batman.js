@@ -34,7 +34,10 @@ Batman.Filters =
     lhs || rhs
 
   not: (value, binding) ->
-    ! !!value
+    !value
+
+  trim: buntUndefined (value, binding) ->
+    value.trim()
 
   matches: buntUndefined (value, searchFor) ->
     value.indexOf(searchFor) isnt -1
@@ -83,7 +86,7 @@ Batman.Filters =
         binding = count
         count = undefined
 
-    if count
+    if count?
       Batman.helpers.pluralize(count, string, undefined, includeCount)
     else
       Batman.helpers.pluralize(string)

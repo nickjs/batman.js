@@ -12,3 +12,4 @@ Batman.extend Batman.translate.messages,
       blank: "can't be blank"
       not_numeric: "must be a number"
       not_matching: "is not valid"
+      invalid_association: "is not valid"

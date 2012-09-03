@@ -134,11 +134,18 @@ asyncTest 'replace', 1, ->
     equal node.html(), "baz"
     QUnit.start()
 
-asyncTest 'contains', 1, ->
+asyncTest 'matches', 1, ->
   helpers.render '<div data-addclass-hasstring="foo | matches \'string\'"></div>',
     foo: 'this_has_some_strings'
   , (node) ->
     ok node.hasClass 'hasstring'
+    QUnit.start()
+
+asyncTest 'trim', 1, ->
+  helpers.render '<div data-bind="foo | trim"></div>',
+    foo: '    fooo      '
+  , (node) ->
+    equal node[0].innerHTML, "fooo"
     QUnit.start()
 
 asyncTest 'downcase', 1, ->
@@ -179,6 +186,14 @@ asyncTest 'pluralize with a count without including the count', 2, ->
     equal node.html(), "foos"
     context.set 'count', 1
     equal node.html(), "foo"
+    QUnit.start()
+
+asyncTest 'pluralize with a count of 0', 1, ->
+  helpers.render '<div data-bind="object | pluralize count"></div>',
+    object: 'foo'
+    count: 0
+  , (node) ->
+    equal node.html(), "0 foos"
     QUnit.start()
 
 asyncTest 'humanize', 1, ->

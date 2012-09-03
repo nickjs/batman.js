@@ -155,8 +155,8 @@ asyncTest "Model.all will get all without storage adapters", ->
 asyncTest "classes fire their loading/loaded callbacks", ->
   callOrder = []
 
-  @Product.get('lifecycle').onEnter 'loading', -> callOrder.push 1
-  @Product.get('lifecycle').onEnter 'loaded', -> callOrder.push 2
+  @Product.on 'loading', -> callOrder.push 1
+  @Product.on 'loaded', -> callOrder.push 2
 
   @Product.load (err, products) =>
     deepEqual callOrder, [1,2]

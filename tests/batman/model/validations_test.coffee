@@ -38,6 +38,20 @@ validationsTestSuite = ->
         equal errors.length, 3
         QUnit.start()
 
+  asyncTest "length with allow blank", 2, ->
+    class Product extends Batman.Model
+      @validate 'min', minLength: 4, allowBlank: true
+
+    p = new Product
+    p.validate (error, errors) ->
+      throw error if error
+      equal errors.length, 0
+      p.set 'min', '123'
+      p.validate (error, errors) ->
+        throw error if error
+        equal errors.length, 1
+        QUnit.start()
+
   asyncTest "presence", 3, ->
     class Product extends Batman.Model
       @validate 'name', presence: yes
@@ -84,11 +98,22 @@ validationsTestSuite = ->
       p.validate (err, errors) ->
         throw err if err
         equal errors.length, 0
-        p.unset 'name'
-        p.validate (err, errors) ->
-          throw err if err
-          equal errors.length, 0
-          QUnit.start()
+        QUnit.start()
+
+  asyncTest "regexp with allow blank", ->
+    class Product extends Batman.Model
+      @validate 'name', {pattern: /[0-9]+/, allowBlank: true}
+
+    p = new Product(name: "foo")
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+
+      p.unset 'name'
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        QUnit.start()
 
   asyncTest "custom async validations which don't rely on model state", ->
     letItPass = true
@@ -116,12 +141,91 @@ validationsTestSuite = ->
     p = new Product number: 5
     p.validate (err, errors) ->
       throw err if err
+      equal errors.length, 0
       p.set 'number', "not_a_number"
-      p.validate (result, errors) ->
-        ok !result
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 1
         QUnit.start()
 
-QUnit.module "Batman.Model: validations"
+  asyncTest "numeric with string", ->
+    class Product extends Batman.Model
+      @validate 'number', numeric: yes
+
+    p = new Product number: "5"
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+      p.set 'number', "not_a_number"
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 1
+        QUnit.start()
+
+  asyncTest "numeric with allow blank", ->
+    class Product extends Batman.Model
+      @validate 'number', numeric: yes, allowBlank: yes
+
+    p = new Product
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+      p.set 'number', "not_a_number"
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 1
+        QUnit.start()
+
+  asyncTest "associated for hasMany", ->
+    namespace = @
+    class @Product extends Batman.Model
+      @validate 'id', presence: true
+
+    class @Collection extends Batman.Model
+      @hasMany 'products', {namespace, autoload: false}
+      @validate 'products', associated: true
+
+    @collection = new @Collection
+    @collection.get('products').add new @Product
+    @collection.get('products').add new @Product
+    @collection.validate (err, errors) =>
+      throw err if err
+      equal errors.length, 2
+      @collection.get('products.toArray.0').set('id', 1)
+      @collection.validate (err, errors) =>
+        throw err if err
+        equal errors.length, 1
+        @collection.get('products.toArray.1').set('id', 2)
+        @collection.validate (err, errors) =>
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
+  asyncTest "associated for belongsTo", ->
+    namespace = @
+    class @Product extends Batman.Model
+      @belongsTo 'collection', {namespace, autoload: false}
+      @validate 'collection', associated: true
+
+    class @Collection extends Batman.Model
+      @validate 'id', presence: true
+
+    @product = new @Product
+    @collection = new @Collection
+    @product.validate (err, errors) =>
+      throw err if err
+      equal errors.length, 0
+      @product.set 'collection', @collection
+      @product.validate (err, errors) =>
+        throw err if err
+        equal errors.length, 1
+        @collection.set('id', 2)
+        @product.validate (err, errors) =>
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
+QUnit.module "Batman.Model: Validations"
 
 validationsTestSuite()
 

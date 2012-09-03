@@ -293,6 +293,16 @@ asyncTest 'it should loop over js objects', 6, ->
       equal parseInt(childNode.innerHTML, 10), playerScores[childNode.id]
     QUnit.start()
 
+asyncTest 'it should loop over silly objects which return undefined for toArray', 3, ->
+  source = '<p data-foreach-item="items" data-bind="item"></p>'
+  items = Batman(toArray: [1, 2, 3])
+  helpers.render source, Batman({items}), (node, view) ->
+    equal getPs(view).length, 3
+    items.set 'toArray', undefined
+    equal getPs(view).length, 0
+    items.set 'toArray', [1, 2]
+    equal getPs(view).length, 2
+    QUnit.start()
 
 asyncTest 'it should prevent parent renders even if it has to defer (note: this test can take a while)', ->
   oldDeferEvery = Batman.DOM.IteratorBinding::deferEvery

@@ -1,7 +1,3 @@
-
-# Global Helpers
-# -------
-
 # `Batman.typeOf` returns a string that contains the built-in class of an object
 # like `String`, `Array`, or `Object`. Note that only `Object` will be returned for
 # the entire prototype chain.
@@ -218,4 +214,3 @@ Batman.initializeObject = (object) ->
     object._batman.check(object)
   else
     object._batman = new Batman._Batman(object)
-
