@@ -4,9 +4,10 @@
 # DOM directives, but are used to handle specific events by the `data-event-#{name}` helper.
 Batman.DOM.events =
   click: (node, callback, context, eventName = 'click') ->
-    Batman.DOM.addEventListener node, eventName, (args...) ->
-      callback node, args..., context
-      Batman.DOM.preventDefault args[0]
+    Batman.DOM.addEventListener node, eventName, (event, args...) ->
+      return if event.metaKey || event.ctrlKey
+      callback node, event, args..., context
+      Batman.DOM.preventDefault event
 
     if node.nodeName.toUpperCase() is 'A' and not node.href
       node.href = '#'

@@ -21,10 +21,11 @@ exports.triggerFocus = (domNode) ->
   else if document.createEventObject
     domNode.fireEvent 'onfocus'
 
-exports.triggerClick = (domNode, eventName = 'click') ->
+exports.triggerClick = (domNode, eventName = 'click', options = {}) ->
+  options = Batman.extend {ctrlKey: false, altKey: false, shiftKey: false, metaKey: false}, options
   if document.createEvent
     evt = document.createEvent("MouseEvents")
-    evt.initMouseEvent(eventName, true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+    evt.initMouseEvent(eventName, true, true, window, 0, 0, 0, 0, 0, options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, 0, null)
     domNode.dispatchEvent(evt)
   else if document.createEventObject
     domNode.fireEvent 'on'+eventName

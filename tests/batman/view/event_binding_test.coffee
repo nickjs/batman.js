@@ -93,6 +93,17 @@ asyncTest 'it should allow double click events to be bound', 2, ->
 
     QUnit.start()
 
+if document.createEvent
+  asyncTest 'it should not execute click handlers for command clicks', 1, ->
+    context =
+      doSomething: spy = createSpy()
+
+    source = '<button data-event-click="doSomething"></button>'
+    helpers.render source, context, (node) ->
+      helpers.triggerClick(node[0], undefined, {metaKey: true})
+      ok !spy.called
+      QUnit.start()
+
 asyncTest 'it should allow un-special-cased events like focus to be bound', 2, ->
   context =
     doSomething: spy = createSpy()
