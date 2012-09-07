@@ -321,13 +321,20 @@ test "can define nonstandard collection routes", ->
   ok !route.get('member')
   deepEqual route.get('baseParams'), {handy: true}
 
-test "can define routes to multi word controllers", 4, ->
+test "can define routes to multi word controllers", 6, ->
   @builder.resources 'email_templates', {only: []}, ->
-    @resources 'email_messages', {only: ['show']}
+    @resources 'email_messages', {only: ['show']}, ->
+      @member 'send'
+      @collection 'search'
 
-  [name, route] = @routeMap.addRoute.lastCallArguments
+  [name, route] = @routeMap.addRoute.calls[2].arguments
   equal name, 'emailTemplates.emailMessages'
-  equal route.get('action'), 'show'
-  ok route.get('member')
   equal route.get('templatePath'), '/email_templates/:emailTemplateId/email_messages/:id'
 
+  [name, route] = @routeMap.addRoute.calls[0].arguments
+  equal name, 'emailTemplates.emailMessages.send'
+  equal route.get('templatePath'), '/email_templates/:emailTemplateId/email_messages/:id/send'
+
+  [name, route] = @routeMap.addRoute.calls[1].arguments
+  equal name, 'emailTemplates.emailMessages.search'
+  equal route.get('templatePath'), '/email_templates/:emailTemplateId/email_messages/search'

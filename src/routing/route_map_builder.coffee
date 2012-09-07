@@ -104,7 +104,7 @@ class Batman.RouteMapBuilder
     options = Batman.extend {}, @baseOptions, options
     options[cardinality] = true
     routeTemplate = @constructor.ROUTES[cardinality]
-    resourceRoot = options.controller
+    resourceRoot = Batman.helpers.underscore(options.controller)
     for name in names
       routeOptions = Batman.extend {action: name}, options
       unless routeOptions.path?
