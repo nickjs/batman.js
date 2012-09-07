@@ -5,7 +5,7 @@
 # make life a little easier.
 buntUndefined = (f) ->
   (value) ->
-    if typeof value is 'undefined'
+    unless value?
       undefined
     else
       f.apply(@, arguments)
