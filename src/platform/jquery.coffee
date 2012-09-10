@@ -9,8 +9,14 @@ Batman.extend Batman.DOM,
     result
   removeNode: (node) ->
     Batman.DOM.willRemoveNode(node)
+    node.parentNode?.removeChild node
+    Batman.DOM.didRemoveNode(node)
+  destroyNode: (node) ->
+    Batman.DOM.willDestroyNode(node)
+    Batman.DOM.willRemoveNode(node)
     jQuery(node).remove()
     Batman.DOM.didRemoveNode(node)
+    Batman.DOM.didDestroyNode(node)
   appendChild: (parent, child) ->
     Batman.DOM.willInsertNode(child)
     jQuery(parent).append(child)

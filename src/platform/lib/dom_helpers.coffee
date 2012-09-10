@@ -17,6 +17,10 @@ Batman.extend Batman.DOM,
     Batman.DOM.willRemoveNode(node)
     node.parentNode?.removeChild node
     Batman.DOM.didRemoveNode(node)
+  destroyNode: (node) ->
+    Batman.DOM.willDestroyNode(node)
+    Batman.DOM.removeNode(node)
+    Batman.DOM.didDestroyNode(node)
   appendChild: (parent, child) ->
     Batman.DOM.willInsertNode(child)
     parent.appendChild(child)

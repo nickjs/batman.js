@@ -7,6 +7,7 @@
 # querySelectorAll
 # appendChild
 # removeNode
+# destroyNode
 # setInnerHTML
 
 Batman.DOM =
@@ -73,11 +74,6 @@ Batman.DOM =
       node.style.setAttribute(property, value, importance)
     else
       node.style.setProperty(property, value, importance)
-
-  destroyNode: (node) ->
-    Batman.DOM.willDestroyNode(node)
-    Batman.DOM.removeNode(node)
-    Batman.DOM.didDestroyNode(node)
 
   removeOrDestroyNode: (node) ->
     view = Batman._data(node, 'view')
