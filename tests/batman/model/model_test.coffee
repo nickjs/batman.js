@@ -91,6 +91,14 @@ test 'the \'lifecycle.state\' key should be bindable', ->
   p.set('unrelatedkey', 'silly')
   ok spy.called
 
+test 'bindable isDirty should correctly reflect an object\`s dirtiness', ->
+  p = new @Product()
+  equal p.get('lifecycle.state'), 'clean'
+  ok !p.get('isDirty')
+  p.set('waffle', 'tasty')
+  equal p.get('lifecycle.state'), 'dirty'
+  ok p.get('isDirty')
+
 test 'the instantiated storage adapter should be returned when persisting', ->
   returned = false
   class StorageAdapter extends Batman.StorageAdapter
