@@ -220,7 +220,7 @@ class Batman.Model extends Batman.Object
   @accessor '_dirtiedKeys', -> @_dirtiedKeys ||= new Batman.SimpleSet
   @accessor 'errors', -> @errors ||= new Batman.ErrorsSet
   @accessor 'isNew', -> @isNew()
-  @accessor 'isDirty', -> @lifecycle.get('state') == 'dirty'
+  @accessor 'isDirty', -> @isDirty()
 
   # Default accessor implementing the latching draft behaviour
   @accessor Model.defaultAccessor =
@@ -253,6 +253,7 @@ class Batman.Model extends Batman.Object
         @set(primaryKey, value)
 
   isNew: -> typeof @get('id') is 'undefined'
+  isDirty: -> @lifecycle.get('state') == 'dirty'
 
   updateAttributes: (attrs) ->
     @mixin(attrs)
