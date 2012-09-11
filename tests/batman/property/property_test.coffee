@@ -445,6 +445,14 @@ test "passing a promise function to a classAccessor declaration wraps the class'
   @SpecialThing.classAccessor 'classFoo', promise: (deliver) -> deliver("error", "result")
   equal @SpecialThing.get('classFoo'), "result"
 
+test "promises with fetchers which return something return the fetcher's return value synchronously", ->
+  @thing.accessor 'foo', promise: (deliver) -> return 1
+  equal @thing.get('foo'), 1
+
+test "promises with fetchers which return something and synchronously deliver something return the delivered value", ->
+  @thing.accessor 'foo', promise: (deliver) -> deliver(null, 2); return 1
+  equal @thing.get('foo'), 2
+
 test "passing a promise function to an accessor declaration wraps the class's default accessor", ->
   @thing.accessor 'foo', promise: (deliver) -> deliver("error", "result")
 
@@ -466,7 +474,7 @@ test "passing a promise function to an accessor declaration wraps the class's de
 
 test "asynchronous delivery calls the wrapped setter", ->
   deliver = null
-  @thing.accessor 'foo', promise: (d) -> deliver = d
+  @thing.accessor 'foo', promise: (d) -> deliver = d; return
 
   equal @thing.get('foo'), undefined
 

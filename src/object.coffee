@@ -50,7 +50,8 @@ class BatmanObject extends Object
           deliver = (err, result) =>
             @set(key, result) if asyncDeliver
             newValue = result
-          fetcher.call(this, deliver, key)
+          returnValue = fetcher.call(this, deliver, key)
+          newValue = returnValue unless newValue?
           true
         asyncDeliver = true
         newValue
