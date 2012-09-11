@@ -100,6 +100,12 @@ class Batman.Model extends Batman.Object
     Batman.initializeObject(@)
     result = @get('loaded').clear()
     @_batman.get('associations')?.reset()
+    for own key, value of @_batman
+      if matches = key.match(/^promise(.+)Fetched$/)
+        property = matches[1]
+        @unset(property)
+        @property(property).cached = false
+        delete @_batman[key]
     result
 
   @find: (id, callback) ->
