@@ -253,7 +253,7 @@ class Batman.Model extends Batman.Object
         @set(primaryKey, value)
 
   isNew: -> typeof @get('id') is 'undefined'
-  isDirty: -> @lifecycle.get('state') == 'dirty'
+  isDirty: -> @get('lifecycle.state') == 'dirty'
 
   updateAttributes: (attrs) ->
     @mixin(attrs)
