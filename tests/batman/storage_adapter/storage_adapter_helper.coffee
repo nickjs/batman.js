@@ -41,11 +41,12 @@ sharedStorageTestSuite = (hooks = {}) ->
 
     equal adapter.storageKey(record), "not_overridden_children"
 
-  asyncTestWithHooks 'creating in storage: should succeed if the record doesn\'t already exist', 1, ->
+  asyncTestWithHooks 'creating in storage: should succeed if the record doesn\'t already exist', 2, ->
     product = new @Product(name: "test")
-    @adapter.perform 'create', product, {}, (err, record) =>
+    returnValue = @adapter.perform 'create', product, {}, (err, record) =>
       throw err if err
       ok record
+      strictEqual returnValue, undefined, 'perform returns undefined'
       QUnit.start()
 
   asyncTestWithHooks 'creating in storage: should fail if the record does already exist', 1, ->
