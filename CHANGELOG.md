@@ -1,10 +1,31 @@
-## 0.13.0 (TBA)
+## 0.13.0 (September 11th, 2012)
 
 Major Release
 
 Breaking Changes:
 
  - Removed top level DOM helpers from the `Batman` namespace and moved them to the `Batman.DOM` namespace. The moved helpers are `setInnerHTML`, `propagateBindingEvent`, `propagateBindingEvents`, `trackBinding`, `onParseExit`, `forgetParseExit`, `setStyleProperty`, `destroyNode`, `removeOrDestroyNode`, `insertBefore`, `addEventListener`, `removeEventListener`, `hasAddEventListener`, `preventDefault`, `stopPropagation`, and `appendChild`.
+ - Moved the DOM helpers which could be expressed using platform specific code into the platform adapters. This means that `Batman.DOM.setInnerHTML` will use `jQuery.fn.html` when using the jQuery platform adapter and the old implemention when using `solo`. Affected helpers are `querySelector`, `querySelectorAll`, `appendChild`, `removeNode`, `destroyNode`, and `setInnerHTML`,
+ - Removed support for daemonizing the `batman` server tool.
+
+Features
+
+ - Add `Controller::handleError()`, `Controller::errorHandler()`, and `Controller.catchError` for regstering error handlers and wrapping callbacks to automatically handle errors coming back from async operations.
+ - Remove `Model.lifecycle` (`Model::lifecycle` still exists) and switched to `loading` and `loaded` events instead so that multiple loads can occur at the same time.
+ - Formalize error objects returned from `RestStorage`. eg, `UnprocessableEntityError` comes back from a `422` response. These error objects also have reference to the `env` for the operation as well as the `request`.
+ - Allow `Model.persist` to take more than one object to mixin to the storage adapter.
+ - Add `record.get('isDirty')` as a shortcut to check if a model is in the dirty state.
+
+Bug Fixes
+
+ - Make `hasMany` associations use the same sets before and after a record has an ID. (#537)
+ - Make `belongsTo` associations replace the `proxy` object in the parent's property after the association is loaded.
+ - Make `IteratorBinding` recover gracefully when the bound collection returns undefined for `toArray`.
+ - Fix a bug in `EventBinding` where proxied values could cause non existant event handlers to fire causing browser errors.
+ - Fix routing bugs surrounding regexp indexes in IE8.
+ - Made `EventBinding`s not interfere with control or command clicks instead of calling the handler regardless of what modifier keys were pressed.
+ - Fix underscoring in route names for nested member and collection routes. (#547)
+ - Made filters which can't operate on null not operate on null.
 
 ## 0.12.0 (August 23rd, 2012)
 
