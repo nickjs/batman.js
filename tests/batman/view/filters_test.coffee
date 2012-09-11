@@ -113,18 +113,20 @@ asyncTest 'truncate', 2, ->
       equal node.html(), "your "
       QUnit.start()
 
-asyncTest 'prepend', 1, ->
-  helpers.render '<div data-bind="foo | prepend \'special-\'"></div>',
-    foo: 'bar'
-  , (node) ->
+asyncTest 'prepend', 2, ->
+  context = Batman(foo: 'bar')
+  helpers.render '<div data-bind="foo | prepend \'special-\'"></div>', context, (node) ->
     equal node.html(), "special-bar"
+    context.unset 'foo'
+    equal node.html(), "special-"
     QUnit.start()
 
-asyncTest 'append', 1, ->
-  helpers.render '<div data-bind="foo | append \'-special\'"></div>',
-    foo: 'bar'
-  , (node) ->
+asyncTest 'append', 2, ->
+  context = Batman(foo: 'bar')
+  helpers.render '<div data-bind="foo | append \'-special\'"></div>', context, (node) ->
     equal node.html(), "bar-special"
+    context.unset 'foo'
+    equal node.html(), "-special"
     QUnit.start()
 
 asyncTest 'replace', 1, ->

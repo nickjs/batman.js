@@ -106,12 +106,14 @@ asyncTest "should parse strings with more than 3 commas as arguments", ->
     deepEqual @spy.lastCallArguments, [1, "a,b,c,d,e,f"]
     QUnit.start()
 
-asyncTest 'should pass undefined for absent arguments', 1, ->
-  node = helpers.render '<div data-bind="foo | append"></div>',
+asyncTest 'should pass undefined for absent arguments', 2, ->
+  Batman.Filters['test'] = (a, b, binding) ->
+    equal a, 'foo'
+    strictEqual b, undefined
+
+  node = helpers.render '<div data-bind="foo | test"></div>',
     foo: 'foo'
-  , (node) ->
-    equal node.html(), "fooundefined"
-    QUnit.start()
+  , (node) -> QUnit.start()
 
 asyncTest 'should render chained filters', 1, ->
   node = helpers.render '<div data-bind="foo | upcase | downcase"></div>',
