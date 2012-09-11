@@ -54,3 +54,14 @@ asyncTest 'nodes after the binding should be rendered if the keypath starts as f
     equal $('.test', node).html(), 'bar'
     QUnit.start()
 
+asyncTest 'it should allow keypaths to transition from falsy values to other falsy values', 3, ->
+  source = '<div class="foo" data-insertif="foo"></div>'
+  context = Batman()
+  helpers.render source, false, context, (node) ->
+    equal $('.foo', node).length, 0
+    context.set 'foo', false
+    equal $('.foo', node).length, 0
+    context.set 'foo', true
+    equal $('.foo', node).length, 1
+    QUnit.start()
+

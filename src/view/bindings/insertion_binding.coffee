@@ -18,8 +18,9 @@ class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
         parentNode.removeChild @placeholderNode
     else
       # Hide
-      parentNode.insertBefore @placeholderNode, @node
-      Batman.DOM.removeNode @node
+      if @node.parentNode?
+        parentNode.insertBefore @placeholderNode, @node
+        Batman.DOM.removeNode @node
 
   die: ->
     return if @dead
