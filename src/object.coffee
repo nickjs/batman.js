@@ -64,6 +64,16 @@ ObjectFunctions =
       for key in keys
         @_defineAccessor key, wrapSingleAccessor(@_defineAccessor(key), wrapper)
 
+  _resetPromises: ->
+    return unless @_batman.promises?
+    @_resetPromise(key) for key of @_batman.promises
+    return
+
+  _resetPromise: (key) ->
+    @unset(key)
+    @property(key).cached = false
+    delete @_batman.promises[key]
+    return
 
 # `Batman.Object` is the base class for all other Batman objects. It is not abstract.
 class BatmanObject extends Object

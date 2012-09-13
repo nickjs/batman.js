@@ -508,3 +508,29 @@ test "fetchers which deliver undefined don't retrigger fetch", ->
 
   equal @thing.get('foo'), undefined
   equal fetcher.callCount, 1
+
+test "resetting a promise re-fetches the promise", ->
+  fetcher = createSpy().whichReturns('foo')
+
+  @thing.accessor 'foo', promise: fetcher
+  @thing.get('foo')
+  fetcher.lastCallArguments[0].call(null, null, 'bar')
+  equal @thing.get('foo'), 'bar'
+
+  @thing._resetPromise('foo')
+
+  @thing.get('foo')
+
+  equal fetcher.callCount, 2
+
+test "resetting a promise makes the next get to it return the return value of the fetcher", ->
+  fetcher = createSpy().whichReturns('foo')
+
+  @thing.accessor 'foo', promise: fetcher
+  @thing.get('foo')
+  fetcher.lastCallArguments[0].call(null, null, 'bar')
+  equal @thing.get('foo'), 'bar'
+
+  @thing._resetPromise('foo')
+
+  equal @thing.get('foo'), 'foo'
