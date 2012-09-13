@@ -3,67 +3,41 @@
 #= require ./observable/observable
 #= require ./hash/simple_hash
 
-# `Batman.Object` is the base class for all other Batman objects. It is not abstract.
-class BatmanObject extends Object
-  Batman.initializeObject(this)
-  Batman.initializeObject(@prototype)
+getAccessorObject = (base, accessor) ->
+  if typeof accessor is 'function'
+    accessor = {get: accessor}
+  for deprecated in ['cachable', 'cacheable']
+    if deprecated of accessor
+      Batman.developer.warn "Property accessor option \"#{deprecated}\" is deprecated. Use \"cache\" instead."
+      accessor.cache = accessor[deprecated] unless 'cache' of accessor
+  accessor
 
-  # Apply mixins to this class.
-  @classMixin: -> Batman.mixin @, arguments...
+promiseWrapper = (fetcher) ->
+  (defaultAccessor) ->
+    get: (key) ->
+      return existingValue if (existingValue = defaultAccessor.get.apply(this, arguments))?
+      asyncDeliver = false
+      newValue = undefined
+      @_batman.promises ?= {}
+      @_batman.promises[key] ?= do =>
+        deliver = (err, result) =>
+          @set(key, result) if asyncDeliver
+          newValue = result
+        returnValue = fetcher.call(this, deliver, key)
+        newValue = returnValue unless newValue?
+        true
+      asyncDeliver = true
+      newValue
+    cache: true
 
-  # Apply mixins to instances of this class.
-  @mixin: -> @classMixin.apply @prototype, arguments
-  mixin: @classMixin
+wrapSingleAccessor = (core, wrapper) ->
+  wrapper = wrapper?(core) or wrapper
+  for k, v of core
+    wrapper[k] = v unless k of wrapper
+  wrapper
 
-  counter = 0
-  _batmanID: ->
-    @_batmanID = -> c
-    c = counter++
-
-  hashKey: ->
-    return if typeof @isEqual is 'function'
-    @hashKey = -> key
-    key = "<Batman.Object #{@_batmanID()}>"
-
-  toJSON: ->
-    obj = {}
-    for own key, value of @ when key not in ["_batman", "hashKey", "_batmanID"]
-      obj[key] = if value?.toJSON then value.toJSON() else value
-    obj
-
-  getAccessorObject = (base, accessor) ->
-    if typeof accessor is 'function'
-      accessor = {get: accessor}
-    for deprecated in ['cachable', 'cacheable']
-      if deprecated of accessor
-        Batman.developer.warn "Property accessor option \"#{deprecated}\" is deprecated. Use \"cache\" instead."
-        accessor.cache = accessor[deprecated] unless 'cache' of accessor
-    accessor
-
-  promiseWrapper = (fetcher) ->
-    (defaultAccessor) ->
-      get: (key) ->
-        return existingValue if (existingValue = defaultAccessor.get.apply(this, arguments))?
-        asyncDeliver = false
-        newValue = undefined
-        @_batman["promise#{key}Fetched"] ?= do =>
-          deliver = (err, result) =>
-            @set(key, result) if asyncDeliver
-            newValue = result
-          returnValue = fetcher.call(this, deliver, key)
-          newValue = returnValue unless newValue?
-          true
-        asyncDeliver = true
-        newValue
-      cache: true
-
-  wrapSingleAccessor = (core, wrapper) ->
-    wrapper = wrapper?(core) or wrapper
-    for k, v of core
-      wrapper[k] = v unless k of wrapper
-    wrapper
-
-  @_defineAccessor: (keys..., accessor) ->
+ObjectFunctions =
+  _defineAccessor: (keys..., accessor) ->
     if not accessor?
       return Batman.Property.defaultAccessorForBase(this)
     else if keys.length is 0 and Batman.typeOf(accessor) not in ['Object', 'Function']
@@ -82,9 +56,7 @@ class BatmanObject extends Object
       @_batman.keyAccessors ||= new Batman.SimpleHash
       @_batman.keyAccessors.set(key, getAccessorObject(this, accessor)) for key in keys
 
-  _defineAccessor: @_defineAccessor
-
-  @_defineWrapAccessor: (keys..., wrapper) ->
+  _defineWrapAccessor: (keys..., wrapper) ->
     Batman.initializeObject(this)
     if keys.length is 0
       @_defineAccessor wrapSingleAccessor(@_defineAccessor(), wrapper)
@@ -92,7 +64,19 @@ class BatmanObject extends Object
       for key in keys
         @_defineAccessor key, wrapSingleAccessor(@_defineAccessor(key), wrapper)
 
-  _defineWrapAccessor: @_defineWrapAccessor
+
+# `Batman.Object` is the base class for all other Batman objects. It is not abstract.
+class BatmanObject extends Object
+  Batman.initializeObject(this)
+  Batman.initializeObject(@prototype)
+
+  # Make every subclass and their instances observable.
+  Batman.mixin @prototype, ObjectFunctions, Batman.EventEmitter, Batman.Observable
+  Batman.mixin @,          ObjectFunctions, Batman.EventEmitter, Batman.Observable
+
+  @classMixin: -> Batman.mixin @, arguments...
+  @mixin: -> @classMixin.apply @prototype, arguments
+  mixin: @classMixin
 
   @classAccessor: @_defineAccessor
   @accessor: -> @prototype._defineAccessor(arguments...)
@@ -102,15 +86,6 @@ class BatmanObject extends Object
   @wrapAccessor: -> @prototype._defineWrapAccessor(arguments...)
   wrapAccessor: @_defineWrapAccessor
 
-  constructor: (mixins...) ->
-    @_batman = new Batman._Batman(@)
-    @mixin mixins...
-
-  # Make every subclass and their instances observable.
-  @classMixin Batman.EventEmitter, Batman.Observable
-  @mixin Batman.EventEmitter, Batman.Observable
-
-  # Observe this property on every instance of this class.
   @observeAll: -> @::observe.apply @prototype, arguments
 
   @singleton: (singletonMethodName="sharedInstance") ->
@@ -118,5 +93,26 @@ class BatmanObject extends Object
       get: -> @["_#{singletonMethodName}"] ||= new @
 
   @accessor '_batmanID', -> @_batmanID()
+
+  constructor: (mixins...) ->
+    @_batman = new Batman._Batman(@)
+    @mixin mixins...
+
+  counter = 0
+  _batmanID: ->
+    @_batman.check(@)
+    @_batman.id ?= counter++
+    @_batman.id
+
+  hashKey: ->
+    return if typeof @isEqual is 'function'
+    @hashKey = -> key
+    key = "<Batman.Object #{@_batmanID()}>"
+
+  toJSON: ->
+    obj = {}
+    for own key, value of @ when key not in ["_batman", "hashKey", "_batmanID"]
+      obj[key] = if value?.toJSON then value.toJSON() else value
+    obj
 
 Batman.Object = BatmanObject
