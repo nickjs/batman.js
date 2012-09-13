@@ -1,3 +1,13 @@
+## 0.13.1 (September 13th, 2012)
+
+Patch Release
+
+Bug Fixes
+
+ - Make the prepend and append filters use the empty string if passed undefined (#543)
+ - Fix a bug with InsertionBinding throwing DOM exceptions if the bound keypath changed from a falsy value to another falsy value. (#512)
+ - Fix a bug with the solo build throwing errors on load due to a missing semicolon with reqwest. (#552)
+
 ## 0.13.0 (September 11th, 2012)
 
 Major Release
