@@ -83,7 +83,12 @@ class Batman.RestStorage extends Batman.StorageAdapter
   urlSuffix: (object, env) -> @_execWithOptions(object, 'urlSuffix', env.options) || ''
 
   urlForRecord: (record, env) ->
-    if record.url
+    if env.options?.recordUrl
+      url = if typeof env.options.recordUrl is 'function'
+        env.options.recordUrl.call(record)
+      else
+        env.options.recordUrl
+    else if record.url
       url = @_execWithOptions(record, 'url', env.options)
     else
       url = if record.constructor.url
@@ -100,7 +105,9 @@ class Batman.RestStorage extends Batman.StorageAdapter
     @_addUrlAffixes(@_addParams(url, env.options), record, env)
 
   urlForCollection: (model, env) ->
-    url = if model.url
+    url = if env.options?.collectionUrl
+      env.options.collectionUrl?() || env.options.collectionUrl
+    else if model.url
       @_execWithOptions(model, 'url', env.options)
     else
       @_defaultCollectionUrl(model, env.options)

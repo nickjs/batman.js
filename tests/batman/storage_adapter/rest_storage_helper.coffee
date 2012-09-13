@@ -421,6 +421,33 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
       '/some/url'
     @adapter.urlForCollection @Product, {options: opts}
 
+  test 'custom collection urls should be used if present', 1, ->
+    url = @adapter.urlForCollection @Product, {options: { collectionUrl: '/foo/bars' }}
+    equal url, "/foo/bars#{urlSuffix}"
+
+  test 'custom collection urls should evaluate function if present and is a function', 1, ->
+    url = @adapter.urlForCollection @Product, {options: { collectionUrl: -> '/foo/bars' }}
+    equal url, "/foo/bars#{urlSuffix}"
+
+  test 'custom collection urls should not affect record urls if present', 1, ->
+    product = new @Product {id: 1}
+    url = @adapter.urlForRecord product, {options: { collectionUrl: '/foo/bars' }}
+    equal url, "/products/1#{urlSuffix}"
+
+  test 'custom record urls should be used if present', 1, ->
+    product = new @Product {id: 1}
+    url = @adapter.urlForRecord product, {options: { recordUrl: '/foos/1' }}
+    equal url, "/foos/1#{urlSuffix}"
+
+  test 'custom record urls should evaluate function if present and is a function', 1, ->
+    product = new @Product {id: 1}
+    url = @adapter.urlForRecord product, {options: { recordUrl: -> "/foos/#{@get('id')}" }}
+    equal url, "/foos/1#{urlSuffix}"
+
+  test 'custom record urls should not affect collection urls if present', 1, ->
+    url = @adapter.urlForCollection @Product, {options: { recordUrl: '/foos/1' }}
+    equal url, "/products#{urlSuffix}"
+
   test 'records should take a urlPrefix option', 1, ->
     product = new @Product
     product.url = 'some/url'

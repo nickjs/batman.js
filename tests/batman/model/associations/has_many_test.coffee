@@ -91,6 +91,17 @@ QUnit.module "Batman.Model hasMany Associations"
         price:60
         product_id:3
 
+asyncTest "hasMany associations are loaded and custom url is used", 2, ->
+  @Store._batman.get('associations').get('products').options.customUrl = "/stores/1/products"
+  associationSpy = spyOn(@productAdapter, 'perform')
+
+  @Store.find 1, (err, store) =>
+    products = store.get 'products'
+    delay ->
+      equal associationSpy.lastCallArguments[2].collectionUrl, '/stores/1/products'
+      equal associationSpy.callCount, 1
+      QUnit.start()
+
 asyncTest "hasMany associations are loaded", 4, ->
   @Store.find 1, (err, store) =>
     throw err if err
@@ -219,7 +230,7 @@ asyncTest "hasMany associations are not loaded when autoload is false", 1, ->
       equal products.length, 0
 
 asyncTest "hasMany associations can be reloaded", 8, ->
-  loadSpy = spyOn(@Product, 'load')
+  loadSpy = spyOn(@Product, 'loadWithOptions')
   @Store.find 1, (err, store) =>
     throw err if err
     products = store.get('products')
