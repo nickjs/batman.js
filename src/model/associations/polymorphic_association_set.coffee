@@ -8,5 +8,5 @@ class Batman.PolymorphicAssociationSet extends Batman.AssociationSet
     loadOptions = { data: {} }
     loadOptions.data[@association.foreignKey] = @foreignKeyValue
     loadOptions.data[@association.foreignTypeKey] = @foreignTypeKeyValue
-    loadOptions.collectionUrl = @association.options.customUrl if @association.options.customUrl
+    loadOptions.collectionUrl = @association.options.url if @association.options.url
     loadOptions

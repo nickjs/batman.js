@@ -7,6 +7,8 @@ class Batman.PolymorphicBelongsToProxy extends Batman.BelongsToProxy
     @association.setIndexForType(@get('foreignTypeValue')).get(@get('foreignValue'))
 
   fetchFromRemote: (callback) ->
-    @association.getRelatedModelForType(@get('foreignTypeValue')).find @get('foreignValue'), (error, loadedRecord) =>
+    loadOptions = {}
+    loadOptions.recordUrl = @association.options.url if @association.options.url
+    @association.getRelatedModelForType(@get('foreignTypeValue')).findWithOptions @get('foreignValue'), loadOptions, (error, loadedRecord) =>
       throw error if error
       callback undefined, loadedRecord

@@ -8,7 +8,7 @@ class Batman.HasOneProxy extends Batman.AssociationProxy
   fetchFromRemote: (callback) ->
     loadOptions = { data: {} }
     loadOptions.data[@association.foreignKey] = @get('primaryValue')
-    loadOptions.collectionUrl = @association.options.customUrl if @association.options.customUrl
+    loadOptions.collectionUrl = @association.options.url if @association.options.url
     @association.getRelatedModel().loadWithOptions loadOptions, (error, loadedRecords) =>
       throw error if error
       if !loadedRecords or loadedRecords.length <= 0

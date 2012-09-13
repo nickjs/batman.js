@@ -20,6 +20,15 @@ asyncTest "belongsTo associations are loaded from remote", 4, ->
           equal product.get('id'), 1
           QUnit.start()
 
+asyncTest "belongsTo associations are loaded from custom urls if specified", 2, ->
+  @Metafield._batman.get('associations').get('subject').options.url = '/subject'
+  associationSpy = spyOn(@storeAdapter, 'perform')
+  @Metafield.find 1, (err, metafield) =>
+    store = metafield.get 'subject'
+    delay ->
+      equal associationSpy.lastCallArguments[2].recordUrl, '/subject'
+      equal associationSpy.callCount, 1
+
 asyncTest "belongsTo associations are loaded from inline json", 2, ->
   @Metafield.find 4, (err, metafield) =>
     throw err if err

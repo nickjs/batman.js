@@ -22,15 +22,13 @@ QUnit.module "Batman.Model hasOne Associations"
       'products3': {name: "JSON Product", id: 3, store_id: 2}
 
 asyncTest "hasOne associations are loaded and custom url is used", 2, ->
-  @Store._batman.get('associations').get('product').options.customUrl = '/store/product'
+  @Store._batman.get('associations').get('product').options.url = '/store/product'
   associationSpy = spyOn(@productAdapter, 'perform')
-
   @Store.find 1, (err, store) =>
     products = store.get 'product'
     delay ->
       equal associationSpy.lastCallArguments[2].collectionUrl, '/store/product'
       equal associationSpy.callCount, 1
-      QUnit.start()
 
 asyncTest "hasOne associations are loaded via ID", 2, ->
   @Store.find 1, (err, store) =>

@@ -13,7 +13,7 @@ class Batman.AssociationSet extends Batman.SetSort
   _getLoadOptions: ->
     loadOptions = { data: {} }
     loadOptions.data[@association.foreignKey] = @foreignKeyValue
-    loadOptions.collectionUrl = @association.options.customUrl if @association.options.customUrl
+    loadOptions.collectionUrl = @association.options.url if @association.options.url
     loadOptions
 
   @accessor 'loaded', Batman.Property.defaultAccessor
