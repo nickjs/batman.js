@@ -106,7 +106,10 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
   urlForCollection: (model, env) ->
     url = if env.options?.collectionUrl
-      env.options.collectionUrl?() || env.options.collectionUrl
+      url = if typeof env.options.collectionUrl is 'function'
+        env.options.collectionUrl.call(env.options.urlContext)
+      else
+        env.options.collectionUrl
     else if model.url
       @_execWithOptions(model, 'url', env.options)
     else

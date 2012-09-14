@@ -59,6 +59,10 @@ class Batman.PluralAssociation extends Batman.Association
 
       relatedRecords
 
+  parentSetIndex: ->
+    @parentIndex ||= @model.get('loaded').indexedByUnique(@primaryKey)
+    @parentIndex
+
   setIndex: ->
     @index ||= new Batman.AssociationSetIndex(this, @[@indexRelatedModelOn])
     @index

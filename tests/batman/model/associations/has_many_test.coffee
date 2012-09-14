@@ -101,6 +101,19 @@ asyncTest "hasMany associations are loaded and custom url is used", 2, ->
       equal associationSpy.lastCallArguments[2].collectionUrl, '/stores/1/products'
       equal associationSpy.callCount, 1
 
+asyncTest "hasMany associations are loaded and custom url function has the parent's context", 3, ->
+  @Store._batman.get('associations').get('products').options.url = -> "/stores/#{@get('id')}/products"
+  
+  associationSpy = spyOn(@productAdapter, 'perform')
+
+  @Store.find 1, (err, store) =>
+    products = store.get 'products'
+    delay ->
+      equal typeof associationSpy.lastCallArguments[2].collectionUrl, 'function'
+      console.log associationSpy.lastCallArguments[2].urlContext
+      ok associationSpy.lastCallArguments[2].urlContext is store
+      equal associationSpy.callCount, 1
+
 asyncTest "hasMany associations are loaded", 4, ->
   @Store.find 1, (err, store) =>
     throw err if err
