@@ -339,7 +339,7 @@ batman.js uses a bunch of these data attributes for different things:
 
 * `data-partial="shared/sidebar"`: renders the view at the path `/views/shared/sidebar.html` within this node. Note that `/views/` is prepended.
 
-* `data-route="/some/path"` or `data-route="some.model"`: loads a route when this node is clicked. The route can either be specified by a path beginning with a slash "/", or by a property leading to either a model instance (resulting in a resource's "show" action) or a model class (for the resource's "index" action).
+* `data-route="'/some/path'"` or `data-route="some.model"` or `data-route="{'controller': 'products', 'action': 'index'}"`: loads a route when this node is clicked. The route can either be specified by a path beginning with a slash "/", or by a property leading to either a model instance (resulting in a resource's "show" action) or a model class (for the resource's "index" action).
 
 
 ### Models
