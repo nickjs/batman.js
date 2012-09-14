@@ -185,10 +185,11 @@ asyncTest 'should be able to destroy bound select nodes', 2, ->
 
 asyncTest "should select an option with value='' when the data is undefined", ->
   context = Batman
-    current: 'foo'
+    current: Batman 
+      bar: 'foo'
 
   source = '''
-    <select data-bind="current">
+    <select data-bind="current.bar">
       <option value="">none</option>
       <option value="foo">foo</option>
     </select>
@@ -198,12 +199,37 @@ asyncTest "should select an option with value='' when the data is undefined", ->
     equal node[0].value, 'foo'
     deepEqual getContents(node), ['none', 'foo']
 
-    context.unset 'current'
-    equal typeof context.get('current'), 'undefined'
+    context.unset 'current.bar'
+    equal typeof context.get('current.bar'), 'undefined'
     equal node[0].value, ''
     deepEqual getContents(node), ['none', 'foo']
     delay ->
-      equal typeof context.get('current'), 'undefined'
+      equal typeof context.get('current.bar'), 'undefined'
+      equal node[0].value, ''
+      deepEqual getContents(node), ['none', 'foo']
+
+asyncTest "should select an option with value='' when the data is null", ->
+  context = Batman
+    current: Batman 
+      bar: 'foo'
+
+  source = '''
+    <select data-bind="current.bar">
+      <option value="">none</option>
+      <option value="foo">foo</option>
+    </select>
+  '''
+
+  helpers.render source, context, (node) ->
+    equal node[0].value, 'foo'
+    deepEqual getContents(node), ['none', 'foo']
+
+    context.set 'current.bar', null
+    equal context.get('current.bar'), null
+    equal node[0].value, ''
+    deepEqual getContents(node), ['none', 'foo']
+    delay ->
+      equal context.get('current.bar'), null
       equal node[0].value, ''
       deepEqual getContents(node), ['none', 'foo']
 

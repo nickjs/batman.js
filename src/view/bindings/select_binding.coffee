@@ -2,7 +2,7 @@
 
 class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
   isInputBinding: true
-  firstBind: true
+  canSetImplicitly: true
 
   constructor: ->
     @selectedBindings = new Batman.SimpleSet
@@ -27,7 +27,13 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
 
     @_fireDataChange(@get('filteredValue'))
 
+  lastKeyContext: null
   dataChange: (newValue) =>
+    @lastKeyContext ||= @get('keyContext')
+    if @lastKeyContext != @get('keyContext')
+      @canSetImplicitly = true
+      @lastKeyContext = @get('keyContext')
+
     # For multi-select boxes, the `value` property only holds the first
     # selection, so go through the child options and update as necessary.
     if newValue?.forEach
@@ -48,11 +54,13 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
 
     # For a regular select box, update the value.
     else
-      if typeof newValue is 'undefined' && @firstBind
-        @set('unfilteredValue', @node.value)
+      if !newValue? && @canSetImplicitly
+        if @node.value
+          @canSetImplicitly = false
+          @set('unfilteredValue', @node.value)
       else
+        @canSetImplicitly = false
         Batman.DOM.valueForNode(@node, newValue, @escapeValue)
-      @firstBind = false
 
     # Finally, update the options' `selected` bindings
     @updateOptionBindings()
