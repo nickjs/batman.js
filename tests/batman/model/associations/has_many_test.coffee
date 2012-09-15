@@ -110,7 +110,6 @@ asyncTest "hasMany associations are loaded and custom url function has the paren
     products = store.get 'products'
     delay ->
       equal typeof associationSpy.lastCallArguments[2].collectionUrl, 'function'
-      console.log associationSpy.lastCallArguments[2].urlContext
       ok associationSpy.lastCallArguments[2].urlContext is store
       equal associationSpy.callCount, 1
 

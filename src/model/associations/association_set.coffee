@@ -15,7 +15,6 @@ class Batman.AssociationSet extends Batman.SetSort
     loadOptions.data[@association.foreignKey] = @foreignKeyValue
     if @association.options.url
       loadOptions.collectionUrl = @association.options.url
-      console.log @association.setIndex(), @foreignKeyValue
       loadOptions.urlContext = @association.parentSetIndex().get(@foreignKeyValue)
     loadOptions
 
