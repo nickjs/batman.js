@@ -118,3 +118,19 @@ asyncTest 'bindings in lower down scopes should shadow higher ones with shadowin
     context.set 'namespace.foo.bar', 'inner'
     equal node.html(), "inner"
     QUnit.start()
+
+asyncTest 'bindings which prevent and fire rendered on their parent renderer should not prematurely fire the event', ->
+  context = Batman(bar: [], baz: '123')
+  html = '''
+    <div>
+      test
+      <p data-foreach-foo="context.bar"></p>
+      test
+    </div>
+    <span data-bind="baz"></span>
+  '''
+
+  # helpers.render fires the callback on view ready, which fires on it's renderer's rendered
+  helpers.render html, context, (node) =>
+    equal node[1].innerHTML, "123"
+    QUnit.start()

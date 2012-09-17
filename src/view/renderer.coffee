@@ -12,6 +12,8 @@ class Batman.Renderer extends Batman.Object
 
   start: =>
     @startTime = new Date
+    @prevent 'parsed'
+    @prevent 'rendered'
     @parseNode @node
 
   resume: =>
@@ -21,8 +23,8 @@ class Batman.Renderer extends Batman.Object
   finish: ->
     @startTime = null
     @prevent 'stopped'
-    @fire 'parsed'
-    @fire 'rendered'
+    @allowAndFire 'parsed'
+    @allowAndFire 'rendered'
 
   stop: ->
     Batman.clearImmediate @immediate
