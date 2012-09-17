@@ -103,19 +103,27 @@ class Batman.Model extends Batman.Object
     result
 
   @find: (id, callback) ->
+    @findWithOptions(id, undefined, callback)
+
+  @findWithOptions: (id, options = {}, callback) ->
     Batman.developer.assert callback, "Must call find with a callback!"
     record = new @()
     record._withoutDirtyTracking -> @set 'id', id
-    record.load callback
+    record.loadWithOptions options, callback
     return record
 
   @load: (options, callback) ->
     if typeof options in ['function', 'undefined']
       callback = options
       options = {}
+    else
+      options = { data: options }
 
+    @loadWithOptions options, callback
+  
+  @loadWithOptions: (options, callback) ->
     @fire 'loading', options
-    @_doStorageOperation 'readAll', {data: options}, (err, records, env) =>
+    @_doStorageOperation 'readAll', options, (err, records, env) =>
       if err?
         @fire 'error', err
         callback?(err, [])
@@ -312,6 +320,12 @@ class Batman.Model extends Batman.Object
   load: (options, callback) =>
     if !callback
       [options, callback] = [{}, options]
+    else
+      options = { data: options }
+
+    @loadWithOptions(options, callback)
+
+  loadWithOptions: (options, callback) =>
     hasOptions = Object.keys(options).length != 0
     if @get('lifecycle.state') in ['destroying', 'destroyed']
       callback?(new Error("Can't load a destroyed record!"))
@@ -322,7 +336,7 @@ class Batman.Model extends Batman.Object
       callbackQueue.push callback if callback?
       if !hasOptions
         @_currentLoad = callbackQueue
-      @_doStorageOperation 'read', {data: options}, (err, record, env) =>
+      @_doStorageOperation 'read', options, (err, record, env) =>
         unless err
           @get('lifecycle').loaded()
           record = @constructor._mapIdentity(record)

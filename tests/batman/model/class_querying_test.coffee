@@ -123,6 +123,7 @@ QUnit.module "Batman.Model class loading"
 
     @Product.persist @adapter
 
+
 asyncTest "models will load all their records", ->
   @Product.load (err, products, env) =>
     throw err if err
@@ -164,6 +165,11 @@ asyncTest "classes fire their loading/loaded callbacks", ->
 
 asyncTest "models will load all their records matching an options hash", ->
   @Product.load {name: 'One'}, (err, products) ->
+    equal products.length, 1
+    QUnit.start()
+
+asyncTest "models will load all their records with options other than a data hash", ->
+  @Product.loadWithOptions { data: { name: 'One' }, option1: 'foo' }, (err, products) ->
     equal products.length, 1
     QUnit.start()
 

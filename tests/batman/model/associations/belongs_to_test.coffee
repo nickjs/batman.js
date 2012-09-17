@@ -41,6 +41,16 @@ QUnit.module "Batman.Model belongsTo Associations"
           name: "Store Three"
           id: 3
 
+asyncTest "belongsTo associations are loaded and custom url is used", 2, ->
+  @Product._batman.get('associations').get('store').options.url = '/product/store'
+  associationSpy = spyOn(@storeAdapter, 'perform')
+  @Product.find 1, (err, product) =>
+    throw err if err
+    store = product.get 'store'
+    delay ->
+      equal associationSpy.lastCallArguments[2].recordUrl, '/product/store'
+      equal associationSpy.callCount, 1
+
 asyncTest "belongsTo associations are loaded via ID", 1, ->
   @Product.find 1, (err, product) =>
     throw err if err

@@ -47,7 +47,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         if id = @get('id')
           url += '/' + id
         url
-    )
+    ) 
 
   @RecordMixin: Batman.extend({}, @BaseMixin)
 
@@ -63,7 +63,12 @@ class Batman.RestStorage extends Batman.StorageAdapter
   recordJsonNamespace: (record) -> Batman.helpers.singularize(@storageKey(record))
   collectionJsonNamespace: (constructor) -> Batman.helpers.pluralize(@storageKey(constructor.prototype))
 
-  _execWithOptions: (object, key, options) -> if typeof object[key] is 'function' then object[key](options) else object[key]
+  _execWithOptions: (object, key, options, context = object) -> 
+    if typeof object[key] is 'function' 
+      object[key].call(context, options)
+    else 
+      object[key]
+
   _defaultCollectionUrl: (model) -> "#{@storageKey(model.prototype)}"
   _addParams: (url, options) ->
     if options && options.action && !(options.action in @_implicitActionNames)
@@ -83,7 +88,9 @@ class Batman.RestStorage extends Batman.StorageAdapter
   urlSuffix: (object, env) -> @_execWithOptions(object, 'urlSuffix', env.options) || ''
 
   urlForRecord: (record, env) ->
-    if record.url
+    if env.options?.recordUrl
+      url = @_execWithOptions(env.options, 'recordUrl', env.options, record)
+    else if record.url
       url = @_execWithOptions(record, 'url', env.options)
     else
       url = if record.constructor.url
@@ -100,7 +107,9 @@ class Batman.RestStorage extends Batman.StorageAdapter
     @_addUrlAffixes(@_addParams(url, env.options), record, env)
 
   urlForCollection: (model, env) ->
-    url = if model.url
+    url = if env.options?.collectionUrl
+      @_execWithOptions(env.options, 'collectionUrl', env.options, env.options.urlContext)
+    else if model.url
       @_execWithOptions(model, 'url', env.options)
     else
       @_defaultCollectionUrl(model, env.options)

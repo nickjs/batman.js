@@ -7,12 +7,15 @@ class Batman.AssociationSet extends Batman.SetSort
   loaded: false
   load: (callback) ->
     return callback(undefined, @) unless @foreignKeyValue?
-    @association.getRelatedModel().load @_getLoadOptions(), (err, records) =>
+    @association.getRelatedModel().loadWithOptions @_getLoadOptions(), (err, records) =>
       @markAsLoaded() unless err
       callback(err, @)
   _getLoadOptions: ->
-    loadOptions = {}
-    loadOptions[@association.foreignKey] = @foreignKeyValue
+    loadOptions = { data: {} }
+    loadOptions.data[@association.foreignKey] = @foreignKeyValue
+    if @association.options.url
+      loadOptions.collectionUrl = @association.options.url
+      loadOptions.urlContext = @association.parentSetIndex().get(@foreignKeyValue)
     loadOptions
 
   @accessor 'loaded', Batman.Property.defaultAccessor

@@ -6,6 +6,8 @@ class Batman.BelongsToProxy extends Batman.AssociationProxy
   fetchFromLocal: -> @association.setIndex().get(@get('foreignValue'))
 
   fetchFromRemote: (callback) ->
-    @association.getRelatedModel().find @get('foreignValue'), (error, loadedRecord) =>
+    loadOptions = {}
+    loadOptions.recordUrl = @association.options.url if @association.options.url
+    @association.getRelatedModel().findWithOptions @get('foreignValue'), loadOptions, (error, loadedRecord) =>
       throw error if error
       callback undefined, loadedRecord
