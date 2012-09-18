@@ -159,6 +159,13 @@ asyncTest 'model will reload data from storage after clear', ->
       equal p.get('cost'), 20
       QUnit.start()
 
+test "class promise accessors will be recalculated after clear", ->
+  i = 0
+  @Product.classAccessor 'promise', promise: (deliver) -> deliver(null, i++)
+  equal @Product.get('promise'), 0
+  @Product.clear()
+  equal @Product.get('promise'), 1
+
 QUnit.module 'Batman.Model.urlNestsUnder',
   setup: ->
     class @Product extends Batman.Model

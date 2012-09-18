@@ -100,6 +100,7 @@ class Batman.Model extends Batman.Object
     Batman.initializeObject(@)
     result = @get('loaded').clear()
     @_batman.get('associations')?.reset()
+    @_resetPromises()
     result
 
   @find: (id, callback) ->
@@ -463,6 +464,7 @@ class Batman.Model extends Batman.Object
     result = block.call(@)
     @_pauseDirtyTracking = false
     result
+
 
   for functionName in ['load', 'save', 'validate', 'destroy']
    @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])
