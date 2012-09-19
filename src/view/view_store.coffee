@@ -1,7 +1,4 @@
 class Batman.ViewStore extends Batman.Object
-  @prefix: 'views'
-  @fetchFromRemote: true
-
   constructor: ->
     super
     @_viewContents = {}
@@ -11,7 +8,7 @@ class Batman.ViewStore extends Batman.Object
 
   fetchView: (path) ->
     new Batman.Request
-      url: Batman.Navigator.normalizePath(@constructor.prefix, "#{path}.html")
+      url: Batman.Navigator.normalizePath(Batman.config.viewPrefix, "#{path}.html")
       type: 'html'
       success: (response) => @set(path, response)
       error: (response) -> throw new Error("Could not load view from #{path}")
@@ -23,7 +20,7 @@ class Batman.ViewStore extends Batman.Object
       return @_viewContents[path] if @_viewContents[path]
       return if @_requestedPaths.has(path)
       return contents if contents = @_sourceFromDOM(path)
-      if @constructor.fetchFromRemote
+      if Batman.config.fetchRemoteViews
         @fetchView(path)
       else
         throw new Error("Couldn't find view source for \'#{path}\'!")
@@ -42,4 +39,3 @@ class Batman.ViewStore extends Batman.Object
     if node = Batman.DOM.querySelector(document, "[data-defineview*='#{relativePath}']")
       Batman.setImmediate -> node.parentNode?.removeChild(node)
       Batman.DOM.defineView(path, node)
-
