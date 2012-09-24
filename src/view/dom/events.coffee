@@ -6,6 +6,8 @@ Batman.DOM.events =
   click: (node, callback, context, eventName = 'click') ->
     Batman.DOM.addEventListener node, eventName, (event, args...) ->
       return if event.metaKey || event.ctrlKey
+      return if not eventIsAllowed(eventName, event)
+
       callback node, event, args..., context
       Batman.DOM.preventDefault event
 
@@ -57,3 +59,9 @@ Batman.DOM.events =
     node
 
   other: (node, eventName, callback, context) -> Batman.DOM.addEventListener node, eventName, (args...) -> callback node, args..., context
+
+eventIsAllowed = (eventName, event) ->
+  if delegate = Batman.currentApp?.shouldAllowEvent?[eventName]
+    return false if delegate(event) is false
+
+  return true

@@ -4,11 +4,7 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
   bindImmediately: false
   constructor: (node, eventName, key, context) ->
     super
-    callback = (e) =>
-      e.stopBatmanPropagation = -> e.__stopBatmanPropagation = true
-      Batman.currentApp?.clickEvent?(e, node)
-      return if e.__stopBatmanPropagation
-
+    callback = =>
       @get('filteredValue')?.apply @get('callbackContext'), arguments
 
     if attacher = Batman.DOM.events[@attributeName]
