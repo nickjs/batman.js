@@ -6,7 +6,7 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
     super
     callback = (e) =>
       e.stopBatmanPropagation = -> e.__stopBatmanPropagation = true
-      Batman.currentApp.clickEvent?(node, e)
+      Batman.currentApp?.clickEvent?(e, node)
       return if e.__stopBatmanPropagation
 
       @get('filteredValue')?.apply @get('callbackContext'), arguments

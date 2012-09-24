@@ -206,15 +206,19 @@ asyncTest 'it should not choke on proxied values which resolve to undefined', 1,
 
 asyncTest 'it should provide an app-level hook for handling click events', 1, ->
   source = """<div>
-    <a id="should-work" data-event-click="clicked">should work</a>
-    <a id="should-not-work" data-event-click="clicked" class="disabled">should not work</a>
+    <a data-event-click="clicked">should work</a>
+    <a data-event-click="clicked" class="disabled">should not work</a>
   </div>"""
 
-  Batman.currentApp.clickEvent = (e, node) ->
-    if $(node).hasClass('disabled')
-      e.stopBatmanPropagation()
+  class MockApp extends Batman.App
+    @layout: null
+    @clickEvent: (e, node) ->
+      if $(node).hasClass('disabled')
+        e.stopBatmanPropagation()
+
+  MockApp.run()
 
   helpers.render source, {clicked: -> ok(true, 'click event finished')}, (node) ->
-    helpers.triggerClick node[0].childNodes[0]
-    helpers.triggerClick node[0].childNodes[1]
+    helpers.triggerClick node[0].children[0]
+    helpers.triggerClick node[0].children[1]
     QUnit.start()
