@@ -23,8 +23,13 @@ class Batman.View extends Batman.Object
         @[bindingKey]?.die()
         @[bindingKey] = new Batman.DOM.ViewArgumentBinding node, keyPath, context
 
-    @accessor keys..., (key) ->
-      @get(@_argumentBindingKey(key))?.get('filteredValue')
+    @accessor keys...,
+      get: (key) ->
+        @get(@_argumentBindingKey(key))?.get('filteredValue')
+      set: (key, value) ->
+        @get(@_argumentBindingKey(key))?.set('filteredValue', value)
+      unset: (key) ->
+        @get(@_argumentBindingKey(key))?.unset('filteredValue')
 
   isView: true
   cache: true
