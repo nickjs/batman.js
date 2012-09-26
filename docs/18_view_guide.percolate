@@ -12,7 +12,7 @@ The controller does all this by instantiating a new `Batman.View`, setting its `
 <!-- You might want to use a View to make flash messages. This one might apply some CSS styles to make the message clearer to the user, or use some JavaScript to add a close button which hides the div -->
 <div data-view="FlashMessageView">Order successfully saved!</div>
 
-<!-- You might want to use a View instead of CSS3 nth-child selectors to apply some styles to round the corners of the the first and last list items in this <ul> to make it look like a nice segmented button -->
+<!-- You might want to use a View instead of CSS3 nth-child selectors to apply some styles to round the corners of the first and last list items in this <ul> to make it look like a nice segmented button -->
 <ul data-view="SegmentedButtonView">
   <li>Rounded</li>
   <li>Not rounded</li>
@@ -36,7 +36,7 @@ Let's look at how this flow applies to a couple examples.
 
 `FlashMessageView` is a `View` subclass we apply to ephemeral messages meant for display and then dismissal. Let's say the class has two responsibilities: applying some fun styles to make the whatever node it wraps flash-y, and also adding a close button to the node to let users hide it once they have read the message.
 
-For demonstration we'll use jQuery to implement the guts of the view. If we were using only jQuery in this project, we might implement this same functionality by giving our node a unique ID or class, and then using jQuery somewhere to select it and add teh classes and close button. With Batman, the selection step is done for us, and all we have to do is apply the functionality. Your `Batman.View` will receive a `node` for wrapping which can be found in in the `node` property on the view instance.
+For demonstration we'll use jQuery to implement the guts of the view. If we were using only jQuery in this project, we might implement this same functionality by giving our node a unique ID or class, and then using jQuery somewhere to select it and add the classes and close button. With Batman, the selection step is done for us, and all we have to do is apply the functionality. Your `Batman.View` will receive a `node` for wrapping which can be found in in the `node` property on the view instance.
 
 ```coffeescript
 class FlashMessageView extends Batman.View
