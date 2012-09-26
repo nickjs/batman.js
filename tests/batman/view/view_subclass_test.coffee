@@ -54,6 +54,21 @@ asyncTest "should make the arguments available in the context of the view", ->
     equal $('p', node).html(), "bar"
     QUnit.start()
 
+asyncTest "should allow view arguments to be set on the view", ->
+  class TestView extends Batman.View
+    @option 'viewKey'
+
+  source = '<div data-view="TestView" data-view-viewKey="test"><input data-bind="viewKey" type="text" /></div>'
+  context = Batman({TestView, test: "foo"})
+
+  helpers.render source, context, (node) =>
+    input = $('input', node)[0]
+    equal input.value, "foo"
+    input.value = "bar"
+    helpers.triggerChange input
+    equal context.get("test"), "bar"
+    QUnit.start()
+
 test "should recreate argument bindings if the view's node changes", ->
   class TestView extends Batman.View
     @option 'keyA', 'keyB'

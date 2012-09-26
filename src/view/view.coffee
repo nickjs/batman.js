@@ -15,16 +15,10 @@ class Batman.View extends Batman.Object
 
   @store: new Batman.ViewStore()
   @option: (keys...) ->
-    keys.forEach (key) =>
-      @accessor @::_argumentBindingKey(key), (bindingKey) ->
-        return unless (node = @get 'node') && (context = @get 'context')
-        keyPath = node.getAttribute "data-view-#{key}".toLowerCase()
-        return unless keyPath?
-        @[bindingKey]?.die()
-        @[bindingKey] = new Batman.DOM.ViewArgumentBinding node, keyPath, context
-
-    @accessor keys..., (key) ->
-      @get(@_argumentBindingKey(key))?.get('filteredValue')
+    @accessor keys...,
+      get: (key) ->        @get("argumentBindings.#{key}")?.get('filteredValue')
+      set: (key, value) -> @get("argumentBindings.#{key}")?.set('filteredValue', value)
+      unset: (key) ->      @get("argumentBindings.#{key}")?.unset('filteredValue')
 
   isView: true
   cache: true
@@ -34,6 +28,15 @@ class Batman.View extends Batman.Object
 
   # Fires once a node is parsed.
   @::event('ready').oneShot = true
+
+  @accessor 'argumentBindings', ->
+    new Batman.TerminalAccessible (key) =>
+      return unless (node = @get 'node') && (context = @get 'context')
+      keyPath = node.getAttribute "data-view-#{key}".toLowerCase()
+      return unless keyPath?
+      bindingKey = "_argumentBinding#{key}"
+      @[bindingKey]?.die()
+      @[bindingKey] = new Batman.DOM.ViewArgumentBinding node, keyPath, context
 
   @accessor 'html',
     get: ->
@@ -111,7 +114,6 @@ class Batman.View extends Batman.Object
     @_setNodeYielder(node)
     @get("yields").get(key).push({node, action})
 
-  _argumentBindingKey: (key) -> "_#{key}ArgumentBinding"
   _setNodeOwner: (node) -> Batman._data(node, 'view', @)
   _setNodeYielder: (node) -> Batman._data(node, 'yielder', @)
 
