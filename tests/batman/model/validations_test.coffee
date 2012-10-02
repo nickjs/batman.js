@@ -176,6 +176,88 @@ validationsTestSuite = ->
         equal errors.length, 1
         QUnit.start()
 
+  asyncTest "numeric using greaterThan", ->
+    class Product extends Batman.Model
+      @validate 'number', greaterThan: 10
+
+    p = new Product number: 5
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      p.set 'number', 15
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        QUnit.start()
+
+  asyncTest "numeric using greaterThanOrEqualTo", ->
+    class Product extends Batman.Model
+      @validate 'number', greaterThanOrEqualTo: 10
+
+    p = new Product number: 5
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      p.set 'number', 10
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        p.set 'number', 15
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
+  asyncTest "numeric using equalTo", ->
+    class Product extends Batman.Model
+      @validate 'number', equalTo: 10
+
+    p = new Product number: 5
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      p.set 'number', 10
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        p.set 'number', 15
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 1
+          QUnit.start()
+
+  asyncTest "numeric using lessThan", ->
+    class Product extends Batman.Model
+      @validate 'number', lessThan: 10
+
+    p = new Product number: 5
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+      p.set 'number', 15
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 1
+        QUnit.start()
+
+  asyncTest "numeric using lessThanOrEqualTo", ->
+    class Product extends Batman.Model
+      @validate 'number', lessThanOrEqualTo: 10
+
+    p = new Product number: 5
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+      p.set 'number', 10
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        p.set 'number', 15
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 1
+          QUnit.start()
+
   asyncTest "associated for hasMany", ->
     namespace = @
     class @Product extends Batman.Model
