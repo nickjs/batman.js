@@ -217,6 +217,11 @@ The built in validation options are listed below:
 
  + `presence : boolean`: Assert that the string value is existant (not undefined nor null) and has length greather than 0.
  + `numeric : true`: Assert that the value can be is or can be coerced into a number using `parseFloat`.
+ + `greaterThan : number`: Assert that the value is greater than the given number.
+ + `greaterThanOrEqualTo : number`: Assert that the value is greater than or equal to the given number.
+ + `equalTo : number`: Assert that the value is equal to the given number.
+ + `lessThan : number`: Assert that the value is less than the given number.
+ + `lessThanOrEqualTo : number`: Assert that the value is less than or equal to the given number.
  + `minLength : number`: Assert that the value's `length` property is greater than the given number.
  + `maxLength : number`: Assert that the value's `length` property is less than the given number.
  + `length : number`: Assert that the value's `length` property is exactly the given number.
