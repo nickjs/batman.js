@@ -531,7 +531,23 @@ coffee tests/serve.coffee
 
 The tests are in `tests/batman`. All test files in there are automatically included into the browser.
 
-#### 4. Create a pull request
+#### 4. Update the documentation
+
+The docs are rendered using [percolate](https://github.com/hornairs/percolate) and require that [pygments](http://pygments.org/) is already installed.
+
+Pygments is a Python library, and can be installed using `easy_install`.
+
+```bash
+sudo easy_install Pygments
+```
+
+To render the docs, run the following command from the project root:
+
+```bash
+cake doc
+```
+
+#### 5. Create a pull request
 
 If it's good code that fits with the goals of the project, we'll merge it in!
 
