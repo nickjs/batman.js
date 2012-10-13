@@ -203,3 +203,36 @@ asyncTest 'it should not choke on proxied values which resolve to undefined', 1,
     helpers.triggerKey(node[0].childNodes[0], 65)
     ok true
     QUnit.start()
+
+asyncTest 'it should provide an app-level hook for handling events', 1, ->
+  source = '<a data-event-click="clicked">test</a>'
+
+  class MockApp extends Batman.App
+    @layout: null
+    @shouldAllowEvent.click = ->
+      ok true, 'shouldAllow called'
+      true
+
+  MockApp.run()
+
+  helpers.render source, {clicked: ->}, (node) ->
+    helpers.triggerClick node[0]
+    QUnit.start()
+
+asyncTest 'returning false from a shouldAllowEvent delegate should cancel the event', 1, ->
+  source = """<div>
+    <a data-event-click="clicked">should work</a>
+    <a data-event-click="clicked" class="disabled">should not work</a>
+  </div>"""
+
+  class MockApp extends Batman.App
+    @layout: null
+    @shouldAllowEvent.click = (e) ->
+      return false if $(e.target).hasClass('disabled')
+
+  MockApp.run()
+
+  helpers.render source, {clicked: -> ok(true, 'clicked was called')}, (node) ->
+    helpers.triggerClick node[0].children[0]
+    helpers.triggerClick node[0].children[1]
+    QUnit.start()

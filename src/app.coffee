@@ -69,6 +69,11 @@ class Batman.App extends Batman.Object
   # Use `MyApp.layout = null` to turn off the default behavior.
   @layout: undefined
 
+  # shouldAllowEvent is a hash of global function delegates. You can use
+  # these to intercept DOM events like click and keydown and return false
+  # if you want to prematurely short circuit the event handler.
+  @shouldAllowEvent: {}
+
   # Routes for the app are built using a RouteMapBuilder, so delegate the
   # functions used to build routes to it.
   for name in Batman.RouteMapBuilder.BUILDER_FUNCTIONS
