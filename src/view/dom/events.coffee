@@ -6,10 +6,11 @@ Batman.DOM.events =
   click: (node, callback, context, eventName = 'click') ->
     Batman.DOM.addEventListener node, eventName, (event, args...) ->
       return if event.metaKey || event.ctrlKey
+
+      Batman.DOM.preventDefault event
       return if not Batman.DOM.eventIsAllowed(eventName, event)
 
       callback node, event, args..., context
-      Batman.DOM.preventDefault event
 
     if node.nodeName.toUpperCase() is 'A' and not node.href
       node.href = '#'
