@@ -47,7 +47,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         if id = @get('id')
           url += '/' + id
         url
-    ) 
+    )
 
   @RecordMixin: Batman.extend({}, @BaseMixin)
 
@@ -63,10 +63,10 @@ class Batman.RestStorage extends Batman.StorageAdapter
   recordJsonNamespace: (record) -> Batman.helpers.singularize(@storageKey(record))
   collectionJsonNamespace: (constructor) -> Batman.helpers.pluralize(@storageKey(constructor.prototype))
 
-  _execWithOptions: (object, key, options, context = object) -> 
-    if typeof object[key] is 'function' 
+  _execWithOptions: (object, key, options, context = object) ->
+    if typeof object[key] is 'function'
       object[key].call(context, options)
-    else 
+    else
       object[key]
 
   _defaultCollectionUrl: (model) -> "#{@storageKey(model.prototype)}"
@@ -259,5 +259,5 @@ class Batman.RestStorage extends Batman.StorageAdapter
       error = new errorClass
       error.request = request
       error.env = env
-    error 
+    error
 
