@@ -25,11 +25,11 @@ class Batman.SetProxy extends Batman.Object
     length.expose()
     result
 
+  Batman.Set._applySetAccessors(@)
+
   for k in ['add', 'remove', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy']
     do (k) =>
       @::[k] = -> @base[k](arguments...)
-
-  Batman.Set._applySetAccessors(@)
 
   @accessor 'length',
     get: ->
