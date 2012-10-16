@@ -24,6 +24,10 @@ class Batman.SetSort extends Batman.SetProxy
     for item in @get('_storage')
       return item if block(item)
 
+  merge: (other) ->
+    @base.registerAsMutableSource()
+    new Batman.Set(@_storage...).merge(other).sortedBy(@key, @order)
+
   compare: (a,b) ->
     return 0 if a is b
     return 1 if a is undefined
