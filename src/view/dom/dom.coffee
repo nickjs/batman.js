@@ -70,10 +70,10 @@ Batman.DOM =
     contents
 
   setStyleProperty: (node, property, value, importance) ->
-    if node.style.setAttribute
-      node.style.setAttribute(property, value, importance)
-    else
+    if node.style.setProperty
       node.style.setProperty(property, value, importance)
+    else
+      node.style.setAttribute(property, value, importance)
 
   removeOrDestroyNode: (node) ->
     view = Batman._data(node, 'view')
