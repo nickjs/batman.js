@@ -7,9 +7,11 @@ class Batman.PushStateNavigator extends Batman.Navigator
   stopWatching: ->
     Batman.DOM.removeEventListener window, 'popstate', @handleCurrentLocation
   pushState: (stateObject, title, path) ->
-    window.history.pushState(stateObject, title, @linkTo(path))
+    if path != @pathFromLocation(window.location)
+      window.history.pushState(stateObject, title, @linkTo(path))
   replaceState: (stateObject, title, path) ->
-    window.history.replaceState(stateObject, title, @linkTo(path))
+    if path != @pathFromLocation(window.location)
+      window.history.replaceState(stateObject, title, @linkTo(path))
   linkTo: (url) ->
     @normalizePath(Batman.config.pathPrefix, url)
   pathFromLocation: (location) ->
