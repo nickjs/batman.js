@@ -82,9 +82,6 @@ _implementImmediates = (container) ->
   if container.setImmediate and container.clearImmediate
     Batman.setImmediate = container.setImmediate
     Batman.clearImmediate = container.clearImmediate
-  else if container.msSetImmediate and container.msClearImmediate
-    Batman.setImmediate = msSetImmediate
-    Batman.clearImmediate = msClearImmediate
   else if canUsePostMessage()
     prefix = 'com.batman.'
     functions = new Batman.SimpleHash
