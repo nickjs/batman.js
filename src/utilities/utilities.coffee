@@ -82,11 +82,11 @@ _implementImmediates = (container) ->
 
   if container.setImmediate
     Batman.setImmediate = container.setImmediate
+    Batman.clearImmediate = container.clearImmediate
   else if container.msSetImmediate
     Batman.setImmediate = msSetImmediate
+    Batman.clearImmediate = msClearImmediate
   else if canUsePostMessage()
-    usingTasks = true
-
     prefix = 'com.batman.'
     functions = new Batman.SimpleHash
     handler = (e) ->
@@ -103,9 +103,8 @@ _implementImmediates = (container) ->
       tasks.set(handle = getHandle(), f)
       container.postMessage(prefix+handle, "*")
       handle
+    Batman.clearImmediate = (handle) -> tasks.unset(handle)
   else if typeof document isnt 'undefined' && "onreadystatechange" in document.createElement("script")
-    usingTasks = true
-
     Batman.setImmediate = (f) ->
       handle = getHandle()
       script = document.createElement("script")
@@ -116,6 +115,7 @@ _implementImmediates = (container) ->
         script = null
       document.documentElement.appendChild(script)
       handle
+    Batman.clearImmediate = (handle) -> tasks.unset(handle)
   else if process?.nextTick
     functions = {}
     Batman.setImmediate = (f) ->
@@ -126,20 +126,15 @@ _implementImmediates = (container) ->
         delete functions[handle]
       handle
 
-  else
-    Batman.setImmediate = (f) -> setTimeout(f, 0)
-
-  if container.clearImmediate
-    Batman.clearImmediate = container.clearImmediate
-  else if container.msClearImmediate
-    Batman.clearImmediate = msClearImmediate
-  else if usingTasks
-    Batman.clearImmediate = (handle) -> tasks.unset(handle)
-  else if process?.nextTick
     Batman.clearImmediate = (handle) ->
       delete functions[handle]
+
   else
+    Batman.setImmediate = (f) -> setTimeout(f, 0)
     Batman.clearImmediate = (handle) -> clearTimeout(handle)
+
+  Batman.setImmediate = Batman.setImmediate
+  Batman.clearImmediate = Batman.clearImmediate
 
 Batman.setImmediate = ->
   _implementImmediates(Batman.container)
