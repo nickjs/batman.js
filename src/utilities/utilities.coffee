@@ -65,7 +65,6 @@ Batman._isChildOf = Batman.isChildOf = (parentNode, childNode) ->
     node = node.parentNode
   false
 
-Batman.setImmediate = Batman.clearImmediate = null
 _implementImmediates = (container) ->
   canUsePostMessage = ->
     return false unless container.postMessage
@@ -80,10 +79,10 @@ _implementImmediates = (container) ->
   count = 0
   getHandle = -> "go#{++count}"
 
-  if container.setImmediate
+  if container.setImmediate and container.clearImmediate
     Batman.setImmediate = container.setImmediate
     Batman.clearImmediate = container.clearImmediate
-  else if container.msSetImmediate
+  else if container.msSetImmediate and container.msClearImmediate
     Batman.setImmediate = msSetImmediate
     Batman.clearImmediate = msClearImmediate
   else if canUsePostMessage()
@@ -132,9 +131,6 @@ _implementImmediates = (container) ->
   else
     Batman.setImmediate = (f) -> setTimeout(f, 0)
     Batman.clearImmediate = (handle) -> clearTimeout(handle)
-
-  Batman.setImmediate = Batman.setImmediate
-  Batman.clearImmediate = Batman.clearImmediate
 
 Batman.setImmediate = ->
   _implementImmediates(Batman.container)
