@@ -57,10 +57,10 @@ Batman.Filters =
       defaultValue
 
   prepend: (value, string, binding) ->
-    string + (value ? '')
+    (string ? '') + (value ? '')
 
   append: (value, string, binding) ->
-    (value ? '') + string
+    (value ? '') + (string ? '')
 
   replace: buntUndefined (value, searchFor, replaceWith, flags, binding) ->
     if !binding

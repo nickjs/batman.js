@@ -121,12 +121,24 @@ asyncTest 'prepend', 2, ->
     equal node.html(), "special-"
     QUnit.start()
 
+asyncTest 'prepend does not change the value if the suffix is undefined', 1, ->
+  context = Batman(foo: 'bar')
+  helpers.render '<div data-bind="foo | prepend test"></div>', context, (node) ->
+    equal node.html(), "bar"
+    QUnit.start()
+
 asyncTest 'append', 2, ->
   context = Batman(foo: 'bar')
   helpers.render '<div data-bind="foo | append \'-special\'"></div>', context, (node) ->
     equal node.html(), "bar-special"
     context.unset 'foo'
     equal node.html(), "-special"
+    QUnit.start()
+
+asyncTest 'append does not change the value if the suffix is undefined', 1, ->
+  context = Batman(foo: 'bar')
+  helpers.render '<div data-bind="foo | append test"></div>', context, (node) ->
+    equal node.html(), "bar"
     QUnit.start()
 
 asyncTest 'replace', 1, ->
