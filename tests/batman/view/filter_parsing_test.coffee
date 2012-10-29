@@ -126,7 +126,7 @@ asyncTest 'should render chained filters with arguments', 1, ->
   node = helpers.render '<div data-bind="foo | prepend \'(\' | append \')\' | append"></div>',
     foo: 'foo'
   , (node) ->
-    equal node.html(), "(foo)undefined"
+    equal node.html(), "(foo)"
     QUnit.start()
 
 asyncTest 'should update bindings with the filtered value if they change', 1, ->
