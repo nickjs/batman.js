@@ -103,7 +103,7 @@ asyncTest "belongsTo supports custom foreign keys", 2, ->
       id: 1
       key: 'SEO Title'
       subject_id: 1
-      doodad_type: 'Store'
+      doodad_type: 'store'
 
   SillyMetafield.find 1, (err, metafield) ->
     store = metafield.get('doodad')
@@ -122,7 +122,7 @@ asyncTest "belongsTo supports custom type keys", 2, ->
       id: 1
       key: 'SEO Title'
       subject_id: 1
-      doodad_type: 'Store'
+      doodad_type: 'store'
 
   SillyMetafield.find 1, (err, metafield) ->
     store = metafield.get('subject')

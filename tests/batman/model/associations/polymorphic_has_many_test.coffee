@@ -81,12 +81,26 @@ asyncTest "hasMany associations should index the loaded set", 3, ->
   @Product.find 4, (err, product) =>
     throw err if err
     metafields = product.get('metafields')
-    ok metafields instanceof Batman.AssociationSet
+    ok metafields instanceof Batman.PolymorphicAssociationSet
     equal metafields.get('length'), 1
     metafield = new @Metafield(subject_id: 4, subject_type: 'product', key: "Test Metafield")
     metafield.save (err) ->
       throw err if err
       equal metafields.get('length'), 2
+    QUnit.start()
+
+asyncTest "hasMany associations should take record type into consideration when adding items to their set", 5, ->
+  @Product.find 4, (err, product) =>
+    throw err if err
+    equal product.get('metafields').get('length'), 1
+    metafield = new @Metafield(subject_id: 4, subject_type: 'store', key: "Test Store Metafield")
+    metafield.save (err) ->
+    @Store.find 4, (err, store) =>
+      throw err if err
+      equal product.get('metafields.length'), 1
+      equal product.get('metafields.first.key'), "SEO Title"
+      equal store.get('metafields.length'), 1
+      equal store.get('metafields.first.key'), "Test Store Metafield"
       QUnit.start()
 
 asyncTest "hasMany child models are added to the identity map", 2, ->
