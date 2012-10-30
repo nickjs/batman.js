@@ -19,11 +19,10 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
   apply: (base) ->
     super
     if instanceOrProxy = base.get(@label)
-      if instanceOrProxy instanceof Batman.AssociationProxy
-        model = instanceOrProxy.association.model
+      foreignTypeValue = if instanceOrProxy instanceof Batman.PolymorphicBelongsToProxy
+        instanceOrProxy.get('foreignTypeValue')
       else
-        model = instanceOrProxy.constructor
-      foreignTypeValue = model.get('resourceName')
+        instanceOrProxy.constructor.get('resourceName')
       base.set @foreignTypeKey, foreignTypeValue
 
   getAccessor: (self, model, label) ->

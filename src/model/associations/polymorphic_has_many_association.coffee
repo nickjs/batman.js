@@ -18,13 +18,15 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
         relations.forEach (model) => model.set @foreignTypeKey, @modelType()
     true
 
+  proxyClassInstanceForKey: (indexValue) ->
+    new @proxyClass(indexValue, @modelType(), this)
+
   getRelatedModelForType: -> @getRelatedModel()
 
   modelType: -> @model.get('resourceName')
 
   setIndex: ->
-    if !@typeIndex
-      @typeIndex = new Batman.PolymorphicAssociationSetIndex(@, @modelType(), @[@indexRelatedModelOn])
+    @typeIndex ||= new Batman.PolymorphicAssociationSetIndex(@, @modelType(), @[@indexRelatedModelOn])
     @typeIndex
 
   encoder: ->
