@@ -87,13 +87,9 @@ class Batman.Property
   updateSourcesFromTracker: ->
     newSources = @constructor.popSourceTracker()
     handler = @sourceChangeHandler()
-    @_eachSourceChangeEvent (e) -> e.removeHandler(handler)
+    source?.event('change').removeHandler(handler) for source in @sources.toArray() if @sources
     @sources = newSources
-    @_eachSourceChangeEvent (e) -> e.addHandler(handler)
-
-  _eachSourceChangeEvent: (iterator) ->
-    return unless @sources?
-    @sources.forEach (source) -> iterator(source.event('change'))
+    source?.event('change').addHandler(handler) for source in @sources.toArray() if @sources
 
   getValue: ->
     @registerAsMutableSource()
@@ -180,7 +176,7 @@ class Batman.Property
 
   _removeHandlers: ->
     handler = @sourceChangeHandler()
-    @_eachSourceChangeEvent (e) -> e.removeHandler(handler)
+    source.event('change').removeHandler(handler) for source in @sources.toArray() if @sources
     delete @sources
     @changeEvent().clearHandlers()
 
