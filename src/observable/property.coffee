@@ -71,13 +71,13 @@ class Batman.Property
     accessor
   eachObserver: (iterator) ->
     key = @key
-    @changeEvent().handlers.slice().forEach(iterator)
+    iterator(object) for object in @changeEvent().handlers.slice()
     if @base.isObservable
       @base._batman.ancestors (ancestor) ->
         if ancestor.isObservable and ancestor.hasProperty(key)
           property = ancestor.property(key)
           handlers = property.changeEvent().handlers
-          handlers.slice().forEach(iterator)
+          iterator(object) for object in handlers.slice()
   observers: ->
     results = []
     @eachObserver (observer) -> results.push(observer)
