@@ -28,7 +28,9 @@ exports =
                     Reports.sha IN (#{exports.qs(shas.length)})"
 
     results = query queryString, key, shas...
-    pivoted = results.pivot 'sha', 'y', {default: 0}
+    pivoted = results
+      .updateField('y': (r) -> r.get('y') / 1000000)
+      .pivot 'sha', 'y', {default: 0}
 
   summarizeKeysForSha: (keys, sha) ->
     queryString = "SELECT Points.x, Points.y, Reports.key FROM Points
@@ -49,6 +51,8 @@ exports =
                       Reports.sha IN (#{exports.qs(shas.length)})"
 
     results = query queryString, keys..., shas...
-    pivoted = results.pivot 'key', 'y', {default: 0}
+    pivoted = results
+      .updateField('y': (r) -> r.get('y') * 1000)
+      .pivot('key', 'y', {default: 0})
 
 module.exports = exports
