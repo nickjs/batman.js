@@ -51,4 +51,4 @@ exports =
     results = query queryString, keys..., shas...
     pivoted = results.pivot 'key', 'y', {default: 0}
 
-output exports
+module.exports = exports
