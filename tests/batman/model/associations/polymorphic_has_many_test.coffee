@@ -87,7 +87,7 @@ asyncTest "hasMany associations should index the loaded set", 3, ->
     metafield.save (err) ->
       throw err if err
       equal metafields.get('length'), 2
-    QUnit.start()
+      QUnit.start()
 
 asyncTest "hasMany associations should take record type into consideration when adding items to their set", 5, ->
   @Product.find 4, (err, product) =>
