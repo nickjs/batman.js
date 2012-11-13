@@ -26,7 +26,7 @@ Batman.DOM.readers =
       when 'select'
         bindingClass = Batman.DOM.SelectBinding
     bindingClass ||= Batman.DOM.Binding
-    new bindingClass(arguments...)
+    new bindingClass(node, key, context, renderer, only)
     true
 
   context: (node, key, context, renderer) -> return context.descendWithKey(key)
@@ -47,12 +47,12 @@ Batman.DOM.readers =
 
   removeif: -> Batman.DOM.readers.insertif(arguments..., yes)
 
-  route: ->
-    new Batman.DOM.RouteBinding(arguments...)
+  route: (node, key, context, renderer, only) ->
+    new Batman.DOM.RouteBinding(node, key, context, renderer, only)
     true
 
-  view: ->
-    new Batman.DOM.ViewBinding arguments...
+  view: (node, key, context, renderer, only) ->
+    new Batman.DOM.ViewBinding(node, key, context, renderer, only)
     false
 
   partial: (node, path, context, renderer) ->

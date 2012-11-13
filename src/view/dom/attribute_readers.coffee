@@ -24,13 +24,13 @@ Batman.DOM.attrReaders =
         Batman.DOM.StyleBinding
       else
         Batman.DOM.AttributeBinding
-    new bindingClass(arguments...)
+    new bindingClass(node, attr, key, context, renderer, only)
     true
 
   context: (node, contextName, key, context) -> return context.descendWithKey(key, contextName)
 
   event: (node, eventName, key, context) ->
-    new Batman.DOM.EventBinding(arguments...)
+    new Batman.DOM.EventBinding(node, eventName, key, context)
     true
 
   addclass: (node, className, key, context, parentRenderer, invert) ->
@@ -40,9 +40,9 @@ Batman.DOM.attrReaders =
   removeclass: (node, className, key, context, parentRenderer) -> Batman.DOM.attrReaders.addclass node, className, key, context, parentRenderer, yes
 
   foreach: (node, iteratorName, key, context, parentRenderer) ->
-    new Batman.DOM.IteratorBinding(arguments...)
+    new Batman.DOM.IteratorBinding(node, iteratorName, key, context, parentRenderer)
     false # Return false so the Renderer doesn't descend into this node's children.
 
   formfor: (node, localName, key, context) ->
-    new Batman.DOM.FormBinding(arguments...)
+    new Batman.DOM.FormBinding(node, localName, key, context)
     context.descendWithKey(key, localName)
