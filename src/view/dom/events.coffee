@@ -4,18 +4,26 @@
 # DOM directives, but are used to handle specific events by the `data-event-#{name}` helper.
 Batman.DOM.events =
   click: (node, callback, context, eventName = 'click') ->
-    Batman.DOM.addEventListener node, eventName, (event, args...) ->
+    Batman.DOM.addEventListener node, eventName, Batman.DOM.events.clickCallback(callback)
+
+    if node.nodeName.toUpperCase() is 'A' and not node.href
+        node.href = '#'
+
+    node
+
+  clickCallback: (callback) ->
+    clickHandler = (event) ->
       return if event.metaKey || event.ctrlKey
 
       Batman.DOM.preventDefault event
-      return if not Batman.DOM.eventIsAllowed(eventName, event)
+      return if not Batman.DOM.eventIsAllowed(event.type, event)
 
-      callback node, event, args..., context
+      node = event.target
+      callback node, event
 
-    if node.nodeName.toUpperCase() is 'A' and not node.href
-      node.href = '#'
-
-    node
+    clickHandler.name = "clickHandler"
+    clickHandler.functionName = "clickHandler"
+    clickHandler
 
   doubleclick: (node, callback, context) ->
     # The actual DOM event is called `dblclick`
@@ -36,30 +44,39 @@ Batman.DOM.events =
       else ['change']
 
     for eventName in eventNames
-      Batman.DOM.addEventListener node, eventName, (args...) ->
-        callback node, args..., context
+      Batman.DOM.addEventListener node, eventName, @changeCallback
+
+  changeCallback: -> callback node, args..., context
 
   isEnter: (ev) -> (13 <= ev.keyCode <= 14) || (13 <= ev.which <= 14) || ev.keyIdentifier is 'Enter' || ev.key is 'Enter'
 
   submit: (node, callback, context) ->
     if Batman.DOM.nodeIsEditable(node)
-      Batman.DOM.addEventListener node, 'keydown', (args...) ->
-        if Batman.DOM.events.isEnter(args[0])
-          Batman.DOM._keyCapturingNode = node
-      Batman.DOM.addEventListener node, 'keyup', (args...) ->
-        if Batman.DOM.events.isEnter(args[0])
-          if Batman.DOM._keyCapturingNode is node
-            Batman.DOM.preventDefault args[0]
-            callback node, args..., context
-          Batman.DOM._keyCapturingNode = null
+      Batman.DOM.addEventListener node, 'keydown', @keyDownCallback
+      Batman.DOM.addEventListener node, 'keyup',   @keyUpCallback
     else
-      Batman.DOM.addEventListener node, 'submit', (args...) ->
-        Batman.DOM.preventDefault args[0]
-        callback node, args..., context
-
+      Batman.DOM.addEventListener node, 'submit',  @submitCallback
     node
 
-  other: (node, eventName, callback, context) -> Batman.DOM.addEventListener node, eventName, (args...) -> callback node, args..., context
+  keyDownCallback: ->
+    if Batman.DOM.events.isEnter(args[0])
+      Batman.DOM._keyCapturingNode = node
+
+  keyUpCallback: ->
+    if Batman.DOM.events.isEnter(args[0])
+      if Batman.DOM._keyCapturingNode is node
+        Batman.DOM.preventDefault args[0]
+        callback node, args..., context
+      Batman.DOM._keyCapturingNode = null
+
+  submitCallback: ->
+    Batman.DOM.preventDefault args[0]
+    callback node, args..., context
+
+  other: (node, eventName, callback, context) ->
+    Batman.DOM.addEventListener node, eventName, @otherCallback
+
+  otherCallback: -> callback node, args..., context
 
 Batman.DOM.eventIsAllowed = (eventName, event) ->
   if delegate = Batman.currentApp?.shouldAllowEvent?[eventName]
