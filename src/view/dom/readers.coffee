@@ -3,15 +3,21 @@
 class Batman.DOM.ReaderBindingDefinition
   constructor: (@node, @keyPath, @context, @renderer) ->
 
+Batman.BindingDefinitionOnlyObserve =
+  Data: 'data'
+  Node: 'node'
+  All: 'all'
+  None: 'none'
+
 # `Batman.DOM.readers` contains the functions used for binding a node's value or innerHTML, showing/hiding nodes,
 # and any other `data-#{name}=""` style DOM directives.
 Batman.DOM.readers =
   target: (definition) ->
-    definition.observes = 'node'
+    definition.onlyObserve = Batman.BindingDefinitionOnlyObserve.Node
     Batman.DOM.readers.bind(definition)
 
   source: (definition) ->
-    definition.observes = 'data'
+    definition.onlyObserve = Batman.BindingDefinitionOnlyObserve.Data
     Batman.DOM.readers.bind(definition)
 
   bind: (definition) ->

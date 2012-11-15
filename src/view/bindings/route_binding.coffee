@@ -2,7 +2,7 @@
 
 class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
   onAnchorTag: false
-  onlyObserve: 'none'
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
   @accessor 'dispatcher', ->
     @renderContext.get('dispatcher') || Batman.App.get('current.dispatcher')

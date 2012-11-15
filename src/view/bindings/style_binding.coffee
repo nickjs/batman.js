@@ -1,7 +1,7 @@
 #= require ./abstract_collection_binding
 
 class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
-  onlyObserve: 'data'
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
   constructor: ->
     @oldStyles = {}
@@ -65,7 +65,7 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
     super
 
   class @SingleStyleBinding extends Batman.DOM.AbstractAttributeBinding
-    onlyObserve: 'date'
+    onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
     isTwoWay: -> false
 
     constructor: (definition, @parent) ->

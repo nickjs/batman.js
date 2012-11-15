@@ -222,10 +222,10 @@ asyncTest "destroyNode: bindings are kept in Batman.data and destroyed when the 
     QUnit.start()
 
 asyncTest "destroyNode: iterators are kept in Batman.data and destroyed when the parent node is removed", 5, ->
-  context = new Batman.Object bar: true
+  context = new Batman.Object bar: 'baz'
   set = null
-  context.accessor 'foo', (setSpy = createSpy -> set = new Batman.Set @get('bar'), @get('bar'))
-  helpers.render '<div id="parent"><div data-foreach-x="foo"></div></div>', context, (node) ->
+  context.accessor 'foo', (setSpy = createSpy -> set = new Batman.Set @get('bar'), 'qux')
+  helpers.render '<div id="parent"><div data-foreach-x="foo" data-bind="x"></div></div>', context, (node) ->
     equal setSpy.callCount, 1  # Cached, so only called once
 
     parent = node[0]

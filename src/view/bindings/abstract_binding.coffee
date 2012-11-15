@@ -37,7 +37,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   @accessor 'filteredValue'
     get: ->
       unfilteredValue = @get('unfilteredValue')
-      self = @
+      self = this
       renderContext = @get('renderContext')
       if @filterFunctions.length > 0
         Batman.developer.currentFilterStack = renderContext
@@ -87,15 +87,19 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   # The `keyContext` accessor is
   @accessor 'keyContext', -> @renderContext.contextForKey(@key)
 
+  onlyAll = Batman.BindingDefinitionOnlyObserve.All
+  onlyData = Batman.BindingDefinitionOnlyObserve.Data
+  onlyNode = Batman.BindingDefinitionOnlyObserve.Node
+
   bindImmediately: true
   shouldSet: true
   isInputBinding: false
   escapeValue: true
-  onlyObserve: false
+  onlyObserve: onlyAll
 
-  constructor: (@definition) ->
+  constructor: (definition) ->
     {@node, @keyPath, context: @renderContext, @renderer} = definition
-    @onlyObserve = definition.onlyObserve if definition.onlyObserve?
+    @onlyObserve = definition.onlyObserve if definition.onlyObserve
 
     # Pull out the `@key` and filter from the `@keyPath`.
     @parseFilter()
@@ -107,17 +111,17 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
   bind: ->
     # Attach the observers.
-    if @node? && @onlyObserve in [false, 'node'] and Batman.DOM.nodeIsEditable(@node)
+    if @node and @onlyObserve in [onlyAll, onlyNode] and Batman.DOM.nodeIsEditable(@node)
       Batman.DOM.events.change @node, @_fireNodeChange
 
       # Usually, we let the HTML value get updated upon binding by `observeAndFire`ing the dataChange
       # function below. When dataChange isn't attached, we update the JS land value such that the
       # sync between DOM and JS is maintained.
-      if @onlyObserve is 'node'
+      if @onlyObserve is onlyNode
         @_fireNodeChange()
 
     # Observe the value of this binding's `filteredValue` and fire it immediately to update the node.
-    if @onlyObserve in [false, 'data']
+    if @onlyObserve in [onlyAll, onlyData]
       @observeAndFire 'filteredValue', @_fireDataChange
 
     Batman.DOM.trackBinding(this, @node) if @node

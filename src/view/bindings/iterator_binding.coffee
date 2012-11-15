@@ -5,45 +5,43 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   queuedActionNumber: 0
   bindImmediately: false
   skipChildren: true
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
   constructor: (definition) ->
-    super
-    @iteratorName = @attributeName
-    @parentRenderer = @renderer
+    {node: sourceNode, attr: @iteratorName, keyPath: @key, renderer: @parentRenderer} = definition
 
     @nodeMap = new Batman.SimpleHash
     @rendererMap = new Batman.SimpleHash
 
-    @prototypeNode = @node.cloneNode(true)
+    @prototypeNode = sourceNode.cloneNode(true)
     @prototypeNode.removeAttribute "data-foreach-#{@iteratorName}"
 
     # Create a reference sibling node in order to know where this foreach ends,
     # and move any Batman._data from the sourceNode to the sibling because we need to
     # retain the bindings, and we want to dispose of the node.
-    previousSiblingNode = @node.nextSibling
+    previousSiblingNode = sourceNode.nextSibling
     @startNode = document.createComment "start #{@iteratorName}-#{@get('_batmanID')}"
     @endNode = document.createComment "end #{@iteratorName}-#{@get('_batmanID')}"
-    @endNode[Batman.expando] = @node[Batman.expando]
-    delete @node[Batman.expando] if Batman.canDeleteExpando
-    Batman.DOM.insertBefore @node.parentNode, @startNode, previousSiblingNode
-    Batman.DOM.insertBefore @node.parentNode, @endNode, previousSiblingNode
+    @endNode[Batman.expando] = sourceNode[Batman.expando]
+    delete sourceNode[Batman.expando] if Batman.canDeleteExpando
+    Batman.DOM.insertBefore sourceNode.parentNode, @startNode, previousSiblingNode
+    Batman.DOM.insertBefore sourceNode.parentNode, @endNode, previousSiblingNode
 
     # Don't let the parent emit its rendered event until this iteration has set up
     @parentRenderer.prevent 'rendered'
 
     # Remove the original node once the parent has moved past it.
-    Batman.DOM.onParseExit @node.parentNode, =>
-      Batman.DOM.destroyNode @node
+    Batman.DOM.onParseExit sourceNode.parentNode, =>
+      Batman.DOM.destroyNode sourceNode
       @bind()
       @parentRenderer.allowAndFire 'rendered'
+
+    definition.node = @endNode
+    super
 
   # The parent node can change if this content is yielded into a different container,
   # so use a function to grab it.
   parentNode: -> @endNode.parentNode
-
-  die: ->
-    @dead = true
-    super
 
   dataChange: (collection) ->
     if collection?
@@ -110,4 +108,3 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
     Batman.DOM.destroyNode(node)
     @fire 'nodeRemoved', node, item
-

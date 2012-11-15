@@ -13,7 +13,7 @@ Batman.DOM.attrReaders =
     value
 
   source: (definition) ->
-    definition.observes = 'data'
+    definition.onlyObserve = Batman.BindingDefinitionOnlyObserve.Data
     Batman.DOM.attrReaders.bind(definition)
 
   bind: (definition) ->
