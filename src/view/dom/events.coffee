@@ -85,9 +85,9 @@ callbackForEvent = {
   submit: (block, context) ->
     (event) ->
       Batman.DOM.preventDefault(event)
-      block(node, event, context)
+      block(event.target, event, context)
 
   other: (block, context) ->
     (event) ->
-      block(node, event, context)
+      block(event.target, event, context)
 }
