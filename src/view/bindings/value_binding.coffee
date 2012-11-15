@@ -1,8 +1,8 @@
 #= require ./abstract_binding
 
-class Batman.DOM.Binding extends Batman.DOM.AbstractBinding
-  constructor: (node) ->
-    @isInputBinding = node.nodeName.toLowerCase() in ['input', 'textarea']
+class Batman.DOM.ValueBinding extends Batman.DOM.AbstractBinding
+  constructor: (definition) ->
+    @isInputBinding = definition.node.nodeName.toLowerCase() in ['input', 'textarea']
     super
 
   nodeChange: (node, context) ->
