@@ -72,19 +72,23 @@ class Batman.Renderer extends Batman.Object
         else
           [name, undefined, attribute.value]
 
-      for [name, argument, keypath] in bindings.sort(@_sortBindings)
-        result = if argument
-          Batman.DOM.attrReaders[name]?(node, argument, keypath, @context, @)
+      for [name, attr, value] in bindings.sort(@_sortBindings)
+        binding = if attr
+          if reader = Batman.DOM.attrReaders[name]
+            bindingDefinition = new Batman.DOM.AttrReaderBindingDefinition(node, attr, value, @context, this)
+            reader(bindingDefinition)
         else
-          Batman.DOM.readers[name]?(node, keypath, @context, @)
+          if reader = Batman.DOM.readers[name]
+            bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @context, this)
+            reader(bindingDefinition)
 
-        if result is false
+        if binding instanceof Batman.RenderContext
+          oldContext = @context
+          @context = binding
+          Batman.DOM.onParseExit(node, => @context = oldContext)
+        else if binding?.skipChildren
           skipChildren = true
           break
-        else if result instanceof Batman.RenderContext
-          oldContext = @context
-          @context = result
-          Batman.DOM.onParseExit(node, => @context = oldContext)
 
     if (nextNode = @nextNode(node, skipChildren)) then @parseNode(nextNode) else @finish()
 

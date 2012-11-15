@@ -1,23 +1,27 @@
 #= require ./dom
 
+class Batman.DOM.ReaderBindingDefinition
+  constructor: (@node, @keyPath, @context, @renderer) ->
+
 # `Batman.DOM.readers` contains the functions used for binding a node's value or innerHTML, showing/hiding nodes,
 # and any other `data-#{name}=""` style DOM directives.
 Batman.DOM.readers =
-  target: (node, key, context, renderer) ->
-    Batman.DOM.readers.bind(node, key, context, renderer, 'nodeChange')
-    true
+  target: (definition) ->
+    definition.observes = 'node'
+    Batman.DOM.readers.bind(definition)
 
-  source: (node, key, context, renderer) ->
-    Batman.DOM.readers.bind(node, key, context, renderer, 'dataChange')
-    true
+  source: (definition) ->
+    definition.observes = 'data'
+    Batman.DOM.readers.bind(definition)
 
-  bind: (node, key, context, renderer, only) ->
-    bindingClass = false
+  bind: (definition) ->
+    {node} = definition
     switch node.nodeName.toLowerCase()
       when 'input'
         switch node.getAttribute('type')
           when 'checkbox'
-            Batman.DOM.attrReaders.bind(node, 'checked', key, context, renderer, only)
+            definition.attr = 'checked'
+            Batman.DOM.attrReaders.bind(definition)
             return true
           when 'radio'
             bindingClass = Batman.DOM.RadioBinding
@@ -25,57 +29,61 @@ Batman.DOM.readers =
             bindingClass = Batman.DOM.FileBinding
       when 'select'
         bindingClass = Batman.DOM.SelectBinding
-    bindingClass ||= Batman.DOM.Binding
-    new bindingClass(node, key, context, renderer, only)
-    true
 
-  context: (node, key, context, renderer) -> return context.descendWithKey(key)
+    bindingClass ||= Batman.DOM.ValueBinding
+    new bindingClass(definition)
 
-  mixin: (node, key, context, renderer) ->
-    new Batman.DOM.MixinBinding(node, key, context.descend(Batman.mixins), renderer)
-    true
+  context: (definition) ->
+    definition.context.descendWithKey(definition.keyPath)
 
-  showif: (node, key, context, parentRenderer, invert) ->
-    new Batman.DOM.ShowHideBinding(node, key, context, parentRenderer, false, invert)
-    true
+  mixin: (definition) ->
+    definition.context = definition.context.descend(Batman.mixins)
+    new Batman.DOM.MixinBinding(definition)
 
-  hideif: -> Batman.DOM.readers.showif(arguments..., yes)
+  showif: (definition) ->
+    new Batman.DOM.ShowHideBinding(definition)
 
-  insertif: (node, key, context, parentRenderer, invert) ->
-    new Batman.DOM.InsertionBinding(node, key, context, parentRenderer, false, invert)
-    true
+  hideif: (definition) ->
+    definition.invert = true
+    new Batman.DOM.ShowHideBinding(definition)
 
-  removeif: -> Batman.DOM.readers.insertif(arguments..., yes)
+  insertif: (definition) ->
+    new Batman.DOM.InsertionBinding(definition)
 
-  route: (node, key, context, renderer, only) ->
-    new Batman.DOM.RouteBinding(node, key, context, renderer, only)
-    true
+  removeif: (definition) ->
+    definition.invert = true
+    new Batman.DOM.InsertionBinding(definition)
 
-  view: (node, key, context, renderer, only) ->
-    new Batman.DOM.ViewBinding(node, key, context, renderer, only)
-    false
+  route: (definition) ->
+    new Batman.DOM.RouteBinding(definition)
 
-  partial: (node, path, context, renderer) ->
-    Batman.DOM.partial node, path, context, renderer
-    true
+  view: (definition) ->
+    new Batman.DOM.ViewBinding(definition)
 
-  defineview: (node, name, context, renderer) ->
+  partial: (definition) ->
+    Batman.DOM.partial definition.node, definition.keyPath, definition.context, definition.renderer
+
+  defineview: (definition) ->
+    {node} = definition
     Batman.DOM.onParseExit(node, -> node.parentNode?.removeChild(node))
-    Batman.DOM.defineView(name, node)
-    false
+    Batman.DOM.defineView(definition.keyPath, node)
+    {skipChildren: true}
 
-  renderif: (node, key, context, renderer) ->
-    new Batman.DOM.DeferredRenderingBinding(node, key, context, renderer)
-    false
+  renderif: (definition) ->
+    new Batman.DOM.DeferredRenderingBinding(definition)
 
-  yield: (node, key) ->
-    Batman.DOM.onParseExit node, -> Batman.DOM.Yield.withName(key).set 'containerNode', node
-    true
-  contentfor: (node, key, context, renderer, action = 'append') ->
+  yield: (definition) ->
+    {node, keyPath} = definition
+    Batman.DOM.onParseExit(node, -> Batman.DOM.Yield.withName(keyPath).set('containerNode', node))
+
+  contentfor: (definition) ->
+    {node, value, swapMethod, renderer, keyPath} = definition
+    swapMethod ||= 'append'
+
     Batman.DOM.onParseExit node, ->
       node.parentNode?.removeChild(node)
-      renderer.view.pushYieldAction(key, action, node)
-    true
-  replace: (node, key, context, renderer) ->
-    Batman.DOM.readers.contentfor(node, key, context, renderer, 'replace')
-    true
+      renderer.view.pushYieldAction(keyPath, swapMethod, node)
+
+  replace: (definition) ->
+    definition.swapMethod = 'replace'
+    Batman.DOM.readers.contentfor(definition)

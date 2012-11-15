@@ -8,9 +8,9 @@ class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
   @accessor 'errorsListSelector', ->
     @get('node').getAttribute('data-errors-list') || @defaultErrorsListSelector
 
-  constructor: (node, contextName, keyPath, renderContext, renderer, only) ->
+  constructor: ->
     super
-    @contextName = contextName
+    @contextName = @attributeName
     delete @attributeName
 
     Batman.DOM.events.submit @get('node'), (node, e) -> Batman.DOM.preventDefault e
@@ -21,7 +21,8 @@ class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
       if ~(index = binding.get('key').indexOf(@contextName)) # If the binding is to a key on the thing passed to formfor
         node = binding.get('node')
         field = binding.get('key').slice(index + @contextName.length + 1) # Slice off up until the context and the following dot
-        new Batman.DOM.AddClassBinding(node, @errorClass, @get('keyPath') + " | get 'errors.#{field}.length'", @renderContext, @renderer)
+        definition = new Batman.DOM.AttrReaderBindingDefinition(node, @errorClass, @get('keyPath') + " | get 'errors.#{field}.length'", @renderContext, @renderer)
+        new Batman.DOM.AddClassBinding(definition)
 
   setupErrorsList: ->
     if @errorsListNode = Batman.DOM.querySelector(@get('node'), @get('errorsListSelector'))

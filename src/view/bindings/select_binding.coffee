@@ -28,6 +28,7 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
     @_fireDataChange(@get('filteredValue'))
 
   lastKeyContext: null
+
   dataChange: (newValue) =>
     @lastKeyContext ||= @get('keyContext')
     if @lastKeyContext != @get('keyContext')

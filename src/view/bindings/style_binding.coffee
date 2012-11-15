@@ -1,13 +1,7 @@
 #= require ./abstract_collection_binding
 
 class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
-
-  class @SingleStyleBinding extends Batman.DOM.AbstractAttributeBinding
-    isTwoWay: -> false
-    constructor: (args..., @parent) ->
-      super(args...)
-    dataChange: (value) ->
-      @parent.setStyle(@attributeName, value)
+  onlyObserve: 'data'
 
   constructor: ->
     @oldStyles = {}
@@ -45,7 +39,8 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
       @bindSingleAttribute(key, "#{@keyPath}.#{key}")
 
   bindSingleAttribute: (attr, keyPath) ->
-    @styleBindings[attr] = new @constructor.SingleStyleBinding(@node, attr, keyPath, @renderContext, @renderer, @only, @)
+    definition = new Batman.DOM.AttrReaderBindingDefinition(@node, attr, keyPath, @renderContext, @renderer)
+    @styleBindings[attr] = new Batman.DOM.StyleBinding.SingleStyleBinding(definition, this)
 
   setStyle: (key, value) =>
     key = Batman.helpers.camelize(key.trim(), true)
@@ -68,3 +63,13 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
   unbindCollection: ->
     @resetBindings()
     super
+
+  class @SingleStyleBinding extends Batman.DOM.AbstractAttributeBinding
+    onlyObserve: 'date'
+    isTwoWay: -> false
+
+    constructor: (definition, @parent) ->
+      super(definition)
+
+    dataChange: (value) ->
+      @parent.setStyle(@attributeName, value)

@@ -1,6 +1,8 @@
 #= require ./abstract_binding
 
 class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
+  skipChildren: true
+
   constructor: ->
     super
     @renderer.prevent 'rendered'

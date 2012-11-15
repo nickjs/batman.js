@@ -1,17 +1,18 @@
 #= require ./abstract_attribute_binding
 
 class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
-  bindImmediately: false
-  constructor: (node, eventName, key, context) ->
+  onlyObserve: 'none'
+
+  constructor: ->
     super
+
     callback = =>
       @get('filteredValue')?.apply @get('callbackContext'), arguments
 
     if attacher = Batman.DOM.events[@attributeName]
-      attacher @node, callback, context
+      attacher @node, callback, @renderContext
     else
-      Batman.DOM.events.other @node, @attributeName, callback, context
-    @bind()
+      Batman.DOM.events.other @node, @attributeName, callback, @renderContext
 
   @accessor 'callbackContext', ->
     contextKeySegments = @key.split('.')

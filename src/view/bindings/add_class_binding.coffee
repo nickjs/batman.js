@@ -1,15 +1,14 @@
 #= require ./abstract_attribute_binding
 
 class Batman.DOM.AddClassBinding extends Batman.DOM.AbstractAttributeBinding
-  constructor: (node, className, keyPath, renderContext, renderer, only, @invert = false) ->
-    names = className.split('|')
-    @classes = for name in names
-      {
+  constructor: (definition) ->
+    {@invert} = definition
+
+    @classes = for name in definition.attr.split('|')
         name: name
         pattern: new RegExp("(?:^|\\s)#{name}(?:$|\\s)", 'i')
-      }
+
     super
-    delete @attributeName
 
   dataChange: (value) ->
     currentName = @node.className

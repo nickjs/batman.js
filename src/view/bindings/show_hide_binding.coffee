@@ -1,10 +1,13 @@
 #= require ./abstract_binding
 
 class Batman.DOM.ShowHideBinding extends Batman.DOM.AbstractBinding
-  constructor: (node, className, key, context, parentRenderer, @invert = false) ->
-    display = node.style.display
+  onlyObserve: 'data'
+
+  constructor: (definition) ->
+    display = definition.node.style.display
     display = '' if not display or display is 'none'
     @originalDisplay = display
+
     super
 
   dataChange: (value) ->

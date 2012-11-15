@@ -1,5 +1,8 @@
 #= require ./dom
 
+class Batman.DOM.AttrReaderBindingDefinition
+  constructor: (@node, @attr, @keyPath, @context, @renderer) ->
+
 # `Batman.DOM.attrReaders` contains all the DOM directives which take an argument in their name, in the
 # `data-dosomething-argument="keypath"` style. This means things like foreach, binding attributes like
 # disabled or anything arbitrary, descending into a context, binding specific classes, or binding to events.
@@ -9,11 +12,12 @@ Batman.DOM.attrReaders =
     if value is 'true' then value = true
     value
 
-  source: (node, attr, key, context, renderer) ->
-    Batman.DOM.attrReaders.bind node, attr, key, context, renderer, 'dataChange'
+  source: (definition) ->
+    definition.observes = 'data'
+    Batman.DOM.attrReaders.bind(definition)
 
-  bind: (node, attr, key, context, renderer, only) ->
-    bindingClass = switch attr
+  bind: (definition) ->
+    bindingClass = switch definition.attr
       when 'checked', 'disabled', 'selected'
         Batman.DOM.CheckedBinding
       when 'value', 'href', 'src', 'size'
@@ -24,25 +28,25 @@ Batman.DOM.attrReaders =
         Batman.DOM.StyleBinding
       else
         Batman.DOM.AttributeBinding
-    new bindingClass(node, attr, key, context, renderer, only)
-    true
 
-  context: (node, contextName, key, context) -> return context.descendWithKey(key, contextName)
+    new bindingClass(definition)
 
-  event: (node, eventName, key, context) ->
-    new Batman.DOM.EventBinding(node, eventName, key, context)
-    true
+  context: (definition) ->
+    definition.context.descendWithKey(definition.keyPath, definition.attr)
 
-  addclass: (node, className, key, context, parentRenderer, invert) ->
-    new Batman.DOM.AddClassBinding(node, className, key, context, parentRenderer, false, invert)
-    true
+  event: (definition) ->
+    new Batman.DOM.EventBinding(definition)
 
-  removeclass: (node, className, key, context, parentRenderer) -> Batman.DOM.attrReaders.addclass node, className, key, context, parentRenderer, yes
+  addclass: (definition) ->
+    new Batman.DOM.AddClassBinding(definition)
 
-  foreach: (node, iteratorName, key, context, parentRenderer) ->
-    new Batman.DOM.IteratorBinding(node, iteratorName, key, context, parentRenderer)
-    false # Return false so the Renderer doesn't descend into this node's children.
+  removeclass: (definition) ->
+    definition.invert = true
+    new Batman.DOM.AddClassBinding(definition)
 
-  formfor: (node, localName, key, context) ->
-    new Batman.DOM.FormBinding(node, localName, key, context)
-    context.descendWithKey(key, localName)
+  foreach: (definition) ->
+    new Batman.DOM.IteratorBinding(definition)
+
+  formfor: (definition) ->
+    new Batman.DOM.FormBinding(definition)
+    definition.context.descendWithKey(definition.keyPath, definition.attr)
