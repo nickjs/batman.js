@@ -76,6 +76,7 @@ class Batman.RenderContext
       unset: (key) -> @unset("proxiedObject.#{key}")
 
     constructor: (@renderContext, @keyPath, @localKey) ->
-      @binding = new Batman.DOM.AbstractBinding(undefined, @keyPath, @renderContext)
+      definition = new Batman.DOM.ReaderBindingDefinition(null, keyPath, renderContext)
+      @binding = new Batman.DOM.AbstractBinding(definition)
 
 Batman.RenderContext.base = new Batman.RenderContext(Batman.RenderContext::windowWrapper)

@@ -36,7 +36,9 @@ class Batman.View extends Batman.Object
       return unless keyPath?
       bindingKey = "_argumentBinding#{key}"
       @[bindingKey]?.die()
-      @[bindingKey] = new Batman.DOM.ViewArgumentBinding node, keyPath, context
+
+      definition = new Batman.DOM.ReaderBindingDefinition(node, keyPath, context)
+      @[bindingKey] = new Batman.DOM.ViewArgumentBinding(definition)
 
   @accessor 'html',
     get: ->
