@@ -1,7 +1,7 @@
 #= require ./abstract_attribute_binding
 
 class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
-  onlyObserve: 'none'
+  onlyObserve: onlyObserve: Batman.BindingDefinitionOnlyObserve.None
 
   constructor: ->
     super

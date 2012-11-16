@@ -1,6 +1,8 @@
 #= require ./abstract_attribute_binding
 
 class Batman.DOM.AddClassBinding extends Batman.DOM.AbstractAttributeBinding
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
+
   constructor: (definition) ->
     {@invert} = definition
 

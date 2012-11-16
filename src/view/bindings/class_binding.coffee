@@ -1,6 +1,8 @@
 #= require ./abstract_collection_binding
 
 class Batman.DOM.ClassBinding extends Batman.DOM.AbstractCollectionBinding
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
+
   dataChange: (value) ->
     if value?
       @unbindCollection()

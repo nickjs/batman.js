@@ -4,6 +4,7 @@ class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
   @current: null
   errorClass: 'error'
   defaultErrorsListSelector: 'div.errors'
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.None
 
   @accessor 'errorsListSelector', ->
     @get('node').getAttribute('data-errors-list') || @defaultErrorsListSelector

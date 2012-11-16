@@ -2,6 +2,7 @@
 
 class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
   skipChildren: true
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
   constructor: ->
     super
@@ -24,4 +25,3 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
       @renderer.allowAndFire 'rendered'
 
     @die()
-

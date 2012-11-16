@@ -1,6 +1,7 @@
 class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
   isTwoWay: false
   bindImmediately: false
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
   constructor: (definition) ->
     {@invert} = definition
