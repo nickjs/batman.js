@@ -203,9 +203,13 @@ QUnit.module "Batman.RouteMapBuilder nested resources"
 
 test "can define nested resource routes", ->
   @builder.resources 'products', ->
-    @resources 'images'
+    @resources 'images', ->
+      @resources 'metadata'
 
-  equal @routeMap.addRoute.callCount, 8
+  equal @routeMap.addRoute.callCount, 12
+  [name, route] = @routeMap.addRoute.calls[0].arguments
+  equal name, 'products.images.metadata'
+  equal route.get('templatePath'), '/products/:productId/images/:imageId/metadata'
 
 test "can define nested resource routes with options on the outer call", ->
   @builder.resources 'products', {only: []}, ->
