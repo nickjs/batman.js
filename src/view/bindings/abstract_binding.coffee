@@ -96,13 +96,15 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   isInputBinding: false
   escapeValue: true
   onlyObserve: onlyAll
+  skipParseFilter: false
 
   constructor: (definition) ->
     {@node, @keyPath, context: @renderContext, @renderer} = definition
     @onlyObserve = definition.onlyObserve if definition.onlyObserve
+    @skipParseFilter = definition.skipParseFilter if definition.skipParseFilter?
 
     # Pull out the `@key` and filter from the `@keyPath`.
-    @parseFilter()
+    @parseFilter() if not @skipParseFilter
 
     # Observe the node and the data.
     @bind() if @bindImmediately
@@ -142,6 +144,12 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     @forget()
     @_batman.properties?.forEach (key, property) -> property.die()
     @fire('die')
+
+    @node = null
+    @keyPath = null
+    @renderContext = null
+    @renderer = null
+
     @dead = true
     return true
 

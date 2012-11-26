@@ -24,4 +24,9 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     @view.on 'ready', =>
       @renderer.allowAndFire 'rendered'
 
-    @die()
+    @forget()
+    @_batman.properties?.forEach (key, property) -> property.die()
+
+  die: ->
+    @view = null
+    super
