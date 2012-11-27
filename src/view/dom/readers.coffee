@@ -40,7 +40,7 @@ Batman.DOM.readers =
     new bindingClass(definition)
 
   context: (definition) ->
-    definition.context.descendWithKey(definition.keyPath)
+    definition.context.descendWithDefinition(definition)
 
   mixin: (definition) ->
     definition.context = definition.context.descend(Batman.mixins)

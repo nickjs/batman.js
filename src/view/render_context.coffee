@@ -38,14 +38,14 @@ class Batman.RenderContext
       object[scopedKey] = oldObject
     return new @constructor(object, @)
 
-  # `descendWithKey` takes a `key` and optionally a `scopedKey`. It creates a new `RenderContext` leaf node
-  # with the runtime value of the `key` available on the stack or under the `scopedKey` if given. This
+  # `descendWithDefinition` takes a binding `definition`. It creates a new `RenderContext` leaf node
+  # with the runtime value of the `keyPath` available on the stack or under the context name if given. This
   # differs from a normal `descend` in that it looks up the `key` at runtime (in the parent `RenderContext`)
   # and will correctly reflect changes if the value at the `key` changes. A normal `descend` takes a concrete
   # reference to an object which never changes.
-  descendWithKey: (key, scopedKey) ->
-   proxy = new ContextProxy(@, key)
-   return @descend(proxy, scopedKey)
+  descendWithDefinition: (definition) ->
+   proxy = new ContextProxy(definition)
+   return @descend(proxy, definition.attr)
 
   # `chain` flattens a `RenderContext`'s path to the root.
   chain: ->
@@ -75,8 +75,7 @@ class Batman.RenderContext
       set: (key, value) -> @set("proxiedObject.#{key}", value)
       unset: (key) -> @unset("proxiedObject.#{key}")
 
-    constructor: (@renderContext, @keyPath, @localKey) ->
-      definition = new Batman.DOM.ReaderBindingDefinition(null, keyPath, renderContext)
+    constructor: (definition) ->
       @binding = new Batman.DOM.AbstractBinding(definition)
 
 Batman.RenderContext.base = new Batman.RenderContext(Batman.RenderContext::windowWrapper)

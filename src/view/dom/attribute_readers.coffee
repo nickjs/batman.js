@@ -32,7 +32,7 @@ Batman.DOM.attrReaders =
     new bindingClass(definition)
 
   context: (definition) ->
-    definition.context.descendWithKey(definition.keyPath, definition.attr)
+    definition.context.descendWithDefinition(definition)
 
   event: (definition) ->
     new Batman.DOM.EventBinding(definition)
@@ -49,4 +49,4 @@ Batman.DOM.attrReaders =
 
   formfor: (definition) ->
     new Batman.DOM.FormBinding(definition)
-    definition.context.descendWithKey(definition.keyPath, definition.attr)
+    definition.context.descendWithDefinition(definition)
