@@ -48,7 +48,7 @@ class Batman.Controller extends Batman.Object
     handlers = if Batman.typeOf(options.with) is 'Array' then options.with else [options.with]
     for error in errors
       currentHandlers = @_batman.errorHandlers.get(error) || []
-      @_batman.errorHandlers.set(error, currentHandlers.concat(handlers)) 
+      @_batman.errorHandlers.set(error, currentHandlers.concat(handlers))
 
   errorHandler: (callback) =>
     errorFrame = @_actionFrames?[@_actionFrames.length - 1]
@@ -112,7 +112,7 @@ class Batman.Controller extends Batman.Object
     frame.startOperation({internal: true})
 
     oldRedirect = Batman.navigator?.redirect
-    Batman.navigator?.redirect = @redirect    
+    Batman.navigator?.redirect = @redirect
     @_runFilters action, params, 'beforeFilters'
     result = @[action](params) unless @_afterFilterRedirect
 
@@ -165,7 +165,7 @@ class Batman.Controller extends Batman.Object
 
     if view
       Batman.currentApp?.prevent 'ready'
-      view.on 'ready', =>
+      view.once 'ready', =>
         Batman.DOM.Yield.withName(options.into).replace view.get('node')
         Batman.currentApp?.allowAndFire 'ready'
         frame?.finishOperation()

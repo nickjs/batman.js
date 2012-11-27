@@ -5,7 +5,7 @@ class Batman.ControllerActionFrame extends Batman.Object
 
   constructor: (options, onComplete) ->
     super(options)
-    @on 'complete', onComplete
+    @once 'complete', onComplete
 
   startOperation: (options = {}) ->
     if !options.internal
