@@ -8,7 +8,7 @@ class Batman.SetSort extends Batman.SetProxy
     if @base.isObservable
       @_setObserver = new Batman.SetObserver(@base)
       @_setObserver.observedItemKeys = [@key]
-      boundReIndex = @_reIndex.bind(@)
+      boundReIndex = => @_reIndex()
       @_setObserver.observerForItemAndKey = -> boundReIndex
       @_setObserver.on 'itemsWereAdded', boundReIndex
       @_setObserver.on 'itemsWereRemoved', boundReIndex

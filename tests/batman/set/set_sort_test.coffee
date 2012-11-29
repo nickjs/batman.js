@@ -188,6 +188,16 @@ test "setting a new value of the sorted property on an item which has been remov
   expected = [@byFred, @byMary, @byZeke]
   deepEqual @authorNameSort.toArray(), expected
 
+test "adding many new values to the set should only reindex the set once", ->
+  @authorNameSort.remove @anotherByFred
+  reIndex = spyOn(@authorNameSort, "_reIndex")
+
+  @authorNameSort.add(@anotherByFred)
+  equal reIndex.callCount, 1
+
+  @authorNameSort.add(@byJill, @anotherByZeke)
+  equal reIndex.callCount, 2
+
 test "stopObserving() forgets all observers", ->
   @authorNameSort.stopObserving()
   expected = [@byFred, @anotherByFred, @byMary, @byZeke]
