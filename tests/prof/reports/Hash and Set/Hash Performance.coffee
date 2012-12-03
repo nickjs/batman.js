@@ -4,7 +4,7 @@ keys = ['hash performance: object-key setting', 'hash performance: object-key re
 shas = helpers.getAvailableShas(keys)
 
 header "Setting Speed (milliseconds)"
-barchart helpers.reportKeysAcrossShas([keys[1], keys[3]], shas)
+barchart helpers.reportKeysAcrossShas([keys[0], keys[2]], shas)
 
 header "Getting Speed (milliseconds)"
-barchart helpers.reportKeysAcrossShas([keys[0], keys[2]], shas)
+barchart helpers.reportKeysAcrossShas([keys[1], keys[3]], shas)
