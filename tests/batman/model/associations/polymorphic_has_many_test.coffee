@@ -289,4 +289,29 @@ asyncTest "hasMany sets the foreign key on the inverse relation if the children 
         ok metafields[0].get('subject') == product
         ok metafields[1].get('subject') == product
 
+asyncTest "hasMany associations are polymorphic", ->
+  class Animal extends Batman.Model
+    @encode 'id', 'name'
+  class Cat extends Animal
+  class Dog extends Animal
+  class Zoo extends Batman.Model
+    @encode 'id', 'name'
+    @hasMany 'animals', { as: 'animal', foreignKey: 'id', foreignTypeKey: 'type', namespace: { Animal: Animal, Cat: Cat, Dog: Dog}}
 
+  animalAdapter = createStorageAdapter Animal, AsyncTestStorageAdapter,
+    'animals1': {}
+
+  zooAdapter = createStorageAdapter Zoo, AsyncTestStorageAdapter,
+    'zoos1':
+      id: 1
+      name: 'Petting Zoo',
+      animals: [
+        { id: 2, name: 'Max', type: 'dog' }
+        { id: 3, name: 'Molly', type: 'cat'}
+      ]
+
+  Zoo.find 1, (err, zoo) ->
+    animals = zoo.get('animals').toArray()
+    ok animals[0] instanceof Dog
+    ok animals[1] instanceof Cat
+    QUnit.start()

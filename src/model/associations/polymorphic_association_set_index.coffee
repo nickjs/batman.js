@@ -2,7 +2,7 @@
 
 class Batman.PolymorphicAssociationSetIndex extends Batman.SetIndex
   constructor: (@association, @type, key) ->
-    super @association.getRelatedModelForType(type).get('loaded'), key
+    super @association.getRelatedModel().get('loaded'), key
 
   _resultSetForKey: (key) -> @association.setForKey(key)
 
