@@ -36,9 +36,9 @@ class Batman.Property
         Batman.Property.popSourceTracker()
   @registerSource: (obj) ->
     return unless obj.isEventEmitter
-    @sourceTracker()?.add(obj)
+    @sourceTracker()?.push(obj)
 
-  @pushSourceTracker: -> Batman.Property._sourceTrackerStack.push(new Batman.SimpleSet)
+  @pushSourceTracker: -> Batman.Property._sourceTrackerStack.push([])
   @pushDummySourceTracker: -> Batman.Property._sourceTrackerStack.push(null)
   @popSourceTracker: -> Batman.Property._sourceTrackerStack.pop()
 
@@ -87,9 +87,9 @@ class Batman.Property
   updateSourcesFromTracker: ->
     newSources = @constructor.popSourceTracker()
     handler = @sourceChangeHandler()
-    source?.event('change').removeHandler(handler) for source in @sources.toArray() if @sources
+    source?.event('change').removeHandler(handler) for source in @sources if @sources
     @sources = newSources
-    source?.event('change').addHandler(handler) for source in @sources.toArray() if @sources
+    source?.event('change').addHandler(handler) for source in @sources if @sources
 
   getValue: ->
     @registerAsMutableSource()
@@ -176,7 +176,7 @@ class Batman.Property
 
   _removeHandlers: ->
     handler = @sourceChangeHandler()
-    source.event('change').removeHandler(handler) for source in @sources.toArray() if @sources
+    source.event('change').removeHandler(handler) for source in @sources if @sources
     delete @sources
     @changeEvent().clearHandlers()
 
