@@ -7,28 +7,28 @@ test "calling an accessor from inside an accessor adds a new source", ->
   @class.accessor 'foo', -> @get('bar')
   @object.get('foo')
 
-  deepEqual @object.property('foo').sources.toArray(), [@object.property('bar')]
+  deepEqual @object.property('foo').sources, [@object.property('bar')]
 
 test "calling accessors with sources adds appropriate sources", ->
   @class.accessor 'foo', -> @get('bar')
   @class.accessor 'bar', -> @get('baz')
   @object.get('foo')
 
-  deepEqual @object.property('foo').sources.toArray(), [@object.property('bar')]
-  deepEqual @object.property('bar').sources.toArray(), [@object.property('baz')]
+  deepEqual @object.property('foo').sources, [@object.property('bar')]
+  deepEqual @object.property('bar').sources, [@object.property('baz')]
 
 test "calling multiple accessors adds all properties as sources", ->
   @class.accessor 'foo', -> @get('bar'); @get('baz')
   @object.get('foo')
 
   expected = [@object.property('bar'), @object.property('baz')]
-  deepEqual @object.property('foo').sources.toArray(), expected
+  deepEqual @object.property('foo').sources, expected
 
 test "calling mutators from inside an accessor does not add a new source", ->
   @class.accessor 'foo', -> @set('bar', 1234); @unset('baz')
   @object.get('foo')
 
-  deepEqual @object.property('foo').sources.toArray(), []
+  deepEqual @object.property('foo').sources, []
 
 QUnit.module 'Batman.Property laziness'
   setup: ->
@@ -87,7 +87,7 @@ test "Property.withoutTracking(block) runs the block and returns its return valu
   equal @object.get('foo'), 'barVal'
   equal barVal, 'barVal'
 
-  deepEqual @object.property('foo').sources.toArray(), []
+  deepEqual @object.property('foo').sources, []
 
 
 QUnit.module 'Batman.Property',
@@ -171,16 +171,16 @@ test "refresh() should recursively refresh .value and set .sources to the proper
   fromFooAndQux = @baseWithNestedAccessors.property('fromFooAndQux')
   fromFooAndQux.refresh()
 
-  deepEqual foo.sources.toArray(), [bar]
-  deepEqual bar.sources.toArray(), [baz]
-  deepEqual baz.sources.toArray(), []
-  deepEqual foo.sources.toArray(), [bar]
-  deepEqual foo.sources.toArray(), [bar]
+  deepEqual foo.sources, [bar]
+  deepEqual bar.sources, [baz]
+  deepEqual baz.sources, []
+  deepEqual foo.sources, [bar]
+  deepEqual foo.sources, [bar]
 
   fromFooAndQux = @baseWithNestedAccessors.property('fromFooAndQux')
   qux = @baseWithNestedAccessors.property('qux')
   fromFooAndQux.refresh()
-  deepEqual fromFooAndQux.sources.toArray(), [foo, @mutableSomething, qux]
+  deepEqual fromFooAndQux.sources, [foo, @mutableSomething, qux]
 
 test "if the value of a property with observers fires its 'change' event at some point after the property has refreshed its sources, then the property will refresh its .value and .sources", ->
   foo = @baseWithNestedAccessors.property('foo')
@@ -191,17 +191,17 @@ test "if the value of a property with observers fires its 'change' event at some
   fromFooAndQux.observe ->
 
   fromFooAndQux.refresh()
-  deepEqual fromFooAndQux.sources.toArray(), [foo, @mutableSomething, qux]
+  deepEqual fromFooAndQux.sources, [foo, @mutableSomething, qux]
   deepEqual fromFooAndQux.value, ['Jim', 'quxVal']
 
   @mutableSomething._name = 'Wanda'
   @mutableSomething.fire('change')
 
-  deepEqual foo.sources.toArray(), [bar]
-  deepEqual bar.sources.toArray(), [baz]
-  deepEqual baz.sources.toArray(), []
-  deepEqual qux.sources.toArray(), []
-  deepEqual fromFooAndQux.sources.toArray(), [foo, @mutableSomething, qux]
+  deepEqual foo.sources, [bar]
+  deepEqual bar.sources, [baz]
+  deepEqual baz.sources, []
+  deepEqual qux.sources, []
+  deepEqual fromFooAndQux.sources, [foo, @mutableSomething, qux]
 
   strictEqual foo.value, @mutableSomething
   strictEqual bar.value, @mutableSomething
@@ -389,8 +389,8 @@ test "setValue or unsetValue within a getter should not register the updated pro
     @unset('baz')
   obj.get('foo')
   obj.get('bar')
-  deepEqual obj.property('foo').sources.toArray(), []
-  deepEqual obj.property('bar').sources.toArray(), []
+  deepEqual obj.property('foo').sources, []
+  deepEqual obj.property('bar').sources, []
 
 QUnit.module 'Batman.Property final properties',
   setup: ->
