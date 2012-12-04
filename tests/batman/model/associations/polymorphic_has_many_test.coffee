@@ -81,12 +81,26 @@ asyncTest "hasMany associations should index the loaded set", 3, ->
   @Product.find 4, (err, product) =>
     throw err if err
     metafields = product.get('metafields')
-    ok metafields instanceof Batman.AssociationSet
+    ok metafields instanceof Batman.PolymorphicAssociationSet
     equal metafields.get('length'), 1
     metafield = new @Metafield(subject_id: 4, subject_type: 'product', key: "Test Metafield")
     metafield.save (err) ->
       throw err if err
       equal metafields.get('length'), 2
+      QUnit.start()
+
+asyncTest "hasMany associations should take record type into consideration when adding items to their set", 5, ->
+  @Product.find 4, (err, product) =>
+    throw err if err
+    equal product.get('metafields').get('length'), 1
+    metafield = new @Metafield(subject_id: 4, subject_type: 'store', key: "Test Store Metafield")
+    metafield.save (err) ->
+    @Store.find 4, (err, store) =>
+      throw err if err
+      equal product.get('metafields.length'), 1
+      equal product.get('metafields.first.key'), "SEO Title"
+      equal store.get('metafields.length'), 1
+      equal store.get('metafields.first.key'), "Test Store Metafield"
       QUnit.start()
 
 asyncTest "hasMany child models are added to the identity map", 2, ->
@@ -275,4 +289,29 @@ asyncTest "hasMany sets the foreign key on the inverse relation if the children 
         ok metafields[0].get('subject') == product
         ok metafields[1].get('subject') == product
 
+asyncTest "hasMany associations are polymorphic", ->
+  class Animal extends Batman.Model
+    @encode 'id', 'name'
+  class Cat extends Animal
+  class Dog extends Animal
+  class Zoo extends Batman.Model
+    @encode 'id', 'name'
+    @hasMany 'animals', { as: 'animal', foreignKey: 'id', foreignTypeKey: 'type', namespace: { Animal: Animal, Cat: Cat, Dog: Dog}}
 
+  animalAdapter = createStorageAdapter Animal, AsyncTestStorageAdapter,
+    'animals1': {}
+
+  zooAdapter = createStorageAdapter Zoo, AsyncTestStorageAdapter,
+    'zoos1':
+      id: 1
+      name: 'Petting Zoo',
+      animals: [
+        { id: 2, name: 'Max', type: 'dog' }
+        { id: 3, name: 'Molly', type: 'cat'}
+      ]
+
+  Zoo.find 1, (err, zoo) ->
+    animals = zoo.get('animals').toArray()
+    ok animals[0] instanceof Dog
+    ok animals[1] instanceof Cat
+    QUnit.start()

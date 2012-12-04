@@ -65,7 +65,7 @@ Batman._Batman = class _Batman
   # `ancestors` traverses the prototype or class chain and returns the application of a function to each
   # object in the chain. `ancestors` does this _only_ to the `@object`'s ancestors, and not the `@object`
   # itsself.
-  ancestors: (getter = (x) -> x) ->
+  ancestors: (getter) ->
     results = []
     # Decide if the object is a class or not, and pull out the first ancestor
     isClass = !!@object.prototype
@@ -80,7 +80,7 @@ Batman._Batman = class _Batman
     if parent?
       parent._batman?.check(parent)
       # Apply the function and store the result if it isn't undefined.
-      val = getter(parent)
+      val = if getter? then getter(parent) else parent
       results.push(val) if val?
 
       # Use a recursive call to `_batman.ancestors` on the ancestor, which will take the next step up the chain.

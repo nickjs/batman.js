@@ -20,7 +20,7 @@ class Batman.PluralAssociation extends Batman.Association
             return existingValueSet
 
         # Otherwise, add a new set to the record proxies, and stick it in the value proxies if we have a value.
-        newSet = new @proxyClass(indexValue, this)
+        newSet = @proxyClassInstanceForKey(indexValue)
         if indexValue?
           @_setsByValue.set indexValue, newSet
         newSet
@@ -41,7 +41,10 @@ class Batman.PluralAssociation extends Batman.Association
       return foundSet
 
     # Otherwise, set a new set into the value keyd sets which will get picked up in `setForRecord`.
-    @_setsByValue.getOrSet indexValue, => new @proxyClass(indexValue, this)
+    @_setsByValue.getOrSet indexValue, => @proxyClassInstanceForKey(indexValue)
+
+  proxyClassInstanceForKey: (indexValue) ->
+    new @proxyClass(indexValue, this)
 
   getAccessor: (self, model, label) ->
     return unless self.getRelatedModel()

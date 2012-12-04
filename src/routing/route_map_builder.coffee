@@ -137,12 +137,12 @@ class Batman.RouteMapBuilder
     else
       nestingParam = ":" + Batman.helpers.singularize(@baseOptions.controller) + "Id"
       nestingSegment = Batman.helpers.underscore(@baseOptions.controller)
-      "#{@parent._nestingPath()}/#{nestingSegment}/#{nestingParam}/"
+      "#{@parent._nestingPath()}#{nestingSegment}/#{nestingParam}/"
 
   _nestingName: ->
     unless @parent
       ""
     else
-      @baseOptions.controller + "."
+      @parent._nestingName() + @baseOptions.controller + "."
 
   _childBuilder: (baseOptions = {}) -> new Batman.RouteMapBuilder(@app, @routeMap, @, baseOptions)

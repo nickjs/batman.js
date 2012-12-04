@@ -20,7 +20,7 @@ ex.baseSetup = ->
     'metafields2':
       id: 2
       subject_id: 1
-      subject_type: 'Product'
+      subject_type: 'product'
       key: 'Product metafield'
     'metafields3':
       id: 3
@@ -30,14 +30,14 @@ ex.baseSetup = ->
     'metafields4':
       id: 4
       key: 'Product metafield 2'
-      subject_type: 'Product'
+      subject_type: 'product'
       subject:
         name: "Product 5"
         id: 5
     'metafields7':
       id: 7
       key: 'Product metafield 2.1'
-      subject_type: 'Product'
+      subject_type: 'product'
       subject:
         name: "Product 5"
         id: 5
@@ -63,6 +63,9 @@ ex.baseSetup = ->
         id: 5
         key: "SEO Title"
       }]
+    'stores4':
+      name: "Store Four"
+      id: 4
 
   namespace.Product = class @Product extends Batman.Model
     @encode 'id', 'name'

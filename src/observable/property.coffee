@@ -18,8 +18,9 @@ class Batman.Property
     if (_bm = base._batman)?
       accessor = _bm.keyAccessors?.get(key)
       if !accessor
-        _bm.ancestors (ancestor) =>
+        for ancestor in _bm.ancestors()
           accessor ||= ancestor._batman?.keyAccessors?.get(key)
+          break if accessor
     accessor or @defaultAccessorForBase(base)
   @forBaseAndKey: (base, key) ->
     if base.isObservable
@@ -36,9 +37,9 @@ class Batman.Property
         Batman.Property.popSourceTracker()
   @registerSource: (obj) ->
     return unless obj.isEventEmitter
-    @sourceTracker()?.add(obj)
+    @sourceTracker()?.push(obj)
 
-  @pushSourceTracker: -> Batman.Property._sourceTrackerStack.push(new Batman.SimpleSet)
+  @pushSourceTracker: -> Batman.Property._sourceTrackerStack.push([])
   @pushDummySourceTracker: -> Batman.Property._sourceTrackerStack.push(null)
   @popSourceTracker: -> Batman.Property._sourceTrackerStack.pop()
 
@@ -71,13 +72,13 @@ class Batman.Property
     accessor
   eachObserver: (iterator) ->
     key = @key
-    @changeEvent().handlers.slice().forEach(iterator)
+    iterator(object) for object in @changeEvent().handlers.slice()
     if @base.isObservable
-      @base._batman.ancestors (ancestor) ->
+      for ancestor in @base._batman.ancestors()
         if ancestor.isObservable and ancestor.hasProperty(key)
           property = ancestor.property(key)
           handlers = property.changeEvent().handlers
-          handlers.slice().forEach(iterator)
+          iterator(object) for object in handlers.slice()
   observers: ->
     results = []
     @eachObserver (observer) -> results.push(observer)
@@ -87,13 +88,9 @@ class Batman.Property
   updateSourcesFromTracker: ->
     newSources = @constructor.popSourceTracker()
     handler = @sourceChangeHandler()
-    @_eachSourceChangeEvent (e) -> e.removeHandler(handler)
+    source?.event('change').removeHandler(handler) for source in @sources if @sources
     @sources = newSources
-    @_eachSourceChangeEvent (e) -> e.addHandler(handler)
-
-  _eachSourceChangeEvent: (iterator) ->
-    return unless @sources?
-    @sources.forEach (source) -> iterator(source.event('change'))
+    source?.event('change').addHandler(handler) for source in @sources if @sources
 
   getValue: ->
     @registerAsMutableSource()
@@ -180,7 +177,7 @@ class Batman.Property
 
   _removeHandlers: ->
     handler = @sourceChangeHandler()
-    @_eachSourceChangeEvent (e) -> e.removeHandler(handler)
+    source.event('change').removeHandler(handler) for source in @sources if @sources
     delete @sources
     @changeEvent().clearHandlers()
 

@@ -1,4 +1,4 @@
-Batman = require '../../../../lib/batman'
+Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
 jsdom = require 'jsdom'
 
@@ -22,7 +22,7 @@ Watson.benchmark 'parseNode function', (error, suite) ->
     context = Batman.RenderContext.base
 
     suite.add '1000 divs without bindings', (deferred) ->
-      renderer = new Batman.Renderer(node, (->), context, {})
+      renderer = new Batman.Renderer(node, context, {})
       Batman.clearImmediate renderer.immediate
       renderer.start()
 
@@ -34,7 +34,7 @@ Watson.benchmark 'parseNode function', (error, suite) ->
     Batman.DOM.readers.test = -> true
 
     suite.add '1000 divs with one binding', (deferred) ->
-      renderer = new Batman.Renderer(node, (->), context, {})
+      renderer = new Batman.Renderer(node, context, {})
       Batman.clearImmediate renderer.immediate
       renderer.start()
 
@@ -48,7 +48,7 @@ Watson.benchmark 'parseNode function', (error, suite) ->
       Batman.DOM.readers["test#{i}"] = -> true
 
     suite.add '1000 divs with 10 bindings', (deferred) ->
-      renderer = new Batman.Renderer(node, (->), context, {})
+      renderer = new Batman.Renderer(node, context, {})
       Batman.clearImmediate renderer.immediate
       renderer.start()
 
@@ -62,7 +62,7 @@ Watson.benchmark 'parseNode function', (error, suite) ->
       Batman.DOM.attrReaders["test#{i}"] = -> true
 
     suite.add '1000 divs with 10 attribute bindings', (deferred) ->
-      renderer = new Batman.Renderer(node, (->), context, {})
+      renderer = new Batman.Renderer(node, context, {})
       Batman.clearImmediate renderer.immediate
       renderer.start()
 
@@ -83,7 +83,7 @@ Watson.benchmark 'parseNode function', (error, suite) ->
     context = Batman.RenderContext.base
 
     suite.add '1000 deeply nested divs', (deferred) ->
-      renderer = new Batman.Renderer(node, (->), context, {})
+      renderer = new Batman.Renderer(node, context, {})
       Batman.clearImmediate renderer.immediate
       renderer.start()
 
@@ -110,7 +110,7 @@ Watson.benchmark 'parseNode function', (error, suite) ->
     Batman.DOM.readers.test = -> true
 
     suite.add '1000 deeply nested divs with one binding', (deferred) ->
-      renderer = new Batman.Renderer(node, (->), context, {})
+      renderer = new Batman.Renderer(node, context, {})
       Batman.clearImmediate renderer.immediate
       renderer.start()
 
@@ -139,7 +139,7 @@ Watson.benchmark 'parseNode function', (error, suite) ->
       Batman.DOM.readers["test#{i}"] = -> true
 
     suite.add '1000 deeply nested divs with 10 bindings', (deferred) ->
-      renderer = new Batman.Renderer(node, (->), context, {})
+      renderer = new Batman.Renderer(node, context, {})
       Batman.clearImmediate renderer.immediate
       renderer.start()
 
@@ -168,7 +168,7 @@ Watson.benchmark 'parseNode function', (error, suite) ->
       Batman.DOM.attrReaders["test#{i}"] = -> true
 
     suite.add '1000 deeply nested divs with 10 attribute bindings', (deferred) ->
-      renderer = new Batman.Renderer(node, (->), context, {})
+      renderer = new Batman.Renderer(node, context, {})
       Batman.clearImmediate renderer.immediate
       renderer.start()
 

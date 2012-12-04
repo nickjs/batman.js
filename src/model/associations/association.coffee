@@ -13,7 +13,7 @@ class Batman.Association
     @options = Batman.extend defaultOptions, @defaultOptions, options
 
     if @options.nestUrl
-      developer.error "You must persist the the model #{@model.constructor.name} to use the url helpers on an association" if !@model.urlNestsUnder?
+      Batman.developer.error "You must persist the the model #{@model.constructor.name} to use the url helpers on an association" if !@model.urlNestsUnder?
       @model.urlNestsUnder Batman.helpers.underscore(@getRelatedModel().get('resourceName'))
 
     if @options.extend?

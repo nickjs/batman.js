@@ -1,4 +1,4 @@
-Batman = require './../../../../lib/batman'
+Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
 Random = require '../lib/number_generator'
 Clunk = require '../lib/clunk'
