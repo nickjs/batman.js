@@ -19,7 +19,7 @@ class Batman.Property
       accessor = _bm.keyAccessors?.get(key)
       if !accessor
         for ancestor in _bm.ancestors()
-          accessor ||= ancestor._batman?.keyAccessors?.get(key)
+          accessor = ancestor._batman?.keyAccessors?.get(key)
           break if accessor
     accessor or @defaultAccessorForBase(base)
   @forBaseAndKey: (base, key) ->

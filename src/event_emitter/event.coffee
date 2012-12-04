@@ -25,7 +25,7 @@ class Batman.Event
     @handlers.slice().forEach(iterator)
     if @base?.isEventEmitter
       key = @key
-      @base._batman?.ancestors (ancestor) ->
+      for ancestor in @base._batman?.ancestors()
         if ancestor.isEventEmitter and ancestor._batman?.events?.hasOwnProperty(key)
           handlers = ancestor.event(key).handlers
           handlers.slice().forEach(iterator)

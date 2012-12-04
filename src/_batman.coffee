@@ -66,7 +66,7 @@ Batman._Batman = class _Batman
   # object in the chain. `ancestors` does this _only_ to the `@object`'s ancestors, and not the `@object`
   # itsself.
   ancestors: (getter) ->
-    @_allAncestors = @allAncestors()
+    @_allAncestors ||= @allAncestors()
 
     if getter
       results = []
