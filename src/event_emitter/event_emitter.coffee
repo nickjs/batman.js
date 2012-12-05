@@ -7,14 +7,14 @@ Batman.EventEmitter =
   event: (key, copy = true) ->
     Batman.initializeObject this
     eventClass = @eventClass or Batman.Event
-    events = @_batman.events ||= {}
-    if events.hasOwnProperty(key)
-      existingEvent = events[key]
+    if @_batman.events?.hasOwnProperty(key)
+      existingEvent = @_batman.events[key]
     else
       for ancestor in @_batman.ancestors()
         existingEvent = ancestor._batman?.events?[key]
         break if existingEvent
       if copy
+        events = @_batman.events ||= {}
         newEvent = events[key] = new eventClass(this, key)
         newEvent.oneShot = existingEvent?.oneShot
         newEvent
