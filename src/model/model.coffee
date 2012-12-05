@@ -155,18 +155,21 @@ class Batman.Model extends Batman.Object
     record._withoutDirtyTracking -> @fromJSON(json)
     @_mapIdentity(record)
 
-  @_mapIdentity: (record) ->
-    if typeof (id = record.get('id')) == 'undefined' || id == ''
-      return record
-    else
-      existing = @get("loaded.indexedBy.id").get(id)?.toArray()[0]
-      if existing
+  @_mapIdentity: (record) -> @_mapIdentities([record])[0]
+
+  @_mapIdentities: (records) ->
+    newRecords = []
+    for record, index in records
+      if not (id = record.get('id'))?
+        continue
+      else if existing = @get('loaded.indexedBy.id').get(id)?.toArray()[0]
         existing._withoutDirtyTracking ->
           @updateAttributes(record.get('attributes')?.toObject() || {})
-        existing
+        records[index] = existing
       else
-        @get('loaded').add(record)
-        record
+        newRecords.push record
+    @get('loaded').add(newRecords...) if newRecords.length
+    return records
 
   @_doStorageOperation: (operation, options, callback) ->
     Batman.developer.assert @::hasStorage(), "Can't #{operation} model #{Batman.functionName(@constructor)} without any storage adapters!"
