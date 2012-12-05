@@ -27,8 +27,8 @@ class Batman.Event
       key = @key
       for ancestor in @base._batman?.ancestors()
         if ancestor.isEventEmitter and ancestor._batman?.events?.hasOwnProperty(key)
-          handlers = ancestor.event(key).handlers
-          handlers.slice().forEach(iterator)
+          handlers = ancestor.event(key, false)?.handlers
+          handlers?.slice().forEach(iterator)
   clearHandlers: -> @handlers = []
   handlerContext: -> @base
   prevent: -> ++@_preventCount
