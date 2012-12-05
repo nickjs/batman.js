@@ -129,7 +129,7 @@ class Batman.Model extends Batman.Object
         @fire 'error', err
         callback?(err, [])
       else
-        mappedRecords = (@_mapIdentity(record) for record in records)
+        mappedRecords = @_mapIdentities(records)
         @fire 'loaded', mappedRecords, env
         callback?(err, mappedRecords, env)
 
