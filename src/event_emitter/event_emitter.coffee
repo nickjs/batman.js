@@ -34,7 +34,7 @@ Batman.EventEmitter =
   mutation: (wrappedFunction) ->
     ->
       result = wrappedFunction.apply(this, arguments)
-      @event('change', false)?.fire(this, this)
+      @event('change')?.fire(this, this)
       result
   prevent: (key) ->
     @event(key).prevent()
@@ -45,6 +45,6 @@ Batman.EventEmitter =
   isPrevented: (key) ->
     @event(key, false)?.isPrevented()
   fire: (key, args...) ->
-    @event(key, false)?.fire(args...)
+    @event(key, false)?.fireWithContext(this, args...)
   allowAndFire: (key, args...) ->
-    @event(key, false)?.allowAndFire(args...)
+    @event(key, false)?.allowAndFireWithContext(this, args...)
