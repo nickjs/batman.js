@@ -79,7 +79,7 @@ asyncTest "fireWithContext() calls handlers with given context", 2, ->
     equal @foo, 'bar'
     equal data, 'foo'
     QUnit.start()
-  @rain.fireWithContext(this, 'foo')
+  @rain.fireWithContext(this, ['foo'])
 
 asyncTest 'allowAndFireWithContext() calls handlers with given context', 4, ->
   @foo = 'bar'
@@ -91,7 +91,7 @@ asyncTest 'allowAndFireWithContext() calls handlers with given context', 4, ->
     equal data, 'foo'
     ok !rain.isPrevented()
     QUnit.start()
-  rain.allowAndFireWithContext(this, 'foo')
+  rain.allowAndFireWithContext(this, ['foo'])
 
 test "isEqual(other) returns true when other is an event with the same base and key", ->
   moreRain = new Batman.Event(@ottawaWeather, 'rain')

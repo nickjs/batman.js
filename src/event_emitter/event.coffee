@@ -43,15 +43,15 @@ class Batman.Event
     @_oneShotFired = false
     @_oneShotArgs = null
   fire: ->
-    @fireWithContext(@handlerContext(), arguments...)
-  fireWithContext: (context, args...) ->
+    @fireWithContext(@handlerContext(), arguments)
+  fireWithContext: (context, args) ->
     return false if @isPrevented() or @_oneShotFired
     if @oneShot
       @_oneShotFired = true
       @_oneShotArgs = args
     @eachHandler (handler) -> handler.apply(context, args)
   allowAndFire: ->
-    @allowAndFireWithContext(@handlerContext, arguments...)
-  allowAndFireWithContext: (context, args...) ->
+    @allowAndFireWithContext(@handlerContext, arguments)
+  allowAndFireWithContext: (context, args) ->
     @allow()
-    @fireWithContext(context, args...)
+    @fireWithContext(context, args)

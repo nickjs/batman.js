@@ -45,6 +45,6 @@ Batman.EventEmitter =
   isPrevented: (key) ->
     @event(key, false)?.isPrevented()
   fire: (key, args...) ->
-    @event(key, false)?.fireWithContext(this, args...)
+    @event(key, false)?.fireWithContext(this, args)
   allowAndFire: (key, args...) ->
-    @event(key, false)?.allowAndFireWithContext(this, args...)
+    @event(key, false)?.allowAndFireWithContext(this, args)
