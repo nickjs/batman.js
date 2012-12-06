@@ -54,4 +54,4 @@ class Batman.Event
     @allowAndFireWithContext(@handlerContext, arguments...)
   allowAndFireWithContext: (context, args...) ->
     @allow()
-    @fireWithContext(context, arguments...)
+    @fireWithContext(context, args...)
