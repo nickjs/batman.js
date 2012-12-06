@@ -7,7 +7,7 @@ QUnit.module 'Batman.View insertion bindings'
         @constructor.instance = @
         super
 
-asyncTest 'it should allow elements to be removeed when the keypath evaluates to true', 3, ->
+asyncTest 'it should allow elements to be removed when the keypath evaluates to true', 3, ->
   source = '<div class="foo" data-removeif="foo"></div>'
   context = Batman foo: true
   helpers.render source, false, context, (node) ->

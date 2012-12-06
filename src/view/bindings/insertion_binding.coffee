@@ -29,9 +29,12 @@ class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
   die: ->
     return if @dead
     {node, placeholderNode} = this
+    filteredValue = @get('filteredValue')
+
     super
+
     # If the tree is currently hidden, destroy it too
-    if !!@get('filteredValue') is not @invert
+    if !!filteredValue is not @invert
       Batman.DOM.destroyNode(placeholderNode)
     else
       Batman.DOM.destroyNode(node)
