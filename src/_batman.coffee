@@ -66,9 +66,22 @@ Batman._Batman = class _Batman
   # object in the chain. `ancestors` does this _only_ to the `@object`'s ancestors, and not the `@object`
   # itsself.
   ancestors: (getter) ->
+    @_allAncestors ||= @allAncestors()
+
+    if getter
+      results = []
+      for ancestor in @_allAncestors
+        val = getter(ancestor)
+        results.push(val) if val?
+      results
+    else
+      @_allAncestors
+
+  allAncestors: ->
     results = []
     # Decide if the object is a class or not, and pull out the first ancestor
     isClass = !!@object.prototype
+
     parent = if isClass
       @object.__super__?.constructor
     else
@@ -79,13 +92,11 @@ Batman._Batman = class _Batman
 
     if parent?
       parent._batman?.check(parent)
-      # Apply the function and store the result if it isn't undefined.
-      val = if getter? then getter(parent) else parent
-      results.push(val) if val?
+      results.push(parent)
 
-      # Use a recursive call to `_batman.ancestors` on the ancestor, which will take the next step up the chain.
       if parent._batman?
-        results = results.concat(parent._batman.ancestors(getter))
+        results = results.concat(parent._batman.allAncestors())
+
     results
 
   set: (key, value) ->
