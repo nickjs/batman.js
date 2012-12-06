@@ -4,19 +4,23 @@ Batman.EventEmitter =
   isEventEmitter: true
   hasEvent: (key) ->
     @_batman?.get?('events')?.hasOwnProperty(key)
-  event: (key) ->
+  event: (key, createEvent = true) ->
     Batman.initializeObject this
     eventClass = @eventClass or Batman.Event
-    events = @_batman.events ||= {}
-    if events.hasOwnProperty(key)
-      existingEvent = events[key]
+    if @_batman.events?.hasOwnProperty(key)
+      existingEvent = @_batman.events[key]
     else
       for ancestor in @_batman.ancestors()
         existingEvent = ancestor._batman?.events?[key]
         break if existingEvent
-      newEvent = events[key] = new eventClass(this, key)
-      newEvent.oneShot = existingEvent?.oneShot
-      newEvent
+      if createEvent || existingEvent?.oneShot
+        events = @_batman.events ||= {}
+        newEvent = events[key] = new eventClass(this, key)
+        newEvent.oneShot = existingEvent?.oneShot
+        newEvent
+      else
+        existingEvent
+
   on: (keys..., handler) ->
     @event(key).addHandler(handler) for key in keys
   once: (key, handler) ->
@@ -30,7 +34,7 @@ Batman.EventEmitter =
   mutation: (wrappedFunction) ->
     ->
       result = wrappedFunction.apply(this, arguments)
-      @event('change').fire(this, this)
+      @event('change', false)?.fire(this, this)
       result
   prevent: (key) ->
     @event(key).prevent()
@@ -39,8 +43,8 @@ Batman.EventEmitter =
     @event(key).allow()
     this
   isPrevented: (key) ->
-    @event(key).isPrevented()
+    @event(key, false)?.isPrevented()
   fire: (key, args...) ->
-    @event(key).fire(args...)
+    @event(key, false)?.fireWithContext(this, args)
   allowAndFire: (key, args...) ->
-    @event(key).allowAndFire(args...)
+    @event(key, false)?.allowAndFireWithContext(this, args)

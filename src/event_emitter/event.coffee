@@ -27,8 +27,8 @@ class Batman.Event
       key = @key
       for ancestor in @base._batman?.ancestors()
         if ancestor.isEventEmitter and ancestor._batman?.events?.hasOwnProperty(key)
-          handlers = ancestor.event(key).handlers
-          handlers.slice().forEach(iterator)
+          handlers = ancestor.event(key, false)?.handlers
+          handlers?.slice().forEach(iterator)
   clearHandlers: -> @handlers = []
   handlerContext: -> @base
   prevent: -> ++@_preventCount
@@ -43,13 +43,15 @@ class Batman.Event
     @_oneShotFired = false
     @_oneShotArgs = null
   fire: ->
+    @fireWithContext(@handlerContext(), arguments)
+  fireWithContext: (context, args) ->
     return false if @isPrevented() or @_oneShotFired
-    context = @handlerContext()
-    args = arguments
     if @oneShot
       @_oneShotFired = true
-      @_oneShotArgs = arguments
+      @_oneShotArgs = args
     @eachHandler (handler) -> handler.apply(context, args)
   allowAndFire: ->
+    @allowAndFireWithContext(@handlerContext, arguments)
+  allowAndFireWithContext: (context, args) ->
     @allow()
-    @fire(arguments...)
+    @fireWithContext(context, args)
