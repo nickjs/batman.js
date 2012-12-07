@@ -88,7 +88,7 @@ class Batman.View extends Batman.Object
     return if @_rendered
     @_rendered = true
     @_renderer = new Batman.Renderer(node = @get('node'), @get('context'), @)
-    @_renderer.on 'rendered', => @fire('ready', node)
+    @_renderer.once 'rendered', => @fire('ready', node)
 
   isInDOM: ->
     if (node = @get('node'))

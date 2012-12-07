@@ -29,7 +29,7 @@ Batman.DOM.events =
           oldCallback = callback
           callback = (node, event) ->
             return if event.type is 'keyup' and Batman.DOM.events.isEnter(event)
-            oldCallback(arguments...)
+            oldCallback(node, event)
           ['input', 'keyup', 'change']
         else
           ['input', 'change']
