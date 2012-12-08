@@ -5,7 +5,6 @@ class Batman.Event
     else
       new Batman.Event(base, key)
   constructor: (@base, @key) ->
-    @handlers = []
     @_preventCount = 0
   isEvent: true
   isEqual: (other) ->
@@ -14,22 +13,22 @@ class Batman.Event
     @hashKey = -> key
     key = "<Batman.Event base: #{Batman.Hash::hashKeyFor(@base)}, key: \"#{Batman.Hash::hashKeyFor(@key)}\">"
   addHandler: (handler) ->
+    @handlers ||= []
     @handlers.push(handler) if @handlers.indexOf(handler) == -1
     @autofireHandler(handler) if @oneShot
     this
   removeHandler: (handler) ->
-    if (index = @handlers.indexOf(handler)) != -1
+    if @handlers && (index = @handlers.indexOf(handler)) != -1
       @handlers.splice(index, 1)
     this
   eachHandler: (iterator) ->
-    @handlers.slice().forEach(iterator)
+    @handlers?.slice().forEach(iterator)
     if @base?.isEventEmitter
       key = @key
       for ancestor in @base._batman?.ancestors()
         if ancestor.isEventEmitter and ancestor._batman?.events?.hasOwnProperty(key)
-          handlers = ancestor.event(key, false)?.handlers
-          handlers?.slice().forEach(iterator)
-  clearHandlers: -> @handlers = []
+          ancestor.event(key, false)?.handlers?.slice().forEach(iterator)
+  clearHandlers: -> @handlers = undefined
   handlerContext: -> @base
   prevent: -> ++@_preventCount
   allow: ->
