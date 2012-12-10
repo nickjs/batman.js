@@ -1,18 +1,20 @@
-# Batman = require '../../../../lib/dist/batman.node'
-# Watson = require 'watson'
-# TestStorageAdapter = require '../lib/test_storage_adapter'
+Batman = require '../../../../lib/dist/batman.node'
+Watson = require 'watson'
+TestStorageAdapter = require '../lib/test_storage_adapter'
 
-# Watson.ensureCommitted 'v0.6.1', ->
-#   class Product extends Batman.Model
-#     constructor: ->
-#       super
-#       @set 'name', "Cool Snowboard"
-#       @set 'cost', 10
+class Product extends Batman.Model
+  @persist TestStorageAdapter
+  @encode "attribute#{i}" for i in [0...50]
 
-#     @encode 'name', 'cost'
-#     @persist TestStorageAdapter
+generateAttributes = (count) ->
+  attributes = {}
+  attributes["attribute#{i}"] = "value#{i}" for i in [0...50]
+  JSON.stringify(attributes)
 
-#   Watson.trackMemory 'model memory usage', 2000, (i) ->
-#     (new Product).save (err) -> throw err if err
-#     if i % 500 == 0
-#       Product.get('loaded').forEach (p) -> p.destroy (err) -> throw err if err
+products = []
+Watson.trackMemory 'models with 50 attributes', 2000, (i) ->
+  product = new Product
+  product.fromJSON(generateAttributes(50))
+  products.push product
+
+  products = [] if i % 500 == 0
