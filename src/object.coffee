@@ -116,8 +116,7 @@ class BatmanObject extends Object
 
   hashKey: ->
     return if typeof @isEqual is 'function'
-    @hashKey = -> key
-    key = "<Batman.Object #{@_batmanID()}>"
+    @_batman.hashKey ||= "<Batman.Object #{@_batmanID()}>"
 
   toJSON: ->
     obj = {}

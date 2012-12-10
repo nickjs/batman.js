@@ -321,7 +321,7 @@ class Batman.Model extends Batman.Object
   hasStorage: -> @_batman.get('storage')?
 
   # `load` fetches the record from all sources possible
-  load: (options, callback) =>
+  load: (options, callback) ->
     if !callback
       [options, callback] = [{}, options]
     else
@@ -329,7 +329,7 @@ class Batman.Model extends Batman.Object
 
     @loadWithOptions(options, callback)
 
-  loadWithOptions: (options, callback) =>
+  loadWithOptions: (options, callback) ->
     hasOptions = Object.keys(options).length != 0
     if @get('lifecycle.state') in ['destroying', 'destroyed']
       callback?(new Error("Can't load a destroyed record!"))
@@ -359,7 +359,7 @@ class Batman.Model extends Batman.Object
 
   # `save` persists a record to all the storage mechanisms added using `@persist`. `save` will only save
   # a model if it is valid.
-  save: (options, callback) =>
+  save: (options, callback) ->
     if !callback
       [options, callback] = [{}, options]
 
@@ -399,7 +399,7 @@ class Batman.Model extends Batman.Object
     else
       callback?(new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}"))
 
-  destroy: (options, callback) =>
+  destroy: (options, callback) ->
     if !callback
       [options, callback] = [{}, options]
 
