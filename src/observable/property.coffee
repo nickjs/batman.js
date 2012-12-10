@@ -78,8 +78,8 @@ class Batman.Property
       for ancestor in @base._batman.ancestors()
         if ancestor.isObservable and ancestor.hasProperty(key)
           property = ancestor.property(key)
-          handlers = property.changeEvent().handlers
-          iterator(object) for object in handlers.slice()
+          handlers = property.changeEvent().handlers?.slice()
+          iterator(object) for object in handlers if handlers
   observers: ->
     results = []
     @eachObserver (observer) -> results.push(observer)
