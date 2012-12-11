@@ -177,6 +177,7 @@ UnderscoreToHuman =
   "employee_salary" : "Employee salary"
   "employee_id"     : "Employee"
   "underground"     : "Underground"
+  "emails.address"  : "Emails address"
 
 testBothDirections = (singular, plural) ->
   test "#{singular} is pluralized to #{plural} and back again", ->
