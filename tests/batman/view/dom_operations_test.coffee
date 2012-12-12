@@ -173,7 +173,7 @@ test "addEventListener and removeEventListener store and remove callbacks using 
   listeners = Batman._data div, 'listeners'
   ok !~listeners.click.indexOf f
 
-asyncTest "destroyNode: destroys yielded nodes when their parents are destroyed", 3, ->
+asyncTest "destroyNode: destroys yielded childNodes when their parents are destroyed", 2, ->
   source = """
     <div class="bar" data-yield="bar"></div>
     <div class="notcached" data-view="OuterView">

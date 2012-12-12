@@ -217,4 +217,3 @@ asyncTest 'die should forget observers and fire destroy', 2, ->
     ok fireSpy.called
     ok forgetSpy.called
     QUnit.start()
-
