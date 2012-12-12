@@ -54,22 +54,22 @@ class Batman.Property
 
   isEqual: (other) ->
     @constructor is other.constructor and @base is other.base and @key is other.key
+
   hashKey: ->
-    @hashKey = -> key
-    key = "<Batman.Property base: #{Batman.Hash::hashKeyFor(@base)}, key: \"#{Batman.Hash::hashKeyFor(@key)}\">"
+    @_hashKey ||= "<Batman.Property base: #{Batman.Hash::hashKeyFor(@base)}, key: \"#{Batman.Hash::hashKeyFor(@key)}\">"
+
   event: (key) ->
     eventClass = @eventClass or Batman.Event
     @events ||= {}
     @events[key] ||= new eventClass(this, key)
     @events[key]
+
   changeEvent: ->
-    event = @event('change')
-    @changeEvent = -> event
-    event
+    @_changeEvent ||= @event('change')
+
   accessor: ->
-    accessor = @constructor.accessorForBaseAndKey(@base, @key)
-    @accessor = -> accessor
-    accessor
+    @_accessor ||= @constructor.accessorForBaseAndKey(@base, @key)
+
   eachObserver: (iterator) ->
     key = @key
     handlers = @changeEvent().handlers?.slice()
@@ -80,11 +80,14 @@ class Batman.Property
           property = ancestor.property(key)
           handlers = property.changeEvent().handlers?.slice()
           iterator(object) for object in handlers if handlers
+
   observers: ->
     results = []
     @eachObserver (observer) -> results.push(observer)
     results
-  hasObservers: -> @observers().length > 0
+
+  hasObservers: ->
+    @observers().length > 0
 
   updateSourcesFromTracker: ->
     newSources = @constructor.popSourceTracker()
@@ -122,10 +125,9 @@ class Batman.Property
     @lockValue() if @value isnt undefined and @isFinal()
 
   sourceChangeHandler: ->
-    handler = @_handleSourceChange.bind(@)
-    Batman.developer.do => handler.property = @
-    @sourceChangeHandler = -> handler
-    handler
+    @_sourceChangeHandler ||= @_handleSourceChange.bind(@)
+    Batman.developer.do => @_sourceChangeHandler.property = @
+    @_sourceChangeHandler
 
   _handleSourceChange: ->
     if @isIsolated()

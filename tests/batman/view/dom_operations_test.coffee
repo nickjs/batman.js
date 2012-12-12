@@ -49,6 +49,14 @@ asyncTest "destroyNode fires beforeDisappear, beforeDestroy, disappear, and dest
     Batman.DOM.destroyNode(node.childNodes[0])
     QUnit.start()
 
+asyncTest "destroyNode fires calls die on views about to be removed", 1, ->
+  helpers.render @simpleSource, false, @context, (node) =>
+    view = Batman._data node, 'view'
+    view.die = spy = createSpy()
+    Batman.DOM.destroyNode(node)
+    ok spy.called
+    QUnit.start()
+
 asyncTest "appendChild fires beforeAppear and appear events on views being added", 4, ->
   helpers.render @simpleSource, false, @context, (node) =>
     newElement = $('<div/>')[0]
@@ -165,7 +173,7 @@ test "addEventListener and removeEventListener store and remove callbacks using 
   listeners = Batman._data div, 'listeners'
   ok !~listeners.click.indexOf f
 
-asyncTest "destroyNode: destroys yielded nodes when their parents are destroyed", 3, ->
+asyncTest "destroyNode: destroys yielded childNodes when their parents are destroyed", 2, ->
   source = """
     <div class="bar" data-yield="bar"></div>
     <div class="notcached" data-view="OuterView">

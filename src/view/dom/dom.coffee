@@ -184,10 +184,7 @@ Batman.DOM =
   didDestroyNode: (node) ->
     view = Batman._data node, 'view'
     if view
-      view.fire 'destroy', node
-      view.get('yields').forEach (name, actions) ->
-        for {node} in actions
-          Batman.DOM.didDestroyNode(node)
+      view.die()
 
     # break down all bindings
     if bindings = Batman._data node, 'bindings'

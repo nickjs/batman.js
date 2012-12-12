@@ -102,6 +102,14 @@ class Batman.View extends Batman.Object
     else
       false
 
+  die: ->
+    @fire 'destroy', @node
+    @forget()
+    @_batman.properties?.forEach (key, property) -> property.die()
+    @get('yields').forEach (name, actions) ->
+      for {node} in actions
+        Batman.DOM.didDestroyNode(node)
+
   applyYields: ->
     @get('yields').forEach (name, nodes) ->
       yieldObject = Batman.DOM.Yield.withName(name)
