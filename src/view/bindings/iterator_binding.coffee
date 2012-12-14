@@ -98,7 +98,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @nodeMap.set(newItem, newNode)
     @parentRenderer.prevent 'rendered'
     renderer = new Batman.Renderer newNode, @renderContext.descend(newItem, @iteratorName), @parentRenderer.view
-    renderer.on 'rendered', =>
+    renderer.once 'rendered', =>
       @_nodesToBeRendered.remove(newNode)
       if @_nodesToBeRemoved?.has(newNode)
         @_removeItem(newItem)
