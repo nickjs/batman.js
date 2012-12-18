@@ -78,7 +78,12 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
           Batman.DOM.insertBefore @parentNode(), node, nodeAtIndex
 
     unseenNodeMap.forEach (item, node) =>
-      @_removeItem(item)
+      if @_nodesToBeRendered.has(node)
+        @_nodesToBeRemoved ||= new Batman.SimpleSet
+        @_nodesToBeRemoved.add(node)
+      else
+        @_removeItem(item)
+
     return
 
   _itemForNode: (node) ->
@@ -86,14 +91,24 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
   _newNodeForItem: (newItem) ->
     newNode = @prototypeNode.cloneNode(true)
+    @_nodesToBeRendered ||= new Batman.SimpleSet
+    @_nodesToBeRendered.add(newNode)
+
     Batman._data(newNode, "#{@iteratorName}Item", newItem)
     @nodeMap.set(newItem, newNode)
     @parentRenderer.prevent 'rendered'
     renderer = new Batman.Renderer newNode, @renderContext.descend(newItem, @iteratorName), @parentRenderer.view
-    renderer.on 'rendered', =>
-      Batman.DOM.propagateBindingEvents(newNode)
-      @fire 'nodeAdded', newNode, newItem
+    renderer.once 'rendered', =>
+      @_nodesToBeRendered.remove(newNode)
+      if @_nodesToBeRemoved?.has(newNode)
+        @_nodesToBeRemoved.remove(newNode)
+        @_removeItem(newItem)
+      else
+        Batman.DOM.propagateBindingEvents(newNode)
+        @fire 'nodeAdded', newNode, newItem
+
       @parentRenderer.allowAndFire 'rendered'
+
     newNode
 
   _getStartNodeIndex: ->
@@ -108,3 +123,12 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
     Batman.DOM.destroyNode(node)
     @fire 'nodeRemoved', node, item
+
+  die: ->
+    # ensure any remaining un-rendered nodes are removed once rendering is complete
+    # if this binding dies before they're done rendering
+    if @_nodesToBeRendered && !@_nodesToBeRendered.isEmpty()
+      @_nodesToBeRemoved ||= new Batman.SimpleSet
+      @_nodesToBeRemoved.add(@_nodesToBeRendered.toArray()...)
+
+    super
