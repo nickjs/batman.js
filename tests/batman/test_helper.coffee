@@ -266,10 +266,9 @@ delay = (time, fn) ->
 
   setTimeout(defer, time)
 
-doWhen = (conditionFunction, actionFunction, timeout=2000) ->
+doWhen = (conditionFunction, actionFunction, timeout = 2000) ->
   t = new Date
   f = ->
-    debugger if (new Date) - t > timeout
     if conditionFunction() or (new Date) - t > timeout
       try
         actionFunction()

@@ -135,4 +135,4 @@ test "transitions in accessors shouldn't add sources", ->
   x = Batman(sm: @sm)
   x.accessor 'foo', => @sm.switch()
   x.get('foo')
-  equal x.property('foo').sources.length, 0
+  equal x.property('foo').sources, undefined
