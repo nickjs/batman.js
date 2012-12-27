@@ -22,16 +22,19 @@ exports.triggerFocus = (domNode) ->
     domNode.fireEvent 'onfocus'
 
 exports.triggerClick = (domNode, eventName = 'click', options = {}) ->
-  options = Batman.extend {ctrlKey: false, altKey: false, shiftKey: false, metaKey: false}, options
+  options = Batman.extend {ctrlKey: false, altKey: false, shiftKey: false, metaKey: false, button: 0}, options
   if document.createEvent
     evt = document.createEvent("MouseEvents")
-    evt.initMouseEvent(eventName, true, true, window, 0, 0, 0, 0, 0, options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, 0, null)
+    evt.initMouseEvent(eventName, true, true, window, 0, 0, 0, 0, 0, options.ctrlKey, options.altKey, options.shiftKey, options.metaKey, options.button, null)
     domNode.dispatchEvent(evt)
   else if document.createEventObject
     domNode.fireEvent 'on'+eventName
 
 exports.triggerDoubleClick = (domNode) ->
   exports.triggerClick domNode, 'dblclick'
+
+exports.triggerMiddleClick = (domNode) ->
+  exports.triggerClick domNode, 'click', {button: 1}
 
 keyIdentifiers =
   13: 'Enter'

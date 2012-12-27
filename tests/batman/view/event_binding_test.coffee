@@ -104,6 +104,16 @@ if document.createEvent
       ok !spy.called
       QUnit.start()
 
+asyncTest 'it should not execute click handlers for middle clicks', 1, ->
+  context =
+    doSomething: spy = createSpy()
+
+  source = '<button data-event-click="doSomething"></button>'
+  helpers.render source, context, (node) ->
+    helpers.triggerClick(node[0], undefined, {button: 1})
+    ok !spy.called
+    QUnit.start()
+
 asyncTest 'it should allow un-special-cased events like focus to be bound', 2, ->
   context =
     doSomething: spy = createSpy()

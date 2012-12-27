@@ -5,7 +5,7 @@
 Batman.DOM.events =
   click: (node, callback, context, eventName = 'click') ->
     Batman.DOM.addEventListener node, eventName, (event, args...) ->
-      return if event.metaKey || event.ctrlKey
+      return if event.metaKey || event.ctrlKey || event.button == 1
 
       Batman.DOM.preventDefault event
       return if not Batman.DOM.eventIsAllowed(eventName, event)
