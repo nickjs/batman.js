@@ -23,27 +23,59 @@ class Batman.RestStorage extends Batman.StorageAdapter
     urlNestsUnder: (keys...) ->
       parents = {}
       for key in keys
-        parents[key + '_id'] = Batman.helpers.pluralize(key)
+        if 'Array' == Batman.typeOf key
+          parents[key.join("-")] = {}
+          for deep_key in key
+            parents[key.join("-")][deep_key + '_id'] = Batman.helpers.pluralize(deep_key)
+        else
+          parents[key + '_id'] = Batman.helpers.pluralize(key)
 
       @url = (options) ->
         childSegment = @storageKey || Batman.helpers.pluralize(@get('resourceName').toLowerCase())
+        url = ""
         for key, plural of parents
-          parentID = options.data[key]
-          if parentID
-            delete options.data[key]
-            return "#{plural}/#{parentID}/#{childSegment}"
-        return childSegment
+          if 'Object' == Batman.typeOf plural
+            for deep_key, deep_plural of plural
+              parentID = options.data[deep_key]
+              if parentID
+                delete options.data[deep_key]
+                url = "#{url}#{deep_plural}/#{parentID}/"
+              else
+                url = ""
+                break
+            break unless "" == url
+
+          else
+            parentID = options.data[key]
+            if parentID
+              delete options.data[key]
+              url = "#{plural}/#{parentID}/"
+              break
+        "#{url}#{childSegment}"
 
       @::url = ->
         childSegment = @constructor.storageKey || Batman.helpers.pluralize(@constructor.get('resourceName').toLowerCase())
+        url = ""
         for key, plural of parents
-          parentID = @get('dirtyKeys').get(key)
-          if parentID is undefined
-            parentID = @get(key)
-          if parentID
-            url = "#{plural}/#{parentID}/#{childSegment}"
-            break
-        url ||= childSegment
+          if 'Object' == Batman.typeOf plural
+            for deep_key, deep_plural of plural
+              parentID = @get('dirtyKeys').get(deep_key)
+              if parentID is undefined
+                parentID = @get(deep_key)
+              if parentID
+                url = "#{url}#{deep_plural}/#{parentID}/"
+              else
+                url = ""
+                break
+            break unless "" == url
+          else
+            parentID = @get('dirtyKeys').get(key)
+            if parentID is undefined
+              parentID = @get(key)
+            if parentID
+              url = "#{plural}/#{parentID}/"
+              break
+        url = "#{url}#{childSegment}"
         if id = @get('id')
           url += '/' + id
         url
