@@ -114,7 +114,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   bind: ->
     # Attach the observers.
     if @node and @onlyObserve in [onlyAll, onlyNode] and Batman.DOM.nodeIsEditable(@node)
-      Batman.DOM.events.change @node, @_fireNodeChange
+      Batman.DOM.events.change @node, @_fireNodeChange.bind(this)
 
       # Usually, we let the HTML value get updated upon binding by `observeAndFire`ing the dataChange
       # function below. When dataChange isn't attached, we update the JS land value such that the
@@ -128,7 +128,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
     Batman.DOM.trackBinding(this, @node) if @node
 
-  _fireNodeChange: (event) =>
+  _fireNodeChange: (event) ->
     @shouldSet = false
     val = @value || @get('keyContext')
     @nodeChange?(@node, val, event)
