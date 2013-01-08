@@ -2,12 +2,13 @@
 #= require ../event_emitter/event_emitter
 #= require ../set/simple_set
 
+SOURCE_TRACKER_STACK = []
+SOURCE_TRACKER_STACK_VALID = true
 
 class Batman.Property
   Batman.mixin @prototype, Batman.EventEmitter
 
-  @_sourceTrackerStack: []
-  @_sourceTrackerStack.valid = true
+  @_sourceTrackerStack: SOURCE_TRACKER_STACK
   @defaultAccessor:
     get: (key) -> @[key]
     set: (key, val) -> @[key] = val
@@ -38,30 +39,30 @@ class Batman.Property
         Batman.Property.popSourceTracker()
   @registerSource: (obj) ->
     return unless obj.isEventEmitter
-    if !Batman.Property._sourceTrackerStack.valid
+    if !SOURCE_TRACKER_STACK_VALID
       set = []
-      Batman.Property._sourceTrackerStack.push set
-      Batman.Property._sourceTrackerStack.valid = true
+      SOURCE_TRACKER_STACK.push set
+      SOURCE_TRACKER_STACK_VALID = true
     else
-      set = Batman.Property._sourceTrackerStack[Batman.Property._sourceTrackerStack.length - 1]
+      set = SOURCE_TRACKER_STACK[SOURCE_TRACKER_STACK.length - 1]
 
     set?.push(obj)
     undefined
 
   @pushSourceTracker: ->
-    if !Batman.Property._sourceTrackerStack.valid
-      Batman.Property._sourceTrackerStack.push []
+    if !SOURCE_TRACKER_STACK_VALID
+      SOURCE_TRACKER_STACK.push []
     else
-      Batman.Property._sourceTrackerStack.valid = false
+      SOURCE_TRACKER_STACK_VALID = false
   @popSourceTracker: ->
-    if !Batman.Property._sourceTrackerStack.valid
-      Batman.Property._sourceTrackerStack.valid = true
+    if !SOURCE_TRACKER_STACK_VALID
+      SOURCE_TRACKER_STACK_VALID = true
       undefined
     else
-      Batman.Property._sourceTrackerStack.pop()
+      SOURCE_TRACKER_STACK.pop()
 
   @pushDummySourceTracker: ->
-    Batman.Property._sourceTrackerStack.push(null)
+    SOURCE_TRACKER_STACK.push(null)
 
   constructor: (@base, @key) ->
   _isolationCount: 0
