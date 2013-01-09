@@ -181,14 +181,12 @@ _entityMap =
   "\"": "&#34;"
   "'": "&#39;"
 
-_entityMapReversed = {}
 _unsafeChars = []
 _encodedChars = []
 
 for chr of _entityMap
   _unsafeChars.push(chr)
   _encodedChars.push(_entityMap[chr])
-  _entityMapReversed[_entityMap[chr]] = chr
 
 _unsafeCharsPattern = new RegExp("[#{_unsafeChars.join('')}]", "g")
 _encodedCharsPattern = new RegExp("(#{_encodedChars.join('|')})", "g")
@@ -197,7 +195,10 @@ Batman.escapeHTML = do ->
   return (s) -> (""+s).replace(_unsafeCharsPattern, (c) -> _entityMap[c])
 
 Batman.unescapeHTML = do ->
-  return (s) -> (""+s).replace(_encodedCharsPattern, (c) -> _entityMapReversed[c])
+  return (s) ->
+    node = document.createElement('DIV')
+    node.innerHTML = s
+    if node.innerText? then node.innerText else node.textContent
 
 # `translate` is hook for the i18n extra to override and implemnent. All strings which might
 # be shown to the user pass through this method. `translate` is aliased to `t` internally.
