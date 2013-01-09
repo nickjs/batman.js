@@ -194,10 +194,9 @@ _encodedCharsPattern = new RegExp("(#{_encodedChars.join('|')})", "g")
 Batman.escapeHTML = do ->
   return (s) -> (""+s).replace(_unsafeCharsPattern, (c) -> _entityMap[c])
 
-Batman._unescapeHTMLNode = document.createElement('DIV')
 Batman.unescapeHTML = do ->
   return (s) ->
-    node = Batman._unescapeHTMLNode
+    node = Batman._unescapeHTMLNode ||= document.createElement('DIV')
     node.innerHTML = s
     if node.innerText?
       node.innerText
