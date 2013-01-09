@@ -9,3 +9,7 @@ test "should unescape escaped symbol characters", ->
   equal Batman.unescapeHTML('&pound;'), "\u00A3"
   equal Batman.unescapeHTML('&Omega;'), "\u03A9"
   equal Batman.unescapeHTML('&euro;'), '\u20AC'
+
+test "should return undefined for undefined values", ->
+  equal Batman.unescapeHTML(undefined), undefined
+  equal Batman.unescapeHTML(null), undefined

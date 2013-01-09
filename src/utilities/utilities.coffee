@@ -196,6 +196,7 @@ Batman.escapeHTML = do ->
 
 Batman.unescapeHTML = do ->
   return (s) ->
+    return unless s?
     node = Batman._unescapeHTMLNode ||= document.createElement('DIV')
     node.innerHTML = s
     if node.innerText?
