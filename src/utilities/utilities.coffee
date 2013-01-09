@@ -194,11 +194,15 @@ _encodedCharsPattern = new RegExp("(#{_encodedChars.join('|')})", "g")
 Batman.escapeHTML = do ->
   return (s) -> (""+s).replace(_unsafeCharsPattern, (c) -> _entityMap[c])
 
+Batman._unescapeHTMLNode = document.createElement('DIV')
 Batman.unescapeHTML = do ->
   return (s) ->
-    node = document.createElement('DIV')
+    node = Batman._unescapeHTMLNode
     node.innerHTML = s
-    if node.innerText? then node.innerText else node.textContent
+    if node.innerText?
+      node.innerText
+    else
+      node.textContent
 
 # `translate` is hook for the i18n extra to override and implemnent. All strings which might
 # be shown to the user pass through this method. `translate` is aliased to `t` internally.
