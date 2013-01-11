@@ -28,7 +28,7 @@ test "calling mutators from inside an accessor does not add a new source", ->
   @class.accessor 'foo', -> @set('bar', 1234); @unset('baz')
   @object.get('foo')
 
-  deepEqual @object.property('foo').sources, []
+  equal @object.property('foo').sources, undefined
 
 QUnit.module 'Batman.Property laziness'
   setup: ->
@@ -51,7 +51,7 @@ test "observing a property should call the accessor to populate its sources", ->
 
 test "observing a property should not call the accessor if it has loaded its sources", ->
   @class.accessor 'foo', (spy = createSpy())
-  @object.property('foo').sources = new Batman.SimpleSet()
+  @object.property('foo').sources = []
   @object.observe 'foo', ->
 
   equal spy.callCount, 0
@@ -70,7 +70,7 @@ test "observed properties should call the accessor when changed", ->
   @class.accessor 'foo',
     get: getter = createSpy()
     set: ->
-  @object.property('foo').sources = new Batman.SimpleSet()
+  @object.property('foo').sources = []
   @object.observe 'foo', ->
 
   equal getter.callCount, 0
@@ -87,7 +87,7 @@ test "Property.withoutTracking(block) runs the block and returns its return valu
   equal @object.get('foo'), 'barVal'
   equal barVal, 'barVal'
 
-  deepEqual @object.property('foo').sources, []
+  equal @object.property('foo').sources, undefined
 
 
 QUnit.module 'Batman.Property',
@@ -173,7 +173,7 @@ test "refresh() should recursively refresh .value and set .sources to the proper
 
   deepEqual foo.sources, [bar]
   deepEqual bar.sources, [baz]
-  deepEqual baz.sources, []
+  equal baz.sources, undefined
   deepEqual foo.sources, [bar]
   deepEqual foo.sources, [bar]
 
@@ -199,8 +199,8 @@ test "if the value of a property with observers fires its 'change' event at some
 
   deepEqual foo.sources, [bar]
   deepEqual bar.sources, [baz]
-  deepEqual baz.sources, []
-  deepEqual qux.sources, []
+  equal baz.sources, undefined
+  equal qux.sources, undefined
   deepEqual fromFooAndQux.sources, [foo, @mutableSomething, qux]
 
   strictEqual foo.value, @mutableSomething
@@ -389,8 +389,8 @@ test "setValue or unsetValue within a getter should not register the updated pro
     @unset('baz')
   obj.get('foo')
   obj.get('bar')
-  deepEqual obj.property('foo').sources, []
-  deepEqual obj.property('bar').sources, []
+  equal obj.property('foo').sources, undefined
+  equal obj.property('bar').sources, undefined
 
 QUnit.module 'Batman.Property final properties',
   setup: ->
