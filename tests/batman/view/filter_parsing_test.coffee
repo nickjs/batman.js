@@ -13,11 +13,11 @@ asyncTest "should parse one segment keypaths as values", ->
     deepEqual @spy.lastCallArguments, ["bar"]
     QUnit.start()
 
-asyncTest "should parse many segment keypaths as values", ->
-  helpers.render '<div data-bind="foo.bar | test"></div>', Batman(foo: Batman(bar: "baz")), (node) =>
+asyncTest "should parse one segment keypaths that begin with numbers", ->
+  helpers.render '<div data-bind="404_title | test"></div>', Batman("404_title": "bar"), (node) =>
     equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
-    deepEqual @spy.lastCallArguments, ["baz"]
+    deepEqual @spy.lastCallArguments, ["bar"]
     QUnit.start()
 
 asyncTest "should parse one segment keypaths as arguments", ->
@@ -53,6 +53,20 @@ asyncTest "should parse many segment keypaths as arguments", ->
     equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, [1, "baz"]
+    QUnit.start()
+
+asyncTest "should parse many segment keypaths that begin with numbers", ->
+  helpers.render '<div data-bind="404_title.bar | test"></div>', Batman("404_title": Batman(bar: "baz")), (node) =>
+    equal node.html(), "testValue"
+    ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
+    deepEqual @spy.lastCallArguments, ["baz"]
+    QUnit.start()
+
+asyncTest "should parse many segment keypaths as values", ->
+  helpers.render '<div data-bind="foo.bar | test"></div>', Batman(foo: Batman(bar: "baz")), (node) =>
+    equal node.html(), "testValue"
+    ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
+    deepEqual @spy.lastCallArguments, ["baz"]
     QUnit.start()
 
 asyncTest "should parse keypaths containing true as arguments", ->
