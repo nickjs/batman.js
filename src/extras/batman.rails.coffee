@@ -57,7 +57,12 @@ class Batman.RailsStorage extends Batman.RestStorage
       return url
     url + '.json'
 
-  _errorsFrom422Response: (response) -> JSON.parse(response)
+  _errorsFrom422Response: (response) ->
+    parsedResponse = JSON.parse(response)
+    if 'errors' of parsedResponse
+      parsedResponse.errors
+    else
+      parsedResponse
 
   @::after 'update', 'create', (env, next) ->
     record = env.subject
