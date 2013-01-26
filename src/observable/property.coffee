@@ -9,6 +9,7 @@ class Batman.Property
   Batman.mixin @prototype, Batman.EventEmitter
 
   @_sourceTrackerStack: SOURCE_TRACKER_STACK
+  @_sourceTrackerStackValid: SOURCE_TRACKER_STACK_VALID
   @defaultAccessor:
     get: (key) -> @[key]
     set: (key, val) -> @[key] = val
