@@ -5,7 +5,8 @@ class Batman.SimpleSet
   constructor: ->
     @_storage = []
     @length = 0
-    @add.apply @, arguments if arguments.length > 0
+    itemsToAdd = (item for item in arguments when item?)
+    @add(itemsToAdd...) if itemsToAdd.length > 0
 
   Batman.extend @prototype, Batman.Enumerable
 
