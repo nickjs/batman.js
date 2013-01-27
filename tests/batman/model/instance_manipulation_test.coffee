@@ -113,7 +113,7 @@ asyncTest "load calls in an accessor will have no sources", ->
       delay ->
         equal callCount, 1
   obj.get('foo')
-  equal obj.property('foo').sources, undefined
+  deepEqual obj.property('foo').sources, []
 
 QUnit.module "Batman.Model instance saving"
   setup: ->
@@ -252,7 +252,7 @@ asyncTest "save calls in an accessor will have no sources", ->
       delay ->
         equal callCount, 1
   obj.get('foo')
-  equal obj.property('foo').sources, undefined
+  deepEqual obj.property('foo').sources, []
 
 asyncTest "save calls call state transition callbacks before validation", ->
   product = new @Product()
@@ -313,7 +313,7 @@ asyncTest "destroy calls in an accessor will have no sources", ->
       delay ->
         equal callCount, 1
   obj.get('foo')
-  equal obj.property('foo').sources, undefined
+  deepEqual obj.property('foo').sources, []
 
 QUnit.module "Batman.Model instance validation"
   setup: ->
@@ -333,4 +333,4 @@ asyncTest "validate calls in an accessor will have no sources", ->
       delay ->
         equal callCount, 1
   obj.get('foo')
-  equal obj.property('foo').sources, undefined
+  deepEqual obj.property('foo').sources, []

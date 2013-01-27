@@ -40,29 +40,32 @@ class Batman.Property
         Batman.Property.popSourceTracker()
   @registerSource: (obj) ->
     return unless obj.isEventEmitter
-    if !SOURCE_TRACKER_STACK_VALID
+    if SOURCE_TRACKER_STACK_VALID
+      set = SOURCE_TRACKER_STACK[SOURCE_TRACKER_STACK.length - 1]
+    else
       set = []
       SOURCE_TRACKER_STACK.push set
       SOURCE_TRACKER_STACK_VALID = true
-    else
-      set = SOURCE_TRACKER_STACK[SOURCE_TRACKER_STACK.length - 1]
 
     set?.push(obj)
     undefined
 
   @pushSourceTracker: ->
-    if !SOURCE_TRACKER_STACK_VALID
-      SOURCE_TRACKER_STACK.push []
-    else
+    if SOURCE_TRACKER_STACK_VALID
       SOURCE_TRACKER_STACK_VALID = false
+    else
+      SOURCE_TRACKER_STACK.push []
   @popSourceTracker: ->
-    if !SOURCE_TRACKER_STACK_VALID
+    if SOURCE_TRACKER_STACK_VALID
+      SOURCE_TRACKER_STACK.pop()
+    else
       SOURCE_TRACKER_STACK_VALID = true
       undefined
-    else
-      SOURCE_TRACKER_STACK.pop()
 
   @pushDummySourceTracker: ->
+    if !SOURCE_TRACKER_STACK_VALID
+      SOURCE_TRACKER_STACK.push []
+      SOURCE_TRACKER_STACK_VALID = true
     SOURCE_TRACKER_STACK.push(null)
 
   constructor: (@base, @key) ->

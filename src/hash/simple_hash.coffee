@@ -4,7 +4,6 @@ class Batman.SimpleHash
     @length = 0
     @update(obj) if obj?
   Batman.extend @prototype, Batman.Enumerable
-  propertyClass: Batman.Property
   hasKey: (key) ->
     if @objectKey(key)
       return false unless @_objectStorage
