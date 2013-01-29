@@ -77,7 +77,7 @@ asyncTest "find calls in an accessor will have no sources", ->
       delay ->
         equal callCount, 1
   obj.get('foo')
-  equal obj.property('foo').sources, undefined
+  deepEqual obj.property('foo').sources, []
 
 QUnit.module "Batman.Model class findOrCreating"
   setup: ->
@@ -220,4 +220,4 @@ asyncTest "load calls in an accessor will have no sources", ->
       delay ->
         equal callCount, 1
   obj.get('foo')
-  equal obj.property('foo').sources, undefined
+  deepEqual obj.property('foo').sources, []

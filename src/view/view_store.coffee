@@ -16,7 +16,7 @@ class Batman.ViewStore extends Batman.Object
   @accessor
     'final': true
     get: (path) ->
-      return @get("/#{path}") unless path[0] is '/'
+      return @get("/#{path}") unless path.charAt(0) is '/'
       return @_viewContents[path] if @_viewContents[path]
       return if @_requestedPaths.has(path)
       return contents if contents = @_sourceFromDOM(path)
@@ -26,7 +26,7 @@ class Batman.ViewStore extends Batman.Object
         throw new Error("Couldn't find view source for \'#{path}\'!")
       return
     set: (path, content) ->
-      return @set("/#{path}", content) unless path[0] is '/'
+      return @set("/#{path}", content) unless path.charAt(0) is '/'
       @_requestedPaths.add(path)
       @_viewContents[path] = content
 

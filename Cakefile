@@ -28,6 +28,7 @@ pipedExec = do ->
         running = false
         callback(code)
 
+
 task 'build', 'compile Batman.js and all the tools', (options) ->
   files = glob.sync('./src/**/*').concat(glob.sync('./tests/run.coffee'))
   muffin.run
