@@ -16,9 +16,10 @@ class Batman.AssociationSet extends Batman.SetSort
       loadOptions.data = Batman.extend(loadOptions.data, options)
 
     return callback(undefined, @) unless @foreignKeyValue?
-    @association.getRelatedModel().loadWithOptions loadOptions, (err, records) =>
+    @association.getRelatedModel().loadWithOptions loadOptions, (err, records, env) =>
       @markAsLoaded() unless err
-      callback(err, @)
+
+      callback(err, @, env)
 
   _getLoadOptions: ->
     loadOptions = data: {}
