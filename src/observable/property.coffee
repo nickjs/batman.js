@@ -1,6 +1,7 @@
 #= require ./property_event
 #= require ../event_emitter/event_emitter
 #= require ../set/simple_set
+#= require ../developer
 
 SOURCE_TRACKER_STACK = []
 SOURCE_TRACKER_STACK_VALID = true
