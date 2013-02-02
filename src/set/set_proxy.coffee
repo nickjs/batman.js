@@ -15,9 +15,9 @@ class Batman.SetProxy extends Batman.Object
   Batman.extend @prototype, Batman.Enumerable
 
   filter: (f) ->
-    @reduce (result, element) ->
-      result.add(element) if f(element)
-      result
+    @reduce (accumulator, element) ->
+      accumulator.add(element) if f(element)
+      accumulator
     , new Batman.Set()
 
   replace: ->

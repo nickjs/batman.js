@@ -24,11 +24,19 @@ Batman.Enumerable =
   reduce: (f, accumulator) ->
     count = 0
     self = @
+    if accumulator?
+      initialValuePassed = true
+    else
+      initialValuePassed = false
+
     @forEach ->
-      if accumulator?
-        accumulator = f(accumulator, arguments..., count, self)
-      else
+      if !initialValuePassed
         accumulator = arguments[0]
+        initialValuePassed = true
+        return
+
+      accumulator = f(accumulator, arguments..., count, self)
+
     accumulator
 
   filter: (f) ->

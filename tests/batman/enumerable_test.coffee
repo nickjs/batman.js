@@ -131,6 +131,12 @@ test "reduce should return a value", ->
   f = (x, acc) -> acc + x
   deepEqual @enumerable.reduce(f), @array.reduce(f)
 
+test "reduce should not return the function if the reduction function returns undefined", ->
+  f = -> undefined
+  @array = [1, 2, 3]
+  @enumerable = getEnumerable(@array)
+  deepEqual @enumerable.reduce(f), @array.reduce(f)
+
 test "inGroupsOf(1) should return an array with each item in an array", ->
   @enumerable = getEnumerable([1,2,3])
   deepEqual @enumerable.inGroupsOf(1), [[1],[2],[3]]
