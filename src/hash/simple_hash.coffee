@@ -1,3 +1,5 @@
+_objectToString = Object::toString
+
 class Batman.SimpleHash
   constructor: (obj) ->
     @_storage = {}
@@ -62,7 +64,12 @@ class Batman.SimpleHash
     currentValue
   prefixedKey: (key) -> "_"+key
   unprefixedKey: (key) -> key.slice(1)
-  hashKeyFor: (obj) -> obj?.hashKey?() or obj
+  hashKeyFor: (obj) ->
+    typeString = _objectToString.call(obj)
+    if typeString is "[object Array]"
+      typeString
+    else
+      obj?.hashKey?() or obj
   equality: (lhs, rhs) ->
     return true if lhs is rhs
     return true if lhs isnt lhs and rhs isnt rhs # when both are NaN
