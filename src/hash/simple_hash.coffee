@@ -65,11 +65,11 @@ class Batman.SimpleHash
   prefixedKey: (key) -> "_"+key
   unprefixedKey: (key) -> key.slice(1)
   hashKeyFor: (obj) ->
-    typeString = _objectToString.call(obj)
-    if typeString is "[object Array]"
-      typeString
+    if hashKey = obj?.hashKey?()
+      hashKey
     else
-      obj?.hashKey?() or obj
+      typeString = _objectToString.call(obj)
+      if typeString is "[object Array]" then typeString else obj
   equality: (lhs, rhs) ->
     return true if lhs is rhs
     return true if lhs isnt lhs and rhs isnt rhs # when both are NaN

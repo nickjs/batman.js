@@ -466,6 +466,13 @@ test "replace(hash) works with other batman hashes as expected", ->
 
   deepEqual @hash.toObject(), foo: 'otherFoo', baz: 'otherBaz'
 
+test "using mutating arrays as keys", ->
+  arr = []
+  @hash.set(arr, "array value")
+  arr.push(1)
+
+  strictEqual @hash.get(arr), "array value"
+
 test "using arrays of Batman.Model objects with mutable IDs as keys", ->
   class Product extends Batman.Model
     @encode 'id'
@@ -477,5 +484,4 @@ test "using arrays of Batman.Model objects with mutable IDs as keys", ->
   product.set('id', 5)
 
   strictEqual @hash.get(arr), "array value"
-
-
+  
