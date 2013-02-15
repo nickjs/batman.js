@@ -1,3 +1,7 @@
+## 0.14.1 (Febrary 15th, 2013)
+
+Forgot to bump a version number to fix the version number test.
+
 ## 0.14.0 (February 14th, 2013)
 
 https://github.com/Shopify/batman/compare/v0.13.0...master
