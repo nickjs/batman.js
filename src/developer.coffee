@@ -35,5 +35,8 @@ Batman.developer =
         console?.log? developer.currentFilterStack
         value
 
+Batman.deprecated = (deprecatedName, upgradeString) ->
+  Batman.developer.warn("#{deprecatedName} has been deprecated.", upgradeString || '')
+
 developer = Batman.developer
 Batman.developer.assert (->).bind, "Error! Batman needs Function.bind to work! Please shim it using something like es5-shim or augmentjs!"
