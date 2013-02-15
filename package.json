@@ -1,13 +1,13 @@
 {
   "name": "batman",
-  "description": "A client side JavaScript framework that helps you build rich, single-page applications with power and speed.",
-  "author": "Nick Small <nick@shopify.com> (http://github.com/nciagra)",
+  "description": "A client-side framework that makes JavaScript apps as fun as Rails.",
+  "author": "Nick Small <nick@shopify.com> (http://github.com/nickjs)",
   "contributors": [
-    "Harry Brundage <harry.brundage@shopify.com> (http://github.com/hornairs)",
-    "James MacAulay <james@shopify.com> (http://github.com/jamesmacaulay)",
-    "Kamil Tusznio <kamil.tusznio@shopify.com> (http://github.com/ktusznio)"
+    "Matt Helm <matt.helm@shopify.com> (http://github.com/matthelm)",
+    "Kristian PD <kristian@shopify.com> (http://github.com/kristianpd)",
+    "Harry Brundage <harry.brundage@shopify.com> (http://github.com/hornairs)"
   ],
-  "version": "0.13.1",
+  "version": "0.14.0",
   "homepage": "http://batmanjs.org",
   "repository": {
     "type": "git",
