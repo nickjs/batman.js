@@ -294,29 +294,21 @@
 </li>
   <li class="searchable"><a href="#batman-controller-beforefilter" class="class-function">@beforeFilter([options], filter)</a>
 </li>
-</ul>
+  <li class="searchable"><a href="#batman-controller-afterfilter" class="class-function">@afterFilter([options], filter)</a>
 </li>
-  <li ><a href="#undefined-that-this-filter-function-should-be-executed-before-all-actions" class="">`undefined` that this filter function should be executed before all actions</a>
+  <li class="searchable"><a href="#batman-controller-autoscrolltohash-true" class="class-function">autoScrollToHash[= true]</a>
 </li>
-  <li ><a href="#a-string-that-this-filter-function-should-be-executed-before-the-action-named-by-the-string" class="">a String that this filter function should be executed before the action named by the string</a>
+  <li class="searchable"><a href="#batman-controller-defaultrenderyield-main" class="class-function">defaultRenderYield[= &#39;main&#39;]</a>
 </li>
-  <li ><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object" class="">an Object that this filter function should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.</a>
-<ul>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-afterfilter" class="class-function">@afterFilter([options], filter)</a>
+  <li class="searchable"><a href="#batman-controller-controller-actions" class="class-function">Controller Actions</a>
 </li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-autoscrolltohash-true" class="class-function">autoScrollToHash[= true]</a>
+  <li class="searchable"><a href="#batman-controller-executeaction" class="class-function">executeAction</a>
 </li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-defaultrenderyield-main" class="class-function">defaultRenderYield[= &#39;main&#39;]</a>
+  <li class="searchable"><a href="#batman-controller-render" class="class-function">render</a>
 </li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-controller-actions" class="class-function">Controller Actions</a>
+  <li class="searchable"><a href="#batman-controller-redirect" class="class-function">redirect</a>
 </li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-executeaction" class="class-function">executeAction</a>
-</li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-render" class="class-function">render</a>
-</li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-redirect" class="class-function">redirect</a>
-</li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-scrolltohash" class="class-function">scrollToHash</a>
+  <li class="searchable"><a href="#batman-controller-scrolltohash" class="class-function">scrollToHash</a>
 </li>
 </ul>
 </li>
@@ -2987,9 +2979,11 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>The <code>options</code> argument can take three forms to imply different things:
 
 </p>
-<h1 id="undefined-that-this-filter-function-should-be-executed-before-all-actions"><code>undefined</code>: implies that this filter function should be executed before all actions</h1>
-<h1 id="a-string-that-this-filter-function-should-be-executed-before-the-action-named-by-the-string">a String: implies that this filter function should be executed before the action named by the string</h1>
-<h1 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object">an Object: implies that this filter function should be executed before the actions named by an Array at the <code>only</code> key in the options object, or before all actions excluding those named by an Array at the <code>except</code> key in the options object.</h1>
+<ol>
+<li><code>undefined</code>: implies that this filter function should be executed before all actions.</li>
+<li>a String: implies that this filter function should be executed before the action named by the string.</li>
+<li>an Object: implies that this filter function should be executed before the actions named by an Array at the <code>only</code> key in the options object, or before all actions excluding those named by an Array at the <code>except</code> key in the options object.</li>
+</ol>
 <div class="console-session">
   <h4>@beforeFilter allows declaration of filters to execute before an action</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">TestController</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
@@ -3140,7 +3134,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div></code>
   </pre>
 </div>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-afterfilter">@afterFilter([options : [String|Object]], filter : [String|Function])</h3>
+<h3 id="batman-controller-afterfilter">@afterFilter([options : [String|Object]], filter : [String|Function])</h3>
 <p><code>@afterFilter</code> allows controllers to declare that a function should be run after the action body and all operations have completed during action execution. Functions declared by <code>@afterFilter</code> will thus be run after the code of the action body and also after any redirects or renders have taken place and completed. <code>@beforeFilter</code> optionally accepts some options representing which action(s) to execute the filter before, and then a string naming a function or function proper to execute. See <code>Batman.Controller.beforeFilter</code> for documentation on the structure of the options.
 
 </p>
@@ -3311,20 +3305,20 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div></code>
   </pre>
 </div>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-autoscrolltohash-true">autoScrollToHash[= true] : boolean</h3>
+<h3 id="batman-controller-autoscrolltohash-true">autoScrollToHash[= true] : boolean</h3>
 <p><code>autoScrollToHash</code> is a boolean property on the instance level of a controller describing weather or not the controller should automatically scroll the browser window to the element with ID equal to the <code>hash</code> parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing. <code>autoScrollToHash</code> is true by default.
 
 </p>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-defaultrenderyield-main">defaultRenderYield[= &#39;main&#39;] : String</h3>
+<h3 id="batman-controller-defaultrenderyield-main">defaultRenderYield[= &#39;main&#39;] : String</h3>
 <p><code>defaultRenderYield</code> is a <code>String</code> representing which yield a controller should automatically render into if no yield is mentioned explicitly. <code>defaultRenderYield</code> is <code>&#39;main&#39;</code> normally, which means calls to <code>@render()</code> or actions which rely on the implicit rendering render their views into the <code>main</code> yield (and end up where ever <code>data-yield=&quot;main&quot;</code> is found in your HTML).
 
 
 </p>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-controller-actions">Controller Actions</h3>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-executeaction">executeAction</h3>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-render">render</h3>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-redirect">redirect</h3>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-scrolltohash">scrollToHash</h3>
+<h3 id="batman-controller-controller-actions">Controller Actions</h3>
+<h3 id="batman-controller-executeaction">executeAction</h3>
+<h3 id="batman-controller-render">render</h3>
+<h3 id="batman-controller-redirect">redirect</h3>
+<h3 id="batman-controller-scrolltohash">scrollToHash</h3>
 
 <h2 id="batman-model">Batman.Model</h2>
 <p><code>Batman.Model</code> is responsible for representing data in your application, and for providing a fluid interface to moving in to and out of your backend.
