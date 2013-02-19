@@ -110,9 +110,6 @@ cli.main (args, options) ->
     sourcePath = path.join(source, aPath)
     # Examine each file at the path.
     fs.readdirSync(sourcePath).forEach (file) =>
-      if file == '.gitignore'
-        return
-
       # Get an absolute path to this file in the template directory
       resultName = replaceVars(file)
       sourceFile = path.join(sourcePath, file)
