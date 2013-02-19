@@ -313,9 +313,9 @@ test 'Set::toArray returns an array representation of the set', ->
 
 ### merge(collections... : Enumerable) : Set
 
-`merge` adds all the items in a set and all the items in the passed `collections` to a new set and returns it. A `collection` is an object which has a `forEach` function. It is a non-destructive collection union. The set `merge` is called on and each `collection` passed to `merge` remain unaffected.
+`merge` adds all the items in a set and all the items in the passed `collections` to a new set and returns it. A `collection` is an object which has a `forEach` function. `merge` is a non-destructive collection union, so the set `merge` is called on and each `collection` passed to `merge` are unaffected by the call.
 
-_Note_: Be careful about using `merge` within accessors. Calling `merge` in an accessor function body will register the set `merge` is called upon as a source of the property being calculated, which means each the set changes, the property will be recalculated. This means the merge will occur again each time, and return an entirely new `Set` instance. If the previously returned `Set` instance is retained after recalculation, this is a big memory leak. Instead of merging in accessors, try to use a `SetUnion` or a `SetIntersection`.
+_Note_: Be careful about using `merge` within accessors. Calling `merge` in an accessor function body will register the set `merge` is called upon as a source of the property being calculated, which means when the set changes, that accessor will be recalculated. This means the O(n * m) merge will occur again each time, and return an entirely new `Set` instance. If the previously returned `Set` instance is retained after recalculation, this is a big memory leak. Instead of merging in accessors, try to use a `SetUnion` or a `SetIntersection`.
 
 !!!
 test 'Set::merge returns a new set with the items of the original set and the passed set', ->
@@ -327,6 +327,100 @@ test 'Set::merge returns a new set with the items of the original set and the pa
 
 ### indexedBy(key : String) : SetIndex
 
+`indexedBy` returns a hash of sets which buckets all the items in the callee set by the value of a particular `key`. The value of the passed `key` is `get`ted from each object in the set, and then a hash of each value to a set of the items with that value at the `key` is built. This hash of sets is a smart object called a `SetIndex` which will continue to observe the set and the value of the `key` on each item in the set to ensure the set index remains up to date. `SetIndex` also has a friend named `UniqueSetIndex` which will give you a hash of items instead of a hash of sets with items for easy access if you know each item's value at the `key` is unique.
+
+!!!
+test 'Set::indexedBy returns a new SetIndex with the items bucketed by the value of the key', ->
+  show set = new Batman.Set(Batman(colour: 'blue'), Batman(colour: 'green'), Batman(colour: 'blue'))
+  show index = set.indexedBy('colour')
+  ok index.get('blue') instanceof Batman.Set
+  equal index.get('blue').get('length'), 2
+  equal index.get('green').get('length'), 1
+!!!
+
+!!!
+test 'Set::indexedBy returns a new SetIndex which observes the set for new additions and stays up to date', ->
+  show set = new Batman.Set(Batman(colour: 'blue'), Batman(colour: 'green'))
+  show index = set.indexedBy('colour')
+  equal index.get('blue').get('length'), 1
+  show newItem = Batman(colour: 'blue')
+  show set.add(newItem)
+  equal index.get('blue').get('length'), 2
+  ok index.get('blue').has(newItem)
+  show set.remove(newItem)
+  equal index.get('blue').get('length'), 1
+!!!
+
+!!!
+test 'Set::indexedBy returns a new SetIndex which observes the items in the set for changes to the observed key', ->
+  show itemA = Batman(colour: 'blue')
+  show itemB = Batman(colour: 'green')
+  show set = new Batman.Set(itemA, itemB)
+  show index = set.indexedBy('colour')
+  equal index.get('blue').get('length'), 1
+  equal index.get('green').get('length'), 1
+  show itemA.set('colour', 'green')
+  equal index.get('blue').get('length'), 0
+  equal index.get('green').get('length'), 2
+!!!
+
+`SetIndex`es can be created by calling the `indexedBy` function on the `Set`, as well as by `get`ting a `key` on the `indexedBy` property.
+
+!!!
+test "Set::get('indexedBy.someKey') returns a new SetIndex for 'someKey'", ->
+  show set = new Batman.Set(Batman(colour: 'blue'), Batman(colour: 'green'))
+  show index = set.get('indexedBy.colour')
+  equal index.get('blue').get('length'), 1
+!!!
+
 ### indexedByUnique(key : String) : UniqueSetIndex
+
+`indexedByUnique` returns a hash of items keyed by the value of the given `key` on each item from the callee set. The value of the passed `key` is `get`ted from each object in the set, and then a hash of each value to an item with that value at the `key` is built. This hash of items is a smart object called a `UniqueSetIndex` which will continue to observe the set and the value of the `key` on each item in the set to ensure the index remains up to date. Note that the semantics for which item ends up in the hash if two items have the same value for the `key` are undefined, so it is wise to only use `UniqueSetIndex`es on keys who's values are going to be unique in the set. If the values are not going to be unique, you may be interested in `SetIndex` and `Set::indexedBy`.
+
+!!!
+test 'Set::indexedByUnique returns a new UniqueSetIndex with the items hashed by the value of the key', ->
+  show greenItem = Batman(colour: 'green')
+  show blueItem = Batman(colour: 'blue')
+  show set = new Batman.Set(greenItem, blueItem)
+  show index = set.indexedByUnique('colour')
+  ok blueItem == index.get('blue')
+  ok greenItem == index.get('green')
+  equal undefined, index.get('red')
+!!!
+
+!!!
+test 'Set::indexedByUnique returns a new UniqueSetIndex which observes the set for new additions and stays up to date', ->
+  show set = new Batman.Set(Batman(colour: 'blue'), Batman(colour: 'green'))
+  show index = set.indexedByUnique('colour')
+  show newItem = Batman(colour: 'red')
+  show set.add(newItem)
+  ok newItem == index.get('red')
+  show set.remove(newItem)
+  equal undefined, index.get('red')
+!!!
+
+!!!
+test 'Set::indexedByUnique returns a new UniqueSetIndex which observes the items in the set for changes to the observed key', ->
+  show itemA = Batman(colour: 'blue')
+  show itemB = Batman(colour: 'green')
+  show set = new Batman.Set(itemA, itemB)
+  show index = set.indexedByUnique('colour')
+  equal index.get('blue')?, true
+  equal index.get('green')?, true
+  equal index.get('red')?, false
+  show itemA.set('colour', 'red')
+  equal index.get('blue')?, false
+  equal index.get('green')?, true
+  equal index.get('red')?, true
+!!!
+
+`UniqueSetIndex`es can be created by calling the `indexedByUnique` function on the `Set`, as well as by `get`ting a `key` on the `indexedByUnique` property.
+
+!!!
+test "Set::get('indexedByUnique.someKey') returns a new UniqueSetIndex for 'someKey'", ->
+  show set = new Batman.Set(Batman(colour: 'blue'), Batman(colour: 'green'))
+  show index = set.get('indexedByUnique.colour')
+  equal 'blue', index.get('blue').get('colour')
+!!!
 
 ### sortedBy(key: String) : SetSort
