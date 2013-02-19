@@ -30,10 +30,9 @@ For functionality like contextual redirects and automatic view source and class 
 
 The `options` argument can take three forms to imply different things:
 
-  - `undefined`: implies that this filter function should be executed before all actions
-  - a String: implies that this filter function should be executed before the action named by the string
-  - an Object: implies that this filter function should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.
-
+ 1. `undefined`: implies that this filter function should be executed before all actions.
+ 2. a String: implies that this filter function should be executed before the action named by the string.
+ 3. an Object: implies that this filter function should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.
 
 !!!
 test "@beforeFilter allows declaration of filters to execute before an action", ->
