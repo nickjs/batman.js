@@ -9,6 +9,7 @@
 # removeNode
 # destroyNode
 # setInnerHTML
+# innerText
 
 Batman.DOM =
   # List of input type="types" for which we can use keyup events to track
@@ -202,8 +203,6 @@ Batman.DOM =
 
     Batman.DOM.didDestroyNode(child) for child in node.childNodes
     true
-
-  innerText: (node) -> node.textContent || node.innerText
 
 Batman.mixin Batman.DOM, Batman.EventEmitter, Batman.Observable
 Batman.DOM.event('bindingAdded')
