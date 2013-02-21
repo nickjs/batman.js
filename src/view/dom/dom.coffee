@@ -203,5 +203,11 @@ Batman.DOM =
     Batman.DOM.didDestroyNode(child) for child in node.childNodes
     true
 
+  innerText: (node) ->
+    if node.innerText?
+      node.innerText
+    else
+      node.textContent
+
 Batman.mixin Batman.DOM, Batman.EventEmitter, Batman.Observable
 Batman.DOM.event('bindingAdded')
