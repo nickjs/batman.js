@@ -9,8 +9,8 @@ Batman.config =
   pathPrefix: '/'
   pathToHTML: 'html'
   fetchRemoteViews: true
-  usePushState: yes
-  minificationErrors: yes
+  usePushState: true
+  minificationErrors: true
 
 (Batman.container = do -> this).Batman = Batman  # I am so, so sorry.
 
