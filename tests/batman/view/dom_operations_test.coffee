@@ -175,11 +175,11 @@ test "addEventListener and removeEventListener store and remove callbacks using 
 
 test "innerText should return innerText when available", ->
   node = innerText: 'test'
-  equals Batman.DOM.innerText(node), 'test'
+  equal Batman.DOM.innerText(node), 'test'
 
 test "innerText should return textContent when innerText is not available", ->
   node = textContent: 'test'
-  equals Batman.DOM.innerText(node), 'test'
+  equal Batman.DOM.innerText(node), 'test'
 
 asyncTest "destroyNode: destroys yielded childNodes when their parents are destroyed", 2, ->
   source = """
