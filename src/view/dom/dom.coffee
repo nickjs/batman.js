@@ -9,6 +9,7 @@
 # removeNode
 # destroyNode
 # setInnerHTML
+# innerText
 
 Batman.DOM =
   # List of input type="types" for which we can use keyup events to track

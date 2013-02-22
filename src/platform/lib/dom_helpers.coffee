@@ -25,3 +25,4 @@ Batman.extend Batman.DOM,
     Batman.DOM.willInsertNode(child)
     parent.appendChild(child)
     Batman.DOM.didInsertNode(child)
+  innerText: (node) -> node.textContent || node.innerText
