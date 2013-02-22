@@ -101,9 +101,6 @@
       sourcePath = path.join(source, aPath);
       return fs.readdirSync(sourcePath).forEach(function(file) {
         var destFile, dir, ext, newFile, oldFile, resultName, sourceFile, stat;
-        if (file === '.gitignore') {
-          return;
-        }
         resultName = replaceVars(file);
         sourceFile = path.join(sourcePath, file);
         destFile = path.join(destinationPath, aPath, resultName);
