@@ -6,7 +6,7 @@ class Batman.HTMLStore extends Batman.Object
 
   propertyClass: Batman.Property
 
-  fetchView: (path) ->
+  fetchHTML: (path) ->
     new Batman.Request
       url: Batman.Navigator.normalizePath(Batman.config.pathToHTML, "#{path}.html")
       type: 'html'
@@ -20,8 +20,8 @@ class Batman.HTMLStore extends Batman.Object
       return @_htmlContents[path] if @_htmlContents[path]
       return if @_requestedPaths.has(path)
       return contents if contents = @_sourceFromDOM(path)
-        @fetchView(path)
       if Batman.config.fetchRemoteHTML
+        @fetchHTML(path)
       else
         throw new Error("Couldn't find html source for \'#{path}\'!")
       return
