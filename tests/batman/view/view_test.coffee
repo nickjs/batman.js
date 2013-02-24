@@ -8,7 +8,7 @@ count = 0
 
 QUnit.module 'Batman.View'
   setup: ->
-    Batman.View.store = new Batman.ViewStore
+    Batman.View.store = new Batman.HTMLStore
     MockRequest.reset()
     @options =
       source: "test_path#{++count}"

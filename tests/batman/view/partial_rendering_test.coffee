@@ -10,7 +10,7 @@ QUnit.module 'Batman.View partial rendering'
     Batman.Request = MockRequest
 
   teardown: ->
-    Batman.View.store = new Batman.ViewStore
+    Batman.View.store = new Batman.HTMLStore
     Batman.Request = oldRequest
 
 asyncTest "preloaded/already rendered partials should render", ->
