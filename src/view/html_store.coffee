@@ -20,8 +20,8 @@ class Batman.HTMLStore extends Batman.Object
       return @_htmlContents[path] if @_htmlContents[path]
       return if @_requestedPaths.has(path)
       return contents if contents = @_sourceFromDOM(path)
-      if Batman.config.fetchRemoteViews
         @fetchView(path)
+      if Batman.config.fetchRemoteHTML
       else
         throw new Error("Couldn't find html source for \'#{path}\'!")
       return

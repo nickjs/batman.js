@@ -103,10 +103,10 @@ test ".store should pull absolutely path'd data-defineview'd views from the DOM"
   equal MockRequest.instances.length, 1
 
 test ".store should raise if remote fetching is disabled", ->
-  Batman.config.fetchRemoteViews = false
+  Batman.config.fetchRemoteHTML = false
   QUnit.raises ->
     Batman.View.store.get('remote')
-  Batman.config.fetchRemoteViews = true
+  Batman.config.fetchRemoteHTML = true
 
 test 'should not autogenerate a node if the node property is false', 1, ->
   MockRequest.reset()
