@@ -207,6 +207,12 @@ test "Inflector ordinalizes", ->
   for number, ordinalized of OrdinalNumbers
     equal Batman.helpers.inflector.ordinalize(number), ordinalized
 
+test "radix is assumed to be base 10", ->
+  equal Batman.helpers.inflector.ordinalize('010'), "10th"
+
+test "allows for other radix values", ->
+  equal Batman.helpers.inflector.ordinalize('010', 2), "2nd"
+
 QUnit.module 'Batman.helpers humanization'
 
 test "helpers humanize", ->

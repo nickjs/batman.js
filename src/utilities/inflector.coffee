@@ -19,8 +19,9 @@ class Batman.Inflector
     @_uncountable = []
     @_human = []
 
-  ordinalize: (number) ->
-    absNumber = Math.abs(parseInt(number))
+  ordinalize: (number, radix=10) ->
+    number = parseInt(number, radix)
+    absNumber = Math.abs(number)
     if absNumber % 100 in [11..13]
       number + "th"
     else
