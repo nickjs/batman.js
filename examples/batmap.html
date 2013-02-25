@@ -27,11 +27,11 @@
             </li>
             <li><span data-bind="'characters' | pluralize Character.all.length"></span></li>
         </ul>
-       
+
     </div>
 
     <script type="text/coffeescript">
-                
+
     # Create our application and namespace.
     window.BatMap = class BatMap extends Batman.App
 
@@ -46,7 +46,7 @@
 
       @accessor 'imageSrc'
         get: -> "http://maps.googleapis.com/maps/api/staticmap?center=#{@get('address')}&zoom=14&size=400x400&sensor=false"
-          
+
       render: ->
         img = $('<img>').attr('src', @get('imageSrc'))
         $(@get('node')).append(img)
@@ -58,7 +58,7 @@
 
     AppController = class BatMap.AppController extends Batman.Controller
       routingKey: 'app'
-      
+
       index: ->
         @set 'emptyChar', new Character
         # add some example characters to show off.
