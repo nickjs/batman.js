@@ -6,8 +6,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript" src="../lib/es5-shim.js"></script>
-    <script type="text/javascript" src="../lib/batman.js"></script>
-    <script type="text/javascript" src="../lib/batman.solo.js"></script>
+    <script type="text/javascript" src="../lib/dist/batman.js"></script>
     <script type="text/javascript" src="../lib/coffee-script.js"></script>
 </head>
 
@@ -28,11 +27,11 @@
             </li>
             <li><span data-bind="'characters' | pluralize Character.all.length"></span></li>
         </ul>
-       
+
     </div>
 
     <script type="text/coffeescript">
-                
+
     # Create our application and namespace.
     window.BatMap = class BatMap extends Batman.App
 
@@ -47,7 +46,7 @@
 
       @accessor 'imageSrc'
         get: -> "http://maps.googleapis.com/maps/api/staticmap?center=#{@get('address')}&zoom=14&size=400x400&sensor=false"
-          
+
       render: ->
         img = $('<img>').attr('src', @get('imageSrc'))
         $(@get('node')).append(img)
@@ -59,7 +58,7 @@
 
     AppController = class BatMap.AppController extends Batman.Controller
       routingKey: 'app'
-      
+
       index: ->
         @set 'emptyChar', new Character
         # add some example characters to show off.
