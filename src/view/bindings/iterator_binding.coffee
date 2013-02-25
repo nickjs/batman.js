@@ -70,7 +70,10 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
           continue
         else
           # Otherwise, create a new or move the existing node for that position to the desired position
-          node = if (existingNode = @nodeMap.get(newItem))
+          matchesInNodeMap  = @nodeMap.filter( (value) -> value == newItem)
+          matchesInNewItems = newItems.filter( (value) -> value == newItem)
+
+          node = if (existingNode = @nodeMap.get(newItem)) && (matchesInNodeMap.length == matchesInNewItems.length)
             unseenNodeMap.unset(newItem)
             existingNode
           else
