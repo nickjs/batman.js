@@ -30,7 +30,7 @@ unless IN_NODE #jsdom doesn't like window.location.replace
 
 test "handleLocation(window.location) dispatches based on pathFromLocation", ->
   @nav.handleLocation
-    pathname: Batman.config.pathPrefix
+    pathname: Batman.config.pathToApp
     search: ''
     hash: '#!/foo/bar?page=2'
   equal @dispatchSpy.callCount, 1
@@ -39,13 +39,13 @@ test "handleLocation(window.location) dispatches based on pathFromLocation", ->
 
 test "handleLocation(window.location) handles the real non-hashbang path if present, but only if Batman.config.usePushState is true", ->
   location =
-    pathname: @nav.normalizePath(Batman.config.pathPrefix, '/baz')
+    pathname: @nav.normalizePath(Batman.config.pathToApp, '/baz')
     search: '?q=buzz'
     hash: '#!/foo/bar?page=2'
     replace: createSpy()
   @nav.handleLocation(location)
   equal location.replace.callCount, 1
-  deepEqual location.replace.lastCallArguments, ["#{Batman.config.pathPrefix}#!/baz?q=buzz"]
+  deepEqual location.replace.lastCallArguments, ["#{Batman.config.pathToApp}#!/baz?q=buzz"]
 
   Batman.config.usePushState = no
   @nav.handleLocation(location)

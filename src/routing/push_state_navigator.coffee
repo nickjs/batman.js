@@ -13,10 +13,10 @@ class Batman.PushStateNavigator extends Batman.Navigator
     if path != @pathFromLocation(window.location)
       window.history.replaceState(stateObject, title, @linkTo(path))
   linkTo: (url) ->
-    @normalizePath(Batman.config.pathPrefix, url)
+    @normalizePath(Batman.config.pathToApp, url)
   pathFromLocation: (location) ->
     fullPath = "#{location.pathname or ''}#{location.search or ''}"
-    prefixPattern = new RegExp("^#{@normalizePath(Batman.config.pathPrefix)}")
+    prefixPattern = new RegExp("^#{@normalizePath(Batman.config.pathToApp)}")
     @normalizePath(fullPath.replace(prefixPattern, ''))
   handleLocation: (location) ->
     path = @pathFromLocation(location)
