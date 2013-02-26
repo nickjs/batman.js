@@ -423,4 +423,45 @@ test "Set::get('indexedByUnique.someKey') returns a new UniqueSetIndex for 'some
   equal 'blue', index.get('blue').get('colour')
 !!!
 
-### sortedBy(key: String) : SetSort
+### sortedBy(key: String [, order: String]) : SetSort
+
+`sortedBy` returns a `Set` like object containing all the items of the callee set but with a defined iteration order (unlike `Set`). The iteration order is defined as the alpha numeric sorting of the values of the passed `key` gotten from each item. The direction of the sort can be controlled with the `order` argument, which defaults to `asc` (short for ascending) or can be passed as `desc` (short for descending). This `Set` like object is a `SetSort` which encapsulates the logic to get the values from each item at the passed `key` and traverse the `Set` in the values sorted order.
+
+`SetSort`s are useful for getting a transform of a `Set` which sorted, but also because the sort stays up to date as items are added or removed to the sorted set, or the value at the `key` changes on any of the items in the set.
+
+!!!
+test 'Set::sortedBy returns a new SetSort who can be iterated in the sorted order of the value of the key on each item', ->
+  show set = new Batman.Set(Batman(place: 3, name: 'Harry'), Batman(place: 1, name: 'Tom'), Batman(place: 2, name: 'Camilo'))
+  show sort = set.sortedBy('place')
+  deepEqual sort.toArray().map((item) -> item.get('name')), ['Tom', 'Camilo', 'Harry']
+!!!
+
+!!!
+test 'Set::sortedBy returns a new SetSort which observes the callee set for additions or removals and puts new items in the sorted order', ->
+  show set = new Batman.Set(Batman(place: 3, name: 'Harry'), Batman(place: 1, name: 'Tom'), Batman(place: 2, name: 'Camilo'))
+  show sort = set.sortedBy('place')
+  deepEqual sort.toArray().map((item) -> item.get('name')), ['Tom', 'Camilo', 'Harry']
+  show burke = Batman(place: 1.5, name: 'Burke')
+  show set.add(burke)
+  deepEqual sort.toArray().map((item) -> item.get('name')), ['Tom', 'Burke', 'Camilo', 'Harry']
+!!!
+
+!!!
+test 'Set::sortedBy returns a new SetSort which observes each item in the callee set for changes to the sort key', ->
+  show harry = Batman(place: 2, name: 'Harry')
+  show tom = Batman(place: 1, name: 'Tom')
+  show set = new Batman.Set(harry, tom)
+  show sort = set.sortedBy('place')
+  deepEqual sort.toArray().map((item) -> item.get('name')), ['Tom', 'Harry']
+  show tom.set('place', 3)
+  deepEqual sort.toArray().map((item) -> item.get('name')), ['Harry', 'Tom']
+!!!
+
+`SetSort`s can be created by calling the `sortedBy` function on the `Set`, as well as by `get`ting a `key` on the `sortedBy` property. Note that with this instantiation form you can't pass an order to the `SetSort`.
+
+!!!
+test "Set::get('sortedBy.someKey') returns a new SetSort onn 'someKey'", ->
+  show set = new Batman.Set(Batman(place: 3, name: 'Harry'), Batman(place: 1, name: 'Tom'), Batman(place: 2, name: 'Camilo'))
+  show sort = set.get('sortedBy.place')
+  equal 'Harry', sort.get('toArray')[2].get('name')
+!!!

@@ -194,7 +194,7 @@
 </li>
   <li class="searchable"><a href="#batman-simpleset-indexedbyunique" class="class-function">indexedByUnique(key)</a>
 </li>
-  <li class="searchable"><a href="#batman-simpleset-sortedby" class="class-function">sortedBy(key)</a>
+  <li class="searchable"><a href="#batman-simpleset-sortedby" class="class-function">sortedBy(key, order = &quot;asc&quot; : [&quot;asc&quot;, &quot;desc&quot;])</a>
 </li>
 </ul>
 </li>
@@ -234,7 +234,7 @@
 </li>
   <li class="searchable"><a href="#batman-set-indexedbyunique" class="class-function">indexedByUnique(key)</a>
 </li>
-  <li class="searchable"><a href="#batman-set-sortedby" class="class-function">sortedBy(key)</a>
+  <li class="searchable"><a href="#batman-set-sortedby" class="class-function">sortedBy(key [, order])</a>
 </li>
 </ul>
 </li>
@@ -1860,10 +1860,10 @@ batman server # (or just "batman s")</code></pre>
   })</div><div class="out"></div><div class="in">set = new Batman.SimpleSet(greenItem, blueItem)</div><div class="out"></div><div class="in">index = set.indexedByUnique('colour')</div><div class="out"></div><div class="in">blueItem === index.get('blue')</div><div class="out">true</div><div class="in">greenItem === index.get('green')</div><div class="out">true</div><div class="in">void 0</div><div class="out">index.get('red')</div></code>
   </pre>
 </div>
-<p><em>Note</em>: <code>SetIndex</code> on <code>SimpleSet</code> can&#39;t maintain up-to-datedness as the state of the set or items change. It can on a bonified <code>Set</code> however, so if you need a <code>SetIndex</code> which will be guaranteed up to date as items in the set change or the values of the observed <code>key</code> change on items, use a <code>Set</code> and <code>Set::indexedBy</code> instead of <code>SimpleSet::indexedBy</code>.
+<p><em>Note</em>: <code>UniqueSetIndex</code> when created on a <code>SimpleSet</code> can&#39;t maintain up-to-datedness as the state of the set or items change. It can on a bonified <code>Set</code> however, so if you need a <code>UniqueSetIndex</code> which will be guaranteed up to date as items in the set change or the values of the observed <code>key</code> change on items, use a <code>Set</code> and <code>Set::indexedByUnique</code> instead of <code>SimpleSet::indexedByUnique</code>.
 
 </p>
-<h3 id="batman-simpleset-sortedby">sortedBy(key: String) : SetSort</h3>
+<h3 id="batman-simpleset-sortedby">sortedBy(key: String, order = &quot;asc&quot; : [&quot;asc&quot;, &quot;desc&quot;]) : SetSort</h3>
 
 <h2 id="batman-set">Batman.Set</h2>
 <p><code>Set</code> is an observable, <code>Batman.Object</code> wrapper around <code>SimpleSet</code>.
@@ -2294,7 +2294,82 @@ batman server # (or just "batman s")</code></pre>
   }))</div><div class="out"></div><div class="in">index = set.get('indexedByUnique.colour')</div><div class="out"></div><div class="in">'blue'</div><div class="out">index.get('blue').get('colour')</div></code>
   </pre>
 </div>
-<h3 id="batman-set-sortedby">sortedBy(key: String) : SetSort</h3>
+<h3 id="batman-set-sortedby">sortedBy(key: String [, order: String]) : SetSort</h3>
+<p><code>sortedBy</code> returns a <code>Set</code> like object containing all the items of the callee set but with a defined iteration order (unlike <code>Set</code>). The iteration order is defined as the alpha numeric sorting of the values of the passed <code>key</code> gotten from each item. The direction of the sort can be controlled with the <code>order</code> argument, which defaults to <code>asc</code> (short for ascending) or can be passed as <code>desc</code> (short for descending). This <code>Set</code> like object is a <code>SetSort</code> which encapsulates the logic to get the values from each item at the passed <code>key</code> and traverse the <code>Set</code> in the values sorted order.
+
+</p>
+<p><code>SetSort</code>s are useful for getting a transform of a <code>Set</code> which sorted, but also because the sort stays up to date as items are added or removed to the sorted set, or the value at the <code>key</code> changes on any of the items in the set.
+
+</p>
+<div class="console-session">
+  <h4>Set::sortedBy returns a new SetSort who can be iterated in the sorted order of the value of the key on each item</h4>
+  <pre><code class="javascript"><div class="in">set = new Batman.Set(Batman({
+    place: 3,
+    name: 'Harry'
+  }), Batman({
+    place: 1,
+    name: 'Tom'
+  }), Batman({
+    place: 2,
+    name: 'Camilo'
+  }))</div><div class="out"></div><div class="in">sort = set.sortedBy('place')</div><div class="out"></div><div class="in">sort.toArray().map(function(item) {
+    return item.get('name');
+  })</div><div class="out">['Tom', 'Camilo', 'Harry']</div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>Set::sortedBy returns a new SetSort which observes the callee set for additions or removals and puts new items in the sorted order</h4>
+  <pre><code class="javascript"><div class="in">set = new Batman.Set(Batman({
+    place: 3,
+    name: 'Harry'
+  }), Batman({
+    place: 1,
+    name: 'Tom'
+  }), Batman({
+    place: 2,
+    name: 'Camilo'
+  }))</div><div class="out"></div><div class="in">sort = set.sortedBy('place')</div><div class="out"></div><div class="in">sort.toArray().map(function(item) {
+    return item.get('name');
+  })</div><div class="out">['Tom', 'Camilo', 'Harry']</div><div class="in">burke = Batman({
+    place: 1.5,
+    name: 'Burke'
+  })</div><div class="out"></div><div class="in">set.add(burke)</div><div class="out"></div><div class="in">sort.toArray().map(function(item) {
+    return item.get('name');
+  })</div><div class="out">['Tom', 'Burke', 'Camilo', 'Harry']</div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>Set::sortedBy returns a new SetSort which observes each item in the callee set for changes to the sort key</h4>
+  <pre><code class="javascript"><div class="in">harry = Batman({
+    place: 2,
+    name: 'Harry'
+  })</div><div class="out"></div><div class="in">tom = Batman({
+    place: 1,
+    name: 'Tom'
+  })</div><div class="out"></div><div class="in">set = new Batman.Set(harry, tom)</div><div class="out"></div><div class="in">sort = set.sortedBy('place')</div><div class="out"></div><div class="in">sort.toArray().map(function(item) {
+    return item.get('name');
+  })</div><div class="out">['Tom', 'Harry']</div><div class="in">tom.set('place', 3)</div><div class="out"></div><div class="in">sort.toArray().map(function(item) {
+    return item.get('name');
+  })</div><div class="out">['Harry', 'Tom']</div></code>
+  </pre>
+</div>
+<p><code>SetSort</code>s can be created by calling the <code>sortedBy</code> function on the <code>Set</code>, as well as by <code>get</code>ting a <code>key</code> on the <code>sortedBy</code> property. Note that with this instantiation form you can&#39;t pass an order to the <code>SetSort</code>.
+
+</p>
+<div class="console-session">
+  <h4>Set::get(&#39;sortedBy.someKey&#39;) returns a new SetSort onn &#39;someKey&#39;</h4>
+  <pre><code class="javascript"><div class="in">set = new Batman.Set(Batman({
+    place: 3,
+    name: 'Harry'
+  }), Batman({
+    place: 1,
+    name: 'Tom'
+  }), Batman({
+    place: 2,
+    name: 'Camilo'
+  }))</div><div class="out"></div><div class="in">sort = set.get('sortedBy.place')</div><div class="out"></div><div class="in">'Harry'</div><div class="out">sort.get('toArray')[2].get('name')</div></code>
+  </pre>
+</div>
 
 
 

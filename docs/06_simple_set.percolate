@@ -215,6 +215,15 @@ test 'SimpleSet::indexedByUnique returns a new UniqueSetIndex with the items has
 
 _Note_: `UniqueSetIndex` when created on a `SimpleSet` can't maintain up-to-datedness as the state of the set or items change. It can on a bonified `Set` however, so if you need a `UniqueSetIndex` which will be guaranteed up to date as items in the set change or the values of the observed `key` change on items, use a `Set` and `Set::indexedByUnique` instead of `SimpleSet::indexedByUnique`.
 
-### sortedBy(key: String) : SetSort
+### sortedBy(key: String [, order: String]) : SetSort
 
+`sortedBy` returns a `Set` like object containing all the items of the callee set but with a defined iteration order (unlike `SimpleSet`). The iteration order is defined as the alpha numeric sorting of the values of the passed `key` gotten from each item. The direction of the sort can be controlled with the `order` argument, which defaults to `asc` (short for ascending) or can be passed as `desc` (short for descending). This `Set` like object is a `SetSort` which encapsulates the logic to get the values from each item at the passed `key` and traverse the `Set` in the values sorted order.
 
+`SetSort`s are useful for getting a transform of a `Set` which sorted, but also because the sort stays up to date as items are added or removed to the sorted set, or the value at the `key` changes on any of the items in the set.
+
+!!!
+test 'SimpleSet::sortedBy returns a new SetSort who can be iterated in the sorted order of the value of the key on each item', ->
+  show set = new Batman.SimpleSet(Batman(place: 3, name: 'Harry'), Batman(place: 1, name: 'Tom'), Batman(place: 2, name: 'Camilo'))
+  show sort = set.sortedBy('place')
+  deepEqual sort.toArray().map((item) -> item.get('name')), ['Tom', 'Camilo', 'Harry']
+!!!
