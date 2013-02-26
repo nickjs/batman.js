@@ -23,7 +23,7 @@ QUnit.moduleStart ->
 
 # set Batman.config:
 QUnit.testStart ->
-  Batman.config.pathPrefix = originalPathname
+  Batman.config.pathToApp = originalPathname
   Batman.config.usePushState = true
 
 # return clean links (e.g. "Rerun" links):

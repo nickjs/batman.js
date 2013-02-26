@@ -8,7 +8,7 @@ class Batman.ViewStore extends Batman.Object
 
   fetchView: (path) ->
     new Batman.Request
-      url: Batman.Navigator.normalizePath(Batman.config.viewPrefix, "#{path}.html")
+      url: Batman.Navigator.normalizePath(Batman.config.pathToHTML, "#{path}.html")
       type: 'html'
       success: (response) => @set(path, response)
       error: (response) -> throw new Error("Could not load view from #{path}")

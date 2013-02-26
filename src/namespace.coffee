@@ -6,11 +6,11 @@ Batman = (mixins...) ->
 Batman.version = '0.14.1'
 
 Batman.config =
-  pathPrefix: '/'
-  viewPrefix: 'views'
+  pathToApp: '/'
+  pathToHTML: 'html'
   fetchRemoteViews: true
-  usePushState: no
-  minificationErrors: yes
+  usePushState: true
+  minificationErrors: true
 
 (Batman.container = do -> this).Batman = Batman  # I am so, so sorry.
 

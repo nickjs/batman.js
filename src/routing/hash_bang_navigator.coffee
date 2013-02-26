@@ -30,4 +30,4 @@ class Batman.HashbangNavigator extends Batman.Navigator
     if realPath is '/'
       super
     else
-      location.replace(@normalizePath("#{Batman.config.pathPrefix}#{@linkTo(realPath)}"))
+      location.replace(@normalizePath("#{Batman.config.pathToApp}#{@linkTo(realPath)}"))
