@@ -5,10 +5,10 @@ class Batman.SetProxy extends Batman.Object
   constructor: (@base) ->
     super()
     @length = @base.length
-    @base.on 'itemsWereAdded', (items...) =>
+    @base.on? 'itemsWereAdded', (items...) =>
       @set 'length', @base.length
       @fire('itemsWereAdded', items...)
-    @base.on 'itemsWereRemoved', (items...) =>
+    @base.on? 'itemsWereRemoved', (items...) =>
       @set 'length', @base.length
       @fire('itemsWereRemoved', items...)
 
