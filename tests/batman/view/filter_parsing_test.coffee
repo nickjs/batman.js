@@ -20,6 +20,13 @@ asyncTest "should parse one segment keypaths that begin with numbers", ->
     deepEqual @spy.lastCallArguments, ["bar"]
     QUnit.start()
 
+asyncTest "should parse one segment keypaths that begin with numbers and hyphens", ->
+  helpers.render '<div data-bind="404-title | test"></div>', Batman("404-title": "bar"), (node) =>
+    equal node.html(), "testValue"
+    ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
+    deepEqual @spy.lastCallArguments, ["bar"]
+    QUnit.start()
+
 asyncTest "should parse one segment keypaths as arguments", ->
   helpers.render '<div data-bind="1 | test foo"></div>', Batman(foo: "bar"), (node) =>
     equal node.html(), "testValue"
@@ -57,6 +64,13 @@ asyncTest "should parse many segment keypaths as arguments", ->
 
 asyncTest "should parse many segment keypaths that begin with numbers", ->
   helpers.render '<div data-bind="404_title.bar | test"></div>', Batman("404_title": Batman(bar: "baz")), (node) =>
+    equal node.html(), "testValue"
+    ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
+    deepEqual @spy.lastCallArguments, ["baz"]
+    QUnit.start()
+
+asyncTest "should parse many segment keypaths that begin with numbers and hyphens", ->
+  helpers.render '<div data-bind="404-title.bar | test"></div>', Batman("404-title": Batman(bar: "baz")), (node) =>
     equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, ["baz"]
