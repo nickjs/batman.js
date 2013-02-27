@@ -1,4 +1,4 @@
-Batman.config.viewPrefix = '/assets/batman/html'
+Batman.config.pathToHTML = '/assets/batman/html'
 
 numericKeys = [1, 2, 3, 4, 5, 6, 7, 10, 11]
 date_re = ///

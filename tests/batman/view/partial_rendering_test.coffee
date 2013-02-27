@@ -10,7 +10,7 @@ QUnit.module 'Batman.View partial rendering'
     Batman.Request = MockRequest
 
   teardown: ->
-    Batman.View.store = new Batman.ViewStore
+    Batman.View.store = new Batman.HTMLStore
     Batman.Request = oldRequest
 
 asyncTest "preloaded/already rendered partials should render", ->
@@ -33,7 +33,7 @@ asyncTest "unloaded partials should load then render", 2, ->
     QUnit.start()
 
   setTimeout ->
-    equal MockRequest.lastInstance.constructorArguments[0].url, "/html/test/one.html"
+    equal MockRequest.lastInstance.constructorArguments[0].url, "/assets/batman/html/test/one.html"
     MockRequest.lastInstance.fireSuccess('<div>Hello from a partial</div>')
   , ASYNC_TEST_DELAY
 

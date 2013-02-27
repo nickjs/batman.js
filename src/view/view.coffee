@@ -1,5 +1,5 @@
 #= require ../object
-#= require ./view_store
+#= require ./html_store
 
 # A `Batman.View` can function two ways: a mechanism to load and/or parse html files
 # or a root of a subclass hierarchy to create rich UI classes, like in Cocoa.
@@ -13,7 +13,7 @@ class Batman.View extends Batman.Object
           val = @set key, []
         val
 
-  @store: new Batman.ViewStore()
+  @store: new Batman.HTMLStore()
   @option: (keys...) ->
     @accessor keys...,
       get: (key) ->        @get("argumentBindings.#{key}")?.get('filteredValue')

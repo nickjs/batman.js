@@ -8,7 +8,7 @@ count = 0
 
 QUnit.module 'Batman.View'
   setup: ->
-    Batman.View.store = new Batman.ViewStore
+    Batman.View.store = new Batman.HTMLStore
     MockRequest.reset()
     @options =
       source: "test_path#{++count}"
@@ -20,7 +20,7 @@ QUnit.module 'Batman.View'
     Batman.Request = oldRequest
 
 test 'should pull in the source for a view from a path', 1, ->
-  equal MockRequest.lastConstructorArguments[0].url, "/html/#{@options.source}.html"
+  equal MockRequest.lastConstructorArguments[0].url, "/assets/batman/html/#{@options.source}.html"
 
 test 'should update its node with the contents of its view', 1, ->
   MockRequest.lastInstance.fireSuccess('view contents')
@@ -77,7 +77,7 @@ asyncTest 'should call the ready function once its contents have been loaded', 1
 
 asyncTest '.store should allow prefetching of view sources', 2, ->
   Batman.View.store.prefetch('view')
-  equal MockRequest.lastConstructorArguments[0].url, "/html/view.html"
+  equal MockRequest.lastConstructorArguments[0].url, "/assets/batman/html/view.html"
   delay =>
     MockRequest.lastInstance.fireSuccess('prefetched contents')
     view = new Batman.View({source: 'view'})
@@ -103,10 +103,10 @@ test ".store should pull absolutely path'd data-defineview'd views from the DOM"
   equal MockRequest.instances.length, 1
 
 test ".store should raise if remote fetching is disabled", ->
-  Batman.config.fetchRemoteViews = false
+  Batman.config.fetchRemoteHTML = false
   QUnit.raises ->
     Batman.View.store.get('remote')
-  Batman.config.fetchRemoteViews = true
+  Batman.config.fetchRemoteHTML = true
 
 test 'should not autogenerate a node if the node property is false', 1, ->
   MockRequest.reset()
