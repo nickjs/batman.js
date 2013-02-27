@@ -20,7 +20,7 @@ QUnit.module 'Batman.View'
     Batman.Request = oldRequest
 
 test 'should pull in the source for a view from a path', 1, ->
-  equal MockRequest.lastConstructorArguments[0].url, "/html/#{@options.source}.html"
+  equal MockRequest.lastConstructorArguments[0].url, "/assets/batman/html/#{@options.source}.html"
 
 test 'should update its node with the contents of its view', 1, ->
   MockRequest.lastInstance.fireSuccess('view contents')
@@ -77,7 +77,7 @@ asyncTest 'should call the ready function once its contents have been loaded', 1
 
 asyncTest '.store should allow prefetching of view sources', 2, ->
   Batman.View.store.prefetch('view')
-  equal MockRequest.lastConstructorArguments[0].url, "/html/view.html"
+  equal MockRequest.lastConstructorArguments[0].url, "/assets/batman/html/view.html"
   delay =>
     MockRequest.lastInstance.fireSuccess('prefetched contents')
     view = new Batman.View({source: 'view'})
