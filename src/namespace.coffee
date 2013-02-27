@@ -8,7 +8,7 @@ Batman.version = '0.14.1'
 Batman.config =
   pathToApp: '/'
   pathToHTML: 'html'
-  fetchRemoteViews: true
+  fetchRemoteHTML: true
   usePushState: true
   minificationErrors: true
 
