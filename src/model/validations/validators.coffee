@@ -18,4 +18,5 @@ Batman.extend Batman.translate.messages,
       less_than_or_equal_to: "must be less than or equal to %{count}"
       not_matching: "is not valid"
       invalid_association: "is not valid"
-      not_included_in_list: "is not included in list"
+      not_included_in_list: "is not included in the list"
+      included_in_list: "is included in the list"
