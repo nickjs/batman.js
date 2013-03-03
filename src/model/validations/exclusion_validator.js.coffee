@@ -1,10 +1,10 @@
 #= require ./validators
 
 class Batman.ExclusionValidator extends Batman.Validator
-  @triggers 'exlusionIn'
+  @triggers 'exclusionIn'
 
   constructor: (options) ->
-    @unacceptableValues = options.exlusionIn
+    @unacceptableValues = options.exclusionIn
     super
 
   validateEach: (errors, record, key, callback) ->
