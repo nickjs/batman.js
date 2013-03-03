@@ -509,7 +509,13 @@ Well-tested contributions are always welcome! Here's what you should do:
 git clone https://github.com/Shopify/batman.git
 ```
 
-#### 2. Run the tests
+#### 2. Install dependencies using NPM
+
+```bash
+npm install .
+```
+
+#### 3. Run the tests
 
 You can test batman.js locally either on the command line or in the browser and both should work. Tests are written in CoffeeScript using [QUnit](http://docs.jquery.com/QUnit#API_documentation).
 
@@ -527,11 +533,11 @@ coffee tests/serve.coffee
 
 ...then visit `http://localhost:1047/tests/batman/test.html`.
 
-#### 3. Write some test-driven code
+#### 4. Write some test-driven code
 
 The tests are in `tests/batman`. All test files in there are automatically included into the browser.
 
-#### 4. Update the documentation
+#### 5. Update the documentation
 
 The docs are rendered using [percolate](https://github.com/hornairs/percolate) and require that [pygments](http://pygments.org/) is already installed.
 
@@ -547,7 +553,7 @@ To render the docs, run the following command from the project root:
 cake doc
 ```
 
-#### 5. Create a pull request
+#### 6. Create a pull request
 
 If it's good code that fits with the goals of the project, we'll merge it in!
 
