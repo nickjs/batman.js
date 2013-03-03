@@ -89,6 +89,7 @@ cli.main (args, options) ->
   Batman.mixin TemplateVars,
     app: options.appName
     name: options.name
+    version: Batman.version
 
   transforms = [((x) -> x.toUpperCase()), ((x) -> Batman.helpers.camelize(x)), ((x) -> Batman.helpers.underscore(x).toLowerCase())]
 

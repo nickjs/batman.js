@@ -8,7 +8,7 @@
     "node": "*"
   },
   "dependencies": {
-    "batman": "~>0.1.0"
+    "batman": "~>$_version$"
   },
   "devDependencies": {},
   "batman": {
