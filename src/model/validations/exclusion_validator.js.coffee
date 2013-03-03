@@ -4,14 +4,14 @@ class Batman.ExclusionValidator extends Batman.Validator
   @triggers 'exlusionIn'
 
   constructor: (options) ->
-    @acceptableValues = options.exlusionIn
+    @unacceptableValues = options.exlusionIn
     super
 
   validateEach: (errors, record, key, callback) ->
     value = record.get(key)
 
-    for acceptableValue in @acceptableValues
-      if acceptableValue == value
+    for unacceptableValue in @unacceptableValues
+      if unacceptableValue == value
         errors.add key, @format(key, 'included_in_list')
         return callback() 
 
