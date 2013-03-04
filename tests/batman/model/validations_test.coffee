@@ -115,6 +115,36 @@ validationsTestSuite = ->
         equal errors.length, 0
         QUnit.start()
 
+  asyncTest "inclusionIn", ->
+    class Product extends Batman.Model
+      @validate 'name', inclusionIn: ["Batman", "Catwoman"]
+
+    p = new Product(name: "Batman")
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+
+      p.set 'name', "The Penguin"
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 1
+        QUnit.start()
+
+  asyncTest "exclusionIn", ->
+    class Product extends Batman.Model
+      @validate 'name', exclusionIn: ["Batman", "Catwoman"]
+
+    p = new Product(name: "Batman")
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+
+      p.set 'name', "The Penguin"
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        QUnit.start()
+
   asyncTest "custom async validations which don't rely on model state", ->
     letItPass = true
     class Product extends Batman.Model
