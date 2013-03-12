@@ -115,9 +115,9 @@ validationsTestSuite = ->
         equal errors.length, 0
         QUnit.start()
 
-  asyncTest "inclusionIn", ->
+  asyncTest "inclusion", ->
     class Product extends Batman.Model
-      @validate 'name', inclusionIn: ["Batman", "Catwoman"]
+      @validate 'name', inclusion: in: ["Batman", "Catwoman"]
 
     p = new Product(name: "Batman")
     p.validate (err, errors) ->
@@ -130,9 +130,9 @@ validationsTestSuite = ->
         equal errors.length, 1
         QUnit.start()
 
-  asyncTest "exclusionIn", ->
+  asyncTest "exclusion", ->
     class Product extends Batman.Model
-      @validate 'name', exclusionIn: ["Batman", "Catwoman"]
+      @validate 'name', exclusion: in: ["Batman", "Catwoman"]
 
     p = new Product(name: "Batman")
     p.validate (err, errors) ->

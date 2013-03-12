@@ -226,8 +226,8 @@ The built in validation options are listed below:
  + `maxLength : number`: Assert that the value's `length` property is less than the given number.
  + `length : number`: Assert that the value's `length` property is exactly the given number.
  + `lengthWithin : [number, number]` or `lengthIn : [number, number]`: Assert that the value's `length` property is within the ranger specified by the given array of two numbers, where the first number is the lower bound and the second number is the upper bound.
- + `inclusionIn : [list, of, acceptable, values]`: Assert that the value is equal to one of the values in an array.
- + `exclusionIn : [list, of, unacceptable, values]`: Assert that the value is not equal to any of the values in an array.
+ + `inclusion : in : [list, of, acceptable, values]`: Assert that the value is equal to one of the values in an array.
+ + `exclusion : in : [list, of, unacceptable, values]`: Assert that the value is not equal to any of the values in an array.
 
 Custom validators should have the signature `(errors, record, key, callback)`. The arguments are as follows:
 

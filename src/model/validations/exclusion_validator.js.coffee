@@ -1,19 +1,15 @@
 #= require ./validators
 
 class Batman.ExclusionValidator extends Batman.Validator
-  @triggers 'exclusionIn'
+  @triggers 'exclusion'
 
   constructor: (options) ->
-    @unacceptableValues = options.exclusionIn
+    @unacceptableValues = options.exclusion.in
     super
 
   validateEach: (errors, record, key, callback) ->
-    value = record.get(key)
-
-    for unacceptableValue in @unacceptableValues
-      if unacceptableValue == value
-        errors.add key, @format(key, 'included_in_list')
-        return callback() 
+    if @unacceptableValues.indexOf(record.get(key)) >= 0
+      errors.add key, @format(key, 'included_in_list')
 
     callback()
 
