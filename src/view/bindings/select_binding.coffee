@@ -89,6 +89,8 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
     , 100
 
   _fixSelectElementWidth: ->
-    style = @get('node').style
+    style = @get('node')?.style
+    return if not style
+
     style.width = '100%'
     style.width = ''
