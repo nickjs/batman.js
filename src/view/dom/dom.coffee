@@ -99,6 +99,8 @@ Batman.DOM =
         if isSetting then (node.value = value) else node.value
       when 'SELECT'
         if isSetting then node.value = value
+      when 'OPTION'
+        if isSetting then node.text = value else node.text
       else
         if isSetting
           Batman.DOM.setInnerHTML node, if escapeValue then Batman.escapeHTML(value) else value
