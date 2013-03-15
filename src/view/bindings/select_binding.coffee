@@ -70,11 +70,7 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
 
   nodeChange: =>
     if @isTwoWay()
-      # Gather the selected options and update the binding
-      selections = if @node.multiple
-        (c.value for c in @node.children when c.selected)
-      else
-        @node.value
+      selections = Batman.DOM.valueForNode(@node)
       selections = selections[0] if typeof selections is Array && selections.length == 1
       @set 'unfilteredValue', selections
 
