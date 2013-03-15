@@ -94,15 +94,15 @@ Batman.DOM =
 
   valueForNode: (node, value = '', escapeValue = true) ->
     isSetting = arguments.length > 1
-    switch node.nodeName.toUpperCase()
+    nodeName = node.nodeName.toUpperCase()
+    switch nodeName
       when 'INPUT', 'TEXTAREA'
         if isSetting then (node.value = value) else node.value
       when 'SELECT'
         if isSetting then node.value = value
-      when 'OPTION'
-        if isSetting then node.text = value else node.text
       else
         if isSetting
+          node.text = value if nodeName is 'OPTION'
           Batman.DOM.setInnerHTML node, if escapeValue then Batman.escapeHTML(value) else value
         else node.innerHTML
 
