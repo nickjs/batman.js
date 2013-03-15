@@ -19,7 +19,7 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
     else if binding instanceof Batman.DOM.IteratorBinding
       binding.on 'nodeAdded', dataChangeHandler = => @_fireDataChange(@get('filteredValue'))
       binding.on 'nodeRemoved', dataChangeHandler
-      binding.on 'die', =>
+      binding.on 'die', ->
         binding.forget 'nodeAdded', dataChangeHandler
         binding.forget 'nodeRemoved', dataChangeHandler
     else
@@ -65,6 +65,7 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
 
     # Finally, update the options' `selected` bindings
     @updateOptionBindings()
+    @fixSelectElementWidth()
     return
 
   nodeChange: =>
@@ -82,3 +83,16 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
 
   updateOptionBindings: =>
     @selectedBindings.forEach (binding) -> binding._fireNodeChange()
+
+  fixSelectElementWidth: ->
+    clearTimeout(@_fixWidthTimeout) if @_fixWidthTimeout
+
+    @_fixWidthTimeout = setTimeout =>
+      @_fixWidthTimeout = null
+      @_fixSelectElementWidth()
+    , 100
+
+  _fixSelectElementWidth: ->
+    style = @get('node').style
+    style.width = '100%'
+    style.width = ''
