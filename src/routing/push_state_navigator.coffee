@@ -21,6 +21,6 @@ class Batman.PushStateNavigator extends Batman.Navigator
   handleLocation: (location) ->
     path = @pathFromLocation(location)
     if path is '/' and (hashbangPath = Batman.HashbangNavigator::pathFromLocation(location)) isnt '/'
-      @replace(hashbangPath)
+      @redirect(hashbangPath, true)
     else
       super
