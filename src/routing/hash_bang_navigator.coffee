@@ -19,13 +19,19 @@ class Batman.HashbangNavigator extends Batman.Navigator
     @handleCurrentLocation()
 
   pushState: (stateObject, title, path) ->
+    link = @linkTo(path)
+    return if link == window.location.hash
+
     @ignoreHashChange = true
-    window.location.hash = @linkTo(path)
+    window.location.hash = link
 
   replaceState: (stateObject, title, path) ->
+    link = @linkTo(path)
+    return if link == window.location.hash
+
     @ignoreHashChange = true
     loc = window.location
-    loc.replace("#{loc.pathname}#{loc.search}#{@linkTo(path)}")
+    loc.replace("#{loc.pathname}#{loc.search}#{link}")
 
   linkTo: (url) -> @hashPrefix + url
 
