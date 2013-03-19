@@ -11,9 +11,10 @@ test "pathFromLocation(window.location) returns the app-relative path", ->
   equal @nav.pathFromLocation(hash: '#'), '/'
   equal @nav.pathFromLocation(hash: ''), '/'
 
-test "pushState(stateObject, title, path) sets window.location.hash", ->
+asyncTest "pushState(stateObject, title, path) sets window.location.hash", ->
   @nav.pushState(null, '', '/foo/bar')
-  equal window.location.hash, "#!/foo/bar"
+  delay =>
+    equal window.location.hash, "#!/foo/bar"
 
 unless IN_NODE #jsdom doesn't like window.location.replace
   asyncTest "replaceState(stateObject, title, path) replaces the current history entry", ->
@@ -47,8 +48,6 @@ test "handleLocation(window.location) handles the real non-hashbang path if pres
   equal location.replace.callCount, 1
   deepEqual location.replace.lastCallArguments, ["#{Batman.config.pathToApp}#!/baz?q=buzz"]
 
-  Batman.config.usePushState = no
+  Batman.config.usePushState = false
   @nav.handleLocation(location)
   equal location.replace.callCount, 1
-
-
