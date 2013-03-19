@@ -5,18 +5,25 @@ class Batman.HashbangNavigator extends Batman.Navigator
 
   if window? and 'onhashchange' of window
     @::startWatching = ->
-      Batman.DOM.addEventListener window, 'hashchange', @handleCurrentLocation
+      Batman.DOM.addEventListener window, 'hashchange', @handleHashChange
     @::stopWatching = ->
-      Batman.DOM.removeEventListener window, 'hashchange', @handleCurrentLocation
+      Batman.DOM.removeEventListener window, 'hashchange', @handleHashChange
   else
     @::startWatching = ->
       @interval = setInterval @handleCurrentLocation, 100
     @::stopWatching = ->
       @interval = clearInterval @interval
+
+  handleHashChange: =>
+    return @ignoreHashChange = false if @ignoreHashChange
+    @handleCurrentLocation()
+
   pushState: (stateObject, title, path) ->
+    @ignoreHashChange = true
     window.location.hash = @linkTo(path)
 
   replaceState: (stateObject, title, path) ->
+    @ignoreHashChange = true
     loc = window.location
     loc.replace("#{loc.pathname}#{loc.search}#{@linkTo(path)}")
 
