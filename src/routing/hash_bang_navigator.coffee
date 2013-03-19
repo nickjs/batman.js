@@ -1,7 +1,8 @@
 #= require ./navigator
 
 class Batman.HashbangNavigator extends Batman.Navigator
-  HASH_PREFIX: '#!'
+  hashPrefix: '#!'
+
   if window? and 'onhashchange' of window
     @::startWatching = ->
       Batman.DOM.addEventListener window, 'hashchange', @handleCurrentLocation
@@ -14,16 +15,22 @@ class Batman.HashbangNavigator extends Batman.Navigator
       @interval = clearInterval @interval
   pushState: (stateObject, title, path) ->
     window.location.hash = @linkTo(path)
+
   replaceState: (stateObject, title, path) ->
     loc = window.location
     loc.replace("#{loc.pathname}#{loc.search}#{@linkTo(path)}")
-  linkTo: (url) -> @HASH_PREFIX + url
+
+  linkTo: (url) -> @hashPrefix + url
+
   pathFromLocation: (location) ->
     hash = location.hash
-    if hash?.substr(0,2) is @HASH_PREFIX
-      @normalizePath(hash.substr(2))
+    length = @hashPrefix.length
+
+    if hash?.substr(0, length) is @hashPrefix
+      @normalizePath(hash.substr(length))
     else
       '/'
+
   handleLocation: (location) ->
     return super unless Batman.config.usePushState
     realPath = Batman.PushStateNavigator::pathFromLocation(location)
