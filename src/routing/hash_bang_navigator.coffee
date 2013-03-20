@@ -26,6 +26,7 @@ class Batman.HashbangNavigator extends Batman.Navigator
     window.location.hash = link
 
   replaceState: (stateObject, title, path) ->
+    loc = window.location
     link = @linkTo(path)
     return if link == loc.hash
 
