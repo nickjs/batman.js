@@ -97,14 +97,13 @@ Batman.DOM =
     nodeName = node.nodeName.toUpperCase()
     switch nodeName
       when 'INPUT', 'TEXTAREA'
-        if isSetting then (node.value = value) else node.value
+        if isSetting then node.value = value else node.value
       when 'SELECT'
         if isSetting then node.value = value
+        else if node.multiple
+          child.value for child in node.children when child.selected
         else
-          if node.multiple
-            child.value for child in node.children when child.selected
-          else
-            node.value
+          node.value
       else
         if isSetting
           node.text = value if nodeName is 'OPTION'
