@@ -81,6 +81,7 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
     @selectedBindings.forEach (binding) -> binding._fireNodeChange()
 
   fixSelectElementWidth: ->
+    return if window.navigator.userAgent.toLowerCase().indexOf('msie') is -1 # I. Hate. Everything.
     clearTimeout(@_fixWidthTimeout) if @_fixWidthTimeout
 
     @_fixWidthTimeout = setTimeout =>
@@ -89,8 +90,12 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
     , 100
 
   _fixSelectElementWidth: ->
+    # There is a nasty bug in IE where select elements never reflow themselves (like ever),
+    # until there is mouse interaction with them. This is a fix for select elements which
+    # have their options set after they are rendered. They won't ever show their width without it.
     style = @get('node')?.style
     return if not style
 
+    previousWidth = @get('node').currentStyle.width
     style.width = '100%'
-    style.width = ''
+    style.width = previousWidth ? ''
