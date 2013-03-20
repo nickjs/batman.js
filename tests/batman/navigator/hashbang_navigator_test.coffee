@@ -51,3 +51,18 @@ test "handleLocation(window.location) handles the real non-hashbang path if pres
   Batman.config.usePushState = false
   @nav.handleLocation(location)
   equal location.replace.callCount, 1
+
+test "detectHashChange should trigger handleHashChange on change", ->
+  @nav.handleHashChange = createSpy()
+
+  window.location.hash = 'new_hash'
+  @nav.detectHashChange()
+  equal @nav.handleHashChange.callCount, 1
+
+  # Make sure handleHashChange is not called when hash hasn't changed
+  @nav.detectHashChange()
+  equal @nav.handleHashChange.callCount, 1
+
+  window.location.hash = 'new_hash_2'
+  @nav.detectHashChange()
+  equal @nav.handleHashChange.callCount, 2
