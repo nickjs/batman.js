@@ -106,6 +106,8 @@ Batman.DOM =
           node.value
       else
         if isSetting
+          # IE, in its infinite wisdom, requires option nodes to update the text property instead
+          # of innerHTML. We do this for all browsers since it's cheap and actually is in the spec.
           node.text = value if nodeName is 'OPTION'
           Batman.DOM.setInnerHTML node, if escapeValue then Batman.escapeHTML(value) else value
         else node.innerHTML
