@@ -10,7 +10,7 @@ class Batman.HashbangNavigator extends Batman.Navigator
       Batman.DOM.removeEventListener window, 'hashchange', @handleHashChange
   else
     @::startWatching = ->
-      @interval = setInterval @handleHashChange, 100
+      @interval = setInterval @detectHashChange, 100
     @::stopWatching = ->
       @interval = clearInterval @interval
 
