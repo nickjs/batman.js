@@ -18,7 +18,7 @@ class Batman.Navigator
       if @started && Batman.currentApp
         prefix = Batman.HashbangNavigator::hashPrefix
         hash = window.location.hash
-        if hash.substr(0, prefix.length) != prefix
+        if hash.length > prefix.length and hash.substr(0, prefix.length) != prefix
           @initialHash = hash.substr(prefix.length - 1)
         else if (index = hash.indexOf("##BATMAN##")) != -1
           @initialHash = hash.substr(index + 10)
