@@ -54,9 +54,11 @@ class Batman.HashbangNavigator extends Batman.Navigator
     # if the app doesn't support pushState at all, URL's will never be pushState URL's, so we can return
     return super if not Batman.config.usePushState
 
+    pushStatePath = Batman.PushStateNavigator::pathFromLocation(location)
+
     # if someone pastes a pushState URL but we're using hashbangs, we need to switch to that instead
-    if (pushStatePath = Batman.PushStateNavigator::pathFromLocation(location)) isnt '/'
-      location.replace(@normalizePath("#{Batman.config.pathToApp}#{@linkTo(pushStatePath)}##BATMAN###{@initialHash || ''}"))
+    if pushStatePath isnt '/'
+      location.replace(@normalizePath("#{Batman.config.pathToApp}#{@linkTo(pushStatePath)}#{if @initialHash then '##BATMAN##' + @initialHash else ''}"))
     #otherwise, just handle the hashbang URL
     else
       super

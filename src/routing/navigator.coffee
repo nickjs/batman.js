@@ -38,11 +38,16 @@ class Batman.Navigator
     @dispatch(path)
 
   dispatch: (params) ->
-    if @initialHash
+    dispatcher = @app.get('dispatcher')
+
+    @cachedPath = if @initialHash
       paramsMixin = {@initialHash}
       delete @initialHash
 
-    @cachedPath = @app.get('dispatcher').dispatch(params, paramsMixin)
+      dispatcher.dispatch(params, paramsMixin)
+    else
+      dispatcher.dispatch(params)
+
     @cachedPath = @_lastRedirect if @_lastRedirect
     @cachedPath
 
