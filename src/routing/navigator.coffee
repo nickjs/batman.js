@@ -16,6 +16,14 @@ class Batman.Navigator
     Batman.currentApp.prevent 'ready'
     Batman.setImmediate =>
       if @started && Batman.currentApp
+        prefix = Batman.HashbangNavigator::hashPrefix
+        hash = window.location.hash
+        if hash.substr(0, prefix.length) != prefix
+          @initialHash = hash.substr(prefix.length - 1)
+        else if (index = hash.indexOf("##BATMAN##")) != -1
+          @initialHash = hash.substr(index + 10)
+          @replaceState(null, '', hash.substr(prefix.length, index - prefix.length))
+
         @handleCurrentLocation()
         Batman.currentApp.allowAndFire 'ready'
 
@@ -30,7 +38,11 @@ class Batman.Navigator
     @dispatch(path)
 
   dispatch: (params) ->
-    @cachedPath = @app.get('dispatcher').dispatch(params)
+    if @initialHash
+      paramsMixin = {@initialHash}
+      delete @initialHash
+
+    @cachedPath = @app.get('dispatcher').dispatch(params, paramsMixin)
     @cachedPath = @_lastRedirect if @_lastRedirect
     @cachedPath
 

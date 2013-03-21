@@ -56,7 +56,7 @@ class Batman.HashbangNavigator extends Batman.Navigator
 
     # if someone pastes a pushState URL but we're using hashbangs, we need to switch to that instead
     if (pushStatePath = Batman.PushStateNavigator::pathFromLocation(location)) isnt '/'
-      location.replace(@normalizePath("#{Batman.config.pathToApp}#{@linkTo(pushStatePath)}"))
+      location.replace(@normalizePath("#{Batman.config.pathToApp}#{@linkTo(pushStatePath)}##BATMAN###{@initialHash || ''}"))
     #otherwise, just handle the hashbang URL
     else
       super
