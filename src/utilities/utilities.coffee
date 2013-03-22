@@ -80,8 +80,8 @@ _implementImmediates = (container) ->
   getHandle = -> "go#{++count}"
 
   if container.setImmediate and container.clearImmediate
-    Batman.setImmediate = container.setImmediate
-    Batman.clearImmediate = container.clearImmediate
+    Batman.setImmediate = -> container.setImmediate.apply(container, arguments)
+    Batman.clearImmediate = -> container.clearImmediate.apply(container, arguments)
   else if canUsePostMessage()
     prefix = 'com.batman.'
     functions = new Batman.SimpleHash
