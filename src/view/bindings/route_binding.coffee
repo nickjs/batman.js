@@ -13,13 +13,14 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
 
     super
 
+    return if @onAnchorTag && @node.getAttribute('target')
     Batman.DOM.events.click(@node, @routeClick)
 
   routeClick: (node, event) =>
-      return if event.__batmanActionTaken
-      event.__batmanActionTaken = true
-      params = @pathFromValue(@get('filteredValue'))
-      Batman.redirect(params) if params?
+    return if event.__batmanActionTaken
+    event.__batmanActionTaken = true
+    params = @pathFromValue(@get('filteredValue'))
+    Batman.redirect(params) if params?
 
   dataChange: (value) ->
     if value
