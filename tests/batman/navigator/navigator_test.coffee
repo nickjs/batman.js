@@ -14,14 +14,14 @@ test "normalizePath(segments...) joins the segments with slashes, prepends a sla
 test "push with dispatch that includes nested push only pushes inner state", ->
   navigator = new Batman.Navigator
   navigator.app = new Batman.Object
-    dispatcher: 
+    dispatcher:
       pathFromParams: (params) -> params
       dispatch: (params) ->
-        navigator.push '/redirected' if params is '/foo'
+        navigator.redirect('/redirected') if params is '/foo'
         params
 
   pushSpy = navigator.pushState = createSpy()
-  navigator.push '/foo'
+  navigator.redirect('/foo')
 
   ok pushSpy.callCount, 1
   deepEqual pushSpy.lastCallArguments, [null, '', '/redirected']
@@ -29,14 +29,14 @@ test "push with dispatch that includes nested push only pushes inner state", ->
 test "replace with dispatch that includes nested replace only replaces inner state", ->
   navigator = new Batman.Navigator
   navigator.app = new Batman.Object
-    dispatcher: 
+    dispatcher:
       pathFromParams: (params) -> params
       dispatch: (params) ->
-        navigator.replace '/redirected' if params is '/foo'
+        navigator.redirect('/redirected', true) if params is '/foo'
         params
 
   replaceSpy = navigator.replaceState = createSpy()
-  navigator.replace '/foo'
+  navigator.redirect('/foo', true)
 
   ok replaceSpy.callCount, 1
   deepEqual replaceSpy.lastCallArguments, [null, '', '/redirected']

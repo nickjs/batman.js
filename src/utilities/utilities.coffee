@@ -207,8 +207,8 @@ Batman.translate = (x, values = {}) -> Batman.helpers.interpolate(Batman.get(Bat
 Batman.translate.messages = {}
 Batman.t = -> Batman.translate(arguments...)
 
-Batman.redirect = (url) ->
-  Batman.navigator?.redirect url
+Batman.redirect = (url, replaceState=false) ->
+  Batman.navigator?.redirect(url, replaceState)
 
 # `Batman.initializeObject` is called by all the methods in Batman.Object to ensure that the
 # object's `_batman` property is initialized and it's own. Classes extending Batman.Object inherit
