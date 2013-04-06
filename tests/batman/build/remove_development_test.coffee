@@ -1,15 +1,22 @@
 return unless IN_NODE
-jsp = require("uglify-js").parser
-pro = require("uglify-js").uglify
+uglify = require("uglify-js")
 fs = require 'fs'
 path = require 'path'
 CoffeeScript = require 'coffee-script'
 remove = require '../../../src/tools/build/remove_development_transform'
 
 transform = (string) ->
-  ast = jsp.parse(string)
-  ast = remove.removeDevelopment(ast)
-  pro.gen_code(ast).trim()
+  toplevel = uglify.parse(string)
+  toplevel.figure_out_scope()
+  toplevel = remove.removeDevelopment(toplevel)
+  sq = uglify.Compressor({warnings: false})
+  toplevel = toplevel.transform(sq)
+  toplevel.figure_out_scope()
+  toplevel.compute_char_frequency()
+  toplevel.mangle_names()
+  stream = uglify.OutputStream()
+  toplevel.print(stream)
+  (stream + "").trim()
 
 QUnit.module "Batman build development removal",
 test "removes developer declarations", ->
@@ -45,6 +52,19 @@ test "removes assignments on developer", ->
 
   equal transform(code), ""
 
+test "removes if conditionals", ->
+  code = """
+    if (Batman.developer) {
+      window.foo = "bar";
+    }
+
+    if (Batman.developer.foo) {
+      window.foo = "bar";
+    }
+  """
+
+  equal transform(code), ""
+
 test "leaves no trace in the batman minified source", ->
   code = CoffeeScript.compile(fs.readFileSync(path.join(__dirname, '..', '..', '..', 'src', 'developer.coffee')).toString())
-  equal transform(code), "((function(){})).call(this)"
+  equal transform(code), "(function(){}).call(this);"
