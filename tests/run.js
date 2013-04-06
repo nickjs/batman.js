@@ -11,7 +11,8 @@
   qqunit = require('qqunit');
 
   qqunit.Environment.jsdom.jQueryify(window, path.join(__dirname, 'lib', 'jquery.js'), function(window, jQuery) {
-    var Helper, k, tests, v;
+    var Helper, e, k, tests, v;
+
     global.jQuery = jQuery;
     try {
       require('./lib/query_selector_polyfill');
@@ -32,7 +33,8 @@
       tests = glob.sync("" + __dirname + "/batman/**/*_test.coffee").map(function(test) {
         return path.resolve(process.cwd(), test);
       });
-    } catch (e) {
+    } catch (_error) {
+      e = _error;
       console.error(e.stack);
       process.exit(1);
     }
