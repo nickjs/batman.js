@@ -11,8 +11,7 @@ transform = (string) ->
   ast = remove.removeDevelopment(ast)
   pro.gen_code(ast).trim()
 
-QUnit.module "Batman build development removal"
-
+QUnit.module "Batman build development removal",
 test "removes developer declarations", ->
   code = """
     Batman.developer = {};

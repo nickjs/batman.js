@@ -1,4 +1,4 @@
-QUnit.module 'Batman.Navigator'
+QUnit.module 'Batman.Navigator',
   setup: ->
 
 test "normalizePath(segments...) joins the segments with slashes, prepends a slash if necessary, and removes final trailing slashes", ->

@@ -1,4 +1,4 @@
-QUnit.module "Batman.StateMachine"
+QUnit.module "Batman.StateMachine",
   setup: ->
     class @SwitchStateMachine extends Batman.StateMachine
       @transitions

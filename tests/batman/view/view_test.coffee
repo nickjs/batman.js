@@ -6,7 +6,7 @@ class MockRequest extends MockClass
   @chainedCallback 'error'
 count = 0
 
-QUnit.module 'Batman.View'
+QUnit.module 'Batman.View',
   setup: ->
     Batman.View.store = new Batman.HTMLStore
     MockRequest.reset()
@@ -133,7 +133,7 @@ asyncTest 'should render a given node after not autogenerating one if the node p
       equal renderSpy.callCount, 1
       equal @view.get('node').childNodes[0].innerHTML, 'bar'
 
-QUnit.module 'Batman.View isInDOM'
+QUnit.module 'Batman.View isInDOM',
   setup: ->
     @options =
       html: "predetermined contents"

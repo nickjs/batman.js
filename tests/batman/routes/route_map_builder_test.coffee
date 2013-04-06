@@ -6,7 +6,7 @@ simpleSetup = ->
 
     @builder = new Batman.RouteMapBuilder(@app, @routeMap, undefined)
 
-QUnit.module "Batman.RouteMapBuilder defining simple routes"
+QUnit.module "Batman.RouteMapBuilder defining simple routes",
   setup: simpleSetup
 
 test "can define simple routes to a controller and action", ->
@@ -76,7 +76,7 @@ test "autogenerates names for routes from the path if not given", ->
   [name, route] = @routeMap.addRoute.lastCallArguments
   equal name, 'somethings.new'
 
-QUnit.module "Batman.RouteMapBuilder defining resource routes"
+QUnit.module "Batman.RouteMapBuilder defining resource routes",
   setup: simpleSetup
 
 test "can define resource routes", 13, ->
@@ -198,7 +198,7 @@ test "can define nonstandard collection routes", ->
   deepEqual route.get('baseParams'), {handy: true}
   deepEqual route.get('templatePath'), '/products/filtered'
 
-QUnit.module "Batman.RouteMapBuilder nested resources"
+QUnit.module "Batman.RouteMapBuilder nested resources",
   setup: simpleSetup
 
 test "can define nested resource routes", ->

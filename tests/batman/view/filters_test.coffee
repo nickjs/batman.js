@@ -1,7 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View filter execution'
-
+QUnit.module 'Batman.View filter execution',
 asyncTest 'get', 1, ->
   context = Batman
     foo: new Batman.Hash({bar: "qux"})
@@ -453,8 +452,7 @@ asyncTest 'raw', 2, ->
     QUnit.start()
 
 
-QUnit.module "Batman.Filters: interpolate filter"
-
+QUnit.module "Batman.Filters: interpolate filter",
 asyncTest "it should accept string literals", ->
   helpers.render '<div data-bind="\'this kind of defeats the purpose\' | interpolate"></div>', false, {}, (node) ->
     equal node.childNodes[0].innerHTML, "this kind of defeats the purpose"
@@ -494,8 +492,7 @@ asyncTest "it should interpolate strings with counts", ->
       equal node.childNodes[0].innerHTML, "3 pamplemouses"
       QUnit.start()
 
-QUnit.module "Batman.View user defined filter execution"
-
+QUnit.module "Batman.View user defined filter execution",
 asyncTest 'should render a user defined filter', 4, ->
   Batman.Filters['test'] = spy = createSpy().whichReturns("testValue")
   ctx = Batman

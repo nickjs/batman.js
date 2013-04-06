@@ -1,4 +1,4 @@
-QUnit.module "Batman.SetComplement"
+QUnit.module "Batman.SetComplement",
   setup: ->
     @left = new Batman.Set("a", "b", "c")
     @right = new Batman.Set("c", "d", "e")

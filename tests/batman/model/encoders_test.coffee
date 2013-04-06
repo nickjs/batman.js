@@ -1,8 +1,8 @@
-QUnit.module "Batman.Model: encoding/decoding to/from JSON"
+QUnit.module "Batman.Model: encoding/decoding to/from JSON",
   setup: ->
     class @Product extends Batman.Model
       @encode 'name', 'cost'
-      @accessor 'excitingName'
+      @accessor 'excitingName',
         get: -> @get('name').toUpperCase()
 
     class @FlakyProduct extends @Product
@@ -82,7 +82,7 @@ test "key ending with ? marked for decoding should be decoded", ->
   p.fromJSON(json)
   ok p.get('broken?'), "Cool Snowboard"
 
-QUnit.module "Batman.Model: encoding/decoding to/from JSON with custom primary Key"
+QUnit.module "Batman.Model: encoding/decoding to/from JSON with custom primary Key",
   setup: ->
     class @Product extends Batman.Model
       @set 'primaryKey', '_id'
@@ -114,7 +114,7 @@ test "primary key encoding can be opted into", ->
   p = new @Product("deadbeef")
   deepEqual p.toJSON(), {_id: "deadbeef"}
 
-QUnit.module "Batman.Model: encoding: custom encoders/decoders"
+QUnit.module "Batman.Model: encoding: custom encoders/decoders",
   setup: ->
     class @Product extends Batman.Model
       @encode 'name', (unencoded) -> unencoded.toUpperCase()
@@ -184,7 +184,7 @@ test "passing false for an encoder should never do a get on the property", ->
       encode: false
       decode: (x) -> x
 
-    @accessor 'name'
+    @accessor 'name',
       get: getSpy
 
   encoded = new TestProduct(name: "snowboard", date: "10/10/2010")

@@ -1,4 +1,4 @@
-QUnit.module "Batman.SetIntersection"
+QUnit.module "Batman.SetIntersection",
   setup: ->
     @left = new Batman.Set("a", "b", "c")
     @right = new Batman.Set("c", "d", "e")

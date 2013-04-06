@@ -1,7 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module "Batman.View: mixin and context bindings"
-
+QUnit.module "Batman.View: mixin and context bindings",
 asyncTest 'it should allow mixins to be applied', 1, ->
   Batman.mixins.set 'test',
     foo: 'bar'

@@ -9,7 +9,7 @@ equalCacheLength = (cache, length) ->
   QUnit.equal cache.length, length
   QUnit.equal cache.keyQueue.length, length
 
-QUnit.module "Batman.RenderCache"
+QUnit.module "Batman.RenderCache",
   setup: ->
     @cache = new Batman.RenderCache
     class @MockView extends MockClass

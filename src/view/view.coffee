@@ -48,7 +48,7 @@ class Batman.View extends Batman.Object
       @html = @constructor.store.get(source)
     set: (_, html) -> @html = html
 
-  @accessor 'node'
+  @accessor 'node',
     get: ->
       unless @node?
         html = @get('html')

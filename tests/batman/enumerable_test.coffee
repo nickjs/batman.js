@@ -8,8 +8,7 @@ class TestEnumerator
     @a.forEach(f)
 
 getEnumerable = (array) -> new TestEnumerator(array...)
-QUnit.module "Batman.Enumerable mixin"
-
+QUnit.module "Batman.Enumerable mixin",
 test "classes mixing in enumerable should report as such", ->
   class Test
     Batman.mixin @::, Batman.Enumerable

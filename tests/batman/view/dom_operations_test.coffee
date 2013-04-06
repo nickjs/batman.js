@@ -1,6 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module "Batman.DOM helpers"
+QUnit.module "Batman.DOM helpers",
   setup: ->
     class @TestView extends Batman.View
       constructor: ->

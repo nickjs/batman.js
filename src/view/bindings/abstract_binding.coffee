@@ -35,7 +35,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   get_rx = /(?!^\s*)\[(.*?)\]/g
 
   # The `filteredValue` which calculates the final result by reducing the initial value through all the filters.
-  @accessor 'filteredValue'
+  @accessor 'filteredValue',
     get: ->
       unfilteredValue = @get('unfilteredValue')
       self = this
@@ -66,7 +66,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     set: (_, newValue) -> @set('unfilteredValue', newValue)
 
   # The `unfilteredValue` is whats evaluated each time any dependents change.
-  @accessor 'unfilteredValue'
+  @accessor 'unfilteredValue',
     get: ->
       # If we're working with an `@key` and not an `@value`, find the context the key belongs to so we can
       # hold a reference to it for passing to the `dataChange` and `nodeChange` observers.

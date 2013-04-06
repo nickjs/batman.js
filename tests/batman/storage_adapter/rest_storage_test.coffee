@@ -5,7 +5,7 @@ else
 
 oldRequest = Batman.Request
 
-QUnit.module "Batman.RestStorage"
+QUnit.module "Batman.RestStorage",
   setup: ->
     Batman.Request = restStorageTestSuite.MockRequest
     restStorageTestSuite.MockRequest.reset()

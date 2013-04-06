@@ -1,8 +1,7 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 getPs = (view) -> $('p', view.get('node')).map(-> @innerHTML).toArray()
 
-QUnit.module "Batman.View loop rendering"
-
+QUnit.module "Batman.View loop rendering",
 asyncTest 'it should allow simple loops', 1, ->
   source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
   objects = new Batman.Set('foo', 'bar', 'baz')

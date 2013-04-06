@@ -1,6 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module "Batman.View rendering nested loops"
+QUnit.module "Batman.View rendering nested loops",
   setup: ->
     @context = Batman
       posts: new Batman.Set()
