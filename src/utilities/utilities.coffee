@@ -199,7 +199,7 @@ Batman.unescapeHTML = do ->
     return unless s?
     node = Batman._unescapeHTMLNode ||= document.createElement('DIV')
     node.innerHTML = s
-    Batman.DOM.innerText(node)
+    Batman.DOM.textContent(node)
 
 # `translate` is hook for the i18n extra to override and implemnent. All strings which might
 # be shown to the user pass through this method. `translate` is aliased to `t` internally.
