@@ -4,7 +4,7 @@ else
   {sharedStorageTestSuite} = window
 
 if typeof window.localStorage isnt 'undefined'
-  QUnit.module "Batman.LocalStorage"
+  QUnit.module "Batman.LocalStorage",
     setup: ->
       window.localStorage.clear()
       class @Product extends Batman.Model

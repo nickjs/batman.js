@@ -1,5 +1,4 @@
-QUnit.module "Batman.Route"
-
+QUnit.module "Batman.Route",
 test "routes should match and dispatch", 3, ->
   @route = new Batman.CallbackActionRoute "/why/where/what", {callback: spy = createSpy()}
 

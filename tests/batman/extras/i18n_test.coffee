@@ -23,7 +23,7 @@ class MockRequest extends MockClass
   @chainedCallback 'loading'
   @chainedCallback 'loaded'
 
-QUnit.module "Batman.I18N: locale property"
+QUnit.module "Batman.I18N: locale property",
   setup: ->
     MockRequest.reset()
     I18N.set('locales', Batman {en: {grapefruit: true}, fr: {pamplemouse: true}})
@@ -48,7 +48,7 @@ test "Batman.I18N.translations should reflect the locale", ->
   ok !I18N.get('translations.grapefruit')
   ok I18N.get('translations.pamplemouse')
 
-QUnit.module "Batman.I18N: locales fetching"
+QUnit.module "Batman.I18N: locales fetching",
   setup: ->
     MockRequest.reset()
     Batman.Request = MockRequest
@@ -83,7 +83,7 @@ test "the locales obj should be replaceable", ->
   I18N.set('locales', Batman {en: {a: "c"}})
   deepEqual I18N.get('locales.en'), {a: "c"}
 
-QUnit.module "Batman.I18N: translate filter"
+QUnit.module "Batman.I18N: translate filter",
   setup: ->
     Batman.Request = MockRequest
     I18N.set 'locales', Batman

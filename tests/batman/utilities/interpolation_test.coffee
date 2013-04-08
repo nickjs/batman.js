@@ -1,5 +1,4 @@
-QUnit.module 'Batman.helpers.interpolate'
-
+QUnit.module 'Batman.helpers.interpolate',
 test 'should interpolate simple values', ->
   equal Batman.helpers.interpolate("%{one} %{two}, %{three}", {one: "one", two: 2, three: false}), "one 2, false"
 

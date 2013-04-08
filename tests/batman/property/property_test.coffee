@@ -1,4 +1,4 @@
-QUnit.module 'Batman.Property source tracking'
+QUnit.module 'Batman.Property source tracking',
   setup: ->
     @class = class extends Batman.Object
     @object = new @class
@@ -43,7 +43,7 @@ test "calling mutators from inside an accessor does not add a new source", ->
 
   deepEqual @object.property('foo').sources, []
 
-QUnit.module 'Batman.Property laziness'
+QUnit.module 'Batman.Property laziness',
   setup: ->
     @class = class extends Batman.Object
     @object = new @class

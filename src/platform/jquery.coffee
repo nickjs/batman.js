@@ -21,7 +21,7 @@ Batman.extend Batman.DOM,
     Batman.DOM.willInsertNode(child)
     jQuery(parent).append(child)
     Batman.DOM.didInsertNode(child)
-  innerText: (node) -> jQuery(node).text()
+  textContent: (node) -> jQuery(node).text()
 
 Batman.Request::_parseResponseHeaders = (xhr) ->
   headers = xhr.getAllResponseHeaders().split('\n').reduce((acc, header) ->

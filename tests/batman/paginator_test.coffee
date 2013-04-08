@@ -1,4 +1,4 @@
-QUnit.module 'Batman.Paginator'
+QUnit.module 'Batman.Paginator',
   setup: ->
     @data = ['a','b','c','d','e','f','g','h','i','j']
     @p = new Batman.Paginator
@@ -95,7 +95,7 @@ test "numeric setters cast strings to numbers", ->
   strictEqual p.get('offset'), 10
   strictEqual p.offset, 10
 
-QUnit.module 'Batman.Paginator.Cache'
+QUnit.module 'Batman.Paginator.Cache',
   setup: ->
     @slice = new Batman.Paginator.Cache(2, 5, ['a','b','c','d'])
 

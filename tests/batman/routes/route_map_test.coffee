@@ -1,4 +1,4 @@
-QUnit.module "Batman.RouteMap"
+QUnit.module "Batman.RouteMap",
   setup: ->
     @routeMap = new Batman.RouteMap
 

@@ -1,6 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.DOM.Yield'
+QUnit.module 'Batman.DOM.Yield',
   setup: ->
     @yield = Batman.DOM.Yield.withName('test')
     @containerNode = document.createElement('div')
@@ -46,7 +46,7 @@ test "clear() after append() should remove references to old nodes", ->
   @yield.clear()
   deepEqual @yield.currentVersionNodes, []
 
-QUnit.module 'Batman.View yield, contentFor, and replace rendering'
+QUnit.module 'Batman.View yield, contentFor, and replace rendering',
   teardown: ->
     Batman.DOM.Yield.reset()
 

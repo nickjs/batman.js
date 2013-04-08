@@ -1,7 +1,7 @@
 {createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter} = if typeof require isnt 'undefined' then require '../model_helper' else window
 helpers = if typeof require is 'undefined' then window.viewHelpers else require '../../view/view_helper'
 
-QUnit.module "Batman.Model belongsTo Associations"
+QUnit.module "Batman.Model belongsTo Associations",
   setup: ->
     namespace = @namespace = this
     class @Store extends Batman.Model
@@ -227,7 +227,7 @@ test "belongsTo supports custom proxy classes", 1, ->
   shirt = new Shirt()
   ok shirt.get('store') instanceof CoolBelongsToProxy
 
-QUnit.module "Batman.Model belongsTo Associations with inverseOf to a hasMany"
+QUnit.module "Batman.Model belongsTo Associations with inverseOf to a hasMany",
   setup: ->
     namespace = @namespace = this
 
@@ -288,7 +288,7 @@ asyncTest "belongsTo sets the foreign key on itself such that many loads are pic
         equal @Customer.get('loaded').length, 1, 'Only one parent record should be created'
         QUnit.start()
 
-QUnit.module "Batman.Model belongsTo Associations with inverseOf to a hasOne"
+QUnit.module "Batman.Model belongsTo Associations with inverseOf to a hasOne",
   setup: ->
     namespace = @
 

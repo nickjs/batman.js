@@ -11,7 +11,7 @@ class MockView extends MockClass
 
 oldNavigator = Batman.navigator
 
-QUnit.module 'Batman.Controller'
+QUnit.module 'Batman.Controller',
   setup: ->
     @controller = new TestController
     @controller.renderCache.reset()
@@ -214,7 +214,7 @@ test 'filters specifying only should only be called on those actions', 2, ->
   spy = createSpy()
 
   class FilterController extends Batman.Controller
-    @beforeFilter only: 'withBefore', spy
+    @beforeFilter {only: 'withBefore'}, spy
 
     withBefore: -> @render false
     all: -> @render false
@@ -229,7 +229,7 @@ test 'filters specifying only should only be called on those actions', 2, ->
 test 'filters specifying except should not be called on those actions', 2, ->
   spy = createSpy()
   class FilterController extends Batman.Controller
-    @beforeFilter except: 'index', spy
+    @beforeFilter {except: 'index'}, spy
 
     show: -> @render false
     index: -> @render false
@@ -244,7 +244,7 @@ test 'filters specifying except should not be called on those actions', 2, ->
 test 'filters specifying options in arrays should apply to all/none of those options', 3, ->
   spy = createSpy()
   class FilterController extends Batman.Controller
-    @beforeFilter except: ['index', 'edit'], spy
+    @beforeFilter {except: ['index', 'edit']}, spy
 
     show: -> @render false
     index: -> @render false
@@ -416,7 +416,7 @@ test 'dispatching params with a hash does not scroll to that hash if autoScrollT
     @controller.dispatch 'show', {'#': 'foo'}
     ok !spy.called
 
-QUnit.module 'Batman.Controller error handling'
+QUnit.module 'Batman.Controller error handling',
   setup: ->
     class @CustomError extends Batman.Object
     class @CustomError2 extends Batman.Object

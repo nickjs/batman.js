@@ -1,4 +1,4 @@
-QUnit.module 'Batman.ModelPaginator'
+QUnit.module 'Batman.ModelPaginator',
   setup: ->
     class @Thing extends Batman.Model
       @load: createSpy()

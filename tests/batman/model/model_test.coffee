@@ -131,7 +131,7 @@ test "get('resourceName') should use the class level resourceName property", ->
 
   equal Product.get('resourceName'), 'product'
 
-QUnit.module "Batman.Model class clearing"
+QUnit.module "Batman.Model class clearing",
   setup: ->
     class @Product extends Batman.Model
       @encode 'name', 'cost'

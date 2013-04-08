@@ -337,8 +337,7 @@ validationsTestSuite = ->
           equal errors.length, 0
           QUnit.start()
 
-QUnit.module "Batman.Model: Validations"
-
+QUnit.module "Batman.Model: Validations",
 validationsTestSuite()
 
 QUnit.module "Batman.Model: Validations with I18N",
@@ -349,7 +348,7 @@ QUnit.module "Batman.Model: Validations with I18N",
 
 validationsTestSuite()
 
-QUnit.module "Batman.Model: binding to errors"
+QUnit.module "Batman.Model: binding to errors",
   setup: ->
     class @Product extends Batman.Model
       @validate 'name', {presence: true}

@@ -1,5 +1,5 @@
 oldOffset = Batman.Encoders.railsDate.defaultTimezoneOffset
-QUnit.module "Batman.Rails: date encoding"
+QUnit.module "Batman.Rails: date encoding",
   teardown: ->
     Batman.Encoders.railsDate.defaultTimezoneOffset = oldOffset
 

@@ -4,7 +4,7 @@ class MockRequest extends MockClass
   @chainedCallback 'success'
   @chainedCallback 'error'
 oldRequest = Batman.Request
-QUnit.module 'Batman.View partial rendering'
+QUnit.module 'Batman.View partial rendering',
   setup: ->
     MockRequest.reset()
     Batman.Request = MockRequest

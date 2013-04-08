@@ -1,4 +1,4 @@
-QUnit.module 'Batman.Dispatcher: getting controller instances'
+QUnit.module 'Batman.Dispatcher: getting controller instances',
   setup: ->
     @App = Batman()
     @dispatcher = new Batman.Dispatcher(@App, {})
@@ -18,7 +18,7 @@ test "safely gets multiword controllers", ->
   @App.SavedSearchesController = new Batman.Object({sharedController: @instance = {}})
   equal @dispatcher.get('controllers.savedSearches'), @instance
 
-QUnit.module 'Batman.Dispatcher: inferring paths'
+QUnit.module 'Batman.Dispatcher: inferring paths',
   setup: ->
     class @App extends Batman.App
     class @App.Product extends Batman.Model
@@ -78,7 +78,7 @@ mockRoute = ->
 
 oldRedirect = Batman.redirect
 
-QUnit.module 'Batman.Dispatcher: dispatching routes'
+QUnit.module 'Batman.Dispatcher: dispatching routes',
   setup: ->
     @App = Batman
       currentParams: Batman

@@ -5,7 +5,7 @@ oldRendererDeferEvery = Batman.Renderer::deferEvery
 getSelections = (node) -> node.find('option').map((i, node) -> !!node.selected).toArray()
 getContents = (node) -> node.find('option').map((i, node) -> node.innerHTML).toArray()
 
-QUnit.module 'Batman.View select bindings'
+QUnit.module 'Batman.View select bindings',
   setup: ->
     Batman.DOM.IteratorBinding::deferEvery = false
     Batman.Renderer::deferEvery = false

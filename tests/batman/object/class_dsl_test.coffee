@@ -1,5 +1,4 @@
-QUnit.module "Batman.Object"
-
+QUnit.module "Batman.Object",
 test "@accessor adds instance-level accessors to the prototype", ->
   defaultAccessor = {get: ->}
   keyAccessor = {get: ->}
@@ -82,7 +81,7 @@ test "@wrapAccessor can be given a wrapper function for specific keys", ->
 
 test "@wrapAccessor can be given a wrapper object for specific keys", ->
   class PlusOne extends Batman.Object
-    @wrapAccessor 'foo', 'bar'
+    @wrapAccessor 'foo', 'bar',
       get: (key) -> @[key] + 1
 
   example = new PlusOne

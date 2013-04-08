@@ -2,7 +2,7 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require '../../view/view_helper'
 {baseSetup} = if typeof require is 'undefined' then window.PolymorphicAssociationHelpers else require './polymorphic_association_helper'
 
-QUnit.module "Batman.Model polymorphic belongsTo associations"
+QUnit.module "Batman.Model polymorphic belongsTo associations",
   setup: baseSetup
 
 asyncTest "belongsTo associations are loaded from remote", 4, ->
@@ -130,7 +130,7 @@ asyncTest "belongsTo supports custom type keys", 2, ->
       equal store.get('id'), 1
       equal store.get('name'), 'Store One'
 
-QUnit.module "Batman.Model polymorphic belongsTo associations with inverseof to a hasMany"
+QUnit.module "Batman.Model polymorphic belongsTo associations with inverseof to a hasMany",
   setup: ->
     baseSetup.call(@)
     namespace = @namespace

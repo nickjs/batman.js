@@ -1,7 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View simple rendering'
-
+QUnit.module 'Batman.View simple rendering',
 hte = (actual, expected) ->
   equal actual.innerHTML.toLowerCase().replace(/\n|\r/g, ""),
     expected.toLowerCase().replace(/\n|\r/g, "")
