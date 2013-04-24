@@ -152,7 +152,6 @@ Batman.DOM =
   willInsertNode: (node) ->
     view = Batman._data node, 'view'
     view?.fire 'beforeAppear', node
-    Batman.data(node, 'show')?.call(node)
     Batman.DOM.willInsertNode(child) for child in node.childNodes
     true
 
@@ -168,7 +167,6 @@ Batman.DOM =
     view = Batman._data node, 'view'
     if view
       view.fire 'beforeDisappear', node
-    Batman.data(node, 'hide')?.call(node)
     Batman.DOM.willRemoveNode(child) for child in node.childNodes
     true
 

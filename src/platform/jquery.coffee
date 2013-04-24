@@ -80,25 +80,3 @@ Batman.Request::_prepareOptions = (data) ->
 
 Batman.Request::send = (data) ->
   jQuery.ajax @_prepareOptions(data)
-
-Batman.mixins.animation =
-  show: (addToParent) ->
-    jq = $(@)
-    show = ->
-      jq.show 600
-
-    if addToParent
-      addToParent.append?.appendChild @
-      addToParent.before?.parentNode.insertBefore @, addToParent.before
-
-      jq.hide()
-      setTimeout show, 0
-    else
-      show()
-    @
-
-  hide: (removeFromParent) ->
-    $(@).hide 600, =>
-      @parentNode?.removeChild @ if removeFromParent
-      Batman.DOM.didRemoveNode(@)
-    @

@@ -171,23 +171,6 @@ asyncTest 'it should render content even if the yield doesn\'t exist yet', 1, ->
       equal node.children(0).html(), 'immediate'
       QUnit.start()
 
-asyncTest 'yielded content should animate when show/hide functions are mixed in', 6, ->
-  showSpy = createSpy ->
-  hideSpy = createSpy ->
-  Batman.mixins.animation =
-    show: showSpy
-    hide: hideSpy
-  helpers.render '<div data-yield="foo"></div><div data-contentfor="foo" data-mixin="animation">content</div>', {}, (node) ->
-    equal showSpy.callCount, 1
-    equal hideSpy.callCount, 0
-    equal node.children(0).html(), 'content'
-
-    helpers.render '<div data-replace="foo" data-mixin="animation">replaced</div>', {}, ->
-      equal showSpy.callCount, 2
-      equal hideSpy.callCount, 1
-      equal node.children(0).html(), 'replaced'
-      QUnit.start()
-
 asyncTest 'data-replace should replace content without breaking contentfors', 2, ->
   source = '''
     <div data-yield="foo">start</div>
