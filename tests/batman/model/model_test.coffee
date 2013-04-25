@@ -127,8 +127,22 @@ test 'options passed to persist should be mixed in to the storage adapter once i
 
 test "get('resourceName') should use the class level resourceName property", ->
   class Product extends Batman.Model
-    @resourceName: 'product'
+    @resourceName: 'foobar'
 
+  equal Product.get('resourceName'), 'foobar'
+
+test "get('resourceName') should use the prototype level resourceName property", ->
+  oldError = Batman.developer
+  Batman.developer.error = createSpy()
+
+  class Product extends Batman.Model
+    resourceName: 'foobar'
+
+  equal Product.get('resourceName'), 'foobar'
+  Batman.developer.error = oldError
+
+test "get('resourceName') should use the function name failing all else", ->
+  class Product extends Batman.Model
   equal Product.get('resourceName'), 'product'
 
 QUnit.module "Batman.Model class clearing",

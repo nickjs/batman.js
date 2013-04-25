@@ -75,6 +75,9 @@ class Batman.Model extends Batman.Object
     get: ->
       if @resourceName?
         @resourceName
+      else if @::resourceName?
+        Batman.developer.error("Please define the resourceName property of the #{Batman.functionName(@)} on the constructor and not the prototype.") if Batman.config.minificationErrors
+        @::resourceName
       else
         Batman.developer.error("Please define #{Batman.functionName(@)}.resourceName in order for your model to be minification safe.") if Batman.config.minificationErrors
         Batman.helpers.underscore(Batman.functionName(@))
