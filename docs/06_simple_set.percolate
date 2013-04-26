@@ -173,7 +173,7 @@ test 'SimpleSet::toArray returns an array representation of the set', ->
 
 ### merge(collections... : Enumerable) : SimpleSet
 
-`merge` adds all the items in a set and all the items in the passed `collections` to a new set and returns it. A `collection` is an object which has a `forEach` function. It is a non-destructive collection union. The set `merge` is called on and each `collection` passed to `merge` remain unaffected.
+`merge` adds all the items in a set and all the items in the passed `collections` to a new set and returns it. A `collection` is an object which has a `forEach` function. `merge` is a non-destructive collection union, so the set `merge` is called on and each `collection` passed to `merge` are unaffected by the call.
 
 !!!
 test 'SimpleSet::merge returns a new set with the items of the original set and the passed set', ->
@@ -185,8 +185,45 @@ test 'SimpleSet::merge returns a new set with the items of the original set and 
 
 ### indexedBy(key : String) : SetIndex
 
+`indexedBy` returns a hash of sets which buckets all the items in the callee set by the value of a particular `key`. The value of the passed `key` is `get`ted from each object in the set, and then a hash of each value to a set of the items with that value at the `key` is built. This hash of sets is a smart object called a `SetIndex` which will continue to observe the set and the value of the `key` on each item in the set to ensure the set index remains up to date. `SetIndex` also has a friend named `UniqueSetIndex` which will give you a hash of items instead of a hash of sets with items for easy access if you know each item's value at the `key` is unique.
+
+!!!
+test 'SimpleSet::indexedBy returns a new SetIndex with the items bucketed by the value of the key', ->
+  show set = new Batman.SimpleSet(Batman(colour: 'blue'), Batman(colour: 'green'), Batman(colour: 'blue'))
+  show index = set.indexedBy('colour')
+  ok index.get('blue') instanceof Batman.Set
+  equal index.get('blue').get('length'), 2
+  equal index.get('green').get('length'), 1
+!!!
+
+_Note_: `SetIndex` on `SimpleSet` can't maintain up-to-datedness as the state of the set or items change. It can on a bonified `Set` however, so if you need a `SetIndex` which will be guaranteed up to date as items in the set change or the values of the observed `key` change on items, use a `Set` and `Set::indexedBy` instead of `SimpleSet::indexedBy`.
+
 ### indexedByUnique(key : String) : UniqueSetIndex
 
-### sortedBy(key: String) : SetSort
+`indexedByUnique` returns a hash of items keyed by the value of the given `key` on each item from the callee set. The value of the passed `key` is `get`ted from each object in the set, and then a hash of each value to an item with that value at the `key` is built. This hash of items is a smart object called a `UniqueSetIndex` which will continue to observe the set and the value of the `key` on each item in the set to ensure the index remains up to date. Note that the semantics for which item ends up in the hash if two items have the same value for the `key` are undefined, so it is wise to only use `UniqueSetIndex`es on keys who's values are going to be unique in the set. If the values are not going to be unique, you may be interested in `SetIndex` and `Set::indexedBy`.
 
+!!!
+test 'SimpleSet::indexedByUnique returns a new UniqueSetIndex with the items hashed by the value of the key', ->
+  show greenItem = Batman(colour: 'green')
+  show blueItem = Batman(colour: 'blue')
+  show set = new Batman.SimpleSet(greenItem, blueItem)
+  show index = set.indexedByUnique('colour')
+  ok blueItem == index.get('blue')
+  ok greenItem == index.get('green')
+  equal undefined, index.get('red')
+!!!
 
+_Note_: `UniqueSetIndex` when created on a `SimpleSet` can't maintain up-to-datedness as the state of the set or items change. It can on a bonified `Set` however, so if you need a `UniqueSetIndex` which will be guaranteed up to date as items in the set change or the values of the observed `key` change on items, use a `Set` and `Set::indexedByUnique` instead of `SimpleSet::indexedByUnique`.
+
+### sortedBy(key: String [, order: String]) : SetSort
+
+`sortedBy` returns a `Set` like object containing all the items of the callee set but with a defined iteration order (unlike `SimpleSet`). The iteration order is defined as the alpha numeric sorting of the values of the passed `key` gotten from each item. The direction of the sort can be controlled with the `order` argument, which defaults to `asc` (short for ascending) or can be passed as `desc` (short for descending). This `Set` like object is a `SetSort` which encapsulates the logic to get the values from each item at the passed `key` and traverse the `Set` in the values sorted order.
+
+`SetSort`s are useful for getting a transform of a `Set` which sorted, but also because the sort stays up to date as items are added or removed to the sorted set, or the value at the `key` changes on any of the items in the set.
+
+!!!
+test 'SimpleSet::sortedBy returns a new SetSort who can be iterated in the sorted order of the value of the key on each item', ->
+  show set = new Batman.SimpleSet(Batman(place: 3, name: 'Harry'), Batman(place: 1, name: 'Tom'), Batman(place: 2, name: 'Camilo'))
+  show sort = set.sortedBy('place')
+  deepEqual sort.toArray().map((item) -> item.get('name')), ['Tom', 'Camilo', 'Harry']
+!!!
