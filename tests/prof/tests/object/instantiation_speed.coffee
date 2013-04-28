@@ -12,6 +12,11 @@ Watson.benchmark 'object instantiation', (error, suite) ->
       true
 
   do ->
+    suite.add 'vanilla internal object creation', () ->
+      new Batman.InternalObject() for i in [0..1000]
+      true
+
+  do ->
     suite.add 'clunk creation', () ->
       new Clunk({i}) for i in [0..200]
       true
