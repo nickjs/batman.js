@@ -33,13 +33,8 @@ Watson.benchmark 'simple view rendering', (error, suite) ->
       node.innerHTML = simpleSource
       context = Batman(foo: 'bar')
 
-      view = new Batman.View
-        contexts: [context]
-        node: node
-      if view.on?
-        view.on 'ready', -> deferred.resolve()
-      else
-        view.ready -> deferred.resolve()
+      view = new Batman.View({context, node})
+      view.on 'ready', -> deferred.resolve()
       return
     ),{
       defer: true
@@ -51,13 +46,8 @@ Watson.benchmark 'simple view rendering', (error, suite) ->
       node.innerHTML = loopSource
       context = Batman(objects: new Batman.Set([0...100]...))
 
-      view = new Batman.View
-        contexts: [context]
-        node: node
-      if view.on?
-        view.on 'ready', -> deferred.resolve()
-      else
-        view.ready -> deferred.resolve()
+      view = new Batman.View({context, node})
+      view.on 'ready', -> deferred.resolve()
       return
     ),{
       defer: true
@@ -76,13 +66,46 @@ Watson.benchmark 'simple view rendering', (error, suite) ->
           baz: new Batman.Set([0...100]...)
           qux: new Batman.Set([0...100]...)
 
-      view = new Batman.View
-        contexts: [context]
-        node: node
+      view = new Batman.View({context, node})
       if view.on?
         view.on 'ready', -> deferred.resolve()
       else
         view.ready -> deferred.resolve()
+      return
+    ),{
+      maxTime: 10
+      defer: true
+    })
+
+  do ->
+    suite.add('deep tree rendering', ((deferred) ->
+      rootNode = node = document.createElement 'div'
+      for i in [0..100]
+        newNode = document.createElement 'div'
+        node.appendChild newNode
+        node = newNode
+
+      context = Batman()
+      view = new Batman.View({context, node})
+      view.on 'ready', -> deferred.resolve()
+      return
+    ),{
+      maxTime: 10
+      defer: true
+    })
+
+  do ->
+    suite.add('deep tree rendering with bindings', ((deferred) ->
+      rootNode = node = document.createElement 'div'
+      for i in [0..100]
+        newNode = document.createElement 'div'
+        newNode.setAttribute 'data-bind', 'foo'
+        node.appendChild newNode
+        node = newNode
+
+      context = Batman(foo: 'bar')
+      view = new Batman.View({context, node: rootNode})
+      view.on 'ready', -> deferred.resolve()
       return
     ),{
       maxTime: 10
