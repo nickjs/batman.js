@@ -7,10 +7,7 @@ class Batman.RouteMap
     @childrenByName = {}
 
   routeForParams: (params) ->
-    for route in @childrenByOrder
-      return route if route.test(params)
-
-    return undefined
+    @cachedRoute(params)
 
   addRoute: (name, route) ->
     @childrenByOrder.push(route)
@@ -29,3 +26,19 @@ class Batman.RouteMap
           Batman.developer.error("Collection route with name #{name} already exists!") if @collectionRoute
         @collectionRoute = route
     true
+
+   cachedRoute: (params) ->
+    path = if typeof params is 'string'
+      params
+    else if params.path?
+      params.path
+    else
+      "#{params.controller}##{params.action}"
+
+    @_cachedRoutes ||= {}
+
+    if @_cachedRoutes[path]
+      @_cachedRoutes[path]
+    else
+      for route in @childrenByOrder
+        return (@_cachedRoutes[path] = route) if route.test(params)
