@@ -60,7 +60,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     parentNode = @parentNode()
     startIndex = @_getStartNodeIndex() + 1
     unseenNodeMap = @nodeMap.merge() # duplicate
-
+    fragment = document.createDocumentFragment()
     if newItems
       for newItem, index in newItems
         # Check if the node at this index is already the one destined for that position
@@ -75,7 +75,12 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
             existingNode
           else
             @_newNodeForItem(newItem)
-          Batman.DOM.insertBefore @parentNode(), node, nodeAtIndex
+
+          # Batman.DOM.insertBefore @parentNode(), node, nodeAtIndex
+          fragment.appendChild(node)
+
+      parentNode.appendChild(fragment)
+
 
     unseenNodeMap.forEach (item, node) =>
       if @_nodesToBeRendered.has(node)
