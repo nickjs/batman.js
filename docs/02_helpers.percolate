@@ -63,7 +63,7 @@ test 'mixed in objects passed as higher indexed arguments take precedence', ->
 
 ### unmixin(subject, objects...) : subject
 
-`unmixin` "unmerges" the passes objects from the `subject`. If a key exists on any of the `objects` it will be `delete`d from the `subject`. Returns the `subject`.
+`unmixin` "unmerges" the passed objects from the `subject`. If a key exists on any of the `objects` it will be `delete`d from the `subject`. Returns the `subject`.
 
 `unmixin`, similar to `mixin`, supports calling an `uninitialize` function for each of the `objects` being unmixed in. If an `uninitialize` function exists on each
 

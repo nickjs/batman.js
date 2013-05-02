@@ -43,7 +43,7 @@ test 'primary key can be set using @set', ->
 
 The `primaryKey` is what Batman uses to compare instances to see if they represent the same domain-level object: if two records have the same value at the key specified by `primaryKey`, only one will be in the identity map. The key specified by `primaryKey` is also used by the associations system when determining if a record is related to another record, and by the remote storage adapters to generate URLs for records.
 
-Note_: The default primaryKey is 'id'.
+Note: The default primaryKey is 'id'.
 
 ### @storageKey : string
 

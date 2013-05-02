@@ -56,7 +56,7 @@ test 'one shot events fire handlers attached after they have fired for the first
 
 ### prevent(key) : EventEmitter
 
-Prevents the event with name `key` from firing, even if `.fire` is called. This is useful if you need to guarantee a precondition is in fulfilled before allowing event handlers to execute. Returns the event emitting object.
+Prevents the event with name `key` from firing, even if `.fire` is called. This is useful if you need to guarantee a precondition has been fulfilled before allowing event handlers to execute. Returns the event emitting object.
 
 Undo event prevention with `allow` or `allowAndFire`.
 
