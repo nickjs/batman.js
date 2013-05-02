@@ -1,5 +1,4 @@
-QUnit.module '$setImmediate helper'
-
+QUnit.module '$setImmediate helper',
 asyncTest "should fire asynchronously", 1, ->
   Batman.setImmediate ->
     ok true

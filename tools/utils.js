@@ -15,6 +15,7 @@
 
   exports.mkdir_p = mkdir_p = function(path, mode, callback, position) {
     var directory, parts;
+
     mode = mode || process.umask();
     position = position || 0;
     parts = require("path").normalize(path).split("/");
@@ -47,11 +48,13 @@
 
   exports.CoffeeCompiler = function(options) {
     var destDir, srcDir;
+
     options = options || {};
     srcDir = options.src || process.cwd();
     destDir = options.dest || srcDir;
     return function(req, res, next) {
       var compile, compiler, dest, pathname, send, src;
+
       if ("GET" !== req.method) {
         return next();
       }
@@ -60,11 +63,13 @@
         match: /\.js$/,
         ext: ".coffee",
         compile: function(str, fn) {
-          var coffee;
+          var coffee, err;
+
           coffee = cache.coffee || (cache.coffee = require("coffee-script"));
           try {
             return fn(null, coffee.compile(str));
-          } catch (err) {
+          } catch (_error) {
+            err = _error;
             return fn(err);
           }
         }
@@ -136,12 +141,14 @@
   };
 
   exports.getConfig = (function() {
-    var json, jsonOptions;
+    var e, json, jsonOptions;
+
     try {
       json = fs.readFileSync(path.join(process.cwd(), 'package.json')).toString().trim();
       jsonOptions = JSON.parse(json);
       return jsonOptions.batman;
-    } catch (e) {
+    } catch (_error) {
+      e = _error;
       if (e.code === 'EBADF') {
         return this.fatal('Couldn\'t find your Batman project configuration! Please put it in your package.json under the batman key.');
       } else {

@@ -202,6 +202,8 @@ Batman will execute the `data-foreach` binding before the `data-bind` on the `<o
 
 _Note_: `data-foreach` expects to find an iterable object at the keypath given to it, and will emit a warning if it finds `undefined`.
 
+_Note_: `data-foreach` expects the passed enumerable to be unique. It creates a map of nodes to items, so every node needs to be able to reference exactly one object. If you simply have a set of values that you're iterating over, you should wrap your values in objects, e.g. `[{value: true}, {value: true}]`.
+
 ### data-formfor
 
 `data-formfor` creates a special addition to the context stack to represent a object under edit within a form. Usually this object is a model. Using the double dash syntax the name for the model to reside under can be specified.

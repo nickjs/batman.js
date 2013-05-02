@@ -115,6 +115,36 @@ validationsTestSuite = ->
         equal errors.length, 0
         QUnit.start()
 
+  asyncTest "inclusion", ->
+    class Product extends Batman.Model
+      @validate 'name', inclusion: in: ["Batman", "Catwoman"]
+
+    p = new Product(name: "Batman")
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+
+      p.set 'name', "The Penguin"
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 1
+        QUnit.start()
+
+  asyncTest "exclusion", ->
+    class Product extends Batman.Model
+      @validate 'name', exclusion: in: ["Batman", "Catwoman"]
+
+    p = new Product(name: "Batman")
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+
+      p.set 'name', "The Penguin"
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        QUnit.start()
+
   asyncTest "custom async validations which don't rely on model state", ->
     letItPass = true
     class Product extends Batman.Model
@@ -307,8 +337,7 @@ validationsTestSuite = ->
           equal errors.length, 0
           QUnit.start()
 
-QUnit.module "Batman.Model: Validations"
-
+QUnit.module "Batman.Model: Validations",
 validationsTestSuite()
 
 QUnit.module "Batman.Model: Validations with I18N",
@@ -319,7 +348,7 @@ QUnit.module "Batman.Model: Validations with I18N",
 
 validationsTestSuite()
 
-QUnit.module "Batman.Model: binding to errors"
+QUnit.module "Batman.Model: binding to errors",
   setup: ->
     class @Product extends Batman.Model
       @validate 'name', {presence: true}

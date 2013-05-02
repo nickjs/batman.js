@@ -5,18 +5,20 @@ class Batman.SetProxy extends Batman.Object
   constructor: (@base) ->
     super()
     @length = @base.length
-    @base.on 'itemsWereAdded', (items...) =>
+    @base.on? 'itemsWereAdded', (items...) =>
       @set 'length', @base.length
       @fire('itemsWereAdded', items...)
-    @base.on 'itemsWereRemoved', (items...) =>
+    @base.on? 'itemsWereRemoved', (items...) =>
       @set 'length', @base.length
       @fire('itemsWereRemoved', items...)
 
   Batman.extend @prototype, Batman.Enumerable
 
   filter: (f) ->
-    r = new Batman.Set()
-    @reduce(((r, e) -> r.add(e) if f(e); r), r)
+    @reduce (accumulator, element) ->
+      accumulator.add(element) if f(element)
+      accumulator
+    , new Batman.Set()
 
   replace: ->
     length = @property('length')

@@ -5,7 +5,7 @@ oldRendererDeferEvery = Batman.Renderer::deferEvery
 getSelections = (node) -> node.find('option').map((i, node) -> !!node.selected).toArray()
 getContents = (node) -> node.find('option').map((i, node) -> node.innerHTML).toArray()
 
-QUnit.module 'Batman.View select bindings'
+QUnit.module 'Batman.View select bindings',
   setup: ->
     Batman.DOM.IteratorBinding::deferEvery = false
     Batman.Renderer::deferEvery = false
@@ -185,7 +185,7 @@ asyncTest 'should be able to destroy bound select nodes', 2, ->
 
 asyncTest "should select an option with value='' when the data is undefined", ->
   context = Batman
-    current: Batman 
+    current: Batman
       bar: 'foo'
 
   source = '''
@@ -210,7 +210,7 @@ asyncTest "should select an option with value='' when the data is undefined", ->
 
 asyncTest "should select an option with value='' when the data is null", ->
   context = Batman
-    current: Batman 
+    current: Batman
       bar: 'foo'
 
   source = '''
@@ -245,7 +245,6 @@ asyncTest "should select an option with value='' when the data is ''", ->
     </select>
   '''
 
-  helpers.render source, context, (node) ->
   helpers.render source, context, (node) ->
     equal node[0].value, 'foo'
     deepEqual getContents(node), ['none', 'foo']

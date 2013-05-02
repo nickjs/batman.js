@@ -1,4 +1,4 @@
-QUnit.module "Batman.EventEmitter"
+QUnit.module "Batman.EventEmitter",
   setup: ->
     @prototypeRainHandler = prototypeRainHandler = createSpy()
     @WeatherSystem = class WeatherSystem

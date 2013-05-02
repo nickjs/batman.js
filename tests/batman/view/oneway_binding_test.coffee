@@ -1,7 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View: one-way bindings'
-
+QUnit.module 'Batman.View: one-way bindings',
 asyncTest 'target should update only the javascript value', 3, ->
   source = '<input type="text" data-target="foo" value="start"/>'
   context = Batman foo: null

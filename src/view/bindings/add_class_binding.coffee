@@ -7,8 +7,7 @@ class Batman.DOM.AddClassBinding extends Batman.DOM.AbstractAttributeBinding
     {@invert} = definition
 
     @classes = for name in definition.attr.split('|')
-        name: name
-        pattern: new RegExp("(?:^|\\s)#{name}(?:$|\\s)", 'i')
+      {name: name, pattern: new RegExp("(?:^|\\s)#{name}(?:$|\\s)", 'i')}
 
     super
 

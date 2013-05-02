@@ -48,12 +48,13 @@ class Batman.Dispatcher extends Batman.Object
     params = @constructor.paramsFromArgument(params)
     @routeForParams(params)?.pathFromParams(params)
 
-  dispatch: (params) ->
+  dispatch: (params, paramsMixin) ->
     inferredParams = @constructor.paramsFromArgument(params)
     route = @routeForParams(inferredParams)
 
     if route
       [path, params] = route.pathAndParamsFromArgument(inferredParams)
+      Batman.mixin(params, paramsMixin) if paramsMixin
 
       @set 'app.currentRoute', route
       @set 'app.currentURL', path

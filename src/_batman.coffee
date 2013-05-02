@@ -1,3 +1,5 @@
+#= require namespace
+
 # _Batman provides a convienient, parent class and prototype aware place to store hidden
 # object state. Things like observers, accessors, and states belong in the `_batman` object
 # attached to every Batman.Object subclass and subclass instance.

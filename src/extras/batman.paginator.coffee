@@ -57,7 +57,7 @@ class Batman.Paginator extends Batman.Object
     @markAsFinishedLoading()
     @set('cache', cache)
   @accessor 'toArray', @::toArray
-  @accessor 'offset', 'limit', 'totalCount'
+  @accessor 'offset', 'limit', 'totalCount',
     get: Batman.Property.defaultAccessor.get
     set: (key, value) -> Batman.Property.defaultAccessor.set.call(this, key, +value)
   @accessor 'page',

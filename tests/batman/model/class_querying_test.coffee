@@ -1,6 +1,6 @@
 {TestStorageAdapter, AsyncTestStorageAdapter} = if typeof require isnt 'undefined' then require './model_helper' else window
 
-QUnit.module "Batman.Model class finding"
+QUnit.module "Batman.Model class finding",
   setup: ->
     class @Product extends Batman.Model
       @encode 'name', 'cost'
@@ -77,9 +77,9 @@ asyncTest "find calls in an accessor will have no sources", ->
       delay ->
         equal callCount, 1
   obj.get('foo')
-  equal obj.property('foo').sources, undefined
+  deepEqual obj.property('foo').sources, []
 
-QUnit.module "Batman.Model class findOrCreating"
+QUnit.module "Batman.Model class findOrCreating",
   setup: ->
     class @Product extends Batman.Model
       @encode 'name', 'cost'
@@ -111,7 +111,7 @@ asyncTest "models will find an already loaded model and update the data", ->
       equal product.get('cost'), 10
       QUnit.start()
 
-QUnit.module "Batman.Model class loading"
+QUnit.module "Batman.Model class loading",
   setup: ->
     class @Product extends Batman.Model
       @encode 'name', 'cost'
@@ -220,4 +220,4 @@ asyncTest "load calls in an accessor will have no sources", ->
       delay ->
         equal callCount, 1
   obj.get('foo')
-  equal obj.property('foo').sources, undefined
+  deepEqual obj.property('foo').sources, []

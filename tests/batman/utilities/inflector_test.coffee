@@ -183,8 +183,7 @@ testBothDirections = (singular, plural) ->
     equal Batman.helpers.inflector.pluralize(singular), plural
     equal Batman.helpers.inflector.singularize(plural), singular
 
-QUnit.module 'Batman.Inflector pluralization and singularization'
-
+QUnit.module 'Batman.Inflector pluralization and singularization',
 test "singulars are pluralized to plurals", ->
   for singular, plural of SingularToPlural
     equal Batman.helpers.inflector.pluralize(singular), plural
@@ -201,14 +200,18 @@ test "irregular plurals are singularized to singulars", ->
   for singular, plural of Irregularities
     equal Batman.helpers.inflector.pluralize(singular), plural
 
-QUnit.module 'Batman.Inflector ordinalization'
-
+QUnit.module 'Batman.Inflector ordinalization',
 test "Inflector ordinalizes", ->
   for number, ordinalized of OrdinalNumbers
     equal Batman.helpers.inflector.ordinalize(number), ordinalized
 
-QUnit.module 'Batman.helpers humanization'
+test "radix is assumed to be base 10", ->
+  equal Batman.helpers.inflector.ordinalize('010'), "10th"
 
+test "allows for other radix values", ->
+  equal Batman.helpers.inflector.ordinalize('010', 2), "2nd"
+
+QUnit.module 'Batman.helpers humanization',
 test "helpers humanize", ->
   for underscored, human of UnderscoreToHuman
     equal Batman.helpers.humanize(underscored), human

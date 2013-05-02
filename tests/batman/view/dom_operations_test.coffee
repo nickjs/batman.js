@@ -1,6 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module "Batman.DOM helpers"
+QUnit.module "Batman.DOM helpers",
   setup: ->
     class @TestView extends Batman.View
       constructor: ->
@@ -172,6 +172,10 @@ test "addEventListener and removeEventListener store and remove callbacks using 
   Batman.DOM.removeEventListener div, 'click', f
   listeners = Batman._data div, 'listeners'
   ok !~listeners.click.indexOf f
+
+test "textContent should return textContent", ->
+  node = $("<a>test</a>")[0]
+  equal Batman.DOM.textContent(node), 'test'
 
 asyncTest "destroyNode: destroys yielded childNodes when their parents are destroyed", 2, ->
   source = """

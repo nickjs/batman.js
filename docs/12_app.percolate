@@ -68,9 +68,11 @@ The `ready` class event is fired once the app's layout is rendered.
 
 ## Batman.App Routing
 
-The `Batman` routing DSL is similar to Rails 3's routing DSL.
+The `Batman` routing DSL is similar to Rails 3's routing DSL. It is oriented around the notion of a resource:
 
-### @resources
+### @resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])
+
+
 ### @member
 ### @collection
 ### @route

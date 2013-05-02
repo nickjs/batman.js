@@ -1,6 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module "Batman.View filter value and parameter parsing"
+QUnit.module "Batman.View filter value and parameter parsing",
   setup: ->
     Batman.Filters['test'] = @spy = createSpy().whichReturns("testValue")
   teardown: ->
@@ -15,6 +15,13 @@ asyncTest "should parse one segment keypaths as values", ->
 
 asyncTest "should parse one segment keypaths that begin with numbers", ->
   helpers.render '<div data-bind="404_title | test"></div>', Batman("404_title": "bar"), (node) =>
+    equal node.html(), "testValue"
+    ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
+    deepEqual @spy.lastCallArguments, ["bar"]
+    QUnit.start()
+
+asyncTest "should parse one segment keypaths that begin with numbers and hyphens", ->
+  helpers.render '<div data-bind="404-title | test"></div>', Batman("404-title": "bar"), (node) =>
     equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, ["bar"]
@@ -57,6 +64,13 @@ asyncTest "should parse many segment keypaths as arguments", ->
 
 asyncTest "should parse many segment keypaths that begin with numbers", ->
   helpers.render '<div data-bind="404_title.bar | test"></div>', Batman("404_title": Batman(bar: "baz")), (node) =>
+    equal node.html(), "testValue"
+    ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
+    deepEqual @spy.lastCallArguments, ["baz"]
+    QUnit.start()
+
+asyncTest "should parse many segment keypaths that begin with numbers and hyphens", ->
+  helpers.render '<div data-bind="404-title.bar | test"></div>', Batman("404-title": Batman(bar: "baz")), (node) =>
     equal node.html(), "testValue"
     ok @spy.lastCallArguments.pop() instanceof Batman.DOM.AbstractBinding
     deepEqual @spy.lastCallArguments, ["baz"]
@@ -308,7 +322,7 @@ asyncTest 'it should update the data object if value bindings aren\'t filtered',
   context = new Batman.Object
 
   # Define an accessor on a normal key
-  context.accessor "one"
+  context.accessor "one",
     get: getSpy = createSpy().whichReturns("abcabcabc")
     set: setSpy = createSpy().whichReturns("defdefdef")
 
@@ -327,13 +341,14 @@ asyncTest 'it shouldn\'t update the data object if value bindings are filtered',
   context = new Batman.Object
     one: "abcabcabcabcabc"
 
-  context.accessor "one"
+  context.accessor "one",
     get: getSpy = createSpy().whichReturns("abcabcabc")
     set: setSpy = createSpy().whichReturns("defdefdef")
 
-  context.accessor
+  context.accessor {
     get: defaultGetSpy = createSpy()
     set: defaultSetSpy = createSpy()
+  }
 
   helpers.render '<textarea data-bind="one | truncate 5"></textarea>', context, (node) ->
     node.val('defdefdefdef')

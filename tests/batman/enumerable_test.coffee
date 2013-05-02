@@ -8,8 +8,7 @@ class TestEnumerator
     @a.forEach(f)
 
 getEnumerable = (array) -> new TestEnumerator(array...)
-QUnit.module "Batman.Enumerable mixin"
-
+QUnit.module "Batman.Enumerable mixin",
 test "classes mixing in enumerable should report as such", ->
   class Test
     Batman.mixin @::, Batman.Enumerable
@@ -129,6 +128,12 @@ test "reduce should return a value", ->
   @array = [1, 2, 3]
   @enumerable = getEnumerable(@array)
   f = (x, acc) -> acc + x
+  deepEqual @enumerable.reduce(f), @array.reduce(f)
+
+test "reduce should not return the function if the reduction function returns undefined", ->
+  f = -> undefined
+  @array = [1, 2, 3]
+  @enumerable = getEnumerable(@array)
   deepEqual @enumerable.reduce(f), @array.reduce(f)
 
 test "inGroupsOf(1) should return an array with each item in an array", ->

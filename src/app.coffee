@@ -35,7 +35,10 @@ class Batman.App extends Batman.Object
   # your app where to look for coffeescript source files. This
   # implementation may change in the future.
   Batman.developer.do =>
+    requireDeprecated = "Please use whatever means you'd like to load your code before calling App.run."
+
     App.require = (path, names...) ->
+      Batman.developer.deprecated("App.require", requireDeprecated)
       base = @requirePath + path
       for name in names
         @prevent 'run'
@@ -54,13 +57,16 @@ class Batman.App extends Batman.Object
       @
 
     @controller = (names...) ->
+      Batman.developer.deprecated("App.controller", requireDeprecated)
       names = names.map (n) -> n + '_controller'
       @require 'controllers', names...
 
     @model = ->
+      Batman.developer.deprecated("App.model", requireDeprecated)
       @require 'models', arguments...
 
     @view = ->
+      Batman.developer.deprecated("App.view", requireDeprecated)
       @require 'views', arguments...
 
   # Layout is the base view that other views can be yielded into. The

@@ -19,7 +19,7 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
     else if binding instanceof Batman.DOM.IteratorBinding
       binding.on 'nodeAdded', dataChangeHandler = => @_fireDataChange(@get('filteredValue'))
       binding.on 'nodeRemoved', dataChangeHandler
-      binding.on 'die', =>
+      binding.on 'die', ->
         binding.forget 'nodeAdded', dataChangeHandler
         binding.forget 'nodeRemoved', dataChangeHandler
     else
@@ -65,15 +65,12 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
 
     # Finally, update the options' `selected` bindings
     @updateOptionBindings()
+    @fixSelectElementWidth()
     return
 
   nodeChange: =>
     if @isTwoWay()
-      # Gather the selected options and update the binding
-      selections = if @node.multiple
-        (c.value for c in @node.children when c.selected)
-      else
-        @node.value
+      selections = Batman.DOM.valueForNode(@node)
       selections = selections[0] if typeof selections is Array && selections.length == 1
       @set 'unfilteredValue', selections
 
@@ -82,3 +79,23 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
 
   updateOptionBindings: =>
     @selectedBindings.forEach (binding) -> binding._fireNodeChange()
+
+  fixSelectElementWidth: ->
+    return if window.navigator.userAgent.toLowerCase().indexOf('msie') is -1 # I. Hate. Everything.
+    clearTimeout(@_fixWidthTimeout) if @_fixWidthTimeout
+
+    @_fixWidthTimeout = setTimeout =>
+      @_fixWidthTimeout = null
+      @_fixSelectElementWidth()
+    , 100
+
+  _fixSelectElementWidth: ->
+    # There is a nasty bug in IE where select elements never reflow themselves (like ever),
+    # until there is mouse interaction with them. This is a fix for select elements which
+    # have their options set after they are rendered. They won't ever show their width without it.
+    style = @get('node')?.style
+    return if not style
+
+    previousWidth = @get('node').currentStyle.width
+    style.width = '100%'
+    style.width = previousWidth ? ''

@@ -1,5 +1,4 @@
-QUnit.module "Batman.unescapeHTML helper"
-
+QUnit.module "Batman.unescapeHTML helper",
 test "should unescape escaped basic HTML characters", ->
   equal Batman.unescapeHTML('&lt;&gt;&amp;&#34;&#39;'), '<>&"\''
 

@@ -1,4 +1,4 @@
-QUnit.module 'Batman.Property source tracking'
+QUnit.module 'Batman.Property source tracking',
   setup: ->
     @class = class extends Batman.Object
     @object = new @class
@@ -24,13 +24,26 @@ test "calling multiple accessors adds all properties as sources", ->
   expected = [@object.property('bar'), @object.property('baz')]
   deepEqual @object.property('foo').sources, expected
 
+test "calling multiple accessors adds only the properties not wrapped in tracking prevention as sources", ->
+  obj = Batman()
+  @class.accessor 'foo', ->
+    Batman.Property.withoutTracking =>
+      obj.set 'corge', @get('corge')
+      obj.get('corge')
+    @get('bar')
+    @get('baz')
+  @object.get('foo')
+
+  expected = [@object.property('bar'), @object.property('baz')]
+  deepEqual @object.property('foo').sources, expected
+
 test "calling mutators from inside an accessor does not add a new source", ->
   @class.accessor 'foo', -> @set('bar', 1234); @unset('baz')
   @object.get('foo')
 
-  equal @object.property('foo').sources, undefined
+  deepEqual @object.property('foo').sources, []
 
-QUnit.module 'Batman.Property laziness'
+QUnit.module 'Batman.Property laziness',
   setup: ->
     @class = class extends Batman.Object
     @object = new @class
@@ -87,8 +100,7 @@ test "Property.withoutTracking(block) runs the block and returns its return valu
   equal @object.get('foo'), 'barVal'
   equal barVal, 'barVal'
 
-  equal @object.property('foo').sources, undefined
-
+  deepEqual @object.property('foo').sources, []
 
 QUnit.module 'Batman.Property',
   setup: ->
@@ -389,8 +401,8 @@ test "setValue or unsetValue within a getter should not register the updated pro
     @unset('baz')
   obj.get('foo')
   obj.get('bar')
-  equal obj.property('foo').sources, undefined
-  equal obj.property('bar').sources, undefined
+  deepEqual obj.property('foo').sources, undefined
+  deepEqual obj.property('bar').sources, []
 
 QUnit.module 'Batman.Property final properties',
   setup: ->

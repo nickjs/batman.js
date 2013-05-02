@@ -1,3 +1,74 @@
+## 0.14.1 (Febrary 15th, 2013)
+
+Forgot to bump a version number to fix the version number test.
+
+## 0.14.0 (February 14th, 2013)
+
+https://github.com/Shopify/batman/compare/v0.13.0...master
+
+
+## APP
+- Added: `App.shouldAllowEvent.[event]`. Callbacks in this hash will be called whenever the corresponding `data-event` is fired from anywhere within the app. Return false to prevent app-level propagation. For example:
+```coffeescript
+class MyApp extends Batman.App
+  @shouldAllowEvent.click = (event) ->
+    return false
+```
+- Fix: Prevent additional history items from being created if the users navigates to the page they are already on.
+- Fix: Nested resource routing names.
+- Deprecated: App loader utilities: `App.controller`, `App.model`, `App.view`, `App.require`. Batman does not care how you load your code, as long as it's loaded before calling `App.run`.
+
+## MODELS
+- Added: Substantially better for support for polymorphic associations.
+- Added: Configure custom URL's for associations. Typically used for resources whose backends aren't quite as RESTful as they should be.
+- Added: A server response of 422 will result in the response being parsed as an error and the response's data being used injected into `errors`.
+- Added: A server response of 409 will result in a `RecordExistsError`.
+- Added: `NumericValidator` can now compare for equality.
+- Added: `Batman.Model._mapIdentities` to map many items and then add them to the set all at once.
+- Performance: `Batman.Model.loadWithOptions` uses `mapIdentities` instead of `mapIdentity`.
+- Change: Model instance methods are no longer bound to themselves. If you're passing model methods as callbacks make sure you bind them manually!
+- Fix: Respect sorted order in `SetSort::find`.
+- Fix: Respect sorted order of `SetSort::merge`.
+
+## VIEWS
+- Change: Moved the `Batman.ViewStore`'s `fetchFromRemote` and `prefix` properties to `Batman.config` and rename them to `fetchRemoteViews` and `viewPrefix`.
+- Fix: `Batman.DOM.setStyleProperty` will respect `!important` in all browsers.
+- Fix: Don't intercept middle-click events.
+
+## BINDINGS
+- Change: Rename `Binding` to `ValueBinding`.
+- Fix: Biding to the correct option when loading a `<select>` element. If the data is null when the binding is created, we bind to an option with an empty string.
+- Fix: Parsing keypaths that begin with numbers.
+- Added: The ability for bindings within subviews to update their values that have been added to the context via `data-bind`.
+- Deprecated: `data-confirm` event attribute.
+
+## FILTERS
+- Fix: The prepend and append filters don't prepend/append undefined to the string if the value is undefined. `data-bind="undefinedValue | append 'my string'"` now returns `my string` and not `undefinedmy string`.
+
+## ACCESSORS
+- Change: Promise accessors return the result of their promise function, such that promises which return valueA and asynchronously deliver valueB retune the delivered valueB instead of the returned valueA.
+- Change: Class promise accessors are now be recalculated after calling clear, e.g. `Product.clear()`.
+- Added: `Batman.Object::_resetPromise`.
+
+## GLOBAL
+- Added: A deprecation mechanism. Putting `Batman.developer.deprecated` inside a function will log a warning in the console in development mode.
+- Fix: Some cases where `clearImmediate` would break IE.
+- Fix: IE7 inability to access a character from a string using the index `[]` notation.
+- Fix: Support all symbols with unescapeHTML. e100aca
+- Fix: Bug in reduce where the reduction function returning undefined caused undesirable return values.
+- Fix: Bug when using arrays of models as the keys of a `Batman.Hash`.
+- Fix: Ensure that `add` is only called once when multiple items are added to a `SetSort` at the same time.
+
+## PERFORMANCE & TESTING
+- Performance: Fight off hoardes of DOM memory leaks.
+- Performance: Speed up `Batman.SimpleSet` iteration.
+- Performance: Speed up `Batman.Property` iteration when firing some observers.
+- Performance: Added Two levels of caching for `_batman` ansestors.
+- Performance: Use arrays instead of sets in hot functions.
+- Performance: Remove splats in hot functions.
+- Performance: Avoid creating `EventEmitter` events when not necessary.
+- Fix: Watson and Tiller integration.
+
 ## 0.13.1 (September 13th, 2012)
 
 Patch Release

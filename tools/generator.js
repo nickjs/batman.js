@@ -26,6 +26,7 @@
   cli.main(function(args, options) {
     var TemplateVars, command, count, destinationPath, replaceVars, source, transforms, walk,
       _this = this;
+
     options.appName = options.app;
     command = args.shift();
     if (command === 'new') {
@@ -66,7 +67,8 @@
     options.appName = Batman.helpers.camelize(options.appName);
     Batman.mixin(TemplateVars, {
       app: options.appName,
-      name: options.name
+      name: options.name,
+      version: Batman.version
     });
     transforms = [
       (function(x) {
@@ -79,6 +81,7 @@
     ];
     replaceVars = function(string) {
       var f, templateKey, value, _i, _len;
+
       for (templateKey in TemplateVars) {
         value = TemplateVars[templateKey];
         if (value == null) {
@@ -95,15 +98,14 @@
     count = 0;
     walk = function(aPath) {
       var sourcePath;
+
       if (aPath == null) {
         aPath = "/";
       }
       sourcePath = path.join(source, aPath);
       return fs.readdirSync(sourcePath).forEach(function(file) {
         var destFile, dir, ext, newFile, oldFile, resultName, sourceFile, stat;
-        if (file === '.gitignore') {
-          return;
-        }
+
         resultName = replaceVars(file);
         sourceFile = path.join(sourcePath, file);
         destFile = path.join(destinationPath, aPath, resultName);

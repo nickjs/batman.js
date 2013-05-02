@@ -1,7 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View style bindings'
-
+QUnit.module 'Batman.View style bindings',
 asyncTest 'data-bind-style should bind to a string', 4, ->
   source = '<input type="text" data-bind-style="string"></input>'
   context = Batman

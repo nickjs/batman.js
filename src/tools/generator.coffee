@@ -89,6 +89,7 @@ cli.main (args, options) ->
   Batman.mixin TemplateVars,
     app: options.appName
     name: options.name
+    version: Batman.version
 
   transforms = [((x) -> x.toUpperCase()), ((x) -> Batman.helpers.camelize(x)), ((x) -> Batman.helpers.underscore(x).toLowerCase())]
 
@@ -110,9 +111,6 @@ cli.main (args, options) ->
     sourcePath = path.join(source, aPath)
     # Examine each file at the path.
     fs.readdirSync(sourcePath).forEach (file) =>
-      if file == '.gitignore'
-        return
-
       # Get an absolute path to this file in the template directory
       resultName = replaceVars(file)
       sourceFile = path.join(sourcePath, file)

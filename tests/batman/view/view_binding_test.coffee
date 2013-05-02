@@ -1,6 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View data-view bindings'
+QUnit.module 'Batman.View data-view bindings',
   setup: ->
     @MockViewClass = class MockViewClass extends MockClass
       isView: true

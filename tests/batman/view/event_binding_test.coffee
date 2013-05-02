@@ -1,7 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View event bindings'
-
+QUnit.module 'Batman.View event bindings',
 asyncTest 'it should allow events to be bound and execute them in the context as specified on a multi key keypath', 4, ->
   spy = createSpy()
   context = Batman

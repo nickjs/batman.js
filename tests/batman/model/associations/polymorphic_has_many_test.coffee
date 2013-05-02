@@ -2,7 +2,7 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require '../../view/view_helper'
 {baseSetup} = if typeof require is 'undefined' then window.PolymorphicAssociationHelpers else require './polymorphic_association_helper'
 
-QUnit.module "Batman.Model polymorphic hasMany associations"
+QUnit.module "Batman.Model polymorphic hasMany associations",
   setup: baseSetup
 
 asyncTest "hasMany associations are loaded from remote", 5, ->

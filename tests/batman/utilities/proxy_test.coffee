@@ -1,4 +1,4 @@
-QUnit.module "Batman.Proxy"
+QUnit.module "Batman.Proxy",
   setup: ->
     @object = Batman(foo: 'bar')
     @proxy = new Batman.Proxy(@object)

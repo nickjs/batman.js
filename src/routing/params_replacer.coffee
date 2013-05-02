@@ -2,7 +2,7 @@
 
 class Batman.ParamsReplacer extends Batman.Object
   constructor: (@navigator, @params) ->
-  redirect: -> @navigator.replace(@toObject())
+  redirect: -> @navigator.redirect(@toObject(), true)
   replace: (params) ->
     @params.replace(params)
     @redirect()

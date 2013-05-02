@@ -1,5 +1,4 @@
-QUnit.module 'helpers'
-
+QUnit.module 'helpers',
 test 'functionName', ->
   class Function
   class ExtendedFunction extends Function

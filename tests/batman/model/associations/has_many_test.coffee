@@ -1,7 +1,7 @@
 {createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter, generateSorterOnProperty} = if typeof require isnt 'undefined' then require '../model_helper' else window
 helpers = if typeof require is 'undefined' then window.viewHelpers else require '../../view/view_helper'
 
-QUnit.module "Batman.Model hasMany Associations"
+QUnit.module "Batman.Model hasMany Associations",
   setup: ->
     Batman.currentApp = null
     namespace = @namespace = {}
@@ -167,7 +167,7 @@ asyncTest "AssociationSet does not become loaded when an existing record is save
       QUnit.start()
 
 asyncTest "hasMany associations are loaded using encoders", 1, ->
-  @Product.encode 'name'
+  @Product.encode 'name',
     encode: (x) -> x
     decode: (x) -> x.toUpperCase()
 
@@ -187,7 +187,7 @@ asyncTest "associations loaded via encoders index the child record loaded set", 
       equal products.length, 4
 
 asyncTest "embedded hasMany associations are loaded using encoders", 1, ->
-  @ProductVariant.encode 'price'
+  @ProductVariant.encode 'price',
     encode: (x) -> x
     decode: (x) -> x * 100
 
@@ -626,7 +626,7 @@ asyncTest "regression test: identity mapping works", ->
       deepEqual @ProductVariant.get('loaded').mapToProperty('id').sort(), [1,2,3,4,5,6]
       QUnit.start()
 
-QUnit.module "Batman.Model hasMany Associations with inverse of"
+QUnit.module "Batman.Model hasMany Associations with inverse of",
   setup: ->
     namespace = {}
 

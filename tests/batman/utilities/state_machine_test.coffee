@@ -1,4 +1,4 @@
-QUnit.module "Batman.StateMachine"
+QUnit.module "Batman.StateMachine",
   setup: ->
     class @SwitchStateMachine extends Batman.StateMachine
       @transitions
@@ -135,4 +135,4 @@ test "transitions in accessors shouldn't add sources", ->
   x = Batman(sm: @sm)
   x.accessor 'foo', => @sm.switch()
   x.get('foo')
-  equal x.property('foo').sources, undefined
+  deepEqual x.property('foo').sources, []

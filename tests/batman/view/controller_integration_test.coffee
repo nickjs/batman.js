@@ -1,5 +1,4 @@
-QUnit.module 'Batman.Controller and Batman.View integration'
-
+QUnit.module 'Batman.Controller and Batman.View integration',
 asyncTest "yields populated by inner contentfor's should not be cleared after dispatch", ->
   mainContainer = document.createElement('div')
   sidebarContainer = document.createElement('div')

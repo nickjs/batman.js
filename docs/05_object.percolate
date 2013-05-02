@@ -85,7 +85,7 @@ test '@accessor can use arbitrary logic to define the value', ->
 
 Accessors are extremely useful but you must keep these items in mind while programming using them:
 
- 1. Accessors should be linear, so they can be cached.
+ 1. Accessors should be pure functions so they are predictable and so they can be cached.
 
 Batman automatically memoizes the return value of accessors, and will not re-execute the body until one of the accessor's sources changes. If you need the accessor to recalculate every time the property is gotten, pass `false` for the `cache` option in the accessor descriptor object (the last argument to the `@accessor` function).
 
@@ -113,7 +113,7 @@ Batman tracks an accessor's sources by adding a global hook to all `get`s done, 
 
  3. Accessors can create memory leaks or performance bottlenecks
 
-If you return a brand new object by say merging a number of `Batman.Set`s or doing any sort of major and complete re-computation you run the risk of creating performance problems. This is because accessors can be called frequently and unpredictably, as they are recomputed every time one of their sources changes as well as upon every `set`. Instead of recomputing expensive things every time the accessor is called, try to use objects which do delta recomputation using observers. Practically this translates to using things like `new SetUnion(@get('setA'), @get('setB'))` instead of `@get('setA').merge(@get('setB'))` in an accessor body.
+If you return a brand new object by say merging a number of `Batman.Set`s or doing any sort of major and complete re-computation you run the risk of creating performance problems. This is because accessors can be called frequently and unpredictably, as they are recomputed every time one of their sources changes as well as upon every `set`. Instead of recomputing expensive things every time the accessor is called, try to use objects which do smart re-computation using observers. Practically this translates to using things like `new SetUnion(@get('setA'), @get('setB'))` instead of `@get('setA').merge(@get('setB'))` in an accessor body, since `SetUnion` will observe its constituents and update itsself when they change, instead of the `merge` resulting in the accessor recomputing every time `setA` or `setB` changed.
 
 ### @classAccessor([keys...], objectOrFunction)
 
@@ -220,7 +220,7 @@ test 'toJSON returns a vanilla JS object', ->
 
 ### hashKey() : string
 
-`hashKey` returns a unique string representing this particular `Batman.Object`. No two `Batman.Object`s will have the same `hashKey`.
+`hashKey` returns a unique string identifying this particular `Batman.Object`. No two `Batman.Object`s will have the same `hashKey`. Feel free to override the implmentation of this function on your objects if you have a better hashing scheme for a domain object of yours.
 
 ### accessor([keys...], objectOrFunction)
 
