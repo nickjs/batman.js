@@ -160,6 +160,17 @@ class Batman.Model extends Batman.Object
 
   @_mapIdentity: (record) -> @_mapIdentities([record])[0]
 
+  @_makeOrFindRecordFromData: (attributes) ->
+    if id = attributes[@primaryKey]
+      if existingRecord = @get('loaded.indexedByUnique.id').get(id)
+        existingRecord._withoutDirtyTracking -> @fromJSON(attributes)
+        return existingRecord
+
+    newRecord = new @
+    newRecord._withoutDirtyTracking -> @fromJSON(attributes)
+    @_mapIdentity(newRecord)
+    newRecord
+
   @_mapIdentities: (records) ->
     newRecords = []
     for record, index in records

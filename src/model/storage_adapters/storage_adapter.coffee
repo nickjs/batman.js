@@ -55,10 +55,7 @@ class Batman.StorageAdapter extends Batman.Object
     model = record?.constructor || @model
     model.get('storageKey') || Batman.helpers.pluralize(Batman.helpers.underscore(model.get('resourceName')))
 
-  getRecordFromData: (attributes, constructor = @model) ->
-    record = new constructor()
-    record._withoutDirtyTracking -> @fromJSON(attributes)
-    record
+  getRecordFromData: (attributes, constructor = @model) -> constructor._makeOrFindRecordFromData(attributes)
 
   @skipIfError: (f) ->
     return (env, next) ->
