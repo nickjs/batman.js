@@ -59,22 +59,24 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   handleArrayChanged: (newItems) =>
     parentNode = @parentNode()
     startIndex = @_getStartNodeIndex() + 1
-    unseenNodeMap = @nodeMap.merge() # duplicate
     fragment = document.createDocumentFragment()
+
+    @_removeItem(item) for item, node in @nodeMap
+
     if newItems
       for newItem, index in newItems
         # Check if the node at this index is already the one destined for that position
-        nodeAtIndex = parentNode.childNodes[startIndex + index]
-        if nodeAtIndex? && @_itemForNode(nodeAtIndex) == newItem
-          unseenNodeMap.unset(newItem)
-          continue
-        else
+        # nodeAtIndex = parentNode.childNodes[startIndex + index]
+        # if nodeAtIndex? && @_itemForNode(nodeAtIndex) == newItem
+        #   unseenNodeMap.unset(newItem)
+        #   continue
+        # else
           # Otherwise, create a new or move the existing node for that position to the desired position
-          node = if (existingNode = @nodeMap.get(newItem))
-            unseenNodeMap.unset(newItem)
-            existingNode
-          else
-            @_newNodeForItem(newItem)
+          # node = if (existingNode = @nodeMap.get(newItem))
+          #   unseenNodeMap.unset(newItem)
+          #   existingNode
+          # else
+          node = @_newNodeForItem(newItem)
 
           # Batman.DOM.insertBefore @parentNode(), node, nodeAtIndex
           fragment.appendChild(node)
@@ -82,12 +84,12 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       parentNode.appendChild(fragment)
 
 
-    unseenNodeMap.forEach (item, node) =>
-      if @_nodesToBeRendered.has(node)
-        @_nodesToBeRemoved ||= new Batman.SimpleSet
-        @_nodesToBeRemoved.add(node)
-      else
-        @_removeItem(item)
+    # unseenNodeMap.forEach (item, node) =>
+    #   if @_nodesToBeRendered.has(node)
+    #     @_nodesToBeRemoved ||= new Batman.SimpleSet
+    #     @_nodesToBeRemoved.add(node)
+    #   else
+    #     @_removeItem(item)
 
     return
 
