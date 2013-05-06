@@ -142,4 +142,11 @@ Batman.extend Batman,
     Batman.data elem, name, data, true
 
   acceptData: (elem) ->
-    elem.___acceptData ?= !(match = Batman.noData[elem.nodeName]) || !(match == true) || elem.getAttribute("classid") != match
+    elem.___acceptData = if elem.nodeName
+      match = Batman.noData[elem.nodeName.toLowerCase()]
+      if match
+        !(match == true or elem.getAttribute("classid") != match)
+      else
+        true
+    else
+      true
