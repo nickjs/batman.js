@@ -1,7 +1,7 @@
 Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
-Clunk  = require '../lib/clunk'
-Random = require '../lib/number_generator'
+Clunk  = require '../lib/clunk.coffee'
+Random = require '../lib/number_generator.coffee'
 
 Batman.developer?.suppress()
 generator = new Random(0, 10, 3000)

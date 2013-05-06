@@ -2,9 +2,7 @@ Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
 jsdom = require 'jsdom'
 
-global.window = jsdom.jsdom("<html><head><script></script></head><body></body></html>").createWindow()
-global.window.Benchmark = Watson.Benchmark
-global.document = window.document
+Watson.makeADom()
 
 simpleSource = '''
 <div data-bind="foo"></div>

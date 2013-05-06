@@ -1,6 +1,6 @@
 Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
-Clunk  = require '../lib/clunk'
+Clunk  = require '../lib/clunk.coffee'
 
 hash = new Batman.SimpleHash
 

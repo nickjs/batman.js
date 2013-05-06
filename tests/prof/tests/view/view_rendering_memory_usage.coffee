@@ -2,8 +2,7 @@ Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
 jsdom = require 'jsdom'
 
-global.window = jsdom.jsdom("<html><head><script></script></head><body></body></html>").createWindow()
-global.document = window.document
+Watson.makeADom()
 
 loopSource = '''
 <div data-foreach-obj="objects">

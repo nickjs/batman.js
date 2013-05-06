@@ -1,15 +1,12 @@
 Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
-Random = require '../lib/number_generator'
-Clunk = require '../lib/clunk'
+Random = require '../lib/number_generator.coffee.coffee'
+Clunk = require '../lib/clunk.coffee.coffee'
 
 # Fix deferred loop rendering to actually happen, and always fire the parent's rendered event
 # Needed for the ::deferEvery settings below.
 Watson.ensureCommitted '6d132e078e3e07473b538ab157635b8664e2077e', ->
-  jsdom = require 'jsdom'
-
-  global.window = jsdom.jsdom("<html><head><script></script></head><body></body></html>").createWindow()
-  global.document = window.document
+  Watson.makeADom()
 
   loopSource = '''
   <div data-foreach-obj="objects">

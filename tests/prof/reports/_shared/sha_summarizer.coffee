@@ -55,4 +55,17 @@ exports =
       .updateField('y': (r) -> r.get('y') * 1000)
       .pivot('key', 'y', {default: 0})
 
+  reportKeyAcrossShasAndAgents: (key, shas, type = 'mean') ->
+    queryString = " SELECT Reports.sha, Points.y, CONCAT(Reports.userAgent, ' on ', Reports.os) as userAgent FROM Points
+                    LEFT JOIN Reports ON (Points.ReportId = Reports.id)
+                    WHERE
+                      Points.note = ? AND
+                      Reports.key = ? AND
+                      Reports.sha IN (#{exports.qs(shas.length)})"
+
+    results = query queryString, type, key, shas...
+    pivoted = results
+      .updateField('y': (r) -> r.get('y') * 1000)
+      .pivot('userAgent', 'y', {default: 0})
+
 module.exports = exports
