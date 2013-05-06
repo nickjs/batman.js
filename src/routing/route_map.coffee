@@ -7,7 +7,14 @@ class Batman.RouteMap
     @childrenByName = {}
 
   routeForParams: (params) ->
-    @cachedRoute(params)
+    @_cachedRoutes ||= {}
+    key = @cacheKey(params)
+
+    if @_cachedRoutes[key]
+      @_cachedRoutes[key]
+    else
+      for route in @childrenByOrder
+        return (@_cachedRoutes[key] = route) if route.test(params)
 
   addRoute: (name, route) ->
     @childrenByOrder.push(route)
@@ -27,18 +34,10 @@ class Batman.RouteMap
         @collectionRoute = route
     true
 
-   cachedRoute: (params) ->
-    path = if typeof params is 'string'
+   cacheKey: (params) ->
+    if typeof params is 'string'
       params
     else if params.path?
       params.path
     else
       "#{params.controller}##{params.action}"
-
-    @_cachedRoutes ||= {}
-
-    if @_cachedRoutes[path]
-      @_cachedRoutes[path]
-    else
-      for route in @childrenByOrder
-        return (@_cachedRoutes[path] = route) if route.test(params)

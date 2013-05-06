@@ -15,6 +15,7 @@ Batman.extend Batman,
       delete div.test
     catch e
       Batman.canDeleteExpando = false
+
   # lower and upper case for efficiency
   noData: # these throw exceptions if you attempt to add expandos to them
     "embed": true,
@@ -140,13 +141,5 @@ Batman.extend Batman,
   _data: (elem, name, data) ->
     Batman.data elem, name, data, true
 
-  # A method for determining if a DOM node can handle the data expando
-  # acceptData: (elem) ->
-  #   if elem.nodeName
-  #     match = Batman.noData[elem.nodeName.toLowerCase()]
-  #     if match
-  #       return !(match == true or elem.getAttribute("classid") != match)
-  #   return true
-
   acceptData: (elem) ->
-    elem.___acceptData ||= !(match = Batman.noData[elem.nodeName]) || !(match == true) || elem.getAttribute("classid") != match
+    elem.___acceptData ?= !(match = Batman.noData[elem.nodeName]) || !(match == true) || elem.getAttribute("classid") != match
