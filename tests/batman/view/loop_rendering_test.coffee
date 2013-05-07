@@ -226,7 +226,6 @@ asyncTest 'it should order loops among their siblings properly', 5, ->
     equal 'p', div.childNodes[2].tagName.toLowerCase(), "Order of nodes is preserved"
     equal 'span', $(':first', div).get(0).tagName.toLowerCase(), "Order of nodes is preserved"
     equal 'span', $(':last', div).get(0).tagName.toLowerCase(), "Order of nodes is preserved"
-    console.log 'orly'
     QUnit.start()
 
 asyncTest 'it should order consecutive loops among their siblings properly', 1, ->

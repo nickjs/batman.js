@@ -10,9 +10,6 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   constructor: (definition) ->
     {node: sourceNode, attr: @iteratorName, keyPath: @key, renderer: @parentRenderer} = definition
 
-    @nodeMap = new Batman.SimpleHash
-    @rendererMap = new Batman.SimpleHash
-
     @prototypeNode = sourceNode.cloneNode(true)
     @prototypeNode.removeAttribute "data-foreach-#{@iteratorName}"
 
@@ -61,40 +58,23 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     startIndex = @_getStartNodeIndex() + 1
     fragment = document.createDocumentFragment()
 
-    @nodeMap.forEach (item, node) =>
-      if @_nodesToBeRendered.has(node)
-        @_nodesToBeRemoved ||= new Batman.SimpleSet
-        @_nodesToBeRemoved.add(node)
-      else
-        @_removeItem(item)
+    if @nodes
+      for node in @nodes
+        if @_nodesToBeRendered.has(node)
+          @_nodesToBeRemoved ||= new Batman.SimpleSet
+          @_nodesToBeRemoved.add(node)
+        else
+          @_removeNode(node)
+
+    @nodes = []
 
     if newItems
       for newItem, index in newItems
-        # Check if the node at this index is already the one destined for that position
-        # nodeAtIndex = parentNode.childNodes[startIndex + index]
-        # if nodeAtIndex? && @_itemForNode(nodeAtIndex) == newItem
-        #   unseenNodeMap.unset(newItem)
-        #   continue
-        # else
-          # Otherwise, create a new or move the existing node for that position to the desired position
-          # node = if (existingNode = @nodeMap.get(newItem))
-          #   unseenNodeMap.unset(newItem)
-          #   existingNode
-          # else
-          node = @_newNodeForItem(newItem)
-
-          # Batman.DOM.insertBefore @parentNode(), node, nodeAtIndex
-          fragment.appendChild(node)
+        @nodes ?= []
+        @nodes.push node = @_newNodeForItem(newItem)
+        fragment.appendChild(node)
 
       parentNode.insertBefore(fragment, @endNode)
-
-
-    # unseenNodeMap.forEach (item, node) =>
-    #   if @_nodesToBeRendered.has(node)
-    #     @_nodesToBeRemoved ||= new Batman.SimpleSet
-    #     @_nodesToBeRemoved.add(node)
-    #   else
-    #     @_removeItem(item)
 
     return
 
@@ -107,17 +87,16 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @_nodesToBeRendered.add(newNode)
 
     Batman._data(newNode, "#{@iteratorName}Item", newItem)
-    @nodeMap.set(newItem, newNode)
     @parentRenderer.prevent 'rendered'
     renderer = new Batman.Renderer newNode, @renderContext.descend(newItem, @iteratorName), @parentRenderer.view
     renderer.once 'rendered', =>
       @_nodesToBeRendered.remove(newNode)
       if @_nodesToBeRemoved?.has(newNode)
         @_nodesToBeRemoved.remove(newNode)
-        @_removeItem(newItem)
+        @_removeNode(newNode)
       else
         Batman.DOM.propagateBindingEvents(newNode)
-        @fire 'nodeAdded', newNode, newItem
+        @fire 'nodeAdded', newNode
 
       @parentRenderer.allowAndFire 'rendered'
 
@@ -130,10 +109,9 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
         return index
     0
 
-  _removeItem: (item) ->
-    node = @nodeMap.unset(item)
+  _removeNode: (node) ->
     Batman.DOM.destroyNode(node)
-    @fire 'nodeRemoved', node, item
+    @fire 'nodeRemoved', node
 
   die: ->
     # ensure any remaining un-rendered nodes are removed once rendering is complete
@@ -141,5 +119,4 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     if @_nodesToBeRendered && !@_nodesToBeRendered.isEmpty()
       @_nodesToBeRemoved ||= new Batman.SimpleSet
       @_nodesToBeRemoved.add(@_nodesToBeRendered.toArray()...)
-
     super
