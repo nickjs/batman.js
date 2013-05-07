@@ -40,4 +40,63 @@ Watson.benchmark 'IteratorBinding performance', (error, suite) ->
         minSamples: 10
       }
 
+  do ->
+    source = """
+      <div data-foreach-item="items"></div>
+    """
+
+    items = false
+    context = false
+    setContext = ->
+      set = new Batman.Set
+      set.add(Batman(num: i)) for i in [1..100]
+      items = set.sortedBy('num')
+      context = Batman.RenderContext.base.descend {items}
+
+    setContext()
+
+    suite.add "move one item from the top to the bottom of the set", (deferred) ->
+      view = new Batman.View
+        context: context
+        html: source
+      view.on 'ready', ->
+        items.toArray()[0].set('num', 101)
+        deferred.resolve()
+    , {
+      onCycle: ->
+        setContext()
+      defer: true
+      minSamples: 10
+    }
+
+  do ->
+    source = """
+      <div data-foreach-item="items"></div>
+    """
+
+    set = false
+    context = false
+    boundObject = false
+    setContext = ->
+      set = new Batman.Set
+      set.add(Batman(num: i)) for i in [1..100]
+      boundObject = Batman({items: set.sortedBy('num')})
+      context = Batman.RenderContext.base.descend(boundObject)
+
+    setContext()
+
+    suite.add "reverse the set", (deferred) ->
+      view = new Batman.View
+        context: context
+        html: source
+      view.on 'ready', ->
+        boundObject.set('items', set.sortedBy('num', 'desc'))
+        deferred.resolve()
+    , {
+      onCycle: ->
+        setContext()
+      defer: true
+      minSamples: 10
+    }
+
   suite.run()

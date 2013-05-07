@@ -66,6 +66,6 @@ exports =
     results = query queryString, type, key, shas...
     pivoted = results
       .updateField('y': (r) -> r.get('y') * 1000)
-      .pivot('userAgent', 'y', {default: 0})
+      .pivot('sha', 'y', {default: 0})
 
 module.exports = exports
