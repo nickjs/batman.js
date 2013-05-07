@@ -206,8 +206,7 @@ Batman.DOM =
           Batman.DOM.removeEventListener node, eventName, listener
 
     # remove all bindings and other data associated with this node
-    Batman.removeData node                   # external data (Batman.data)
-    Batman.removeData node, undefined, true  # internal data (Batman._data)
+    Batman.removeData node, null, null, true  # internal and external data (Batman._data and Batman.data)
 
     Batman.DOM.didDestroyNode(child) for child in node.childNodes
     true
