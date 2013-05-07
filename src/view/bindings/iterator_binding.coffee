@@ -54,10 +54,6 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       @handleArrayChanged([])
 
   handleArrayChanged: (newItems) =>
-    parentNode = @parentNode()
-    startIndex = @_getStartNodeIndex() + 1
-    fragment = document.createDocumentFragment()
-
     if @nodes
       for node in @nodes
         if @_nodesToBeRendered.has(node)
@@ -69,12 +65,14 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @nodes = []
 
     if newItems
+      fragment = document.createDocumentFragment()
+
       for newItem, index in newItems
         @nodes ?= []
         @nodes.push node = @_newNodeForItem(newItem)
         fragment.appendChild(node)
 
-      parentNode.insertBefore(fragment, @endNode)
+      @parentNode().insertBefore(fragment, @endNode)
 
     return
 
@@ -101,13 +99,6 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       @parentRenderer.allowAndFire 'rendered'
 
     newNode
-
-  _getStartNodeIndex: ->
-    # Get start index
-    for node, index in @parentNode().childNodes
-      if node == @startNode
-        return index
-    0
 
   _removeNode: (node) ->
     Batman.DOM.destroyNode(node)
