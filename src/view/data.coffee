@@ -31,7 +31,7 @@ Batman.extend Batman,
     !!elem and !isEmptyDataObject(elem)
 
   data: (elem, name, data, pvt) -> # pvt is for internal use only
-    return  unless Batman.acceptData(elem)
+    return unless Batman.acceptData(elem)
     internalKey = Batman.expando
     getByName = typeof name == "string"
     cache = Batman.cache
@@ -142,8 +142,8 @@ Batman.extend Batman,
     Batman.data elem, name, data, true
 
   acceptData: (elem) ->
-    elem.___acceptData = if elem.nodeName
-      match = Batman.noData[elem.nodeName.toLowerCase()]
+    elem.___acceptData ||= if elem.nodeName
+      match = Batman.noData[elem.nodeName]
       if match
         !(match == true or elem.getAttribute("classid") != match)
       else
