@@ -15,11 +15,16 @@ Batman.extend Batman,
       delete div.test
     catch e
       Batman.canDeleteExpando = false
+
+  # lower and upper case for efficiency
   noData: # these throw exceptions if you attempt to add expandos to them
     "embed": true,
+    "EMBED": true,
     # Ban all objects except for Flash (which handle expandos)
     "object": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
-    "applet": true
+    "OBJECT": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
+    "applet": true,
+    "APPLET": true
 
   hasData: (elem) ->
     elem = (if elem.nodeType then Batman.cache[elem[Batman.expando]] else elem[Batman.expando])
@@ -136,10 +141,12 @@ Batman.extend Batman,
   _data: (elem, name, data) ->
     Batman.data elem, name, data, true
 
-  # A method for determining if a DOM node can handle the data expando
   acceptData: (elem) ->
-    if elem.nodeName
+    elem.___acceptData = if elem.nodeName
       match = Batman.noData[elem.nodeName.toLowerCase()]
       if match
-        return !(match == true or elem.getAttribute("classid") != match)
-    return true
+        !(match == true or elem.getAttribute("classid") != match)
+      else
+        true
+    else
+      true

@@ -13,7 +13,9 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
 
     super
 
-    Batman.DOM.events.click @node, (node, event) =>
+    Batman.DOM.events.click @node, @routeClick
+
+  routeClick: (node, event) =>
       return if event.__batmanActionTaken
       event.__batmanActionTaken = true
       params = @pathFromValue(@get('filteredValue'))
