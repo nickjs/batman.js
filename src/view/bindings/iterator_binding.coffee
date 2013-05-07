@@ -61,7 +61,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     startIndex = @_getStartNodeIndex() + 1
     fragment = document.createDocumentFragment()
 
-    @_removeItem(item) for item, node in @nodeMap
+    @nodeMap.forEach (item, node) => @_removeItem(item)
 
     if newItems
       for newItem, index in newItems
