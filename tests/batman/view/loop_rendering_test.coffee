@@ -219,12 +219,14 @@ asyncTest 'it should order loops among their siblings properly', 5, ->
   objects = new Batman.Set('foo', 'bar', 'baz')
 
   helpers.render source, false, {baz: "corn", bar: objects, foo: "qux"}, (node) ->
+    console.log 'dont tase me bro'
     div = node.childNodes[0]
     equal 'corn', $('span', div).get(0).innerHTML, "Node before the loop is rendered"
     equal 'qux', $('span', div).get(1).innerHTML, "Node before the loop is rendered"
     equal 'p', div.childNodes[2].tagName.toLowerCase(), "Order of nodes is preserved"
     equal 'span', $(':first', div).get(0).tagName.toLowerCase(), "Order of nodes is preserved"
     equal 'span', $(':last', div).get(0).tagName.toLowerCase(), "Order of nodes is preserved"
+    console.log 'orly'
     QUnit.start()
 
 asyncTest 'it should order consecutive loops among their siblings properly', 1, ->

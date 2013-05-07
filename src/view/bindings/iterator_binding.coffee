@@ -81,7 +81,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
           # Batman.DOM.insertBefore @parentNode(), node, nodeAtIndex
           fragment.appendChild(node)
 
-      parentNode.appendChild(fragment)
+      parentNode.insertBefore(fragment, @endNode)
 
 
     # unseenNodeMap.forEach (item, node) =>
