@@ -219,7 +219,6 @@ asyncTest 'it should order loops among their siblings properly', 5, ->
   objects = new Batman.Set('foo', 'bar', 'baz')
 
   helpers.render source, false, {baz: "corn", bar: objects, foo: "qux"}, (node) ->
-    console.log 'dont tase me bro'
     div = node.childNodes[0]
     equal 'corn', $('span', div).get(0).innerHTML, "Node before the loop is rendered"
     equal 'qux', $('span', div).get(1).innerHTML, "Node before the loop is rendered"
