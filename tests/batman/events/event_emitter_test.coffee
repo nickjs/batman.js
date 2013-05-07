@@ -19,6 +19,32 @@ test "on attaches handlers to many keys at once", ->
   @ottawaWeather.fire('hail')
   ok spy.callCount, 3
 
+test "off detaches handlers", ->
+  spy = createSpy()
+  @ottawaWeather.on 'rain', spy
+  @ottawaWeather.off 'rain', spy
+  @rain.fire()
+  ok !spy.called
+
+test "off detaches handlers from many keys at once", ->
+  spy = createSpy()
+  @ottawaWeather.on 'snow', 'sleet', 'hail', spy
+  @ottawaWeather.off 'snow', 'sleet', 'hail', spy
+  @ottawaWeather.fire('snow')
+  @ottawaWeather.fire('sleet')
+  @ottawaWeather.fire('hail')
+  ok !spy.called
+
+test "off detaches all handlers if no handler given", ->
+  first = createSpy()
+  second = createSpy()
+  @ottawaWeather.on 'snow', first
+  @ottawaWeather.on 'snow', second
+  @ottawaWeather.off 'snow'
+  @ottawaWeather.fire('snow')
+  ok !first.called
+  ok !second.called
+
 test "once attaches handlers which get called during firing and then remove themselves", ->
   @ottawaWeather.once 'rain', spy = createSpy()
   @rain.fire()
