@@ -36,7 +36,7 @@
     "q": "~>0.9.2",
     "uglify-js": "~>2.2.5",
     "temp": "~>0.5.0",
-    "qqunit": "~>0.5.0",
+    "qqunit": "~>0.6.0",
     "percolate": "~>0.4.2",
     "connect-assets": "~>2.4.1",
     "liquor": "~>0.0.0"
