@@ -24,6 +24,15 @@ class Batman.SimpleHash
           return pair[1] if @equality(pair[0], key)
     else
       @_storage[@prefixedKey(key)]
+
+  _getProperty: (key) ->
+    @_storage["_" + key]
+
+  _setProperty: (key,val) ->
+    key = "_" + key
+    @length++ unless @_storage[key]?
+    @_storage[key] = val
+  
   set: (key, val) ->
     if @objectKey(key)
       @_objectStorage ||= {}
