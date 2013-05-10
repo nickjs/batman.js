@@ -84,7 +84,6 @@ _implementImmediates = (container) ->
     Batman.clearImmediate = -> container.clearImmediate.apply(container, arguments)
   else if canUsePostMessage()
     prefix = 'com.batman.'
-    functions = new Batman.SimpleHash
     handler = (e) ->
       return unless ~e.data.search(prefix)
       handle = e.data.substring(prefix.length)
