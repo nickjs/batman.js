@@ -179,7 +179,7 @@ test "@afterFilter allows declaration of filters to execute before all actions",
 
 ### defaultRenderYield[= 'main'] : String
 
-`defaultRenderYield` is a `String` representing which yield a controller should automatically render into if no yield is mentioned explicitly. `defaultRenderYield` is `'main'` normally, which means calls to `@render()` or actions which rely on the implicit rendering render their views into the `main` yield (and end up where ever `data-yield="main"` is found in your HTML).
+`defaultRenderYield` is a `String` representing which yield a controller should automatically render into if no yield is mentioned explicitly. `defaultRenderYield` is `'main'` normally, which means calls to `@render()` or actions which rely on the implicit rendering render their views into the `main` yield (and end up wherever `data-yield="main"` is found in your HTML).
 
 
 ### Controller Actions

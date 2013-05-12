@@ -4,7 +4,7 @@
 
 #### SimpleSet vs Set
 
-`SimpleSet` and `Set` are two distinct classes in Batman. `SimpleSet` implements the basic set semantics, but it is *not* a `Batman.Object`, so properties on it (like its `length` or `toArray`) can not be bound. `Set` is a `Batman.Object`, so it can be observed, and thus plays nice with the accessor system. Use a `SimpleSet` only when you know nothing will need to be observed on the set you are creating, which usually isn't a valid assumption. If it is in fact correct, consider using a native array as well, because iteration and in fact membership checks will be faster.
+`SimpleSet` and `Set` are two distinct classes in Batman. `SimpleSet` implements the basic set semantics, but it is *not* a `Batman.Object`, so properties on it (like its `length` or `toArray`) cannot be bound. `Set` is a `Batman.Object`, so it can be observed, and thus plays nice with the accessor system. Use a `SimpleSet` only when you know nothing will need to be observed on the set you are creating, which usually isn't a valid assumption. If it is in fact correct, consider using a native array as well, because iteration and in fact membership checks will be faster.
 
 ### constructor(items...)
 

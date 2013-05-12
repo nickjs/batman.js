@@ -1,12 +1,12 @@
 ### What Are Views?
 
-The basic flow of interactions with a Batman application is this: a user triggers an event, which dispatches a route, which routes to a controller action, which gets executed, and finally renders a template. The template is an HTML file in the `app/views` folder with the same name as the action being executed. These templates leverage the power of the Batman view binding system using `data-bind` and kin to display some data to the user and prompt them for the next event.
+In the basic flow of interactions with a Batman application, a user triggers an event, which dispatches a route, which routes to a controller action, which gets executed, and finally renders a template. The template is an HTML file in the `app/views` folder with the same name as the action being executed. These templates leverage the power of Batman's view binding system using `data-bind` to display some data to the user and prompt them for the next event.
 
-The controller does all this by instantiating a new `Batman.View`, setting its `html` property to the contents of the template, and telling the view to `render()`. When the view's `html` property is set, the view inserts it into its `node`, and when `render` is called, it traverses that HTML to find and create your bindings. A vanilla `Batman.View` instance's `render` function does this by instantiating a new `Batman.Renderer` and asking it to do its magic on the view's `html`. The view then emits a `ready` event and then sits around waiting for the user to do something.
+The controller does all this by instantiating a new `Batman.View`, setting its `html` property to the contents of the template, and telling the view to `render()`. When the view's `html` property is set, the view inserts it into its `node`, and when `render` is called, it traverses that HTML to find and create your bindings. A vanilla `Batman.View` instance's `render` function does this by instantiating a new `Batman.Renderer` and asking it to do its magic on the view's `html`. The view then emits a `ready` event and waits for the user to do something.
 
 #### Do More
 
-`Batman.View`s have another purpose however: they can be used to create reusable, configurable components which can then be created and reused inside the templates. Examples include a Google Maps component, perhaps a lightbox, a segmented button control, or maybe a class to manage the interactions around flash messages. The flow with these `View`s is different: they aren't instantiated by controller, but instead by the template using a `data-view` binding. They are subclasses of `Batman.View` which enhance the standard functionality to do something useful. Lets look at some examples of how developers might use `data-view`:
+`Batman.View`s have another purpose however: they can be used to create reusable, configurable components which can then be created and reused inside the templates. Consider a Google Maps component, perhaps a lightbox, a segmented button control, or maybe a class which manages the interactions around flash messages. The flow with these `View`s is different: they aren't instantiated by controller, but instead by the template using a `data-view` binding. They are subclasses of `Batman.View` which enhance the standard functionality to do something useful. Let's look at some examples of how one might use `data-view`:
 
 ```html
 <!-- You might want to use a View to make flash messages. This one might apply some CSS styles to make the message clearer to the user, or use some JavaScript to add a close button which hides the div -->
@@ -23,20 +23,20 @@ The controller does all this by instantiating a new `Batman.View`, setting its `
 <input data-view="PlaceHolderInputView"></input>
 ```
 
-Each of these doo-dads implements some handy functionality which the template can pull in where ever it likes to spice up the experience. `FlashMessageView`, `SegmentedButtonView`, and `PlaceHolderInputView` are all `Batman.View` subclasses which have some custom code in them which does cool stuff to whatever node they are applied to. The basic flow for implementation is this:
+Each of these doo-dads implements some handy functionality which the template can pull in wherever it likes to spice up the experience. `FlashMessageView`, `SegmentedButtonView`, and `PlaceHolderInputView` are all `Batman.View` subclasses which have some custom code in them which does cool stuff to the node on which they are applied. Implementation follows this basic flow:
 
  + Create a `Batman.View` subclass in a namespace where your view can find it
- + Override the `render` function to do something useful, while being sure to call `super`
- + Add useful functions for controlling the views behaviour externally or to be attached as event handlers
+ + Override the `render` function to do something useful and make sure to call `super`
+ + Add useful functions for controlling the view's behaviour externally or attaching event handlers
  + Reference the view using a `data-view` binding on a node elsewhere.
 
 Let's look at how this flow applies to a couple examples.
 
 #### An example: FlashMessageView
 
-`FlashMessageView` is a `View` subclass we apply to ephemeral messages meant for display and then dismissal. Let's say the class has two responsibilities: applying some fun styles to make the whatever node it wraps flash-y, and also adding a close button to the node to let users hide it once they have read the message.
+`FlashMessageView` is a `View` subclass we apply to ephemeral messages meant for display and then dismissal. Let's say the class has two responsibilities: applying some fun styles to make the node it wraps flashy, and also adding a close button to the node to let users hide it once they have read the message.
 
-For demonstration we'll use jQuery to implement the guts of the view. If we were using only jQuery in this project, we might implement this same functionality by giving our node a unique ID or class, and then using jQuery somewhere to select it and add the classes and close button. With Batman, the selection step is done for us, and all we have to do is apply the functionality. Your `Batman.View` will receive a `node` for wrapping which can be found in in the `node` property on the view instance.
+For demonstration, we'll use jQuery to implement the guts of the view. If we were using only jQuery in this project, we might implement this same functionality by giving our node a unique ID or class, and then using jQuery somewhere to select it and add the classes and close button. With Batman, the selection step is done for us, and all we have to do is apply the functionality. Your `Batman.View` will receive a `node` for wrapping which can be found in the `node` property on the view instance.
 
 ```coffeescript
 class FlashMessageView extends Batman.View
@@ -64,11 +64,11 @@ class MyApp.FlashMessageView extends Batman.View
       node.hide('fast')
 ```
 
-There are a couple things we need to change with this. First, applying the logic in the constructor isn't the best idea. I deceived you; my apologies. Instead, it should be in the overridden `render` function on the `View`, or in a handler on one of the `View`'s handlers. This is better because, perhaps unbeknownst to you, Batman should be able to instantiate `Batman.View`s __without a `node`__. The `node` for a view is not always be available upon construction, so construction, rendering, and insertion are all separate happenings on a `View`. Depending on what you are doing, your logic should happen before or after one of these stages.
+There are a couple things we need to change with this. First, applying the logic in the constructor isn't the best idea; I deceived you, my apologies. Instead, it should be in the overridden `render` function on the `View`, or in a handler on one of the `View`'s handlers. This is better because, perhaps unbeknownst to you, Batman should be able to instantiate `Batman.View`s __without a `node`__. The `node` for a view is not always available upon construction, so construction, rendering, and insertion are all separate events on a `View`. Depending on what you are doing, your logic should happen before or after one of these stages.
 
 #### If you want to do something to a view's HTML after rendering, add a `ready` function, or listen to an event
 
-`View`s call a function named `ready` on themselves after all their contents have been rendered and thus their bindings have been setup. This is a useful lifecycle hook to add jQuerys or other fancy logic which implements useful functionality in JavaScript because you know the DOM is setup and stable, at least for now. For example, before the `ready` event has fired, `data-foreach` bindings might not have inserted all their items, or `data-showif` bindings might not have been created and thus their nodes would still be visible.
+`View`s call a function named `ready` on themselves after all their contents have been rendered and thus have setup bindings. This is a useful lifecycle hook to add jQuerys or other fancy logic which implements useful functionality in JavaScript because you know the DOM is setup and stable, at least for now. For example, before the `ready` event has fired, `data-foreach` bindings might not have inserted all their items, or `data-showif` bindings might not have been created and thus their nodes would still be visible.
 
 Lets move the `FlashMessageView`'s enhancements to the `ready` function where they belong:
 
@@ -93,7 +93,7 @@ class MyApp.FlashMessageView extends Batman.View
 
 For things like adding new nodes with bindings on them or munging the existing source of the given `node`, put the logic in an overridden `render` method.
 
-*Note*: an overridden `render` function must call super. Calling super is important because the behaviour from the super class still needs to happen. Imagine the flash message had a binding in it:
+_Note_: an overridden `render` function must call super. Calling super is important because the behaviour from the super class still needs to happen. Imagine the flash message had a binding in it:
 
 ```html
 <div data-view="FlashMessageView">
@@ -118,7 +118,7 @@ class MyApp.FlashMessageView extends Batman.View
   closeFlash: -> $(@get('node')).hide()
 ```
 
-We add a button to the element given to this view which has a binding in it. This binding needs to be rendered, so it must be inserted before the super implementation of render gets called. This setup of the view is the "true" Batman way of doing things: using Batman event handlers and bindings to accomplish functionality so the whole setup is uniform, but if using jQuery events like in the example above is easier you should do what you can to ship your code.
+We add a button to the element given to this view which has a binding in it. This binding needs to be rendered, so it must be inserted before the super implementation of render gets called. This setup of the view is the "true" Batman way of doing things: using Batman event handlers and bindings to accomplish functionality so the whole setup is uniform, but if using jQuery events like in the example above is easier, you should do what you can to ship your code.
 
 #### If you want to do something every time a view is inserted or removed from the DOM, use the `beforeAppear`, `appear`, `beforeDisappear`, and `disappear` events.
 
@@ -132,7 +132,7 @@ class MyApp.UsedOnceView extends Batman.View
   @::on 'beforeDisappear', -> document.getElementById('my-cool-element').inDOM = false
 ```
 
-The reason this is necessary is because in the `beforeAppear` and `disappear` the View's node will not be in the DOM. It will be a detached tree, a parentless node, ceased to be accessible via the document, bereft of siblings, resting in only memory, shuffled off 'ts mortal tree, run down the curtain and joined the bleedin' choir invisible! Batman detaches `View`s whenever the tree the `View`'s node resides in is removed, which often happens if another controller render takes place. Batman will traverse the tree it is removing or inserting and ensure that these events are fired on any views in the tree and not just the root one.
+The reason this is necessary is because in the `beforeAppear` and `disappear` the View's node will not be in the DOM. It will be a detached tree, a parentless node, cease to be accessible via the document, bereft of siblings, resting in only memory, shuffled off its mortal tree, run down the curtain and joined the bleedin' choir invisible! Batman detaches `View`s whenever the tree the `View`'s node resides in is removed, which often happens if another controller render takes place. Batman will traverse the tree it is removing or inserting and ensure that these events are fired on any views in the tree and not just the root one.
 
 
 #### If you want to do something every time a view is removed for good from the DOM, use the `beforeDestroy` or `destroy` events.
@@ -149,7 +149,7 @@ class MyApp.TrackingView extends Batman.View
     @constructor.instances.add @
 ```
 
-This might be a valid strategy to take if you want quick access to all instances of the particular view instead of say traversing the DOM to find them. The issue with this however is that the View instances and thus their entire DOM trees can't be garbage collected since there will always be a reference to them. To avoid this, we can remove the view from the list of instances when it is destroyed, since we know we no longer need it.
+This might be a valid strategy to take if you want quick access to all instances of the particular view instead of say traversing the DOM to find them. The issue with this however is that the View instances, and thus their entire DOM trees, can't be garbage collected since there will always be a reference to them. To avoid this, we can remove the view from the list of instances when it is destroyed, since we know we no longer need it.
 
 ```coffeescript
 class MyApp.TrackingView extends Batman.View
@@ -190,16 +190,16 @@ So, when this `View` subclass is instantiated, it expects to be given `latitude`
     height: '...'
 ```
 
-and then referenced in some template like so:
+and is referenced in some template like so:
 
 ```html
 <h3>Current Address</h3>
 <div data-view="currentMapView"></div>
 ```
 
-When the `<div>` above is rendered, the `GoogleMapsView` will wait for `currentAddressView` will be called, which will insert the image into the DOM using the configured options. It is important that the `View` class has the `node: false` option on its prototype so that it knows it is to wait for a node to be given to it via a `data-view` binding, instead of auto-generating one like most views rendered by a Controller might.
+When the `<div>` above is rendered, the `GoogleMapsView` will wait for `currentAddressView` to be called, which will insert the image into the DOM using the configured options. It is important that the `View` class has the `node: false` option on its prototype so that it knows it needs to wait for a node to be given to it via a `data-view` binding, instead of auto-generating one like most views rendered by a Controller might.
 
-In an effort to make the `View` a more reusable, we should pull out the configuration options from the HTML itself:
+In an effort to make the `View` more reusable, we should pull out the configuration options from the HTML itself:
 
 ```html
 <h3>Current Address</h3>
@@ -214,14 +214,14 @@ class MyApp.GoogleMapsView extends Batman.View
     "http://maps.googleapis.com/maps/api/staticmap?center=#{@get('latitude')},#{@get('longitude')}&zoom=#{@get('zoom')}&size=#{@get('width')}x#{@get('height')}&sensor=false"
 ```
 
-We declare the options that can be passed to the view using `data-view-{option}` style bindings via the `@option` class macro on `View`s. `@option` creates an property on the view which is accessible throughout the rest of it, so you can do `@get('longitude')` in other places. It then expects to find a `data-view-longitude="-75.690237"` on the node the `data-view` binding occurs on, where the value inside the double quotes can be a filtered keypath like any other. The value at `@get('longitude')` will change as the filtered keypath changes, so we could perhaps bind the `longitude` option to a `customer.longitude` keypath by doing the following:
+We declare the options that can be passed to the view using `data-view-{option}` style bindings via the `@option` class macro on `View`s. `@option` creates a property on the view which is accessible throughout the rest of it, so you can do `@get('longitude')` in other places. It then expects to find a `data-view-longitude="-75.690237"` on the node the `data-view` binding occurs on, where the value inside the double quotes can be a filtered keypath like any other. The value at `@get('longitude')` will change as the filtered keypath changes, so we could perhaps bind the `longitude` option to a `customer.longitude` keypath by doing the following:
 
 ```html
 <h3>Current Address</h3>
 <div data-view="GoogleMapsView" data-view-latitude="customer.latitude" data-view-longitude="customer.longitude" ...></div>
 ```
 
-With the above configuration the image rendered out by the view would change as the customer's `longitude` value changed.
+With the above configuration the image rendered out by the view would change as the `longitude` value changed.
 
 _Note_: `data-view` bindings accept both `View` instances and `View` subclasses. In the first example, `data-view` referenced an already existing _instance_ of the subclass, and in the second, `data-view` references the _class_ itself such that it creates its own instance.
 
@@ -248,4 +248,4 @@ class CloseButtonView extends Batman.View
 
 Be careful using the above strategy for passing `View`s data: they should be told their data instead of having to fetch it themselves in the interest of being loosely coupled and thus reusable.
 
-And thats it!
+And that's it!

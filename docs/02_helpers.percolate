@@ -1,6 +1,6 @@
 ## Batman Helpers
 
-Batman includes an number of useful, general purpose helper functions and references. They can all be found attached to the `Batman` object and can optionally be exported into the global namespace with a `$` prefix.
+Batman includes a number of useful, general purpose helper functions and references. They can all be found attached to the `Batman` object and can optionally be exported into the global namespace with a `$` prefix.
 
 ### container
 

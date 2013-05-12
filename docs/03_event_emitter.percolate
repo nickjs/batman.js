@@ -134,7 +134,7 @@ test 'events can be allowed and fired after prevention', ->
 !!!
 
 !!!
-test 'events must be be allowed and fired the same number of times they have been prevented', ->
+test 'events must be allowed and fired the same number of times they have been prevented', ->
   show dynamite = $mixin {}, Batman.EventEmitter
   show dynamite.on 'detonate', -> log "This will only fire once"
   show dynamite.prevent('detonate')
