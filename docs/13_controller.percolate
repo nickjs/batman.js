@@ -175,7 +175,7 @@ test "@afterFilter allows declaration of filters to execute before all actions",
 
 ### autoScrollToHash[= true] : boolean
 
-`autoScrollToHash` is a boolean property on the instance level of a controller describing weather or not the controller should automatically scroll the browser window to the element with ID equal to the `hash` parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing. `autoScrollToHash` is true by default.
+`autoScrollToHash` is a boolean property on the instance level of a controller describing whether or not the controller should automatically scroll the browser window to the element with ID equal to the `hash` parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing. `autoScrollToHash` is true by default.
 
 ### defaultRenderYield[= 'main'] : String
 
