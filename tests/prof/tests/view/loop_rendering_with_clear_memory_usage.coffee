@@ -1,7 +1,7 @@
 Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
-Random = require '../lib/number_generator.coffee.coffee'
-Clunk = require '../lib/clunk.coffee.coffee'
+Random = require '../lib/number_generator.coffee'
+Clunk = require '../lib/clunk.coffee'
 
 # Fix deferred loop rendering to actually happen, and always fire the parent's rendered event
 # Needed for the ::deferEvery settings below.
