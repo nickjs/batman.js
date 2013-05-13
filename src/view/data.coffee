@@ -83,7 +83,7 @@ Batman.extend Batman,
 
     return ret
 
-  removeData: (elem, name, pvt) -> # pvt is for internal use only
+  removeData: (elem, name, pvt, all) -> # pvt is for internal use only
     return unless Batman.acceptData(elem)
     internalKey = Batman.expando
     isNode = elem.nodeType
@@ -124,7 +124,7 @@ Batman.extend Batman,
     # We destroyed the entire user cache at once because it's faster than
     # iterating through each key, but we need to continue to persist internal
     # data if it existed
-    if internalCache
+    if internalCache && !all
       cache[id] = {}
       cache[id][internalKey] = internalCache
     # Otherwise, we need to eliminate the expando on the node to avoid

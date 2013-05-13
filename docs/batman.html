@@ -977,7 +977,7 @@ batman server # (or just "batman s")</code></pre>
   </pre>
 </div>
 <h3 id="batman-eventemitter-allow">allow(key) : EventEmitter</h3>
-<p>Allows the event with name <code>key</code> to fire once more, after <code>prevent</code> had been called previously. <code>allow</code> will not fire the event when called, regardless of weather or not the event can now be fired or if an attempt to fire it was made while the event was prevented. Returns the event emitting object.
+<p>Allows the event with name <code>key</code> to fire once more, after <code>prevent</code> had been called previously. <code>allow</code> will not fire the event when called, regardless of whether or not the event can now be fired or if an attempt to fire it was made while the event was prevented. Returns the event emitting object.
 
 </p>
 <p><em>Note</em>: <code>prevent</code> can be called more than once to effectively &quot;nest&quot; preventions. <code>allow</code> or <code>allowAndFire</code> must be called the same number of times or more for events to fire once more.
@@ -2759,7 +2759,7 @@ batman server # (or just "batman s")</code></pre>
   </pre>
 </div>
 <h3 id="batman-controller-autoscrolltohash-true">autoScrollToHash[= true] : boolean</h3>
-<p><code>autoScrollToHash</code> is a boolean property on the instance level of a controller describing weather or not the controller should automatically scroll the browser window to the element with ID equal to the <code>hash</code> parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing. <code>autoScrollToHash</code> is true by default.
+<p><code>autoScrollToHash</code> is a boolean property on the instance level of a controller describing whether or not the controller should automatically scroll the browser window to the element with ID equal to the <code>hash</code> parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing. <code>autoScrollToHash</code> is true by default.
 
 </p>
 <h3 id="batman-controller-defaultrenderyield-main">defaultRenderYield[= &#39;main&#39;] : String</h3>

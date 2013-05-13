@@ -54,37 +54,3 @@ Batman.Request::send = (data) ->
 
   # Fires the request. Grab a reference to the xhr object so we can get the status code elsewhere.
   xhr = (reqwest options).request
-
-prefixes = ['Webkit', 'Moz', 'O', 'ms', '']
-Batman.mixins.animation =
-  initialize: ->
-    for prefix in prefixes
-      @style["#{prefix}Transform"] = 'scale(1, 1)'
-      @style.opacity = 1
-
-      @style["#{prefix}TransitionProperty"] = "#{if prefix then '-' + prefix.toLowerCase() + '-' else ''}transform, opacity"
-      @style["#{prefix}TransitionDuration"] = "0.8s, 0.55s"
-      @style["#{prefix}TransformOrigin"] = "left top"
-    @
-  show: (addToParent) ->
-    show = =>
-      @style.opacity = 1
-      for prefix in prefixes
-        @style["#{prefix}Transform"] = 'scale(1, 1)'
-      @
-
-    if addToParent
-      addToParent.append?.appendChild @
-      addToParent.before?.parentNode.insertBefore @, addToParent.before
-
-      setTimeout show, 0
-    else
-      show()
-    @
-  hide: (shouldRemove) ->
-    @style.opacity = 0
-    for prefix in prefixes
-      @style["#{prefix}Transform"] = 'scale(0, 0)'
-
-    setTimeout((=> @parentNode?.removeChild @), 600) if shouldRemove
-    @

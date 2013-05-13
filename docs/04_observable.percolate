@@ -129,7 +129,7 @@ test "observe attaches handlers which get called upon change", ->
 
 ### observeAndFire(key, observerCallback) : this
 
-Adds the `observerCallback` as an observer to `key`, and fires it immediately. Accepts the exact same arguments and follows the same semantics as `Observable::observe`, but the observer is fired with the current value of the keypath it observers synchronously during the call to `observeAndFire`.
+Adds the `observerCallback` as an observer to `key`, and fires it immediately. Accepts the exact same arguments and follows the same semantics as `Observable::observe`, but the observer is fired with the current value of the keypath it observes synchronously during the call to `observeAndFire`.
 
 During the initial synchronous firing of the `callback`, the `newValue` and `oldValue` arguments will be the same value: the current value of the property. This is because the old value of the property is not cached and therefore unavailable. If your observer needs the old value of the property, you must attach it before the `set` on the property happens.
 
@@ -146,7 +146,7 @@ test "observeAndFire calls the observer upon attaching it with the currentValue 
 
 If `observerCallback` and `key` are given, that observer is removed from the observers on `key`. If only a `key` is given, all observers on that key are removed. If no `key` is given, all observers on all keys are removed. Accepts keypaths.
 
-Returns the object `forget` was called upon.
+Returns the object on which `forget` was called.
 
 !!!
 test "forget removes an observer from a key if the key and the observer are given", ->
@@ -175,7 +175,7 @@ test "forget removes all observers from a key if only the key is given", ->
 !!!
 
 !!!
-test "forget removes all observers from all key if no key is given", ->
+test "forget removes all observers from all keys if no key is given", ->
   show song = Batman({length: 340, bpm: 120})
   show(observerA = ((newValue, oldValue) -> log [newValue, oldValue]))
   show(observerB = ((newValue, oldValue) -> log [newValue, oldValue]))
