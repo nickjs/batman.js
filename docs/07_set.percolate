@@ -4,7 +4,7 @@
 
 #### SimpleSet vs Set
 
-`SimpleSet` and `Set` are two distinct classes in Batman. `SimpleSet` implements the basic set semantics, but it is *not* a `Batman.Object`, so properties on it (like its `length` or `toArray`) cannot be bound. `Set` is a `Batman.Object`, so it can be observed, and thus plays nice with the accessor system. Use a `SimpleSet` only when you know nothing will need to be observed on the set you are creating, which usually isn't a valid assumption. If it is in fact correct, consider using a native array as well, because iteration and in fact membership checks will be faster.
+`SimpleSet` and `Set` are two distinct classes in Batman. `SimpleSet` implements the basic set semantics, but it is *not* a `Batman.Object`, so properties on it (like its `length` or `toArray`) cannot be bound. `Set` is a `Batman.Object`, so it can be observed, and thus plays nicely with the accessor system. Use a `SimpleSet` only when you know nothing will need to be observed on the set you are creating, which usually isn't a valid assumption. If it is in fact valid, consider using a native array as well, as iteration and membership checks will be faster.
 
 ### constructor(items...)
 
@@ -75,7 +75,7 @@ test 'Set::has registers the set as a source of an accessor', ->
 
 ### add(items...)
 
-`add` adds 0 or more new items to the set. `add` returns an array of the items which have been newly added to the set, which is to say the intersection of the argument items and the set itself before addition.
+`add` adds 0 or more new items to the set. `add` returns an array of the items which have been newly added to the set, which is to say the intersection of the argument items and the set's complement before addition.
 
 `add` fires the `itemsWereAdded` event with the list of items newly added to the set if that list has length greater than 0. This is to say the event will not be fired if the items passed to add were all already members of the set.
 
@@ -170,7 +170,7 @@ test 'Set::find returns undefined if no items pass the test function', ->
 
 `forEach` calls the `iteratorFunction` with each item in the set, optionally executing the `iteratorFunction` in the passed context. Returns `undefined`.
 
-_Note_: Set iteration order is not defined, which is to say Set client code cannot rely on one item being iterated over before another, regardless of when the Set's items were added. If you need an ordered set, Batman provides `SetSort` for exactly this, while including the added benefit of observability. If you need a one time ordering of a set, you can get the array representation with `toArray` and then use vanilla JavaScript `sort` on that array.
+_Note_: Set iteration order is not defined, thus Set client code cannot rely on one item being iterated over before another, regardless of when the Set's items were added. If you need an ordered set, Batman provides `SetSort` for exactly this, while including the added benefit of observability. If you need a one time ordering of a set, you can get the array representation with `toArray` and then use vanilla JavaScript `sort` on that array.
 
 _Note_: Using `forEach()` in an accessor body will register the set iterated over as a source of the property being calculated. This so that whenever the set changes, the property will be recalculated. This can become an issue if you iterate over a set and modify the set's items, as when the property recalculates that modification will potentially happen on items it's happened on previously.
 
