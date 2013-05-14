@@ -87,7 +87,7 @@ class Batman.SimpleHash
     results
   keys: ->
     result = []
-    # Explicitly reference this foreach so that if it's overriden in subclasses the new implementation isn't used.
+    # Explicitly reference this foreach so that if it's overridden in subclasses the new implementation isn't used.
     Batman.SimpleHash::forEach.call @, (key) -> result.push key
     result
   toArray: @::keys

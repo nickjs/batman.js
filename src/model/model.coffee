@@ -258,7 +258,7 @@ class Batman.Model extends Batman.Object
         @get(k)
     unset: (k) -> @get('attributes').unset(k)
 
-  # Add a universally accessible accessor for retrieving the primrary key, regardless of which key its stored under.
+  # Add a universally accessible accessor for retrieving the primary key, regardless of which key its stored under.
   @wrapAccessor 'id', (core) ->
     get: ->
       primaryKey = @constructor.primaryKey

@@ -200,7 +200,7 @@ Batman.unescapeHTML = do ->
     node.innerHTML = s
     Batman.DOM.textContent(node)
 
-# `translate` is hook for the i18n extra to override and implemnent. All strings which might
+# `translate` is hook for the i18n extra to override and implement. All strings which might
 # be shown to the user pass through this method. `translate` is aliased to `t` internally.
 Batman.translate = (x, values = {}) -> Batman.helpers.interpolate(Batman.get(Batman.translate.messages, x), values)
 Batman.translate.messages = {}
