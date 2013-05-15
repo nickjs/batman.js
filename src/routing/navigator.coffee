@@ -50,7 +50,6 @@ class Batman.Navigator
     else
       dispatcher.dispatch(params)
 
-    @cachedPath = @_lastRedirect if @_lastRedirect
     @cachedPath
 
   redirect: (params, replaceState=false) ->
@@ -58,6 +57,7 @@ class Batman.Navigator
     @_lastRedirect = pathFromParams if pathFromParams
 
     path = @dispatch(params)
+    @cachedPath = @_lastRedirect if @_lastRedirect
 
     if !@_lastRedirect or @_lastRedirect is path
       @[if replaceState then 'replaceState' else 'pushState'](null, '', path)

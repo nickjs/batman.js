@@ -41,4 +41,25 @@ test "replace with dispatch that includes nested replace only replaces inner sta
   ok replaceSpy.callCount, 1
   deepEqual replaceSpy.lastCallArguments, [null, '', '/redirected']
 
+test "back and forward browser events should both cause a dispatch", ->
+  dispatchSpy = createSpy()
 
+  navigator = new Batman.Navigator
+  navigator.pathFromLocation = (location) -> location.path
+  navigator.app = new Batman.Object
+    dispatcher:
+      pathFromParams: (params) -> params
+      dispatch: (params) ->
+        dispatchSpy()
+        params
+
+  navigator.replaceState = createSpy()
+  navigator.redirect '/foo', true
+
+  window.location.path = '/bar'
+  navigator.handleCurrentLocation()
+
+  window.location.path = '/foo'
+  navigator.handleCurrentLocation()
+
+  equal dispatchSpy.callCount, 3
