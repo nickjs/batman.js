@@ -3,8 +3,7 @@ keys = ["object instantiation: vanilla object creation", "object instantiation: 
 shas = helpers.getAvailableShas(keys)
 
 header "Instantiation Speed (milliseconds)"
-barchart helpers.reportKeysAcrossShas([keys[0]], shas)
+barchart helpers.reportKeyAcrossShasAndAgents(keys[0], shas)
 
 header "Instantiation Speed with many keys (milliseconds)"
-barchart helpers.reportKeysAcrossShas([keys[1]], shas)
-
+barchart helpers.reportKeyAcrossShasAndAgents(keys[1], shas)

@@ -1,5 +1,4 @@
 helpers = require 'sha_summarizer'
-qs = (length) -> ('?' for i in [0...length]).join(', ')
 
 keys = ['IteratorBinding performance: loop over an array of 200 items with 3 bindings',
         'IteratorBinding performance: loop over an array of 400 items with 3 bindings',
