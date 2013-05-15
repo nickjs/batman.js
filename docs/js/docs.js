@@ -1,7 +1,7 @@
 (function() {
-
   $(document).ready(function() {
     var $sidebar, setSidebarPos;
+
     $('.console-session > pre').hide();
     $(window).scroll(function(e) {
       return setSidebarPos();
@@ -35,6 +35,7 @@
     });
     $('.console-session').each(function() {
       var $header;
+
       if ($(this).has('h4 + pre')) {
         $header = $(this).find('h4').addClass('snippet-closed');
         return $header.addClass('expandable').toggle(function() {

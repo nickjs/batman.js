@@ -36,12 +36,12 @@ class Batman.StorageAdapter extends Batman.Object
   class @InternalStorageError extends @StorageError
     name: "InternalStorageError"
     constructor: (message) ->
-      super(message || "An error occured during the storage operation!")
+      super(message || "An error occurred during the storage operation!")
 
   class @NotImplementedError extends @StorageError
     name: "NotImplementedError"
     constructor: (message) ->
-      super(message || "This operation is not implemented by the storage adpater!")
+      super(message || "This operation is not implemented by the storage adapter!")
 
   constructor: (model) ->
     super(model: model)

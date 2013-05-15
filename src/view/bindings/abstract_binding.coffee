@@ -10,7 +10,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   # A beastly regular expression for pulling keypaths out of the JSON arguments to a filter.
   # Match either strings, object literals, or keypaths.
   keypath_rx = ///
-    (^|,)             # Match either the start of an arguments list or the start of a space inbetween commas.
+    (^|,)             # Match either the start of an arguments list or the start of a space in-between commas.
     \s*               # Be insensitive to whitespace between the comma and the actual arguments.
     (?:
       (true|false)
@@ -20,7 +20,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
       (\{[^\}]*\})      # Match object literals
       |
       (
-        ([0-9]+[a-zA-Z\_\-]|[a-zA-Z]) # Keys that start with a number must contain atleast one letter or an underscore
+        ([0-9]+[a-zA-Z\_\-]|[a-zA-Z]) # Keys that start with a number must contain at least one letter or an underscore
         [\w\-\.]*                   # Now that true and false can't be matched, match a dot delimited list of keys.
         [\?\!]?                     # Allow ? and ! at the end of a keypath to support Ruby's methods
       )
