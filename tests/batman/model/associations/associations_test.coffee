@@ -84,6 +84,27 @@ asyncTest "support custom exensions which get applied before accessors or encode
     equal store.get('id'), 3
     QUnit.start()
 
+asyncTest "supports encoder keys to serialize and deserialize the association to", 2, ->
+  namespace = {}
+  class namespace.Walmart extends Batman.Model
+    @encode 'name', 'id'
+
+  class Product extends Batman.Model
+    @encode 'name', 'id'
+    @belongsTo 'store',
+      namespace: namespace
+      name: 'Walmart'
+      encoderKey: 'foo'
+
+  productAdapter = createStorageAdapter Product, AsyncTestStorageAdapter,
+    'products2': {name: "Product Two", id: 2, foo: {id:3, name:"JSON Store"}}
+
+  Product.find 2, (err, product) ->
+    store = product.get('foo')
+    ok store instanceof namespace.Walmart
+    equal store.get('id'), 3
+    QUnit.start()
+
 asyncTest "associations can be inherited", 2, ->
   namespace = {}
   class namespace.Store extends Batman.Model
