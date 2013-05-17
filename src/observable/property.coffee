@@ -1,14 +1,11 @@
 #= require ./property_event
-#= require ../event_emitter/event_emitter
 #= require ../set/simple_set
 #= require ../developer
 
 SOURCE_TRACKER_STACK = []
 SOURCE_TRACKER_STACK_VALID = true
 
-class Batman.Property
-  Batman.mixin @prototype, Batman.EventEmitter
-
+class Batman.Property extends Batman.PropertyEvent
   @_sourceTrackerStack: SOURCE_TRACKER_STACK
   @_sourceTrackerStackValid: SOURCE_TRACKER_STACK_VALID
   @defaultAccessor:
@@ -40,7 +37,7 @@ class Batman.Property
       finally
         Batman.Property.popSourceTracker()
   @registerSource: (obj) ->
-    return unless obj.isEventEmitter
+    return unless obj.isEventEmitter || obj instanceof Batman.Property
     if SOURCE_TRACKER_STACK_VALID
       set = SOURCE_TRACKER_STACK[SOURCE_TRACKER_STACK.length - 1]
     else
@@ -76,7 +73,9 @@ class Batman.Property
   sources: null
   isProperty: true
   isDead: false
-  eventClass: Batman.PropertyEvent
+
+  registerAsMutableSource: ->
+    Batman.Property.registerSource(this)
 
   isEqual: (other) ->
     @constructor is other.constructor and @base is other.base and @key is other.key
@@ -84,27 +83,18 @@ class Batman.Property
   hashKey: ->
     @_hashKey ||= "<Batman.Property base: #{Batman.Hash::hashKeyFor(@base)}, key: \"#{Batman.Hash::hashKeyFor(@key)}\">"
 
-  event: (key) ->
-    eventClass = @eventClass or Batman.Event
-    @events ||= {}
-    @events[key] ||= new eventClass(this, key)
-    @events[key]
-
-  changeEvent: ->
-    @_changeEvent ||= @event('change')
-
   accessor: ->
     @_accessor ||= @constructor.accessorForBaseAndKey(@base, @key)
 
   eachObserver: (iterator) ->
     key = @key
-    handlers = @changeEvent().handlers?.slice()
+    handlers = @handlers?.slice()
     iterator(object) for object in handlers if handlers
     if @base.isObservable
       for ancestor in @base._batman.ancestors()
         if ancestor.isObservable and ancestor.hasProperty(key)
           property = ancestor.property(key)
-          handlers = property.changeEvent().handlers?.slice()
+          handlers = property.handlers?.slice()
           iterator(object) for object in handlers if handlers
 
   observers: ->
@@ -118,9 +108,24 @@ class Batman.Property
   updateSourcesFromTracker: ->
     newSources = @constructor.popSourceTracker()
     handler = @sourceChangeHandler()
-    source?.off('change', handler) for source in @sources if @sources
+    if @sources
+      for source in @sources
+        if source?
+          if source.on
+            source.off('change', handler)
+          else
+            source.removeHandler(handler)
+
     @sources = newSources
-    source?.on('change', handler) for source in @sources if @sources
+
+    if @sources
+      for source in @sources
+        if source?
+          if source.on
+            source.on('change', handler)
+          else
+            source.addHandler(handler)
+    null
 
   getValue: ->
     @registerAsMutableSource()
@@ -147,7 +152,7 @@ class Batman.Property
     previousValue = @value
     value = @getValue()
     if value isnt previousValue and not @isIsolated()
-      @fire(value, previousValue)
+      @fire(value, previousValue, @key)
     @lockValue() if @value isnt undefined and @isFinal()
 
   sourceChangeHandler: ->
@@ -185,30 +190,35 @@ class Batman.Property
 
   forget: (handler) ->
     if handler?
-      @changeEvent().removeHandler(handler)
+      @removeHandler(handler)
     else
-      @changeEvent().clearHandlers()
+      @clearHandlers()
   observeAndFire: (handler) ->
     @observe(handler)
     handler.call(@base, @value, @value, @key)
   observe: (handler) ->
-    @changeEvent().addHandler(handler)
+    @addHandler(handler)
     @getValue() unless @sources?
     this
   observeOnce: (originalHandler) ->
-    event = @changeEvent()
+    self = @
     handler = ->
       originalHandler.apply(@, arguments)
-      event.removeHandler(handler)
-    event.addHandler(handler)
+      self.removeHandler(handler)
+    @addHandler(handler)
     @getValue() unless @sources?
     this
 
   _removeHandlers: ->
     handler = @sourceChangeHandler()
-    source.off('change', handler) for source in @sources if @sources
+    if @sources
+      for source in @sources
+        if source.on
+          source.off('change', handler)
+        else
+          source.removeHandler(handler)
     delete @sources
-    @changeEvent().clearHandlers()
+    @clearHandlers()
 
   lockValue: ->
     @_removeHandlers()
@@ -219,8 +229,6 @@ class Batman.Property
     @_removeHandlers()
     @base._batman?.properties?.unset(@key)
     @isDead = true
-
-  fire: -> @changeEvent().fire(arguments..., @key)
 
   isolate: ->
     if @_isolationCount is 0
@@ -233,7 +241,7 @@ class Batman.Property
         @value = @_preIsolationValue
         @refresh()
       else if @value isnt @_preIsolationValue
-        @fire(@value, @_preIsolationValue)
+        @fire(@value, @_preIsolationValue, @key)
       @_preIsolationValue = null
     else if @_isolationCount > 0
       @_isolationCount--

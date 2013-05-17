@@ -323,7 +323,7 @@ asyncTest 'it shouldn\'t become desynchronized if the foreach collection observe
   helpers.render source, context, (node, view) ->
     deepEqual getPs(view), ['a', 'b', 'c', 'd', 'e']
     context.observe 'x', spy = createSpy()
-    context.property('x').changeEvent().fire(x,x)
+    context.property('x').fire(x,x,'x')
     delay ->
       ok spy.called
       deepEqual getPs(view), ['a', 'b', 'c', 'd', 'e']

@@ -116,7 +116,7 @@ test "set(key, val) with a simple key calls fire(key, val, oldValue)", ->
 
   @obj.set 'foo', 'newVal'
 
-  equal fooProperty.fire.lastCallArguments.length, 2
+  equal fooProperty.fire.lastCallArguments.length, 3
   equal fooProperty.fire.lastCallArguments[0], 'newVal'
   ok fooProperty.fire.lastCallArguments[1] is foo
 
@@ -418,9 +418,9 @@ test "forget(key) for a deep keypath does not remove any sources when there are 
 
   equal @obj.forget('foo.bar.baz', callback2), @obj, "forget returns object for chaining"
 
-  equal @obj.property('foo').event('change').handlers.length, 1
-  equal @obj.foo.property('bar').event('change').handlers.length, 1
-  equal @obj.foo.bar.property('baz').event('change').handlers.length, 1
+  equal @obj.property('foo').handlers.length, 1
+  equal @obj.foo.property('bar').handlers.length, 1
+  equal @obj.foo.bar.property('baz').handlers.length, 1
 
   equal @obj.property('foo.bar.baz').sources.length, 3
 
