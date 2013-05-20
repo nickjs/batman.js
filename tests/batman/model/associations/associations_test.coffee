@@ -27,6 +27,25 @@ test "association macros without options", ->
   ok deck.get('cards') instanceof Batman.AssociationSet
   ok card.get('deck') instanceof Batman.BelongsToProxy
 
+asyncTest "association load passes env", 1, ->
+  app = Batman.currentApp = {}
+
+  class app.Card extends Batman.Model
+    @belongsTo 'deck'
+  class app.Deck extends Batman.Model
+    @hasMany 'cards'
+
+  adapter = createStorageAdapter app.Card, AsyncTestStorageAdapter,
+    'cards': [ {name: "Card One", id: 1, deck_id: 1} ]
+
+  deck = new app.Deck
+    id: 1
+
+  deck.get('cards').load (err, records, env) ->
+    console.log env, {}
+    equal env, {}
+    QUnit.start()
+
 asyncTest "support custom model namespaces and class names", 2, ->
   namespace = {}
   class namespace.Walmart extends Batman.Model
