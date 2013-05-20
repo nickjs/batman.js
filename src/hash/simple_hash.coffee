@@ -1,3 +1,5 @@
+_objectToString = Object::toString
+
 class Batman.SimpleHash
   constructor: (obj) ->
     @_storage = {}
@@ -62,7 +64,12 @@ class Batman.SimpleHash
     currentValue
   prefixedKey: (key) -> "_"+key
   unprefixedKey: (key) -> key.slice(1)
-  hashKeyFor: (obj) -> obj?.hashKey?() or obj
+  hashKeyFor: (obj) ->
+    if hashKey = obj?.hashKey?()
+      hashKey
+    else
+      typeString = _objectToString.call(obj)
+      if typeString is "[object Array]" then typeString else obj
   equality: (lhs, rhs) ->
     return true if lhs is rhs
     return true if lhs isnt lhs and rhs isnt rhs # when both are NaN
@@ -80,7 +87,7 @@ class Batman.SimpleHash
     results
   keys: ->
     result = []
-    # Explicitly reference this foreach so that if it's overriden in subclasses the new implementation isn't used.
+    # Explicitly reference this foreach so that if it's overridden in subclasses the new implementation isn't used.
     Batman.SimpleHash::forEach.call @, (key) -> result.push key
     result
   toArray: @::keys

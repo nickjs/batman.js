@@ -1,7 +1,8 @@
-QUnit.module "Batman.ControllerActionFrame"
+QUnit.module "Batman.ControllerActionFrame",
   setup: ->
     @completeSpy = createSpy()
     @frame = new Batman.ControllerActionFrame({}, @completeSpy)
+
 suite = ->
   test "starting an operation marks operationOccurred on the frame", ->
     @frame.startOperation()
@@ -39,7 +40,7 @@ suite = ->
 
 suite()
 
-QUnit.module "Batman.ControllerActionFrame with parent frames"
+QUnit.module "Batman.ControllerActionFrame with parent frames",
   setup: ->
     @parentCompleteSpy = createSpy()
     @completeSpy = createSpy()

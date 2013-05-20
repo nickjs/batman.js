@@ -1,4 +1,4 @@
-QUnit.module "Batman.SetUnion"
+QUnit.module "Batman.SetUnion",
   setup: ->
     @left = new Batman.Set("a", "b", "c")
     @right = new Batman.Set("c", "d", "e")

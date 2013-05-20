@@ -1,6 +1,6 @@
 ## Batman View Bindings
 
-Batman's view bindings are how data gets show and collected from the user. They center on the notion of "bindings": that the view representation and the JavaScript land value are always guaranteed to be in sync, such that when one changes, the other will reflect it.
+Batman's view bindings are how data gets shown and collected from the user. They center on the notion of "bindings": that the view representation and the JavaScript land value are always guaranteed to be in sync, such that when one changes, the other will reflect it.
 
 ### How to use bindings
 
@@ -12,19 +12,19 @@ Bindings are declared as attributes on nodes under the `data` namespace. In prac
 
 This instantiates a binding on the `div` node which will update the node's `innerHTML` with the value found at the `name` keypath in the <a href="#batman-view-bindings-binding-contexts">current context</a>. Whenever the `name` key changes, the div's `innerHTML` will update to the new value.
 
-Nodes can have multiple bindings like this:
+Nodes can have multiple bindings:
 
 ```html
 <p data-bind="body" data-showif="isPublished"></p>
 ```
 
-or attribute bindings like this:
+or attribute bindings:
 
 ```html
 <p data-bind-id="currentID"></p>
 ```
 
-and bindings can be on inputs which the user can change, like this:
+and bindings can be on inputs which the user can change:
 
 ```html
 <input type="text" data-bind="title"></input>
@@ -40,7 +40,7 @@ A `keypath` is the value of the HTML attribute a binding references. Importantly
 <p data-bind="order.customer.name"></p>
 ```
 
-The keypath in the above HTML is `order.customer.name`. When you create a binding to a keypath like this (with dot separating segments), the binding will update the HTML value when _any_ of those segments change. In the above example, this means the `p` tag's `innerHTML` will be updated when:
+The keypath in the above HTML is `order.customer.name`. When you create a binding to a keypath like this (with dots separating segments), the binding will update the HTML value when _any_ of those segments change. In the above example, this means the `p` tag's `innerHTML` will be updated when:
 
  1. the order changes,
  2. the order's customer changes,
@@ -74,11 +74,11 @@ and filter chains can use other keypaths as arguments to the filters:
 <span data-bind="person.name | prepend ' ' | prepend person.title"></span>
 ```
 
-The above `<span>`'s `innerHTML` will be updated whenever the person's name, or the person's title changes.
+The above `<span>`'s `innerHTML` will be updated whenever the person's name or title changes.
 
 ==== Two Way Bindings and Filters
 
-Note that filtered keypaths can not propagate DOM land changes because values can't always be "unfiltered". For example, if we bind an input to the truncated version of a string:
+Note that filtered keypaths cannot propagate DOM land changes because values can't always be "unfiltered". For example, if we bind an input to the truncated version of a string:
 
 ```html
 <input data-bind="post.body | truncate 100"></input>
@@ -90,7 +90,7 @@ The `<input>`'s value can be updated when the `post.body` property changes but i
 
 Keypaths also support a select few literals within them. Numbers, strings, and booleans can be passed as arguments to filters or used as the actual value of the keypath.
 
-The following are all valid albeit contrived bindings:
+The following are all valid, albeit contrived, bindings:
 
 ```html
 <!-- String literal used as an argument -->
@@ -118,7 +118,7 @@ The following are all valid albeit contrived bindings:
  + `<input type="checkbox">`: the binding will edit the `checked` property of the checkbox and populate the keypath with a boolean.
  + `<input type="text">` and similar, `<textarea`>: the binding will edit the `value` property of the input and populate the keypath with the string found at `value`.
  + `<input type="file">`: the binding will _not_ edit the `value` property of the input, but it will update the keypath with a host `File` object or objects if the node has the `multiple` attribute.
- + `<select>`: the binding will edit the `selected` property of each `<option>` tag within the `<select>` match the property at the keypath. If the `<select>` has the multiple attribute, the value at the keypath can be an array of selected `<option>` values. You can also use `data-bind-selected` bindings on the individual options to toggle option selectedness.
+ + `<select>`: the binding will edit the `selected` property of each `<option>` tag within the `<select>` matching the property at the keypath. If the `<select>` has the multiple attribute, the value at the keypath can be an array of selected `<option>` values. You can also use `data-bind-selected` bindings on the individual options to toggle option selectedness.
  + All other tags: the binding will edit the `innerHTML` property of the tag and will not populate the keypath.
 
 `data-bind` can also be used to bind an attribute of a node to a JavaScript property. Since attributes can't be observed for changes, this is a one way binding which will never update the JavaScript land property. Specify which attribute to bind using the "double dash" syntax like so: `data-bind-attribute="some.keypath"`. For example, to bind the `placeholder` attribute of an input, use `data-bind-placeholder`.
@@ -152,13 +152,13 @@ _Note_: `data-target-attribute` is unavailable, because DOM changes to node attr
 
 `data-showif` and `data-hideif` bind to keypaths and show or hide the node they appear on based on the truthiness of the result. `data-showif` will show a node if the given keypath evaluates to something truthy, and `data-hideif` will leave a node visible until its given keypath becomes truthy, at which point the node will be hidden. `data-showif` and `data-hideif` show and hide nodes by adding `display: none !important;` to the node's `style` attribute.
 
-For example, the if the HTML below were rendered where the keypath `product.published` evaluated to true, the `<button>` will be visible.
+For example, if the HTML below is rendered where the keypath `product.published` evaluated to true, the `<button>` will be visible.
 
 ```html
 <button data-showif="product.published">Unpublish Product</button>
 ```
 
-This is the Batman equivalent of a templating language's `if` construct, and  where else branches are implemented using the opposite binding.
+This is the Batman equivalent of a templating language's `if` construct, where else branches are implemented using the opposite binding.
 
 ```html
 <button data-showif="product.published">Unpublish Product</button>
@@ -198,19 +198,21 @@ Batman will execute the `data-foreach` binding before the `data-bind` on the `<o
 </select>
 ```
 
-`data-foreach` can be used to iterate over `Batman.Set`s, and most often should be, because it observes any Sets and will update the DOM with new nodes if items are added to the set, or remove nodes from the DOM if their corresponding nodes are removed from the set. `data-foreach` is, like each other binding, keypath aware, such that if the `Set` instance at the keypath changes, or any previous segment of the keypath changes, `data-foreach` will remove all the nodes currently in the DOM, and add new nodes for each new item in the incoming `Set`.
+`data-foreach` can be used to iterate over `Batman.Set`s, and most often should be, because it observes any Sets and will update the DOM with new nodes if items are added to the set, or remove nodes from the DOM if their corresponding nodes are removed from the set. `data-foreach`, like every other binding, is keypath aware, such that if the `Set` instance at the keypath changes, or any previous segment of the keypath changes, `data-foreach` will remove all the nodes currently in the DOM, and add new nodes for each new item in the incoming `Set`.
 
 _Note_: `data-foreach` expects to find an iterable object at the keypath given to it, and will emit a warning if it finds `undefined`.
 
+_Note_: `data-foreach` expects the passed enumerable to be unique. It creates a map of nodes to items, so every node needs to be able to reference exactly one object. If you simply have a set of values that you're iterating over, you should wrap your values in objects, e.g. `[{value: true}, {value: true}]`.
+
 ### data-formfor
 
-`data-formfor` creates a special addition to the context stack to represent a object under edit within a form. Usually this object is a model. Using the double dash syntax the name for the model to reside under can be specified.
+`data-formfor` creates a special addition to the context stack to represent an object under edit within a form. Usually this object is a model. Using the double dash syntax, the name for the model to reside under can be specified.
 
 ==== Automatic Validation Display
 
-`data-formfor` also has some handy functionality for displaying the result of validating the object under edit in the form. This will only be enabled if the object has an `errors` Set, which `Batman.Models` certainly do.
+`data-formfor` also has some handy functionality for displaying the result of validating the object under edit in the form. This will only be enabled if the object has an `errors` Set, like `Batman.Models` do.
 
-If a tag matching the relative selector `.errors` is found, will populate this element with a list of the errors found during validation on the object. The selector for the errors container can be changed by adding a `data-errors-list` attribute with the value of the selector to the form with the `data-formfor` binding on it, or editing `Batman.DOM.FormBinding::defaultErrorsListSelector`.
+If a tag matching the relative selector `.errors` is found, it will populate this element with a list of the errors found during validation on the object. The selector for the errors container can be changed by adding a `data-errors-list` attribute with the value of the selector to the form with the `data-formfor` binding on it, or editing `Batman.DOM.FormBinding::defaultErrorsListSelector`.
 
 If value bindings are made using `data-bind` to attributes on the model within the form, automatic `data-addclass-error` bindings will be added to the elements on which the `data-bind` occurs to add the "error" class when the model has errors on the attribute which `data-bind` binds to.
 
@@ -273,7 +275,7 @@ If the event name used doesn't match the above events, the event name used will 
 
 `data-route` bindings are used to dispatch a new controller action upon the clicking of the node they bind to. `data-route` expects to find either a string or a `NamedRouteQuery` at the keypath passed to it. With this route, it will add an event handler to the `click` action of the element which dispatches the route and prevents the default action of the DOMEvent. `data-route` will also populate the `href` attribute if it occurs on an `<a>` tag so that other functons like "Copy Link Address" and Alt+Click continue to work on the link.
 
-The first way to use `data-route` are by passing it a string, which can be built using filters or an accessor, but the preferred way is to use the `NamedRouteQuery`. These objects are generated for you by starting keypaths at the `App.routes` property. All `Batman.App`s have a `routes` property which holds a nested list of all the routes, which you descend into by passing various key segments and objects. Since the `App` object is present in the default context stack, `data-route` keypaths can just start with `routes` like so.
+The first way to use `data-route` is by passing it a string, which can be built using filters or an accessor, but the preferred way is to use the `NamedRouteQuery`. These objects are generated for you by starting keypaths at the `App.routes` property. All `Batman.App`s have a `routes` property which holds a nested list of all the routes, which you descend into by passing various key segments and objects. Since the `App` object is present in the default context stack, `data-route` keypaths can just start with `routes`.
 
 For example, assume the following routes definition in the current `Batman.App`:
 
@@ -294,7 +296,7 @@ To route to an individual todo things get a bit more complicated. If we have a T
 <a data-route="routes.todos[todo]"></a>
 ```
 
-Underneath this is doing `Alfred.get('routes.todos').get(todo)`; that is to say the todo object is being passed as a key to the `NamedRouteQuery`, which knows how to generate a member route when given a record. The above HTML when rendered will look like this:
+Underneath, this is calling `Alfred.get('routes.todos').get(todo)`; the todo object is being passed as a key to the `NamedRouteQuery`, which knows how to generate a member route when given a record. The above HTML when rendered will look like this:
 
 ```html
 <a data-route="routes.todos[todo]" href="/todos/42"></a>
@@ -304,17 +306,17 @@ This syntax can be extended to nested routes. If we have nested routes, we can u
 
 ```coffeescript
 class Tracker extends Batman.App
-  @resources 'villians', ->
+  @resources 'villains', ->
     @resources 'crimes'
 ```
 
-Routes for collection and member crimes should look like `/villians/:villian_id/crimes` and `/villians/:villian_id/crimes/:id` respectively. Assuming the presence of a `villian` and a `crime` in the context, chained `get`s on `NamedRouteQuery`s achieve this:
+Routes for collection and member crimes should look like `/villains/:villain_id/crimes` and `/villains/:villain_id/crimes/:id` respectively. Assuming the presence of a `villain` and a `crime` in the context, chained `get`s on `NamedRouteQuery`s achieve this:
 
 ```html
-<!-- Collection of crimes for a particular villian -->
-<a data-route="routes.villians[villian].crimes"></a>
-<!-- One crime of a particular villian -->
-<a data-route="routes.villians[villian].crimes[crime]"></a>
+<!-- Collection of crimes for a particular villain -->
+<a data-route="routes.villains[villain].crimes"></a>
+<!-- One crime of a particular villain -->
+<a data-route="routes.villains[villain].crimes[crime]"></a>
 ```
 
 _Note_: `data-route` bindings route only to internal dispatch, and not external links. Use a regular `<a>` tag to link away from the application.
@@ -332,14 +334,14 @@ _Note_: `data-view` bindings will bind to the passed keypath until it exists, th
 If we have this HTML at `views/villains/_stub.html` in our app:
 
 ```html
-<span data-bind="villian.name"></span>
+<span data-bind="villain.name"></span>
 ```
 
-and in `views/villians/show.html` we have this HTML:
+and in `views/villains/show.html` we have this HTML:
 
 ```html
-<h1>A villian!</h1>
-<div data-partial="villians/_stub"></div>
+<h1>A villain!</h1>
+<div data-partial="villains/_stub"></div>
 ```
 
 the contents of the `stub` partial will be inserted and rendered in the `<div>` above.
@@ -360,7 +362,7 @@ the contents of the `stub` partial will be inserted and rendered in the `<div>` 
 
 ### raw(value) : string
 
-The `raw` filter renders the value unescaped.
+The `raw` filter renders the unescaped value.
 
 ```html
 <span data-bind="someHTMLyString | raw"></span>

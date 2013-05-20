@@ -1,4 +1,4 @@
-QUnit.module "$extend"
+QUnit.module "$extend",
   setup: ->
     @base = {x: "x"}
 

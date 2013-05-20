@@ -9,6 +9,7 @@
 # removeNode
 # destroyNode
 # setInnerHTML
+# textContent
 
 Batman.DOM =
   # List of input type="types" for which we can use keyup events to track
@@ -93,13 +94,21 @@ Batman.DOM =
 
   valueForNode: (node, value = '', escapeValue = true) ->
     isSetting = arguments.length > 1
-    switch node.nodeName.toUpperCase()
+    nodeName = node.nodeName.toUpperCase()
+    switch nodeName
       when 'INPUT', 'TEXTAREA'
-        if isSetting then (node.value = value) else node.value
+        if isSetting then node.value = value else node.value
       when 'SELECT'
         if isSetting then node.value = value
+        else if node.multiple
+          child.value for child in node.children when child.selected
+        else
+          node.value
       else
         if isSetting
+          # IE, in its infinite wisdom, requires option nodes to update the text property instead
+          # of innerHTML. We do this for all browsers since it's cheap and actually is in the spec.
+          node.text = value if nodeName is 'OPTION'
           Batman.DOM.setInnerHTML node, if escapeValue then Batman.escapeHTML(value) else value
         else node.innerHTML
 
@@ -143,7 +152,6 @@ Batman.DOM =
   willInsertNode: (node) ->
     view = Batman._data node, 'view'
     view?.fire 'beforeAppear', node
-    Batman.data(node, 'show')?.call(node)
     Batman.DOM.willInsertNode(child) for child in node.childNodes
     true
 
@@ -159,7 +167,6 @@ Batman.DOM =
     view = Batman._data node, 'view'
     if view
       view.fire 'beforeDisappear', node
-    Batman.data(node, 'hide')?.call(node)
     Batman.DOM.willRemoveNode(child) for child in node.childNodes
     true
 
@@ -197,8 +204,7 @@ Batman.DOM =
           Batman.DOM.removeEventListener node, eventName, listener
 
     # remove all bindings and other data associated with this node
-    Batman.removeData node                   # external data (Batman.data)
-    Batman.removeData node, undefined, true  # internal data (Batman._data)
+    Batman.removeData node, null, null, true  # internal and external data (Batman._data and Batman.data)
 
     Batman.DOM.didDestroyNode(child) for child in node.childNodes
     true

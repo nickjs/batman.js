@@ -1,6 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.DOM.Yield'
+QUnit.module 'Batman.DOM.Yield',
   setup: ->
     @yield = Batman.DOM.Yield.withName('test')
     @containerNode = document.createElement('div')
@@ -46,7 +46,7 @@ test "clear() after append() should remove references to old nodes", ->
   @yield.clear()
   deepEqual @yield.currentVersionNodes, []
 
-QUnit.module 'Batman.View yield, contentFor, and replace rendering'
+QUnit.module 'Batman.View yield, contentFor, and replace rendering',
   teardown: ->
     Batman.DOM.Yield.reset()
 
@@ -169,23 +169,6 @@ asyncTest 'it should render content even if the yield doesn\'t exist yet', 1, ->
   helpers.render '<div data-contentfor="foo">immediate</div>', {}, (content) ->
     helpers.render '<div data-yield="foo"></div>', {}, (node) ->
       equal node.children(0).html(), 'immediate'
-      QUnit.start()
-
-asyncTest 'yielded content should animate when show/hide functions are mixed in', 6, ->
-  showSpy = createSpy ->
-  hideSpy = createSpy ->
-  Batman.mixins.animation =
-    show: showSpy
-    hide: hideSpy
-  helpers.render '<div data-yield="foo"></div><div data-contentfor="foo" data-mixin="animation">content</div>', {}, (node) ->
-    equal showSpy.callCount, 1
-    equal hideSpy.callCount, 0
-    equal node.children(0).html(), 'content'
-
-    helpers.render '<div data-replace="foo" data-mixin="animation">replaced</div>', {}, ->
-      equal showSpy.callCount, 2
-      equal hideSpy.callCount, 1
-      equal node.children(0).html(), 'replaced'
       QUnit.start()
 
 asyncTest 'data-replace should replace content without breaking contentfors', 2, ->

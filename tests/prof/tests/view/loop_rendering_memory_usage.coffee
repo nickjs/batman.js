@@ -1,15 +1,13 @@
 Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
-Random = require '../lib/number_generator'
-Clunk = require '../lib/clunk'
+Random = require '../lib/number_generator.coffee'
+Clunk = require '../lib/clunk.coffee'
+
+Watson.makeADom()
 
 # Make Iterator defer DOM touches every 50 ms.
 # Needed for the ::deferEvery settings below.
 Watson.ensureCommitted '7a418aea67be0b79ce11fd5616bd4627f4e576d9', ->
-  jsdom = require 'jsdom'
-
-  global.window = jsdom.jsdom("<html><head><script></script></head><body></body></html>").createWindow()
-  global.document = window.document
 
   loopSource = '''
   <div data-foreach-obj="objects">

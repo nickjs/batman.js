@@ -4,9 +4,9 @@
 
 ### @accessor([keys...], objectOrFunction)
 
-Accessors are used to create properties on a class, prototype, or instance which can be fetched, set, and unset. These properties can be static, computed as functions of the other properties on the object the accessor belongs to, or properties of any Batman object in the system. `accessor` is a Batman and old browser friendly version of ES5 `Object.defineProperty` missing some of the goodness.
+Accessors are used to create properties on a class, prototype, or instance which can be fetched, set, and unset. These properties can be static, computed as functions of the other properties on the object the accessor belongs to, or properties of any Batman object in the system. `accessor` is a Batman and old browser friendly version of ES5 `Object.defineProperty`.
 
-The value of custom accessors can be observed just like any property. Accessors also track which other properties they rely on for computation, and recalculate eagerly when those other properties change. This way, when a source value is changed, any dependent accessors will automatically update any bindings to them with a new value. Accessors accomplish this feat by tracking `get` calls, so do be sure to use `get` to retrieve properties on Batman Objects inside accessors so those properties can be tracked as dependencies. The property dependencies of an accessor are called "sources" in the Batman world.
+The value of custom accessors can be observed just like any property. Accessors also track which other properties they rely on for computation, and recalculate eagerly when those other properties change. This way, when a source value is changed, any dependent accessors will automatically update any bindings to them with a new value. Accessors accomplish this feat by tracking `get` calls, so be sure to use `get` to retrieve properties on Batman Objects inside accessors so those properties can be tracked as dependencies. The property dependencies of an accessor are called "sources" in the Batman world.
 
 Importantly, accessors are also inherited, so accessors defined anywhere in an object's prototype chain will be used. Following this, `@accessor` is meant to be used during the class definition of a class extending `Batman.Object`.
 
@@ -18,11 +18,11 @@ Importantly, accessors are also inherited, so accessors defined anywhere in an o
   * one: create a `keyAccessor` at the given key, which will only be called when that key is gotten, set, or unset.
   * many: create `keyAccessors` for each given key, which will then be called whenever each one of the listed keys is gotten, set, or unset.
 
-`@accessor` accepts as the last argument either an object with any combination of the `get`, `set`, and `unset` keys defined. Functions which implement the behaviour for those particular actions on the property should reside at these keys. `@accessor` also accepts a function as the last argument, which is a shorthand for specifying the `get` implementation for the accessor.
+`@accessor` accepts as the last argument either an object with any combination of the `get`, `set`, and `unset` keys defined, or a function. Functions which implement the behaviour for those particular actions on the property should reside at these keys. `@accessor` also accepts a function as the last argument, which is a shorthand for specifying the `get` implementation for the accessor.
 
 ==== Uses
 
-Accessors are a really useful addition to the world of JavaScript. You can now define transforms on simple properties which will automatically update when the properties they transform change, for example you might want to truncate a potentially long piece of text to display a summary elsewhere, or you might want to capitalize or `encodeURIComponent` a value before putting it in the view or the current URL.
+Accessors are a really useful addition to the world of JavaScript. You can now define transforms on simple properties which will automatically update when the properties they transform change: for example, you might want to truncate a potentially long piece of text to display a summary elsewhere, or you might want to capitalize or `encodeURIComponent` a value before putting it in the view or the current URL.
 
 !!!
 test '@accessor can be called on a class to define how a property is calculated', ->
@@ -83,9 +83,9 @@ test '@accessor can use arbitrary logic to define the value', ->
 
 ==== Caveats
 
-Accessors are extremely useful but you must keep these items in mind while programming using them:
+Accessors are extremely useful, but keep these items in mind when using them:
 
- 1. Accessors should be linear, so they can be cached.
+ 1. Accessors should be pure functions so they are predictable and can be cached.
 
 Batman automatically memoizes the return value of accessors, and will not re-execute the body until one of the accessor's sources changes. If you need the accessor to recalculate every time the property is gotten, pass `false` for the `cache` option in the accessor descriptor object (the last argument to the `@accessor` function).
 
@@ -109,15 +109,15 @@ test "@accessor usually caches results", ->
 
  2. Accessors _must_ use `get` to access properties they use for computation
 
-Batman tracks an accessor's sources by adding a global hook to all `get`s done, so if you don't use `get` to access properties on objects, Batman can't know that that property is a source of the property your accessor defines, so it can't recompute that property when the source property changes. All properties on `Batman.Object` should be accessed using `get` and `set` regardless if the code occurs in an accessor body or not, but it is critical to do so in accessors so the sources of the accessor can be tracked.
+Batman tracks an accessor's sources by adding a global hook to all `get`s done, so if you don't use `get` to access properties on objects, Batman can't know that that property is a source of the property your accessor defines, so it can't recompute that property when the source property changes. All properties on `Batman.Object` should be accessed using `get` and `set` whether or not the code occurs in an accessor body, but it is critical to do so in accessors so the sources of the accessor can be tracked.
 
  3. Accessors can create memory leaks or performance bottlenecks
 
-If you return a brand new object by say merging a number of `Batman.Set`s or doing any sort of major and complete re-computation you run the risk of creating performance problems. This is because accessors can be called frequently and unpredictably, as they are recomputed every time one of their sources changes as well as upon every `set`. Instead of recomputing expensive things every time the accessor is called, try to use objects which do delta recomputation using observers. Practically this translates to using things like `new SetUnion(@get('setA'), @get('setB'))` instead of `@get('setA').merge(@get('setB'))` in an accessor body.
+If you return a brand new object, say by merging a number of `Batman.Set`s or doing any sort of major and complete re-computation, you run the risk of creating performance problems. This is because accessors can be called frequently and unpredictably, as they are recomputed every time one of their sources changes and for every call to `set`. Instead of recomputing expensive things every time the accessor is called, try to use objects which do smart re-computation using observers. Practically, this translates to using things like `new SetUnion(@get('setA'), @get('setB'))` instead of `@get('setA').merge(@get('setB'))` in an accessor body, since `SetUnion` will observe its constituents and update itself when they change, instead of the `merge` resulting in the accessor recomputing every time `setA` or `setB` changed.
 
 ### @classAccessor([keys...], objectOrFunction)
 
-`classAccessor` defines an accessor on the class, in that gets and sets done on the class will use the accessor definition as an implementation. `@accessor` called on a class will define an accessor for all instances of that class, where as `@classAccessor` defines accessors on the class object itself. See `@accessor` for the details surrounding accessors.
+`classAccessor` defines an accessor on the class: `get`s and `set`s done to the class will use the accessor definition as an implementation. `@accessor` called on a class will define an accessor for all instances of that class, whereas `@classAccessor` defines accessors on the class object itself. See `@accessor` for the details surrounding accessors.
 
 !!!
 test '@classAccessor defines an accessor on the class', ->
@@ -130,10 +130,9 @@ test '@classAccessor defines an accessor on the class', ->
 
 ### @mixin(objects...) : prototype
 
-`@mixin` is a handy function for mixing in `objects` to a class' prototype. `@mixin` is implemented on top of the Batman level `mixin` helper, which means that keys from incoming `objects` will be applied using `set`, and any `initialize` functions on the `objects` will be called with the prototype being mixed into. Returns the prototype being mixed into.
+`@mixin` is a handy function for mixing in `object`s to a class' prototype. `@mixin` is implemented on top of the Batman level `mixin` helper, which means that keys from incoming `objects` will be applied using `set`, and any `initialize` functions on the `objects` will be called with the prototype being mixed into. Returns the prototype being mixed into.
 
-_Note_: `@mixin`, similar to `@accessor`, applies to all instances of a class. If you need to mix in to the class itself, look at `classMixin`.
-_note_: `@mixin`, once more similar to `@accessor`, is intended for use during the class definition of a `Batman.Object` subclass.
+_Note_: `@mixin`, similar to `@accessor`, applies to all instances of a class. If you need to mix in to the class itself, look at `classMixin`. `@mixin` is intended for use during the class definition of a `Batman.Object` subclass.
 
 !!!
 test '@mixin extends the prototype of a Batman.Object subclass', ->
@@ -193,7 +192,7 @@ test "@observeAll can attach handlers after instance instantiation", ->
 
 ### constructor(objects...)
 
-To create a new `Batman.Object`, the `Batman.Object` constructor can be used, or, the `Batman` namespace is also a utility function for creating Batman objects. Each object passed in to the constructor will have all its properties applied to the new `Batman.Object` using `get` and `set`, so any custom getters or setters will be respected. Objects passed in last will have precedence over objects passed in first in the event that they share the same keys. The property copy from these objects is shallow.
+To create a new `Batman.Object`, the `Batman.Object` constructor can be used, or, the `Batman` namespace is also a utility function for creating Batman objects. Each object passed in to the constructor will have all its properties applied to the new `Batman.Object` using `get` and `set`, so any custom getters or setters will be respected. Objects passed in last will have precedence over objects passed in first in the event that they share the same keys. The property `copy` from these objects is shallow.
 
 !!!
 test 'Batman() function allows for handy creation of Batman.Objects', ->
@@ -220,7 +219,7 @@ test 'toJSON returns a vanilla JS object', ->
 
 ### hashKey() : string
 
-`hashKey` returns a unique string representing this particular `Batman.Object`. No two `Batman.Object`s will have the same `hashKey`.
+`hashKey` returns a unique string identifying this particular `Batman.Object`. No two `Batman.Object`s will have the same `hashKey`. Feel free to override the implmentation of this function on your objects if you have a better hashing scheme for a domain object of yours.
 
 ### accessor([keys...], objectOrFunction)
 

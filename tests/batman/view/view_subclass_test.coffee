@@ -1,7 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module "Batman.View subclasses: argument declaration and passing"
-
+QUnit.module "Batman.View subclasses: argument declaration and passing",
 test "should allow class level declaration of arguments", ->
   class TestView extends Batman.View
     @option 'keyA', 'keyB', "notgiven"

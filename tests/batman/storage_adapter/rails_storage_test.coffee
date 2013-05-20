@@ -8,7 +8,7 @@ MockRequest = restStorageTestSuite.MockRequest
 oldRequest = Batman.Request
 oldExpectedForUrl = MockRequest.getExpectedForUrl
 
-QUnit.module "Batman.RailsStorage"
+QUnit.module "Batman.RailsStorage",
   setup: ->
     MockRequest.getExpectedForUrl = (url) ->
       @expects[url.slice(0,-5)] || [] # cut off the .json so the fixtures from the test suite work fine

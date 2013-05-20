@@ -1,4 +1,4 @@
-QUnit.module "Batman.Route: named route querying"
+QUnit.module "Batman.Route: named route querying",
   setup: ->
     @app = Batman()
     @routeMap = new Batman.RouteMap

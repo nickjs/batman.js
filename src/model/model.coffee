@@ -75,6 +75,9 @@ class Batman.Model extends Batman.Object
     get: ->
       if @resourceName?
         @resourceName
+      else if @::resourceName?
+        Batman.developer.error("Please define the resourceName property of the #{Batman.functionName(@)} on the constructor and not the prototype.") if Batman.config.minificationErrors
+        @::resourceName
       else
         Batman.developer.error("Please define #{Batman.functionName(@)}.resourceName in order for your model to be minification safe.") if Batman.config.minificationErrors
         Batman.helpers.underscore(Batman.functionName(@))
@@ -156,6 +159,17 @@ class Batman.Model extends Batman.Object
     @_mapIdentity(record)
 
   @_mapIdentity: (record) -> @_mapIdentities([record])[0]
+
+  @_makeOrFindRecordFromData: (attributes) ->
+    if id = attributes[@primaryKey]
+      if existingRecord = @get('loaded.indexedByUnique.id').get(id)
+        existingRecord._withoutDirtyTracking -> @fromJSON(attributes)
+        return existingRecord
+
+    newRecord = new @
+    newRecord._withoutDirtyTracking -> @fromJSON(attributes)
+    @_mapIdentity(newRecord)
+    newRecord
 
   @_mapIdentities: (records) ->
     newRecords = []
@@ -244,7 +258,7 @@ class Batman.Model extends Batman.Object
         @get(k)
     unset: (k) -> @get('attributes').unset(k)
 
-  # Add a universally accessible accessor for retrieving the primrary key, regardless of which key its stored under.
+  # Add a universally accessible accessor for retrieving the primary key, regardless of which key its stored under.
   @wrapAccessor 'id', (core) ->
     get: ->
       primaryKey = @constructor.primaryKey

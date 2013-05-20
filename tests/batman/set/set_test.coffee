@@ -389,7 +389,7 @@ QUnit.module 'Batman.Set indexedBy and SortedBy' ,
 
 sortAndIndexSuite()
 
-QUnit.module "Batman.SetSort set polymorphism"
+QUnit.module "Batman.SetSort set polymorphism",
   setup: ->
     set = new Batman.Set
     @set = set.sortedBy('')

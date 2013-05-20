@@ -6,7 +6,11 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
   constructor: ->
     super
 
+    if confirmText = @node.getAttribute('data-confirm')
+      Batman.developer.deprecated("data-confirm")
+
     callback = =>
+      return if confirmText and not confirm(confirmText)
       @get('filteredValue')?.apply @get('callbackContext'), arguments
 
     if attacher = Batman.DOM.events[@attributeName]

@@ -96,8 +96,7 @@ dataTests = (elem) ->
     actual = elem[Batman.expando]
     equal actual, expected, "Removing the last item in the internal data object also destroys the user data object when it is empty"
 
-QUnit.module 'Batman.Data'
-
+QUnit.module 'Batman.Data',
 test "expando", ->
   expect 1
   equal "expando" of Batman, true, "Batman is exposing the expando"

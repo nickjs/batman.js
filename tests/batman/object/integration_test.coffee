@@ -4,7 +4,7 @@ test 'Batman: runtime integration test', ->
   a.set 'foo', 10
 
   class B extends Batman.Object
-    @accessor 'prop'
+    @accessor 'prop',
       get: (key) -> a.get('foo') + @get 'foo'
 
   b = new B
@@ -16,8 +16,9 @@ test 'Batman: runtime integration test', ->
   ok spy.called
 
   class Binding extends Batman.Object
-    @accessor
+    @accessor {
       get: () -> b.get 'foo'
+    }
 
   c = new Binding
   equal c.get('anything'), 20

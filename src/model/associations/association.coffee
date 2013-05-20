@@ -24,7 +24,8 @@ class Batman.Association
       encode: if @options.saveInline then @encoder() else false
       decode: @decoder()
 
-    @model.encode @label, encoder
+    encoderKey = options.encoderKey || @label
+    @model.encode encoderKey, encoder
 
     # The accessor needs reference to this association object, so curry the association info into
     # the getAccessor, which has the model applied as the context.

@@ -21,6 +21,7 @@ Batman.extend Batman.DOM,
     Batman.DOM.willInsertNode(child)
     jQuery(parent).append(child)
     Batman.DOM.didInsertNode(child)
+  textContent: (node) -> jQuery(node).text()
 
 Batman.Request::_parseResponseHeaders = (xhr) ->
   headers = xhr.getAllResponseHeaders().split('\n').reduce((acc, header) ->
@@ -79,25 +80,3 @@ Batman.Request::_prepareOptions = (data) ->
 
 Batman.Request::send = (data) ->
   jQuery.ajax @_prepareOptions(data)
-
-Batman.mixins.animation =
-  show: (addToParent) ->
-    jq = $(@)
-    show = ->
-      jq.show 600
-
-    if addToParent
-      addToParent.append?.appendChild @
-      addToParent.before?.parentNode.insertBefore @, addToParent.before
-
-      jq.hide()
-      setTimeout show, 0
-    else
-      show()
-    @
-
-  hide: (removeFromParent) ->
-    $(@).hide 600, =>
-      @parentNode?.removeChild @ if removeFromParent
-      Batman.DOM.didRemoveNode(@)
-    @

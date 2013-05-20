@@ -194,7 +194,7 @@
 </li>
   <li class="searchable"><a href="#batman-simpleset-indexedbyunique" class="class-function">indexedByUnique(key)</a>
 </li>
-  <li class="searchable"><a href="#batman-simpleset-sortedby" class="class-function">sortedBy(key)</a>
+  <li class="searchable"><a href="#batman-simpleset-sortedby" class="class-function">sortedBy(key [, order])</a>
 </li>
 </ul>
 </li>
@@ -234,7 +234,7 @@
 </li>
   <li class="searchable"><a href="#batman-set-indexedbyunique" class="class-function">indexedByUnique(key)</a>
 </li>
-  <li class="searchable"><a href="#batman-set-sortedby" class="class-function">sortedBy(key)</a>
+  <li class="searchable"><a href="#batman-set-sortedby" class="class-function">sortedBy(key [, order])</a>
 </li>
 </ul>
 </li>
@@ -272,7 +272,7 @@
 </li>
   <li class="searchable"><a href="#batman-app-routing" class="class">Batman.App Routing</a>
 <ul>
-  <li class="searchable"><a href="#batman-app-routing-resources" class="class-function">@resources</a>
+  <li class="searchable"><a href="#batman-app-routing-resources" class="class-function">@resources(resourceName[, otherResourceNames...][, options][, scopedCallback])</a>
 </li>
   <li class="searchable"><a href="#batman-app-routing-member" class="class-function">@member</a>
 </li>
@@ -294,29 +294,21 @@
 </li>
   <li class="searchable"><a href="#batman-controller-beforefilter" class="class-function">@beforeFilter([options], filter)</a>
 </li>
-</ul>
+  <li class="searchable"><a href="#batman-controller-afterfilter" class="class-function">@afterFilter([options], filter)</a>
 </li>
-  <li ><a href="#undefined-that-this-filter-function-should-be-executed-before-all-actions" class="">`undefined` that this filter function should be executed before all actions</a>
+  <li class="searchable"><a href="#batman-controller-autoscrolltohash-true" class="class-function">autoScrollToHash[= true]</a>
 </li>
-  <li ><a href="#a-string-that-this-filter-function-should-be-executed-before-the-action-named-by-the-string" class="">a String that this filter function should be executed before the action named by the string</a>
+  <li class="searchable"><a href="#batman-controller-defaultrenderyield-main" class="class-function">defaultRenderYield[= &#39;main&#39;]</a>
 </li>
-  <li ><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object" class="">an Object that this filter function should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.</a>
-<ul>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-afterfilter" class="class-function">@afterFilter([options], filter)</a>
+  <li class="searchable"><a href="#batman-controller-controller-actions" class="class-function">Controller Actions</a>
 </li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-autoscrolltohash-true" class="class-function">autoScrollToHash[= true]</a>
+  <li class="searchable"><a href="#batman-controller-executeaction" class="class-function">executeAction</a>
 </li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-defaultrenderyield-main" class="class-function">defaultRenderYield[= &#39;main&#39;]</a>
+  <li class="searchable"><a href="#batman-controller-render" class="class-function">render</a>
 </li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-controller-actions" class="class-function">Controller Actions</a>
+  <li class="searchable"><a href="#batman-controller-redirect" class="class-function">redirect</a>
 </li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-executeaction" class="class-function">executeAction</a>
-</li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-render" class="class-function">render</a>
-</li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-redirect" class="class-function">redirect</a>
-</li>
-  <li class="searchable"><a href="#an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-scrolltohash" class="class-function">scrollToHash</a>
+  <li class="searchable"><a href="#batman-controller-scrolltohash" class="class-function">scrollToHash</a>
 </li>
 </ul>
 </li>
@@ -550,7 +542,7 @@
 
 </p>
 <h4 id="batman-js-its-got-platforms">Platforms</h4>
-<p>Batman runs in node and the browser. Batman supports node v0.4.x and v0.6.x. We&#39;re targeting Chrome, Safari 4+, Firefox 3+, and IE 7+ for compatibility. Batman expects ES5 features like <code>Function::bind</code> and <code>Array::map</code>, so we recommend poly-filling these for older browsers with something like <a href="https://github.com/kriskowal/es5-shim">es5shim</a> or <a href="http://augmentjs.com/">augmentjs</a>. Batman also expects <code>JSON.parse</code>, which can be implemented in browsers without it using <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>.
+<p>Batman runs in node and the browser. Batman supports node v0.8.x. We&#39;re targeting Chrome, Safari 4+, Firefox 3+, and IE 7+ for compatibility. Batman expects ES5 features like <code>Function::bind</code> and <code>Array::map</code>, so we recommend poly-filling these for older browsers with something like <a href="https://github.com/kriskowal/es5-shim">es5shim</a> or <a href="http://augmentjs.com/">augmentjs</a>. Batman also expects <code>JSON.parse</code>, which can be implemented in browsers without it using <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>.
 
 </p>
 <h2 id="batman-js-installation">Installation</h2>
@@ -595,7 +587,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 
 <h2 id="batman-helpers">Batman Helpers</h2>
-<p>Batman includes an number of useful, general purpose helper functions and references. They can all be found attached to the <code>Batman</code> object and can optionally be exported into the global namespace with a <code>$</code> prefix.
+<p>Batman includes a number of useful, general purpose helper functions and references. They can all be found attached to the <code>Batman</code> object and can optionally be exported into the global namespace with a <code>$</code> prefix.
 
 </p>
 <h3 id="batman-helpers-container">container</h3>
@@ -712,7 +704,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-helpers-unmixin">unmixin(subject, objects...) : subject</h3>
-<p><code>unmixin</code> &quot;unmerges&quot; the passes objects from the <code>subject</code>. If a key exists on any of the <code>objects</code> it will be <code>delete</code>d from the <code>subject</code>. Returns the <code>subject</code>.
+<p><code>unmixin</code> &quot;unmerges&quot; the passed objects from the <code>subject</code>. If a key exists on any of the <code>objects</code> it will be <code>delete</code>d from the <code>subject</code>. Returns the <code>subject</code>.
 
 </p>
 <p><code>unmixin</code>, similar to <code>mixin</code>, supports calling an <code>uninitialize</code> function for each of the <code>objects</code> being unmixed in. If an <code>uninitialize</code> function exists on each
@@ -1110,7 +1102,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-eventemitter-prevent">prevent(key) : EventEmitter</h3>
-<p>Prevents the event with name <code>key</code> from firing, even if <code>.fire</code> is called. This is useful if you need to guarantee a precondition is in fulfilled before allowing event handlers to execute. Returns the event emitting object.
+<p>Prevents the event with name <code>key</code> from firing, even if <code>.fire</code> is called. This is useful if you need to guarantee a precondition has been fulfilled before allowing event handlers to execute. Returns the event emitting object.
 
 </p>
 <p>Undo event prevention with <code>allow</code> or <code>allowAndFire</code>.
@@ -1142,7 +1134,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-eventemitter-allow">allow(key) : EventEmitter</h3>
-<p>Allows the event with name <code>key</code> to fire once more, after <code>prevent</code> had been called previously. <code>allow</code> will not fire the event when called, regardless of weather or not the event can now be fired or if an attempt to fire it was made while the event was prevented. Returns the event emitting object.
+<p>Allows the event with name <code>key</code> to fire once more, after <code>prevent</code> had been called previously. <code>allow</code> will not fire the event when called, regardless of whether or not the event can now be fired or if an attempt to fire it was made while the event was prevented. Returns the event emitting object.
 
 </p>
 <p><em>Note</em>: <code>prevent</code> can be called more than once to effectively &quot;nest&quot; preventions. <code>allow</code> or <code>allowAndFire</code> must be called the same number of times or more for events to fire once more.
@@ -1216,7 +1208,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <div class="console-session">
-  <h4>events must be be allowed and fired the same number of times they have been prevented</h4>
+  <h4>events must be allowed and fired the same number of times they have been prevented</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span> <span class="o">=</span> <span class="nx">$mixin</span><span class="p">({},</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">EventEmitter</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">dynamite</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;detonate&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">log</span><span class="p">(</span><span class="s2">&quot;This will only fire once&quot;</span><span class="p">);</span>
@@ -1333,8 +1325,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">340</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="mi">1000</span>
-</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1000</span>
-</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">340</span> <span class="c1">// The song length reported by Batman is unchanged because set wasn&#39;t used to change the value.</span>
 </pre></div></div></code>
   </pre>
@@ -1434,7 +1425,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-observable-observeandfire">observeAndFire(key, observerCallback) : this</h3>
-<p>Adds the <code>observerCallback</code> as an observer to <code>key</code>, and fires it immediately. Accepts the exact same arguments and follows the same semantics as <code>Observable::observe</code>, but the observer is fired with the current value of the keypath it observers synchronously during the call to <code>observeAndFire</code>.
+<p>Adds the <code>observerCallback</code> as an observer to <code>key</code>, and fires it immediately. Accepts the exact same arguments and follows the same semantics as <code>Observable::observe</code>, but the observer is fired with the current value of the keypath it observes synchronously during the call to <code>observeAndFire</code>.
 
 </p>
 <p>During the initial synchronous firing of the <code>callback</code>, the <code>newValue</code> and <code>oldValue</code> arguments will be the same value: the current value of the property. This is because the old value of the property is not cached and therefore unavailable. If your observer needs the old value of the property, you must attach it before the <code>set</code> on the property happens.
@@ -1462,7 +1453,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>If <code>observerCallback</code> and <code>key</code> are given, that observer is removed from the observers on <code>key</code>. If only a <code>key</code> is given, all observers on that key are removed. If no <code>key</code> is given, all observers on all keys are removed. Accepts keypaths.
 
 </p>
-<p>Returns the object <code>forget</code> was called upon.
+<p>Returns the object on which <code>forget</code> was called.
 
 </p>
 <div class="console-session">
@@ -1514,7 +1505,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <div class="console-session">
-  <h4>forget removes all observers from all key if no key is given</h4>
+  <h4>forget removes all observers from all keys if no key is given</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">song</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
     <span class="nx">length</span><span class="o">:</span> <span class="mi">340</span><span class="p">,</span>
     <span class="nx">bpm</span><span class="o">:</span> <span class="mi">120</span>
@@ -1581,10 +1572,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <h3 id="batman-object-accessor">@accessor([keys...], objectOrFunction)</h3>
-<p>Accessors are used to create properties on a class, prototype, or instance which can be fetched, set, and unset. These properties can be static, computed as functions of the other properties on the object the accessor belongs to, or properties of any Batman object in the system. <code>accessor</code> is a Batman and old browser friendly version of ES5 <code>Object.defineProperty</code> missing some of the goodness.
+<p>Accessors are used to create properties on a class, prototype, or instance which can be fetched, set, and unset. These properties can be static, computed as functions of the other properties on the object the accessor belongs to, or properties of any Batman object in the system. <code>accessor</code> is a Batman and old browser friendly version of ES5 <code>Object.defineProperty</code>.
 
 </p>
-<p>The value of custom accessors can be observed just like any property. Accessors also track which other properties they rely on for computation, and recalculate eagerly when those other properties change. This way, when a source value is changed, any dependent accessors will automatically update any bindings to them with a new value. Accessors accomplish this feat by tracking <code>get</code> calls, so do be sure to use <code>get</code> to retrieve properties on Batman Objects inside accessors so those properties can be tracked as dependencies. The property dependencies of an accessor are called &quot;sources&quot; in the Batman world.
+<p>The value of custom accessors can be observed just like any property. Accessors also track which other properties they rely on for computation, and recalculate eagerly when those other properties change. This way, when a source value is changed, any dependent accessors will automatically update any bindings to them with a new value. Accessors accomplish this feat by tracking <code>get</code> calls, so be sure to use <code>get</code> to retrieve properties on Batman Objects inside accessors so those properties can be tracked as dependencies. The property dependencies of an accessor are called &quot;sources&quot; in the Batman world.
 
 </p>
 <p>Importantly, accessors are also inherited, so accessors defined anywhere in an object&#39;s prototype chain will be used. Following this, <code>@accessor</code> is meant to be used during the class definition of a class extending <code>Batman.Object</code>.
@@ -1599,11 +1590,11 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <li>one: create a <code>keyAccessor</code> at the given key, which will only be called when that key is gotten, set, or unset.</li>
 <li>many: create <code>keyAccessors</code> for each given key, which will then be called whenever each one of the listed keys is gotten, set, or unset.</li>
 </ul>
-<p><code>@accessor</code> accepts as the last argument either an object with any combination of the <code>get</code>, <code>set</code>, and <code>unset</code> keys defined. Functions which implement the behaviour for those particular actions on the property should reside at these keys. <code>@accessor</code> also accepts a function as the last argument, which is a shorthand for specifying the <code>get</code> implementation for the accessor.
+<p><code>@accessor</code> accepts as the last argument either an object with any combination of the <code>get</code>, <code>set</code>, and <code>unset</code> keys defined, or a function. Functions which implement the behaviour for those particular actions on the property should reside at these keys. <code>@accessor</code> also accepts a function as the last argument, which is a shorthand for specifying the <code>get</code> implementation for the accessor.
 
 </p>
 <h4 id="batman-object-accessor-uses">Uses</h4>
-<p>Accessors are a really useful addition to the world of JavaScript. You can now define transforms on simple properties which will automatically update when the properties they transform change, for example you might want to truncate a potentially long piece of text to display a summary elsewhere, or you might want to capitalize or <code>encodeURIComponent</code> a value before putting it in the view or the current URL.
+<p>Accessors are a really useful addition to the world of JavaScript. You can now define transforms on simple properties which will automatically update when the properties they transform change: for example, you might want to truncate a potentially long piece of text to display a summary elsewhere, or you might want to capitalize or <code>encodeURIComponent</code> a value before putting it in the view or the current URL.
 
 </p>
 <div class="console-session">
@@ -1743,11 +1734,11 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h4 id="batman-object-accessor-caveats">Caveats</h4>
-<p>Accessors are extremely useful but you must keep these items in mind while programming using them:
+<p>Accessors are extremely useful, but keep these items in mind when using them:
 
 </p>
 <ol>
-<li>Accessors should be linear, so they can be cached.</li>
+<li>Accessors should be pure functions so they are predictable and can be cached.</li>
 </ol>
 <p>Batman automatically memoizes the return value of accessors, and will not re-execute the body until one of the accessor&#39;s sources changes. If you need the accessor to recalculate every time the property is gotten, pass <code>false</code> for the <code>cache</code> option in the accessor descriptor object (the last argument to the <code>@accessor</code> function).
 
@@ -1796,17 +1787,17 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <ol>
 <li>Accessors <em>must</em> use <code>get</code> to access properties they use for computation</li>
 </ol>
-<p>Batman tracks an accessor&#39;s sources by adding a global hook to all <code>get</code>s done, so if you don&#39;t use <code>get</code> to access properties on objects, Batman can&#39;t know that that property is a source of the property your accessor defines, so it can&#39;t recompute that property when the source property changes. All properties on <code>Batman.Object</code> should be accessed using <code>get</code> and <code>set</code> regardless if the code occurs in an accessor body or not, but it is critical to do so in accessors so the sources of the accessor can be tracked.
+<p>Batman tracks an accessor&#39;s sources by adding a global hook to all <code>get</code>s done, so if you don&#39;t use <code>get</code> to access properties on objects, Batman can&#39;t know that that property is a source of the property your accessor defines, so it can&#39;t recompute that property when the source property changes. All properties on <code>Batman.Object</code> should be accessed using <code>get</code> and <code>set</code> whether or not the code occurs in an accessor body, but it is critical to do so in accessors so the sources of the accessor can be tracked.
 
 </p>
 <ol>
 <li>Accessors can create memory leaks or performance bottlenecks</li>
 </ol>
-<p>If you return a brand new object by say merging a number of <code>Batman.Set</code>s or doing any sort of major and complete re-computation you run the risk of creating performance problems. This is because accessors can be called frequently and unpredictably, as they are recomputed every time one of their sources changes as well as upon every <code>set</code>. Instead of recomputing expensive things every time the accessor is called, try to use objects which do delta recomputation using observers. Practically this translates to using things like <code>new SetUnion(@get(&#39;setA&#39;), @get(&#39;setB&#39;))</code> instead of <code>@get(&#39;setA&#39;).merge(@get(&#39;setB&#39;))</code> in an accessor body.
+<p>If you return a brand new object, say by merging a number of <code>Batman.Set</code>s or doing any sort of major and complete re-computation, you run the risk of creating performance problems. This is because accessors can be called frequently and unpredictably, as they are recomputed every time one of their sources changes and for every call to <code>set</code>. Instead of recomputing expensive things every time the accessor is called, try to use objects which do smart re-computation using observers. Practically, this translates to using things like <code>new SetUnion(@get(&#39;setA&#39;), @get(&#39;setB&#39;))</code> instead of <code>@get(&#39;setA&#39;).merge(@get(&#39;setB&#39;))</code> in an accessor body, since <code>SetUnion</code> will observe its constituents and update itself when they change, instead of the <code>merge</code> resulting in the accessor recomputing every time <code>setA</code> or <code>setB</code> changed.
 
 </p>
 <h3 id="batman-object-classaccessor">@classAccessor([keys...], objectOrFunction)</h3>
-<p><code>classAccessor</code> defines an accessor on the class, in that gets and sets done on the class will use the accessor definition as an implementation. <code>@accessor</code> called on a class will define an accessor for all instances of that class, where as <code>@classAccessor</code> defines accessors on the class object itself. See <code>@accessor</code> for the details surrounding accessors.
+<p><code>classAccessor</code> defines an accessor on the class: <code>get</code>s and <code>set</code>s done to the class will use the accessor definition as an implementation. <code>@accessor</code> called on a class will define an accessor for all instances of that class, whereas <code>@classAccessor</code> defines accessors on the class object itself. See <code>@accessor</code> for the details surrounding accessors.
 
 </p>
 <div class="console-session">
@@ -1833,11 +1824,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-object-mixin">@mixin(objects...) : prototype</h3>
-<p><code>@mixin</code> is a handy function for mixing in <code>objects</code> to a class&#39; prototype. <code>@mixin</code> is implemented on top of the Batman level <code>mixin</code> helper, which means that keys from incoming <code>objects</code> will be applied using <code>set</code>, and any <code>initialize</code> functions on the <code>objects</code> will be called with the prototype being mixed into. Returns the prototype being mixed into.
+<p><code>@mixin</code> is a handy function for mixing in <code>object</code>s to a class&#39; prototype. <code>@mixin</code> is implemented on top of the Batman level <code>mixin</code> helper, which means that keys from incoming <code>objects</code> will be applied using <code>set</code>, and any <code>initialize</code> functions on the <code>objects</code> will be called with the prototype being mixed into. Returns the prototype being mixed into.
 
 </p>
-<p><em>Note</em>: <code>@mixin</code>, similar to <code>@accessor</code>, applies to all instances of a class. If you need to mix in to the class itself, look at <code>classMixin</code>.
-<em>note</em>: <code>@mixin</code>, once more similar to <code>@accessor</code>, is intended for use during the class definition of a <code>Batman.Object</code> subclass.
+<p><em>Note</em>: <code>@mixin</code>, similar to <code>@accessor</code>, applies to all instances of a class. If you need to mix in to the class itself, look at <code>classMixin</code>. <code>@mixin</code> is intended for use during the class definition of a <code>Batman.Object</code> subclass.
 
 </p>
 <div class="console-session">
@@ -1968,7 +1958,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-object-constructor">constructor(objects...)</h3>
-<p>To create a new <code>Batman.Object</code>, the <code>Batman.Object</code> constructor can be used, or, the <code>Batman</code> namespace is also a utility function for creating Batman objects. Each object passed in to the constructor will have all its properties applied to the new <code>Batman.Object</code> using <code>get</code> and <code>set</code>, so any custom getters or setters will be respected. Objects passed in last will have precedence over objects passed in first in the event that they share the same keys. The property copy from these objects is shallow.
+<p>To create a new <code>Batman.Object</code>, the <code>Batman.Object</code> constructor can be used, or, the <code>Batman</code> namespace is also a utility function for creating Batman objects. Each object passed in to the constructor will have all its properties applied to the new <code>Batman.Object</code> using <code>get</code> and <code>set</code>, so any custom getters or setters will be respected. Objects passed in last will have precedence over objects passed in first in the event that they share the same keys. The property <code>copy</code> from these objects is shallow.
 
 </p>
 <div class="console-session">
@@ -2013,7 +2003,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-object-hashkey">hashKey() : string</h3>
-<p><code>hashKey</code> returns a unique string representing this particular <code>Batman.Object</code>. No two <code>Batman.Object</code>s will have the same <code>hashKey</code>.
+<p><code>hashKey</code> returns a unique string identifying this particular <code>Batman.Object</code>. No two <code>Batman.Object</code>s will have the same <code>hashKey</code>. Feel free to override the implmentation of this function on your objects if you have a better hashing scheme for a domain object of yours.
 
 </p>
 <h3 id="batman-object-accessor">accessor([keys...], objectOrFunction)</h3>
@@ -2114,11 +2104,11 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </div>
 
 <h2 id="batman-simpleset">Batman.SimpleSet</h2>
-<p><code>SimpleSet</code> is an implementation of the <code>Set</code> object you might expect to find in lots of other languages standard libraries. Sets are an enumerable but unordered collection of objects. A particular object may either be a member or not be a member of a particular set, but it may not belong to the set twice, as that would imply ordering. In the case of Batman, sets will tell you when items are added or removed through events, sets mix in the <code>Enumerable</code> module for handy iteration and aggregation, and can also generate indexes and sorts via <code>SetIndex</code> and <code>SetSort</code>.
+<p><code>SimpleSet</code> is an implementation of the <code>Set</code> object you might expect to find in other languages&#39; standard libraries. Sets are an enumerable but unordered collection of objects. A particular object may either be a member or not be a member of a particular set, but it may not belong to the set twice, as that would imply ordering. In Batman, sets will tell you when items are added or removed through events, mix in the <code>Enumerable</code> module for handy iteration and aggregation, and can also generate indices and sorts via <code>SetIndex</code> and <code>SetSort</code>.
 
 </p>
 <h4 id="batman-simpleset-simpleset-vs-set">SimpleSet vs Set</h4>
-<p><code>SimpleSet</code> and <code>Set</code> are two distinct classes in Batman. <code>SimpleSet</code> implements the set semantics as described above, but it is <em>not</em> a <code>Batman.Object</code>, so properties on it (like its <code>length</code> or <code>toArray</code>) can not be observed, and thus not bound. <code>Set</code> is a <code>Batman.Object</code>, so it can be observed, and thus plays nice with the accessor system. Use a <code>SimpleSet</code> only when you know nothing will need to be observed on the set you are creating, which usually isn&#39;t a valid assumption. If it is in fact correct, consider using a native array as well, because iteration and in fact membership checks will be faster.
+<p><code>SimpleSet</code> and <code>Set</code> are two distinct classes in Batman. <code>SimpleSet</code> implements the set semantics as described above, but it is <em>not</em> a <code>Batman.Object</code>, so properties on it (like its <code>length</code> or <code>toArray</code>) cannot be observed or bound. <code>Set</code> is a <code>Batman.Object</code>, so it can be observed, and thus plays nicely with the accessor system. Use a <code>SimpleSet</code> only when you know nothing will need to be observed on the set you are creating, which usually isn&#39;t a valid assumption. If it is in fact valid, consider using a native array as well, as iteration and membership checks will be faster.
 
 
 </p>
@@ -2161,7 +2151,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-simpleset-add">add(items...) : Array</h3>
-<p><code>add</code> adds 0 or more new items to the set. <code>add</code> returns an array of the items which have been newly added to the set, which is to say the intersection of the argument items and the set itself before addition.
+<p><code>add</code> adds 0 or more new items to the set. <code>add</code> returns an array of the items which have been newly added to the set, which is to say the intersection of the argument items and the set&#39;s complement before addition.
 
 </p>
 <div class="console-session">
@@ -2244,7 +2234,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p><code>forEach</code> calls the <code>iteratorFunction</code> with each item in the set, optionally executing the <code>iteratorFunction</code> in the passed context. Returns <code>undefined</code>.
 
 </p>
-<p><em>Note</em>: Set iteration order is not defined, which is to say Set client code cannot rely on one item being iterated over before another, regardless of when the Set&#39;s items were added. If you need an ordered set, Batman provides <code>SetSort</code> for exactly this, while including the added benefit of observability. If you need a one time ordering of a set, you can get the array representation with <code>toArray</code> and then use vanilla JavaScript <code>sort</code> on that array.
+<p><em>Note</em>: Set iteration order is not defined, thus Set client code cannot rely on one item being iterated over before another, regardless of when the Set&#39;s items were added. If you need an ordered set, Batman provides <code>SetSort</code> for exactly this, while including the added benefit of observability. If you need a one time ordering of a set, you can get the array representation with <code>toArray</code> and then use vanilla JavaScript <code>sort</code> on that array.
 
 </p>
 <div class="console-session">
@@ -2341,7 +2331,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-simpleset-merge">merge(collections... : Enumerable) : SimpleSet</h3>
-<p><code>merge</code> adds all the items in a set and all the items in the passed <code>collections</code> to a new set and returns it. A <code>collection</code> is an object which has a <code>forEach</code> function. It is a non-destructive collection union. The set <code>merge</code> is called on and each <code>collection</code> passed to <code>merge</code> remain unaffected.
+<p><code>merge</code> adds all the items in a set and all the items in the passed <code>collections</code> to a new set and returns it. A <code>collection</code> is an object which has a <code>forEach</code> function. <code>merge</code> is a non-destructive collection union, so the set <code>merge</code> is called on and each <code>collection</code> passed to <code>merge</code> are unaffected by the call.
 
 </p>
 <div class="console-session">
@@ -2356,15 +2346,91 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-simpleset-indexedby">indexedBy(key : String) : SetIndex</h3>
+<p><code>indexedBy</code> returns a hash of sets which buckets all the items in the callee set by the value of a particular <code>key</code>. The value of the passed <code>key</code> is <code>get</code>ted from each object in the set, and then a hash of each value to a set of the items with that value at the <code>key</code> is built. This hash of sets is a smart object called a <code>SetIndex</code> which will continue to observe the set and the value of the <code>key</code> on each item in the set to ensure the set index remains up to date. <code>SetIndex</code> also has a friend named <code>UniqueSetIndex</code> which will give you a hash of items instead of a hash of sets with items for easy access if you know each item&#39;s value at the <code>key</code> is unique.
+
+</p>
+<div class="console-session">
+  <h4>SimpleSet::indexedBy returns a new SetIndex with the items bucketed by the value of the key</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">indexedBy</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">2</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;green&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<p><em>Note</em>: <code>SetIndex</code> on <code>SimpleSet</code> can&#39;t maintain up-to-datedness as the state of the set or items change. It can on a bonified <code>Set</code> however, so if you need a <code>SetIndex</code> which will be guaranteed up to date as items in the set change or the values of the observed <code>key</code> change on items, use a <code>Set</code> and <code>Set::indexedBy</code> instead of <code>SimpleSet::indexedBy</code>.
+
+</p>
 <h3 id="batman-simpleset-indexedbyunique">indexedByUnique(key : String) : UniqueSetIndex</h3>
-<h3 id="batman-simpleset-sortedby">sortedBy(key: String) : SetSort</h3>
+<p><code>indexedByUnique</code> returns a hash of items keyed by the value of the given <code>key</code> on each item from the callee set. The value of the passed <code>key</code> is <code>get</code>ted from each object in the set, and then a hash of each value to an item with that value at the <code>key</code> is built. This hash of items is a smart object called a <code>UniqueSetIndex</code> which will continue to observe the set and the value of the <code>key</code> on each item in the set to ensure the index remains up to date. Note that the semantics for which item ends up in the hash if two items have the same value for the <code>key</code> are undefined, so it is wise to only use <code>UniqueSetIndex</code>es on keys who&#39;s values are going to be unique in the set. If the values are not going to be unique, you may be interested in <code>SetIndex</code> and <code>Set::indexedBy</code>.
+
+</p>
+<div class="console-session">
+  <h4>SimpleSet::indexedByUnique returns a new UniqueSetIndex with the items hashed by the value of the key</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">greenItem</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">blueItem</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">(</span><span class="nx">greenItem</span><span class="p">,</span> <span class="nx">blueItem</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">indexedByUnique</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">blueItem</span> <span class="o">===</span> <span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">greenItem</span> <span class="o">===</span> <span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="k">void</span> <span class="mi">0</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<p><em>Note</em>: <code>UniqueSetIndex</code> when created on a <code>SimpleSet</code> can&#39;t maintain up-to-datedness as the state of the set or items change. It can on a bonified <code>Set</code> however, so if you need a <code>UniqueSetIndex</code> which will be guaranteed up to date as items in the set change or the values of the observed <code>key</code> change on items, use a <code>Set</code> and <code>Set::indexedByUnique</code> instead of <code>SimpleSet::indexedByUnique</code>.
+
+</p>
+<h3 id="batman-simpleset-sortedby">sortedBy(key: String [, order: String]) : SetSort</h3>
+<p><code>sortedBy</code> returns a <code>Set</code> like object containing all the items of the callee set but with a defined iteration order (unlike <code>SimpleSet</code>). The iteration order is defined as the alpha numeric sorting of the values of the passed <code>key</code> gotten from each item. The direction of the sort can be controlled with the <code>order</code> argument, which defaults to <code>asc</code> (short for ascending) or can be passed as <code>desc</code> (short for descending). This <code>Set</code> like object is a <code>SetSort</code> which encapsulates the logic to get the values from each item at the passed <code>key</code> and traverse the <code>Set</code> in the values sorted order.
+
+</p>
+<p><code>SetSort</code>s are useful for getting a transform of a <code>Set</code> which sorted, but also because the sort stays up to date as items are added or removed to the sorted set, or the value at the <code>key</code> changes on any of the items in the set.
+
+</p>
+<div class="console-session">
+  <h4>SimpleSet::sortedBy returns a new SetSort who can be iterated in the sorted order of the value of the key on each item</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Harry&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Tom&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Camilo&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">sortedBy</span><span class="p">(</span><span class="s1">&#39;place&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;Tom&#39;</span><span class="p">,</span> <span class="s1">&#39;Camilo&#39;</span><span class="p">,</span> <span class="s1">&#39;Harry&#39;</span><span class="p">]</span>
+</pre></div></div></code>
+  </pre>
+</div>
 
 <h2 id="batman-set">Batman.Set</h2>
 <p><code>Set</code> is an observable, <code>Batman.Object</code> wrapper around <code>SimpleSet</code>.
 
 </p>
 <h4 id="batman-set-simpleset-vs-set">SimpleSet vs Set</h4>
-<p><code>SimpleSet</code> and <code>Set</code> are two distinct classes in Batman. <code>SimpleSet</code> implements the basic set semantics, but it is <em>not</em> a <code>Batman.Object</code>, so properties on it (like its <code>length</code> or <code>toArray</code>) can not be bound. <code>Set</code> is a <code>Batman.Object</code>, so it can be observed, and thus plays nice with the accessor system. Use a <code>SimpleSet</code> only when you know nothing will need to be observed on the set you are creating, which usually isn&#39;t a valid assumption. If it is in fact correct, consider using a native array as well, because iteration and in fact membership checks will be faster.
+<p><code>SimpleSet</code> and <code>Set</code> are two distinct classes in Batman. <code>SimpleSet</code> implements the basic set semantics, but it is <em>not</em> a <code>Batman.Object</code>, so properties on it (like its <code>length</code> or <code>toArray</code>) cannot be bound. <code>Set</code> is a <code>Batman.Object</code>, so it can be observed, and thus plays nicely with the accessor system. Use a <code>SimpleSet</code> only when you know nothing will need to be observed on the set you are creating, which usually isn&#39;t a valid assumption. If it is in fact valid, consider using a native array as well, as iteration and membership checks will be faster.
 
 </p>
 <h3 id="batman-set-constructor">constructor(items...)</h3>
@@ -2464,7 +2530,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-set-add">add(items...)</h3>
-<p><code>add</code> adds 0 or more new items to the set. <code>add</code> returns an array of the items which have been newly added to the set, which is to say the intersection of the argument items and the set itself before addition.
+<p><code>add</code> adds 0 or more new items to the set. <code>add</code> returns an array of the items which have been newly added to the set, which is to say the intersection of the argument items and the set&#39;s complement before addition.
 
 </p>
 <p><code>add</code> fires the <code>itemsWereAdded</code> event with the list of items newly added to the set if that list has length greater than 0. This is to say the event will not be fired if the items passed to add were all already members of the set.
@@ -2557,9 +2623,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="nx">items</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">__slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="p">[];</span>
     <span class="k">return</span> <span class="nx">log</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
   <span class="p">})</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">last</span><span class="p">.</span><span class="nx">sort</span><span class="p">()</span>
-</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
+</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -2609,7 +2673,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p><code>forEach</code> calls the <code>iteratorFunction</code> with each item in the set, optionally executing the <code>iteratorFunction</code> in the passed context. Returns <code>undefined</code>.
 
 </p>
-<p><em>Note</em>: Set iteration order is not defined, which is to say Set client code cannot rely on one item being iterated over before another, regardless of when the Set&#39;s items were added. If you need an ordered set, Batman provides <code>SetSort</code> for exactly this, while including the added benefit of observability. If you need a one time ordering of a set, you can get the array representation with <code>toArray</code> and then use vanilla JavaScript <code>sort</code> on that array.
+<p><em>Note</em>: Set iteration order is not defined, thus Set client code cannot rely on one item being iterated over before another, regardless of when the Set&#39;s items were added. If you need an ordered set, Batman provides <code>SetSort</code> for exactly this, while including the added benefit of observability. If you need a one time ordering of a set, you can get the array representation with <code>toArray</code> and then use vanilla JavaScript <code>sort</code> on that array.
 
 </p>
 <p><em>Note</em>: Using <code>forEach()</code> in an accessor body will register the set iterated over as a source of the property being calculated. This so that whenever the set changes, the property will be recalculated. This can become an issue if you iterate over a set and modify the set&#39;s items, as when the property recalculates that modification will potentially happen on items it&#39;s happened on previously.
@@ -2643,29 +2707,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </div>
 <div class="console-session">
   <h4>Set::forEach registers the set as a source if called in an accessor body</h4>
-  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="p">(</span><span class="nx">Team</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Team</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
-
-    <span class="kd">function</span> <span class="nx">Team</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">players</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">();</span>
-    <span class="p">}</span>
-
-    <span class="nx">Team</span><span class="p">.</span><span class="nx">accessor</span><span class="p">(</span><span class="s1">&#39;willWinTheCup?&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">sedinCount</span><span class="p">;</span>
-      <span class="nx">sedinCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-      <span class="k">this</span><span class="p">.</span><span class="nx">players</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;Sedin&#39;</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">return</span> <span class="nx">sedinCount</span><span class="o">++</span><span class="p">;</span>
-        <span class="p">}</span>
-      <span class="p">});</span>
-      <span class="k">return</span> <span class="nx">sedinCount</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">;</span>
-    <span class="p">});</span>
-
-    <span class="k">return</span> <span class="nx">Team</span><span class="p">;</span>
-
-  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nb">Object</span><span class="p">))</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Team</span><span class="p">()</span>
+  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Team</span><span class="p">()</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span><span class="p">.</span><span class="nx">observeAndFire</span><span class="p">(</span><span class="s1">&#39;willWinTheCup?&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">log</span><span class="p">(</span><span class="nx">status</span><span class="p">);</span>
   <span class="p">})</span>
@@ -2833,10 +2875,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-set-merge">merge(collections... : Enumerable) : Set</h3>
-<p><code>merge</code> adds all the items in a set and all the items in the passed <code>collections</code> to a new set and returns it. A <code>collection</code> is an object which has a <code>forEach</code> function. It is a non-destructive collection union. The set <code>merge</code> is called on and each <code>collection</code> passed to <code>merge</code> remain unaffected.
+<p><code>merge</code> adds all the items in a set and all the items in the passed <code>collections</code> to a new set and returns it. A <code>collection</code> is an object which has a <code>forEach</code> function. <code>merge</code> is a non-destructive collection union, so the set <code>merge</code> is called on and each <code>collection</code> passed to <code>merge</code> are unaffected by the call.
 
 </p>
-<p><em>Note</em>: Be careful about using <code>merge</code> within accessors. Calling <code>merge</code> in an accessor function body will register the set <code>merge</code> is called upon as a source of the property being calculated, which means each the set changes, the property will be recalculated. This means the merge will occur again each time, and return an entirely new <code>Set</code> instance. If the previously returned <code>Set</code> instance is retained after recalculation, this is a big memory leak. Instead of merging in accessors, try to use a <code>SetUnion</code> or a <code>SetIntersection</code>.
+<p><em>Note</em>: Be careful about using <code>merge</code> within accessors. Calling <code>merge</code> in an accessor function body will register the set <code>merge</code> is called upon as a source of the property being calculated, which means when the set changes, that accessor will be recalculated. This means the O(n * m) merge will occur again each time, and return an entirely new <code>Set</code> instance. If the previously returned <code>Set</code> instance is retained after recalculation, this is a big memory leak. Instead of merging in accessors, try to use a <code>SetUnion</code> or a <code>SetIntersection</code>.
 
 </p>
 <div class="console-session">
@@ -2851,9 +2893,273 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-set-indexedby">indexedBy(key : String) : SetIndex</h3>
-<h3 id="batman-set-indexedbyunique">indexedByUnique(key : String) : UniqueSetIndex</h3>
-<h3 id="batman-set-sortedby">sortedBy(key: String) : SetSort</h3>
+<p><code>indexedBy</code> returns a hash of sets which buckets all the items in the callee set by the value of a particular <code>key</code>. The value of the passed <code>key</code> is <code>get</code>ted from each object in the set, and then a hash of each value to a set of the items with that value at the <code>key</code> is built. This hash of sets is a smart object called a <code>SetIndex</code> which will continue to observe the set and the value of the <code>key</code> on each item in the set to ensure the set index remains up to date. <code>SetIndex</code> also has a friend named <code>UniqueSetIndex</code> which will give you a hash of items instead of a hash of sets with items for easy access if you know each item&#39;s value at the <code>key</code> is unique.
 
+</p>
+<div class="console-session">
+  <h4>Set::indexedBy returns a new SetIndex with the items bucketed by the value of the key</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">indexedBy</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">2</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;green&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>Set::indexedBy returns a new SetIndex which observes the set for new additions and stays up to date</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">indexedBy</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">newItem</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">newItem</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">2</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">has</span><span class="p">(</span><span class="nx">newItem</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">newItem</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>Set::indexedBy returns a new SetIndex which observes the items in the set for changes to the observed key</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">itemA</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">itemB</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">itemA</span><span class="p">,</span> <span class="nx">itemB</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">indexedBy</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;green&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">itemA</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">0</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;green&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">2</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<p><code>SetIndex</code>es can be created by calling the <code>indexedBy</code> function on the <code>Set</code>, as well as by <code>get</code>ting a <code>key</code> on the <code>indexedBy</code> property.
+
+</p>
+<div class="console-session">
+  <h4>Set::get(&#39;indexedBy.someKey&#39;) returns a new SetIndex for &#39;someKey&#39;</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;indexedBy.colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<h3 id="batman-set-indexedbyunique">indexedByUnique(key : String) : UniqueSetIndex</h3>
+<p><code>indexedByUnique</code> returns a hash of items keyed by the value of the given <code>key</code> on each item from the callee set. The value of the passed <code>key</code> is <code>get</code>ted from each object in the set, and then a hash of each value to an item with that value at the <code>key</code> is built. This hash of items is a smart object called a <code>UniqueSetIndex</code> which will continue to observe the set and the value of the <code>key</code> on each item in the set to ensure the index remains up to date. Note that the semantics for which item ends up in the hash if two items have the same value for the <code>key</code> are undefined, so it is wise to only use <code>UniqueSetIndex</code>es on keys who&#39;s values are going to be unique in the set. If the values are not going to be unique, you may be interested in <code>SetIndex</code> and <code>Set::indexedBy</code>.
+
+</p>
+<div class="console-session">
+  <h4>Set::indexedByUnique returns a new UniqueSetIndex with the items hashed by the value of the key</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">greenItem</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">blueItem</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">greenItem</span><span class="p">,</span> <span class="nx">blueItem</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">indexedByUnique</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">blueItem</span> <span class="o">===</span> <span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">greenItem</span> <span class="o">===</span> <span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="k">void</span> <span class="mi">0</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>Set::indexedByUnique returns a new UniqueSetIndex which observes the set for new additions and stays up to date</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">indexedByUnique</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">newItem</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;red&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">newItem</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">newItem</span> <span class="o">===</span> <span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">newItem</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="k">void</span> <span class="mi">0</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>Set::indexedByUnique returns a new UniqueSetIndex which observes the items in the set for changes to the observed key</h4>
+  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">itemB</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">itemA</span><span class="p">,</span> <span class="nx">itemB</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">indexedByUnique</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">null</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;green&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">null</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">null</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">itemA</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">null</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">false</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;green&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">null</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="kc">null</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<p><code>UniqueSetIndex</code>es can be created by calling the <code>indexedByUnique</code> function on the <code>Set</code>, as well as by <code>get</code>ting a <code>key</code> on the <code>indexedByUnique</code> property.
+
+</p>
+<div class="console-session">
+  <h4>Set::get(&#39;indexedByUnique.someKey&#39;) returns a new UniqueSetIndex for &#39;someKey&#39;</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">index</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;indexedByUnique.colour&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="s1">&#39;blue&#39;</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="nx">index</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;colour&#39;</span><span class="p">)</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<h3 id="batman-set-sortedby">sortedBy(key: String [, order: String]) : SetSort</h3>
+<p><code>sortedBy</code> returns a <code>Set</code> like object containing all the items of the callee set but with a defined iteration order (unlike <code>Set</code>). The iteration order is defined as the alpha numeric sorting of the values of the passed <code>key</code> gotten from each item. The direction of the sort can be controlled with the <code>order</code> argument, which defaults to <code>asc</code> (short for ascending) or can be passed as <code>desc</code> (short for descending). This <code>Set</code> like object is a <code>SetSort</code> which encapsulates the logic to get the values from each item at the passed <code>key</code> and traverse the <code>Set</code> in the values sorted order.
+
+</p>
+<p><code>SetSort</code>s are useful for getting a transform of a <code>Set</code> which sorted, but also because the sort stays up to date as items are added or removed to the sorted set, or the value at the <code>key</code> changes on any of the items in the set.
+
+</p>
+<div class="console-session">
+  <h4>Set::sortedBy returns a new SetSort who can be iterated in the sorted order of the value of the key on each item</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Harry&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Tom&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Camilo&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">sortedBy</span><span class="p">(</span><span class="s1">&#39;place&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;Tom&#39;</span><span class="p">,</span> <span class="s1">&#39;Camilo&#39;</span><span class="p">,</span> <span class="s1">&#39;Harry&#39;</span><span class="p">]</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>Set::sortedBy returns a new SetSort which observes the callee set for additions or removals and puts new items in the sorted order</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Harry&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Tom&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Camilo&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">sortedBy</span><span class="p">(</span><span class="s1">&#39;place&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;Tom&#39;</span><span class="p">,</span> <span class="s1">&#39;Camilo&#39;</span><span class="p">,</span> <span class="s1">&#39;Harry&#39;</span><span class="p">]</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">burke</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mf">1.5</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Burke&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">burke</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;Tom&#39;</span><span class="p">,</span> <span class="s1">&#39;Burke&#39;</span><span class="p">,</span> <span class="s1">&#39;Camilo&#39;</span><span class="p">,</span> <span class="s1">&#39;Harry&#39;</span><span class="p">]</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>Set::sortedBy returns a new SetSort which observes each item in the callee set for changes to the sort key</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">harry</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Harry&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">tom</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Tom&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">harry</span><span class="p">,</span> <span class="nx">tom</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">sortedBy</span><span class="p">(</span><span class="s1">&#39;place&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;Tom&#39;</span><span class="p">,</span> <span class="s1">&#39;Harry&#39;</span><span class="p">]</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">tom</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;place&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;Harry&#39;</span><span class="p">,</span> <span class="s1">&#39;Tom&#39;</span><span class="p">]</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<p><code>SetSort</code>s can be created by calling the <code>sortedBy</code> function on the <code>Set</code>, as well as by <code>get</code>ting a <code>key</code> on the <code>sortedBy</code> property. Note that with this instantiation form you can&#39;t pass an order to the <code>SetSort</code>.
+
+</p>
+<div class="console-session">
+  <h4>Set::get(&#39;sortedBy.someKey&#39;) returns a new SetSort onn &#39;someKey&#39;</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Harry&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Tom&#39;</span>
+  <span class="p">}),</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">place</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Camilo&#39;</span>
+  <span class="p">}))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">sort</span> <span class="o">=</span> <span class="nx">set</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;sortedBy.place&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="s1">&#39;Harry&#39;</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="nx">sort</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;toArray&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+</pre></div></div></code>
+  </pre>
+</div>
 
 
 
@@ -2884,11 +3190,11 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <h4 id="batman-app-run-starting-an-application-with-domevents">starting an application with DOMEvents</h4>
-<pre><code class="coffeescript"><div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s">&#39;load&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+<pre><code class="coffeescript"><div class="highlight"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s">&#39;load&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span>
   <span class="nx">MyApp</span><span class="p">.</span><span class="nx">run</span><span class="p">()</span>
 </pre></div></code></pre>
 <h4 id="batman-app-run-starting-an-application-with-jquery">starting an application with jQuery</h4>
-<pre><code class="coffeescript"><div class="highlight"><pre><span class="nx">$</span> <span class="o">-&gt;</span>
+<pre><code class="coffeescript"><div class="highlight"><pre><span class="nx">$</span> <span class="nf">-&gt;</span>
   <span class="nx">MyApp</span><span class="p">.</span><span class="nx">run</span><span class="p">()</span>
 </pre></div></code></pre>
 <h3 id="batman-app-stop">@stop() : App</h3>
@@ -2946,10 +3252,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <h2 id="batman-app-routing">Batman.App Routing</h2>
-<p>The <code>Batman</code> routing DSL is similar to Rails 3&#39;s routing DSL.
+<p>The <code>Batman</code> routing DSL is similar to Rails 3&#39;s routing DSL. It is oriented around the notion of a resource:
 
 </p>
-<h3 id="batman-app-routing-resources">@resources</h3>
+<h3 id="batman-app-routing-resources">@resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])</h3>
 <h3 id="batman-app-routing-member">@member</h3>
 <h3 id="batman-app-routing-collection">@collection</h3>
 <h3 id="batman-app-routing-route">@route</h3>
@@ -2987,9 +3293,11 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>The <code>options</code> argument can take three forms to imply different things:
 
 </p>
-<h1 id="undefined-that-this-filter-function-should-be-executed-before-all-actions"><code>undefined</code>: implies that this filter function should be executed before all actions</h1>
-<h1 id="a-string-that-this-filter-function-should-be-executed-before-the-action-named-by-the-string">a String: implies that this filter function should be executed before the action named by the string</h1>
-<h1 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object">an Object: implies that this filter function should be executed before the actions named by an Array at the <code>only</code> key in the options object, or before all actions excluding those named by an Array at the <code>except</code> key in the options object.</h1>
+<ol>
+<li><code>undefined</code>: implies that this filter function should be executed before all actions.</li>
+<li>a String: implies that this filter function should be executed before the action named by the string.</li>
+<li>an Object: implies that this filter function should be executed before the actions named by an Array at the <code>only</code> key in the options object, or before all actions excluding those named by an Array at the <code>except</code> key in the options object.</li>
+</ol>
 <div class="console-session">
   <h4>@beforeFilter allows declaration of filters to execute before an action</h4>
   <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">TestController</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
@@ -3140,7 +3448,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div></code>
   </pre>
 </div>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-afterfilter">@afterFilter([options : [String|Object]], filter : [String|Function])</h3>
+<h3 id="batman-controller-afterfilter">@afterFilter([options : [String|Object]], filter : [String|Function])</h3>
 <p><code>@afterFilter</code> allows controllers to declare that a function should be run after the action body and all operations have completed during action execution. Functions declared by <code>@afterFilter</code> will thus be run after the code of the action body and also after any redirects or renders have taken place and completed. <code>@beforeFilter</code> optionally accepts some options representing which action(s) to execute the filter before, and then a string naming a function or function proper to execute. See <code>Batman.Controller.beforeFilter</code> for documentation on the structure of the options.
 
 </p>
@@ -3311,48 +3619,48 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div></code>
   </pre>
 </div>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-autoscrolltohash-true">autoScrollToHash[= true] : boolean</h3>
-<p><code>autoScrollToHash</code> is a boolean property on the instance level of a controller describing weather or not the controller should automatically scroll the browser window to the element with ID equal to the <code>hash</code> parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing. <code>autoScrollToHash</code> is true by default.
+<h3 id="batman-controller-autoscrolltohash-true">autoScrollToHash[= true] : boolean</h3>
+<p><code>autoScrollToHash</code> is a boolean property on the instance level of a controller describing whether or not the controller should automatically scroll the browser window to the element with ID equal to the <code>hash</code> parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing. <code>autoScrollToHash</code> is true by default.
 
 </p>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-defaultrenderyield-main">defaultRenderYield[= &#39;main&#39;] : String</h3>
-<p><code>defaultRenderYield</code> is a <code>String</code> representing which yield a controller should automatically render into if no yield is mentioned explicitly. <code>defaultRenderYield</code> is <code>&#39;main&#39;</code> normally, which means calls to <code>@render()</code> or actions which rely on the implicit rendering render their views into the <code>main</code> yield (and end up where ever <code>data-yield=&quot;main&quot;</code> is found in your HTML).
+<h3 id="batman-controller-defaultrenderyield-main">defaultRenderYield[= &#39;main&#39;] : String</h3>
+<p><code>defaultRenderYield</code> is a <code>String</code> representing which yield a controller should automatically render into if no yield is mentioned explicitly. <code>defaultRenderYield</code> is <code>&#39;main&#39;</code> normally, which means calls to <code>@render()</code> or actions which rely on the implicit rendering render their views into the <code>main</code> yield (and end up wherever <code>data-yield=&quot;main&quot;</code> is found in your HTML).
 
 
 </p>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-controller-actions">Controller Actions</h3>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-executeaction">executeAction</h3>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-render">render</h3>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-redirect">redirect</h3>
-<h3 id="an-object-that-this-filter-function-should-be-executed-before-the-actions-named-by-an-array-at-the-only-key-in-the-options-object-or-before-all-actions-excluding-those-named-by-an-array-at-the-except-key-in-the-options-object-scrolltohash">scrollToHash</h3>
+<h3 id="batman-controller-controller-actions">Controller Actions</h3>
+<h3 id="batman-controller-executeaction">executeAction</h3>
+<h3 id="batman-controller-render">render</h3>
+<h3 id="batman-controller-redirect">redirect</h3>
+<h3 id="batman-controller-scrolltohash">scrollToHash</h3>
 
 <h2 id="batman-model">Batman.Model</h2>
-<p><code>Batman.Model</code> is responsible for representing data in your application, and for providing a fluid interface to moving in to and out of your backend.
+<p><code>Batman.Model</code> is responsible for representing data in your application and providing a fluid interface for moving in to and out of your backend.
 
 </p>
 <p><em>Note</em>: This documentation uses the term <em>model</em> to refer to the class <code>Model</code> or a <code>Model</code> subclass, and the term <em>record</em> to refer to one instance of <code>Model</code> or of a <code>Model</code> subclass.
 
 </p>
 <h3 id="batman-model-the-asynchronous-nature-of-the-world">The Asynchronous Nature of the World</h3>
-<p><code>Batman.Model</code>&#39;s operations on both the class and instance level are asynchronous and always will be. This means that the operation functions all accept node style callback functions as the last argument, and only call these callbacks when the operation is complete. Complete in this context means for example with <code>RestStorage</code> only when the entire HTTP response has been received from the server, which can be many seconds after the original call to the operation function.
+<p><code>Batman.Model</code>&#39;s operations on both the class and instance level are asynchronous and always will be. This means that the operation functions all accept node style callback functions as the last argument, and only call these callbacks when the operation is complete. Completion occurs, for example with <code>RestStorage</code>, only when the entire HTTP response has been received from the server, which can be many seconds after the original call to the operation function.
 
 </p>
-<p>These callbacks follow the nodejs convention for their signatures. They should regard the first argument as an error: if it is present, an error has occured, and if it is null or undefined, the operation was successful. Successive arguments represent the result of the operation, or in another world, what would have been returned from the operation function if the operation was synchronous. records returned, a boolean representing status, or response JSON.
+<p>These callbacks follow the nodejs convention for their signatures. They should regard the first argument as an error: if it is present, an error has occurred, and if it is null or undefined, the operation was successful. Successive arguments represent the result of the operation, such as the return value from the operation function if the operation were synchronous, records returned, a boolean representing status, or response JSON.
 
 </p>
 <h3 id="batman-model-the-identity-map">The Identity Map</h3>
-<p>Batman uses an identity map when fetching and storing records to do its best to only ever represent a backend record with exactly one client side record. This means that if you use <code>Model.find</code> twice to fetch a record with the same ID, you will get back the same (<code>===</code>) instance in each callback. This is useful because it means that any state the instance might be in is available and preserved no matter which piece of code asked for it, and so that bindings to the instance update no matter which piece of code actually updates the model.
+<p>Batman uses an identity map when fetching and storing records to do its best to only ever represent a backend record with exactly one client side record. This means that if you use <code>Model.find</code> twice to fetch a record with the same ID, you will get back the same (<code>===</code>) instance in each callback. This is useful as any state the instance might be in is available and preserved no matter which piece of code asked for it, and bindings to the instance update no matter which piece of code actually updates the model.
 
 </p>
-<p>Practically, the identity map is an implementation detail on Batman&#39;s end and developers shouldn&#39;t have to actually interact with it, but the knowledge that you have the &quot;one true instance&quot; is helpful when reasoning about code and bindings.
+<p>Practically, the identity map is an implementation detail on Batman&#39;s end which developers shouldn&#39;t have to interact with , but knowing that you have the &quot;one true instance&quot; is helpful when reasoning about code and bindings.
 
 </p>
 <h3 id="batman-model-subclassing">Subclassing</h3>
-<p>Models in your applications should be subclasses of <code>Batman.Model</code>, or subclasses of subclasses, and so on. Extending <code>Batman.Model</code> will give your domain-modeling class all the functionality described here. Subclasses can also be subclassed once more if you so desire. Things like encoders, validations, and storage adapters will be inherited by sub-subclasses.
+<p>Models in your applications should be subclasses of <code>Batman.Model</code>, or subclasses of subclasses, and so on. Extending <code>Batman.Model</code> will give your domain-modeling class all the functionality described here. Things like encoders, validations, and storage adapters will be inherited by sub-subclasses.
 
 </p>
 <h3 id="batman-model-storage-adapters">Storage Adapters</h3>
-<p><code>Batman.Model</code> alone only defines the logic surrounding loading and saving, but not the actual mechanism for doing so. This is left to a <code>Batman.StorageAdaper</code> subclass, 4 of which are included with Batman or in extras:
+<p><code>Batman.Model</code> alone only defines the logic surrounding loading and saving, but not the actual mechanism for doing so. This is left to a <code>Batman.StorageAdapter</code> subclass, 4 of which are included with Batman or in extras:
 
 </p>
 <ol>
@@ -3388,7 +3696,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>The <code>primaryKey</code> is what Batman uses to compare instances to see if they represent the same domain-level object: if two records have the same value at the key specified by <code>primaryKey</code>, only one will be in the identity map. The key specified by <code>primaryKey</code> is also used by the associations system when determining if a record is related to another record, and by the remote storage adapters to generate URLs for records.
 
 </p>
-<p>Note_: The default primaryKey is &#39;id&#39;.
+<p><em>Note</em>: The default primaryKey is &#39;id&#39;.
 
 </p>
 <h3 id="batman-model-storagekey">@storageKey : string</h3>
@@ -3493,12 +3801,12 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <ul>
 <li><code>value</code> is the server side value of the <code>key</code> which will end up on the <code>record</code>.</li>
-<li><code>key</code> is the key which the <code>value</code> is stored under the incoming JSON.</li>
+<li><code>key</code> is the key which the <code>value</code> is stored under in the incoming JSON.</li>
 <li><code>incomingJSON</code> is the JSON which is being decoded into the <code>record</code>. This can be used to create compound key decoders.</li>
 <li><code>outgoingObject</code> is the object which is built up by the decoders and then <code>mixin</code>&#39;d to the record.</li>
 <li><code>record</code> is the record on which <code>fromJSON</code> has been called.</li>
 </ul>
-<p>The <code>encode</code> and <code>decode</code> keys can also be false to avoid the default identity function encoder or decoder from being used.
+<p>The <code>encode</code> and <code>decode</code> keys can also be false to avoid using the default identity function encoder or decoder.
 
 </p>
 <p><em>Note</em>: <code>Batman.Model</code> subclasses have no encoders by default, except for one which automatically decodes the <code>primaryKey</code> of the model, which is usually <code>id</code>. To get any data into or out of your model, you must white-list the keys you expect from the server or storage attribute.
@@ -3717,10 +4025,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
   <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">()</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">fromJSON</span><span class="p">({</span>
-    <span class="nx">tags</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="s1">&#39;hot&#39;</span><span class="p">,</span> <span class="s1">&#39;cool&#39;</span><span class="p">]</span>
-  <span class="p">})</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;tags&#39;</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span>
+</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;tags&#39;</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="p">{</span>
@@ -3763,8 +4068,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <ul>
-<li><code>presence : boolean</code>: Assert that the string value is existant (not undefined nor null) and has length greather than 0.</li>
-<li><code>numeric : true</code>: Assert that the value can be is or can be coerced into a number using <code>parseFloat</code>.</li>
+<li><code>presence : boolean</code>: Assert that the string value is existent (not undefined or null) and has length greather than 0.</li>
+<li><code>numeric : true</code>: Assert that the value is or can be coerced into a number using <code>parseFloat</code>.</li>
 <li><code>greaterThan : number</code>: Assert that the value is greater than the given number.</li>
 <li><code>greaterThanOrEqualTo : number</code>: Assert that the value is greater than or equal to the given number.</li>
 <li><code>equalTo : number</code>: Assert that the value is equal to the given number.</li>
@@ -3774,6 +4079,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <li><code>maxLength : number</code>: Assert that the value&#39;s <code>length</code> property is less than the given number.</li>
 <li><code>length : number</code>: Assert that the value&#39;s <code>length</code> property is exactly the given number.</li>
 <li><code>lengthWithin : [number, number]</code> or <code>lengthIn : [number, number]</code>: Assert that the value&#39;s <code>length</code> property is within the ranger specified by the given array of two numbers, where the first number is the lower bound and the second number is the upper bound.</li>
+<li><code>inclusion : in : [list, of, acceptable, values]</code>: Assert that the value is equal to one of the values in an array.</li>
+<li><code>exclusion : in : [list, of, unacceptable, values]</code>: Assert that the value is not equal to any of the values in an array.</li>
 </ul>
 <p>Custom validators should have the signature <code>(errors, record, key, callback)</code>. The arguments are as follows:
 
@@ -3782,13 +4089,13 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <li><code>errors</code>: an <code>ErrorsSet</code> instance which expects to have <code>add</code> called on it to add errors to the model</li>
 <li><code>record</code>: the record being validated</li>
 <li><code>key</code>: the key to which the validation has been attached</li>
-<li><code>callback</code>: a function to call once validation has been complete. Calling this function is ++mandatory++.</li>
+<li><code>callback</code>: a function to call once validation has been completed. Calling this function is <strong>mandatory</strong>.</li>
 </ul>
 <p>See <code>Model::validate</code> for information on how to get a particular record&#39;s validity.
 
 </p>
 <h3 id="batman-model-loaded">@loaded : Set</h3>
-<p>The <code>loaded</code> set is available on every model class and holds every model instance seen by the system in order to function as an identity map. Successful loading or saving individual records or batches of records will result in those records being added to the <code>loaded</code> set. Destroying instances will remove records from the identity set.
+<p>The <code>loaded</code> set is available on every model class and holds every model instance seen by the system in order to function as an identity map. Successfully loading or saving individual records or batches of records will result in those records being added to the <code>loaded</code> set. Destroying instances will remove records from the identity set.
 
 </p>
 <div class="console-session">
@@ -3932,10 +4239,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-model-find">@find(id, callback : Function) : Model</h3>
-<p><code>Model.find()</code> retrieves a record with the specified <code>id</code> from the storage adapter and calls back with an error if one occurred and the record if one didn&#39;t. <code>find</code> delegates to the storage adapter the <code>Model</code> has been <code>@persist</code>ed with, so it is up to the storage adapter&#39;s semantics to determine what type of errors may return and the timeline on which the callback may be called. The <code>callback</code> is a non-optional function which should adopt the node style callback signature which accepts two arguments, an error, and the record asked for. <code>find</code> returns an &quot;unloaded&quot; record which after the load completes will be populated with the data from the storage adapter.
+<p><code>Model.find()</code> retrieves a record with the specified <code>id</code> from the storage adapter and calls back with an error if one occurred and the record if the operation was successful. <code>find</code> delegates to the storage adapter the <code>Model</code> has been <code>@persist</code>ed with, so it is up to the storage adapter&#39;s semantics to determine what type of errors may return and the timeline on which the callback may be called. The <code>callback</code> is a required function which should adopt the node style callback signature which accepts two arguments: an error, and the record asked for. <code>find</code> returns an &quot;unloaded&quot; record which, following the load completion, will be populated with the data from the storage adapter.
 
 </p>
-<p><em>Note</em>: <code>find</code> gives two results to calling code: one immediately, and one later. <code>find</code> returns a record synchronously as it is called and calls back with a record and importantly these two records are <strong>not</strong> guaranteed to be the same instance. This is because Batman maps the identities of incoming and outgoing records such that there is only ever one canonical instance representing a record, which is useful so bindings are always bound to the same thing. In practice, this means that calling code should use the record <code>find</code> calls back with if anything is going to bind to that object, which is most of the time. The returned record however remains useful for state inspection as well as bookkeeping.
+<p><em>Note</em>: <code>find</code> gives two results to calling code: one immediately, and one later. <code>find</code> returns a record synchronously as it is called and calls back with a record, and importantly these two records are <strong>not</strong> guaranteed to be the same instance. This is because Batman maps the identities of incoming and outgoing records such that there is only ever one canonical instance representing a record, which is useful so bindings are always bound to the same thing. In practice, this means that calling code should use the record <code>find</code> calls back with if anything is going to bind to that object, which is most of the time. The returned record however remains useful for state inspection and bookkeeping.
 
 </p>
 <div class="console-session">
@@ -4007,15 +4314,15 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   </pre>
 </div>
 <h3 id="batman-model-load">@load(options = {}, callback : Function)</h3>
-<p><code>Model.load()</code> retrieves an array of records according to the given <code>options</code> from the storage adapter and calls back with an error if one occurred and the set of records if one didn&#39;t. <code>load</code> delegates to the storage adapter the <code>Model</code> has been <code>@persist</code>ed with, so it is up to the storage adapter&#39;s semantics to determine what the options do, what kind of errors may arise, and the timeline on which the callback may be called. The <code>callback</code> is a non-optional function which should adopt the node style callback signature which accepts two arguments, an error, and the array of records. <code>load</code> returns undefined.
+<p><code>Model.load()</code> retrieves an array of records according to the given <code>options</code> from the storage adapter and calls back with an error if one occurred and the set of records if the operation was successful. <code>load</code> delegates to the storage adapter the <code>Model</code> has been <code>@persist</code>ed with, so it is up to the storage adapter&#39;s semantics to determine what the options do, what kind of errors may arise, and the timeline on which the callback may be called. The <code>callback</code> is a required function which should adopt the node style callback signature which accepts two arguments, an error, and the array of records. <code>load</code> returns undefined.
 
 </p>
-<p>For the two main <code>StorageAdapter</code>s Batman provides the <code>options</code> do different things:
+<p>For the two main <code>StorageAdapter</code>s Batman provides, the <code>options</code> do different things:
 
 </p>
 <ul>
-<li>For <code>Batman.LocalStorage</code>, the <code>options</code> act as a filter. The adapter will scan all the records in <code>localStorage</code> and return only those records who match all the key/value pairs as given in the options.</li>
-<li>For <code>Batman.RestStorage</code>, the <code>options</code> are serialized into query parameters on the <code>GET</code> request.</li>
+<li>For <code>Batman.LocalStorage</code>, <code>options</code> act as a filter. The adapter will scan all the records in <code>localStorage</code> and return only those records which match all the key/value pairs given in the options.</li>
+<li>For <code>Batman.RestStorage</code>, <code>options</code> are serialized into query parameters on the <code>GET</code> request.</li>
 </ul>
 <div class="console-session">
   <h4>@load calls back an array of records retrieved from the storage adapter</h4>
@@ -4116,14 +4423,14 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <h2 id="batman-view">Batman.View</h2>
 
 <h3 id="what-are-views">What Are Views?</h3>
-<p>The basic flow of interactions with a Batman application is this: a user triggers an event, which dispatches a route, which routes to a controller action, which gets executed, and finally renders a template. The template is an HTML file in the <code>app/views</code> folder with the same name as the action being executed. These templates leverage the power of the Batman view binding system using <code>data-bind</code> and kin to display some data to the user and prompt them for the next event.
+<p>In the basic flow of interactions with a Batman application, a user triggers an event, which dispatches a route, which routes to a controller action, which gets executed, and finally renders a template. The template is an HTML file in the <code>app/views</code> folder with the same name as the action being executed. These templates leverage the power of Batman&#39;s view binding system using <code>data-bind</code> to display some data to the user and prompt them for the next event.
 
 </p>
-<p>The controller does all this by instantiating a new <code>Batman.View</code>, setting its <code>html</code> property to the contents of the template, and telling the view to <code>render()</code>. When the view&#39;s <code>html</code> property is set, the view inserts it into its <code>node</code>, and when <code>render</code> is called, it traverses that HTML to find and create your bindings. A vanilla <code>Batman.View</code> instance&#39;s <code>render</code> function does this by instantiating a new <code>Batman.Renderer</code> and asking it to do its magic on the view&#39;s <code>html</code>. The view then emits a <code>ready</code> event and then sits around waiting for the user to do something.
+<p>The controller does all this by instantiating a new <code>Batman.View</code>, setting its <code>html</code> property to the contents of the template, and telling the view to <code>render()</code>. When the view&#39;s <code>html</code> property is set, the view inserts it into its <code>node</code>, and when <code>render</code> is called, it traverses that HTML to find and create your bindings. A vanilla <code>Batman.View</code> instance&#39;s <code>render</code> function does this by instantiating a new <code>Batman.Renderer</code> and asking it to do its magic on the view&#39;s <code>html</code>. The view then emits a <code>ready</code> event and waits for the user to do something.
 
 </p>
 <h4 id="what-are-views-do-more">Do More</h4>
-<p><code>Batman.View</code>s have another purpose however: they can be used to create reusable, configurable components which can then be created and reused inside the templates. Examples include a Google Maps component, perhaps a lightbox, a segmented button control, or maybe a class to manage the interactions around flash messages. The flow with these <code>View</code>s is different: they aren&#39;t instantiated by controller, but instead by the template using a <code>data-view</code> binding. They are subclasses of <code>Batman.View</code> which enhance the standard functionality to do something useful. Lets look at some examples of how developers might use <code>data-view</code>:
+<p><code>Batman.View</code>s have another purpose however: they can be used to create reusable, configurable components which can then be created and reused inside the templates. Consider a Google Maps component, perhaps a lightbox, a segmented button control, or maybe a class which manages the interactions around flash messages. The flow with these <code>View</code>s is different: they aren&#39;t instantiated by controller, but instead by the template using a <code>data-view</code> binding. They are subclasses of <code>Batman.View</code> which enhance the standard functionality to do something useful. Let&#39;s look at some examples of how one might use <code>data-view</code>:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="c">&lt;!-- You might want to use a View to make flash messages. This one might apply some CSS styles to make the message clearer to the user, or use some JavaScript to add a close button which hides the div --&gt;</span>
@@ -4139,27 +4446,27 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <span class="c">&lt;!-- Someone who didn&#39;t know jQuery might want to implement the placeholder attribute of inputs in a View which might detect if the code is running in a browser which doesn&#39;t support placeholder and polyfills the functionality if so --&gt;</span>
 <span class="nt">&lt;input</span> <span class="na">data-view=</span><span class="s">&quot;PlaceHolderInputView&quot;</span><span class="nt">&gt;&lt;/input&gt;</span>
 </pre></div></code></pre>
-<p>Each of these doo-dads implements some handy functionality which the template can pull in where ever it likes to spice up the experience. <code>FlashMessageView</code>, <code>SegmentedButtonView</code>, and <code>PlaceHolderInputView</code> are all <code>Batman.View</code> subclasses which have some custom code in them which does cool stuff to whatever node they are applied to. The basic flow for implementation is this:
+<p>Each of these doo-dads implements some handy functionality which the template can pull in wherever it likes to spice up the experience. <code>FlashMessageView</code>, <code>SegmentedButtonView</code>, and <code>PlaceHolderInputView</code> are all <code>Batman.View</code> subclasses which have some custom code in them which does cool stuff to the node on which they are applied. Implementation follows this basic flow:
 
 </p>
 <ul>
 <li>Create a <code>Batman.View</code> subclass in a namespace where your view can find it</li>
-<li>Override the <code>render</code> function to do something useful, while being sure to call <code>super</code></li>
-<li>Add useful functions for controlling the views behaviour externally or to be attached as event handlers</li>
+<li>Override the <code>render</code> function to do something useful and make sure to call <code>super</code></li>
+<li>Add useful functions for controlling the view&#39;s behaviour externally or attaching event handlers</li>
 <li>Reference the view using a <code>data-view</code> binding on a node elsewhere.</li>
 </ul>
 <p>Let&#39;s look at how this flow applies to a couple examples.
 
 </p>
 <h4 id="what-are-views-an-example">An example: FlashMessageView</h4>
-<p><code>FlashMessageView</code> is a <code>View</code> subclass we apply to ephemeral messages meant for display and then dismissal. Let&#39;s say the class has two responsibilities: applying some fun styles to make the whatever node it wraps flash-y, and also adding a close button to the node to let users hide it once they have read the message.
+<p><code>FlashMessageView</code> is a <code>View</code> subclass we apply to ephemeral messages meant for display and then dismissal. Let&#39;s say the class has two responsibilities: applying some fun styles to make the node it wraps flashy, and also adding a close button to the node to let users hide it once they have read the message.
 
 </p>
-<p>For demonstration we&#39;ll use jQuery to implement the guts of the view. If we were using only jQuery in this project, we might implement this same functionality by giving our node a unique ID or class, and then using jQuery somewhere to select it and add the classes and close button. With Batman, the selection step is done for us, and all we have to do is apply the functionality. Your <code>Batman.View</code> will receive a <code>node</code> for wrapping which can be found in in the <code>node</code> property on the view instance.
+<p>For demonstration, we&#39;ll use jQuery to implement the guts of the view. If we were using only jQuery in this project, we might implement this same functionality by giving our node a unique ID or class, and then using jQuery somewhere to select it and add the classes and close button. With Batman, the selection step is done for us, and all we have to do is apply the functionality. Your <code>Batman.View</code> will receive a <code>node</code> for wrapping which can be found in the <code>node</code> property on the view instance.
 
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">FlashMessageView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
-  <span class="nv">constructor: </span><span class="o">-&gt;</span>
+  <span class="nv">constructor: </span><span class="nf">-&gt;</span>
     <span class="k">super</span>
     <span class="nx">@get</span><span class="p">(</span><span class="s">&#39;node&#39;</span><span class="p">)</span> <span class="c1">#=&gt; DOMElement</span>
 </pre></div></code></pre>
@@ -4167,7 +4474,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">FlashMessageView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
-  <span class="nv">constructor: </span><span class="o">-&gt;</span>
+  <span class="nv">constructor: </span><span class="nf">-&gt;</span>
     <span class="k">super</span> <span class="c1"># process arguments and stuff</span>
     <span class="nv">node = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;node&#39;</span><span class="p">))</span>
     <span class="c1"># Add our flash box classes</span>
@@ -4178,14 +4485,14 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">button</span><span class="p">)</span>
 
     <span class="c1"># Tell the button to hide the flash box when it&#39;s clicked.</span>
-    <span class="nx">button</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="nx">button</span><span class="p">.</span><span class="nx">on</span> <span class="s">&#39;click&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">hide</span><span class="p">(</span><span class="s">&#39;fast&#39;</span><span class="p">)</span>
 </pre></div></code></pre>
-<p>There are a couple things we need to change with this. First, applying the logic in the constructor isn&#39;t the best idea. I deceived you; my apologies. Instead, it should be in the overridden <code>render</code> function on the <code>View</code>, or in a handler on one of the <code>View</code>&#39;s handlers. This is better because, perhaps unbeknownst to you, Batman should be able to instantiate <code>Batman.View</code>s <strong>without a <code>node</code></strong>. The <code>node</code> for a view is not always be available upon construction, so construction, rendering, and insertion are all separate happenings on a <code>View</code>. Depending on what you are doing, your logic should happen before or after one of these stages.
+<p>There are a couple things we need to change with this. First, applying the logic in the constructor isn&#39;t the best idea; I deceived you, my apologies. Instead, it should be in the overridden <code>render</code> function on the <code>View</code>, or in a handler on one of the <code>View</code>&#39;s handlers. This is better because, perhaps unbeknownst to you, Batman should be able to instantiate <code>Batman.View</code>s <strong>without a <code>node</code></strong>. The <code>node</code> for a view is not always available upon construction, so construction, rendering, and insertion are all separate events on a <code>View</code>. Depending on what you are doing, your logic should happen before or after one of these stages.
 
 </p>
 <h4 id="what-are-views-if-you-want-to-do-something-to-a-views-html-after-rendering-add-a-ready-function-or-listen-to-an-event">If you want to do something to a view&#39;s HTML after rendering, add a <code>ready</code> function, or listen to an event</h4>
-<p><code>View</code>s call a function named <code>ready</code> on themselves after all their contents have been rendered and thus their bindings have been setup. This is a useful lifecycle hook to add jQuerys or other fancy logic which implements useful functionality in JavaScript because you know the DOM is setup and stable, at least for now. For example, before the <code>ready</code> event has fired, <code>data-foreach</code> bindings might not have inserted all their items, or <code>data-showif</code> bindings might not have been created and thus their nodes would still be visible.
+<p><code>View</code>s call a function named <code>ready</code> on themselves after all their contents have been rendered and thus have setup bindings. This is a useful lifecycle hook to add jQuerys or other fancy logic which implements useful functionality in JavaScript because you know the DOM is setup and stable, at least for now. For example, before the <code>ready</code> event has fired, <code>data-foreach</code> bindings might not have inserted all their items, or <code>data-showif</code> bindings might not have been created and thus their nodes would still be visible.
 
 </p>
 <p>Lets move the <code>FlashMessageView</code>&#39;s enhancements to the <code>ready</code> function where they belong:
@@ -4193,7 +4500,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">FlashMessageView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
 
-  <span class="nv">ready: </span><span class="o">-&gt;</span>
+  <span class="nv">ready: </span><span class="nf">-&gt;</span>
     <span class="nv">node = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;node&#39;</span><span class="p">))</span>
     <span class="c1"># Add our flash box classes</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;flash box warning&#39;</span><span class="p">)</span>
@@ -4203,7 +4510,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="nx">node</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">button</span><span class="p">)</span>
 
     <span class="c1"># Tell the button to hide the flash box when it&#39;s clicked.</span>
-    <span class="nx">button</span><span class="p">.</span><span class="kc">on</span> <span class="s">&#39;click&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="nx">button</span><span class="p">.</span><span class="nx">on</span> <span class="s">&#39;click&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span>
       <span class="nx">node</span><span class="p">.</span><span class="nx">hide</span><span class="p">(</span><span class="s">&#39;fast&#39;</span><span class="p">)</span>
 </pre></div></code></pre>
 <h4 id="what-are-views-if-you-want-to-do-something-to-a-views-html-before-rendering-override-the-render-method">If you want to do something to a view&#39;s HTML before rendering, override the <code>render</code> method.</h4>
@@ -4224,7 +4531,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">FlashMessageView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
-  <span class="nv">render: </span><span class="o">-&gt;</span>
+  <span class="nv">render: </span><span class="nf">-&gt;</span>
     <span class="nv">node = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;node&#39;</span><span class="p">))</span>
     <span class="c1"># Create a button and append it</span>
     <span class="nv">button = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;&lt;button data-event-click=&quot;closeFlash&quot;&gt;X&lt;/button&gt;&#39;</span><span class="p">)</span>
@@ -4232,9 +4539,9 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
     <span class="k">super</span> <span class="c1"># Call super last to pass up the return value</span>
 
-  <span class="nv">closeFlash: </span><span class="o">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;node&#39;</span><span class="p">)).</span><span class="nx">hide</span><span class="p">()</span>
+  <span class="nv">closeFlash: </span><span class="nf">-&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;node&#39;</span><span class="p">)).</span><span class="nx">hide</span><span class="p">()</span>
 </pre></div></code></pre>
-<p>We add a button to the element given to this view which has a binding in it. This binding needs to be rendered, so it must be inserted before the super implementation of render gets called. This setup of the view is the &quot;true&quot; Batman way of doing things: using Batman event handlers and bindings to accomplish functionality so the whole setup is uniform, but if using jQuery events like in the example above is easier you should do what you can to ship your code.
+<p>We add a button to the element given to this view which has a binding in it. This binding needs to be rendered, so it must be inserted before the super implementation of render gets called. This setup of the view is the &quot;true&quot; Batman way of doing things: using Batman event handlers and bindings to accomplish functionality so the whole setup is uniform, but if using jQuery events like in the example above is easier, you should do what you can to ship your code.
 
 </p>
 <h4 id="what-are-views-if-you-want-to-do-something-every-time-a-view-is-inserted-or-removed-from-the-dom-use-the-beforeappear-appear-beforedisappear-and-disappear-events">If you want to do something every time a view is inserted or removed from the DOM, use the <code>beforeAppear</code>, <code>appear</code>, <code>beforeDisappear</code>, and <code>disappear</code> events.</h4>
@@ -4245,10 +4552,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">UsedOnceView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
-  <span class="nx">@</span><span class="o">::</span><span class="kc">on</span> <span class="s">&#39;appear&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s">&#39;my-cool-element&#39;</span><span class="p">).</span><span class="nv">inDOM = </span><span class="kc">true</span>
-  <span class="nx">@</span><span class="o">::</span><span class="kc">on</span> <span class="s">&#39;beforeDisappear&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s">&#39;my-cool-element&#39;</span><span class="p">).</span><span class="nv">inDOM = </span><span class="kc">false</span>
+  <span class="nx">@</span><span class="o">::</span><span class="kc">on</span> <span class="s">&#39;appear&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s">&#39;my-cool-element&#39;</span><span class="p">).</span><span class="nv">inDOM = </span><span class="kc">true</span>
+  <span class="nx">@</span><span class="o">::</span><span class="kc">on</span> <span class="s">&#39;beforeDisappear&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s">&#39;my-cool-element&#39;</span><span class="p">).</span><span class="nv">inDOM = </span><span class="kc">false</span>
 </pre></div></code></pre>
-<p>The reason this is necessary is because in the <code>beforeAppear</code> and <code>disappear</code> the View&#39;s node will not be in the DOM. It will be a detached tree, a parentless node, ceased to be accessible via the document, bereft of siblings, resting in only memory, shuffled off &#39;ts mortal tree, run down the curtain and joined the bleedin&#39; choir invisible! Batman detaches <code>View</code>s whenever the tree the <code>View</code>&#39;s node resides in is removed, which often happens if another controller render takes place. Batman will traverse the tree it is removing or inserting and ensure that these events are fired on any views in the tree and not just the root one.
+<p>The reason this is necessary is because in the <code>beforeAppear</code> and <code>disappear</code> the View&#39;s node will not be in the DOM. It will be a detached tree, a parentless node, cease to be accessible via the document, bereft of siblings, resting in only memory, shuffled off its mortal tree, run down the curtain and joined the bleedin&#39; choir invisible! Batman detaches <code>View</code>s whenever the tree the <code>View</code>&#39;s node resides in is removed, which often happens if another controller render takes place. Batman will traverse the tree it is removing or inserting and ensure that these events are fired on any views in the tree and not just the root one.
 
 
 </p>
@@ -4261,20 +4568,20 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">TrackingView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
   <span class="vi">@instances: </span><span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span>
-  <span class="nv">constructor: </span><span class="o">-&gt;</span>
+  <span class="nv">constructor: </span><span class="nf">-&gt;</span>
     <span class="k">super</span>
     <span class="nx">@constructor</span><span class="p">.</span><span class="nx">instances</span><span class="p">.</span><span class="nx">add</span> <span class="nx">@</span>
 </pre></div></code></pre>
-<p>This might be a valid strategy to take if you want quick access to all instances of the particular view instead of say traversing the DOM to find them. The issue with this however is that the View instances and thus their entire DOM trees can&#39;t be garbage collected since there will always be a reference to them. To avoid this, we can remove the view from the list of instances when it is destroyed, since we know we no longer need it.
+<p>This might be a valid strategy to take if you want quick access to all instances of the particular view instead of say traversing the DOM to find them. The issue with this however is that the View instances, and thus their entire DOM trees, can&#39;t be garbage collected since there will always be a reference to them. To avoid this, we can remove the view from the list of instances when it is destroyed, since we know we no longer need it.
 
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">TrackingView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
   <span class="vi">@instances: </span><span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">SimpleSet</span>
-  <span class="nv">constructor: </span><span class="o">-&gt;</span>
+  <span class="nv">constructor: </span><span class="nf">-&gt;</span>
     <span class="k">super</span>
     <span class="nx">@constructor</span><span class="p">.</span><span class="nx">instances</span><span class="p">.</span><span class="nx">add</span> <span class="nx">@</span>
 
-  <span class="nx">@</span><span class="o">::</span><span class="kc">on</span> <span class="s">&#39;destroy&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nx">@constructor</span><span class="p">.</span><span class="nx">instances</span><span class="p">.</span><span class="nx">remove</span> <span class="nx">@</span>
+  <span class="nx">@</span><span class="o">::</span><span class="kc">on</span> <span class="s">&#39;destroy&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span> <span class="nx">@constructor</span><span class="p">.</span><span class="nx">instances</span><span class="p">.</span><span class="nx">remove</span> <span class="nx">@</span>
 </pre></div></code></pre>
 <h4 id="what-are-views-another-example">Another example: GoogleMapsView</h4>
 <p>Lets take a look at another full featured example. <code>GoogleMapsView</code> is a view which will show a map from Google&#39;s Maps API. The biggest difference with this view is that we need to tell the <code>View</code> exactly what area of the Earth to show to the user. It&#39;s functionality relies on being configured: it has to know something more than just the node it should display within.
@@ -4284,7 +4591,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">GoogleMapsView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
-  <span class="nx">@accessor</span> <span class="s">&#39;imageSrc&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  <span class="nx">@accessor</span> <span class="s">&#39;imageSrc&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span>
     <span class="s">&quot;http://maps.googleapis.com/maps/api/staticmap?center=</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;latitude&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">,</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;longitude&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&amp;zoom=</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;zoom&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&amp;size=</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;width&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">x</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;height&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&amp;sensor=false&quot;</span>
 
   <span class="nv">node: </span><span class="kc">false</span>
@@ -4303,16 +4610,16 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="nv">width: </span><span class="s">&#39;...&#39;</span>
     <span class="nv">height: </span><span class="s">&#39;...&#39;</span>
 </pre></div></code></pre>
-<p>and then referenced in some template like so:
+<p>and is referenced in some template like so:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;h3&gt;</span>Current Address<span class="nt">&lt;/h3&gt;</span>
 <span class="nt">&lt;div</span> <span class="na">data-view=</span><span class="s">&quot;currentMapView&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
 </pre></div></code></pre>
-<p>When the <code>&lt;div&gt;</code> above is rendered, the <code>GoogleMapsView</code> will wait for <code>currentAddressView</code> will be called, which will insert the image into the DOM using the configured options. It is important that the <code>View</code> class has the <code>node: false</code> option on its prototype so that it knows it is to wait for a node to be given to it via a <code>data-view</code> binding, instead of auto-generating one like most views rendered by a Controller might.
+<p>When the <code>&lt;div&gt;</code> above is rendered, the <code>GoogleMapsView</code> will wait for <code>currentAddressView</code> to be called, which will insert the image into the DOM using the configured options. It is important that the <code>View</code> class has the <code>node: false</code> option on its prototype so that it knows it needs to wait for a node to be given to it via a <code>data-view</code> binding, instead of auto-generating one like most views rendered by a Controller might.
 
 </p>
-<p>In an effort to make the <code>View</code> a more reusable, we should pull out the configuration options from the HTML itself:
+<p>In an effort to make the <code>View</code> more reusable, we should pull out the configuration options from the HTML itself:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;h3&gt;</span>Current Address<span class="nt">&lt;/h3&gt;</span>
@@ -4323,16 +4630,16 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">MyApp</span><span class="p">.</span><span class="nx">GoogleMapsView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
   <span class="nx">@option</span> <span class="s">&#39;latitude&#39;</span><span class="p">,</span> <span class="s">&#39;longitude&#39;</span><span class="p">,</span> <span class="s">&#39;zoom&#39;</span><span class="p">,</span> <span class="s">&#39;width&#39;</span><span class="p">,</span> <span class="s">&#39;height&#39;</span>
-  <span class="nx">@accessor</span> <span class="s">&#39;imageSrc&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  <span class="nx">@accessor</span> <span class="s">&#39;imageSrc&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span>
     <span class="s">&quot;http://maps.googleapis.com/maps/api/staticmap?center=</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;latitude&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">,</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;longitude&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&amp;zoom=</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;zoom&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&amp;size=</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;width&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">x</span><span class="si">#{</span><span class="nx">@get</span><span class="p">(</span><span class="s">&#39;height&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&amp;sensor=false&quot;</span>
 </pre></div></code></pre>
-<p>We declare the options that can be passed to the view using <code>data-view-{option}</code> style bindings via the <code>@option</code> class macro on <code>View</code>s. <code>@option</code> creates an property on the view which is accessible throughout the rest of it, so you can do <code>@get(&#39;longitude&#39;)</code> in other places. It then expects to find a <code>data-view-longitude=&quot;-75.690237&quot;</code> on the node the <code>data-view</code> binding occurs on, where the value inside the double quotes can be a filtered keypath like any other. The value at <code>@get(&#39;longitude&#39;)</code> will change as the filtered keypath changes, so we could perhaps bind the <code>longitude</code> option to a <code>customer.longitude</code> keypath by doing the following:
+<p>We declare the options that can be passed to the view using <code>data-view-{option}</code> style bindings via the <code>@option</code> class macro on <code>View</code>s. <code>@option</code> creates a property on the view which is accessible throughout the rest of it, so you can do <code>@get(&#39;longitude&#39;)</code> in other places. It then expects to find a <code>data-view-longitude=&quot;-75.690237&quot;</code> on the node the <code>data-view</code> binding occurs on, where the value inside the double quotes can be a filtered keypath like any other. The value at <code>@get(&#39;longitude&#39;)</code> will change as the filtered keypath changes, so we could perhaps bind the <code>longitude</code> option to a <code>customer.longitude</code> keypath by doing the following:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;h3&gt;</span>Current Address<span class="nt">&lt;/h3&gt;</span>
 <span class="nt">&lt;div</span> <span class="na">data-view=</span><span class="s">&quot;GoogleMapsView&quot;</span> <span class="na">data-view-latitude=</span><span class="s">&quot;customer.latitude&quot;</span> <span class="na">data-view-longitude=</span><span class="s">&quot;customer.longitude&quot;</span> <span class="err">...</span><span class="nt">&gt;&lt;/div&gt;</span>
 </pre></div></code></pre>
-<p>With the above configuration the image rendered out by the view would change as the customer&#39;s <code>longitude</code> value changed.
+<p>With the above configuration the image rendered out by the view would change as the <code>longitude</code> value changed.
 
 </p>
 <p><em>Note</em>: <code>data-view</code> bindings accept both <code>View</code> instances and <code>View</code> subclasses. In the first example, <code>data-view</code> referenced an already existing <em>instance</em> of the subclass, and in the second, <code>data-view</code> references the <em>class</em> itself such that it creates its own instance.
@@ -4353,18 +4660,18 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <li>Views have access to the render context, stored in the <code>context</code> property on the view instance.</li>
 </ul>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">CloseButtonView</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">View</span>
-  <span class="nv">render: </span><span class="o">-&gt;</span>
+  <span class="nv">render: </span><span class="nf">-&gt;</span>
     <span class="k">super</span>
     <span class="nx">@set</span> <span class="s">&#39;something&#39;</span><span class="p">,</span> <span class="nx">@context</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;some.key.path&#39;</span><span class="p">)</span>
 </pre></div></code></pre>
 <p>Be careful using the above strategy for passing <code>View</code>s data: they should be told their data instead of having to fetch it themselves in the interest of being loosely coupled and thus reusable.
 
 </p>
-<p>And thats it!
+<p>And that&#39;s it!
 </p>
 
 <h2 id="batman-view-bindings">Batman View Bindings</h2>
-<p>Batman&#39;s view bindings are how data gets show and collected from the user. They center on the notion of &quot;bindings&quot;: that the view representation and the JavaScript land value are always guaranteed to be in sync, such that when one changes, the other will reflect it.
+<p>Batman&#39;s view bindings are how data gets shown and collected from the user. They center on the notion of &quot;bindings&quot;: that the view representation and the JavaScript land value are always guaranteed to be in sync, such that when one changes, the other will reflect it.
 
 </p>
 <h3 id="batman-view-bindings-how-to-use-bindings">How to use bindings</h3>
@@ -4376,17 +4683,17 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>This instantiates a binding on the <code>div</code> node which will update the node&#39;s <code>innerHTML</code> with the value found at the <code>name</code> keypath in the <a href="#batman-view-bindings-binding-contexts">current context</a>. Whenever the <code>name</code> key changes, the div&#39;s <code>innerHTML</code> will update to the new value.
 
 </p>
-<p>Nodes can have multiple bindings like this:
+<p>Nodes can have multiple bindings:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;p</span> <span class="na">data-bind=</span><span class="s">&quot;body&quot;</span> <span class="na">data-showif=</span><span class="s">&quot;isPublished&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
 </pre></div></code></pre>
-<p>or attribute bindings like this:
+<p>or attribute bindings:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;p</span> <span class="na">data-bind-id=</span><span class="s">&quot;currentID&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
 </pre></div></code></pre>
-<p>and bindings can be on inputs which the user can change, like this:
+<p>and bindings can be on inputs which the user can change:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;title&quot;</span><span class="nt">&gt;&lt;/input&gt;</span>
@@ -4400,7 +4707,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;p</span> <span class="na">data-bind=</span><span class="s">&quot;order.customer.name&quot;</span><span class="nt">&gt;&lt;/p&gt;</span>
 </pre></div></code></pre>
-<p>The keypath in the above HTML is <code>order.customer.name</code>. When you create a binding to a keypath like this (with dot separating segments), the binding will update the HTML value when <em>any</em> of those segments change. In the above example, this means the <code>p</code> tag&#39;s <code>innerHTML</code> will be updated when:
+<p>The keypath in the above HTML is <code>order.customer.name</code>. When you create a binding to a keypath like this (with dots separating segments), the binding will update the HTML value when <em>any</em> of those segments change. In the above example, this means the <code>p</code> tag&#39;s <code>innerHTML</code> will be updated when:
 
 </p>
 <ol>
@@ -4434,11 +4741,11 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;person.name | prepend &#39; &#39; | prepend person.title&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
 </pre></div></code></pre>
-<p>The above <code>&lt;span&gt;</code>&#39;s <code>innerHTML</code> will be updated whenever the person&#39;s name, or the person&#39;s title changes.
+<p>The above <code>&lt;span&gt;</code>&#39;s <code>innerHTML</code> will be updated whenever the person&#39;s name or title changes.
 
 </p>
 <h4 id="batman-view-bindings-keypath-filters-two-way-bindings-and-filters">Two Way Bindings and Filters</h4>
-<p>Note that filtered keypaths can not propagate DOM land changes because values can&#39;t always be &quot;unfiltered&quot;. For example, if we bind an input to the truncated version of a string:
+<p>Note that filtered keypaths cannot propagate DOM land changes because values can&#39;t always be &quot;unfiltered&quot;. For example, if we bind an input to the truncated version of a string:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;input</span> <span class="na">data-bind=</span><span class="s">&quot;post.body | truncate 100&quot;</span><span class="nt">&gt;&lt;/input&gt;</span>
@@ -4450,7 +4757,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>Keypaths also support a select few literals within them. Numbers, strings, and booleans can be passed as arguments to filters or used as the actual value of the keypath.
 
 </p>
-<p>The following are all valid albeit contrived bindings:
+<p>The following are all valid, albeit contrived, bindings:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="c">&lt;!-- String literal used as an argument --&gt;</span>
@@ -4479,7 +4786,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <li><code>&lt;input type=&quot;checkbox&quot;&gt;</code>: the binding will edit the <code>checked</code> property of the checkbox and populate the keypath with a boolean.</li>
 <li><code>&lt;input type=&quot;text&quot;&gt;</code> and similar, <code>&lt;textarea</code>&gt;: the binding will edit the <code>value</code> property of the input and populate the keypath with the string found at <code>value</code>.</li>
 <li><code>&lt;input type=&quot;file&quot;&gt;</code>: the binding will <em>not</em> edit the <code>value</code> property of the input, but it will update the keypath with a host <code>File</code> object or objects if the node has the <code>multiple</code> attribute.</li>
-<li><code>&lt;select&gt;</code>: the binding will edit the <code>selected</code> property of each <code>&lt;option&gt;</code> tag within the <code>&lt;select&gt;</code> match the property at the keypath. If the <code>&lt;select&gt;</code> has the multiple attribute, the value at the keypath can be an array of selected <code>&lt;option&gt;</code> values. You can also use <code>data-bind-selected</code> bindings on the individual options to toggle option selectedness.</li>
+<li><code>&lt;select&gt;</code>: the binding will edit the <code>selected</code> property of each <code>&lt;option&gt;</code> tag within the <code>&lt;select&gt;</code> matching the property at the keypath. If the <code>&lt;select&gt;</code> has the multiple attribute, the value at the keypath can be an array of selected <code>&lt;option&gt;</code> values. You can also use <code>data-bind-selected</code> bindings on the individual options to toggle option selectedness.</li>
 <li>All other tags: the binding will edit the <code>innerHTML</code> property of the tag and will not populate the keypath.</li>
 </ul>
 <p><code>data-bind</code> can also be used to bind an attribute of a node to a JavaScript property. Since attributes can&#39;t be observed for changes, this is a one way binding which will never update the JavaScript land property. Specify which attribute to bind using the &quot;double dash&quot; syntax like so: <code>data-bind-attribute=&quot;some.keypath&quot;</code>. For example, to bind the <code>placeholder</code> attribute of an input, use <code>data-bind-placeholder</code>.
@@ -4514,12 +4821,12 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p><code>data-showif</code> and <code>data-hideif</code> bind to keypaths and show or hide the node they appear on based on the truthiness of the result. <code>data-showif</code> will show a node if the given keypath evaluates to something truthy, and <code>data-hideif</code> will leave a node visible until its given keypath becomes truthy, at which point the node will be hidden. <code>data-showif</code> and <code>data-hideif</code> show and hide nodes by adding <code>display: none !important;</code> to the node&#39;s <code>style</code> attribute.
 
 </p>
-<p>For example, the if the HTML below were rendered where the keypath <code>product.published</code> evaluated to true, the <code>&lt;button&gt;</code> will be visible.
+<p>For example, if the HTML below is rendered where the keypath <code>product.published</code> evaluated to true, the <code>&lt;button&gt;</code> will be visible.
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;button</span> <span class="na">data-showif=</span><span class="s">&quot;product.published&quot;</span><span class="nt">&gt;</span>Unpublish Product<span class="nt">&lt;/button&gt;</span>
 </pre></div></code></pre>
-<p>This is the Batman equivalent of a templating language&#39;s <code>if</code> construct, and  where else branches are implemented using the opposite binding.
+<p>This is the Batman equivalent of a templating language&#39;s <code>if</code> construct, where else branches are implemented using the opposite binding.
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;button</span> <span class="na">data-showif=</span><span class="s">&quot;product.published&quot;</span><span class="nt">&gt;</span>Unpublish Product<span class="nt">&lt;/button&gt;</span>
@@ -4555,21 +4862,24 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
   <span class="c">&lt;!-- end products --&gt;</span>
 <span class="nt">&lt;/select&gt;</span>
 </pre></div></code></pre>
-<p><code>data-foreach</code> can be used to iterate over <code>Batman.Set</code>s, and most often should be, because it observes any Sets and will update the DOM with new nodes if items are added to the set, or remove nodes from the DOM if their corresponding nodes are removed from the set. <code>data-foreach</code> is, like each other binding, keypath aware, such that if the <code>Set</code> instance at the keypath changes, or any previous segment of the keypath changes, <code>data-foreach</code> will remove all the nodes currently in the DOM, and add new nodes for each new item in the incoming <code>Set</code>.
+<p><code>data-foreach</code> can be used to iterate over <code>Batman.Set</code>s, and most often should be, because it observes any Sets and will update the DOM with new nodes if items are added to the set, or remove nodes from the DOM if their corresponding nodes are removed from the set. <code>data-foreach</code>, like every other binding, is keypath aware, such that if the <code>Set</code> instance at the keypath changes, or any previous segment of the keypath changes, <code>data-foreach</code> will remove all the nodes currently in the DOM, and add new nodes for each new item in the incoming <code>Set</code>.
 
 </p>
 <p><em>Note</em>: <code>data-foreach</code> expects to find an iterable object at the keypath given to it, and will emit a warning if it finds <code>undefined</code>.
 
 </p>
+<p><em>Note</em>: <code>data-foreach</code> expects the passed enumerable to be unique. It creates a map of nodes to items, so every node needs to be able to reference exactly one object. If you simply have a set of values that you&#39;re iterating over, you should wrap your values in objects, e.g. <code>[{value: true}, {value: true}]</code>.
+
+</p>
 <h3 id="batman-view-bindings-data-formfor">data-formfor</h3>
-<p><code>data-formfor</code> creates a special addition to the context stack to represent a object under edit within a form. Usually this object is a model. Using the double dash syntax the name for the model to reside under can be specified.
+<p><code>data-formfor</code> creates a special addition to the context stack to represent an object under edit within a form. Usually this object is a model. Using the double dash syntax, the name for the model to reside under can be specified.
 
 </p>
 <h4 id="batman-view-bindings-data-formfor-automatic-validation-display">Automatic Validation Display</h4>
-<p><code>data-formfor</code> also has some handy functionality for displaying the result of validating the object under edit in the form. This will only be enabled if the object has an <code>errors</code> Set, which <code>Batman.Models</code> certainly do.
+<p><code>data-formfor</code> also has some handy functionality for displaying the result of validating the object under edit in the form. This will only be enabled if the object has an <code>errors</code> Set, like <code>Batman.Models</code> do.
 
 </p>
-<p>If a tag matching the relative selector <code>.errors</code> is found, will populate this element with a list of the errors found during validation on the object. The selector for the errors container can be changed by adding a <code>data-errors-list</code> attribute with the value of the selector to the form with the <code>data-formfor</code> binding on it, or editing <code>Batman.DOM.FormBinding::defaultErrorsListSelector</code>.
+<p>If a tag matching the relative selector <code>.errors</code> is found, it will populate this element with a list of the errors found during validation on the object. The selector for the errors container can be changed by adding a <code>data-errors-list</code> attribute with the value of the selector to the form with the <code>data-formfor</code> binding on it, or editing <code>Batman.DOM.FormBinding::defaultErrorsListSelector</code>.
 
 </p>
 <p>If value bindings are made using <code>data-bind</code> to attributes on the model within the form, automatic <code>data-addclass-error</code> bindings will be added to the elements on which the <code>data-bind</code> occurs to add the &quot;error&quot; class when the model has errors on the attribute which <code>data-bind</code> binds to.
@@ -4636,7 +4946,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p><code>data-route</code> bindings are used to dispatch a new controller action upon the clicking of the node they bind to. <code>data-route</code> expects to find either a string or a <code>NamedRouteQuery</code> at the keypath passed to it. With this route, it will add an event handler to the <code>click</code> action of the element which dispatches the route and prevents the default action of the DOMEvent. <code>data-route</code> will also populate the <code>href</code> attribute if it occurs on an <code>&lt;a&gt;</code> tag so that other functons like &quot;Copy Link Address&quot; and Alt+Click continue to work on the link.
 
 </p>
-<p>The first way to use <code>data-route</code> are by passing it a string, which can be built using filters or an accessor, but the preferred way is to use the <code>NamedRouteQuery</code>. These objects are generated for you by starting keypaths at the <code>App.routes</code> property. All <code>Batman.App</code>s have a <code>routes</code> property which holds a nested list of all the routes, which you descend into by passing various key segments and objects. Since the <code>App</code> object is present in the default context stack, <code>data-route</code> keypaths can just start with <code>routes</code> like so.
+<p>The first way to use <code>data-route</code> is by passing it a string, which can be built using filters or an accessor, but the preferred way is to use the <code>NamedRouteQuery</code>. These objects are generated for you by starting keypaths at the <code>App.routes</code> property. All <code>Batman.App</code>s have a <code>routes</code> property which holds a nested list of all the routes, which you descend into by passing various key segments and objects. Since the <code>App</code> object is present in the default context stack, <code>data-route</code> keypaths can just start with <code>routes</code>.
 
 </p>
 <p>For example, assume the following routes definition in the current <code>Batman.App</code>:
@@ -4655,7 +4965,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;a</span> <span class="na">data-route=</span><span class="s">&quot;routes.todos[todo]&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
 </pre></div></code></pre>
-<p>Underneath this is doing <code>Alfred.get(&#39;routes.todos&#39;).get(todo)</code>; that is to say the todo object is being passed as a key to the <code>NamedRouteQuery</code>, which knows how to generate a member route when given a record. The above HTML when rendered will look like this:
+<p>Underneath, this is calling <code>Alfred.get(&#39;routes.todos&#39;).get(todo)</code>; the todo object is being passed as a key to the <code>NamedRouteQuery</code>, which knows how to generate a member route when given a record. The above HTML when rendered will look like this:
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;a</span> <span class="na">data-route=</span><span class="s">&quot;routes.todos[todo]&quot;</span> <span class="na">href=</span><span class="s">&quot;/todos/42&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
@@ -4664,16 +4974,16 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
 </p>
 <pre><code class="coffeescript"><div class="highlight"><pre><span class="k">class</span> <span class="nx">Tracker</span> <span class="k">extends</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">App</span>
-  <span class="nx">@resources</span> <span class="s">&#39;villians&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+  <span class="nx">@resources</span> <span class="s">&#39;villains&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span>
     <span class="nx">@resources</span> <span class="s">&#39;crimes&#39;</span>
 </pre></div></code></pre>
-<p>Routes for collection and member crimes should look like <code>/villians/:villian_id/crimes</code> and <code>/villians/:villian_id/crimes/:id</code> respectively. Assuming the presence of a <code>villian</code> and a <code>crime</code> in the context, chained <code>get</code>s on <code>NamedRouteQuery</code>s achieve this:
+<p>Routes for collection and member crimes should look like <code>/villains/:villain_id/crimes</code> and <code>/villains/:villain_id/crimes/:id</code> respectively. Assuming the presence of a <code>villain</code> and a <code>crime</code> in the context, chained <code>get</code>s on <code>NamedRouteQuery</code>s achieve this:
 
 </p>
-<pre><code class="html"><div class="highlight"><pre><span class="c">&lt;!-- Collection of crimes for a particular villian --&gt;</span>
-<span class="nt">&lt;a</span> <span class="na">data-route=</span><span class="s">&quot;routes.villians[villian].crimes&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
-<span class="c">&lt;!-- One crime of a particular villian --&gt;</span>
-<span class="nt">&lt;a</span> <span class="na">data-route=</span><span class="s">&quot;routes.villians[villian].crimes[crime]&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
+<pre><code class="html"><div class="highlight"><pre><span class="c">&lt;!-- Collection of crimes for a particular villain --&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">data-route=</span><span class="s">&quot;routes.villains[villain].crimes&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
+<span class="c">&lt;!-- One crime of a particular villain --&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">data-route=</span><span class="s">&quot;routes.villains[villain].crimes[crime]&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
 </pre></div></code></pre>
 <p><em>Note</em>: <code>data-route</code> bindings route only to internal dispatch, and not external links. Use a regular <code>&lt;a&gt;</code> tag to link away from the application.
 
@@ -4692,13 +5002,13 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <p>If we have this HTML at <code>views/villains/_stub.html</code> in our app:
 
 </p>
-<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;villian.name&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
+<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;villain.name&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
 </pre></div></code></pre>
-<p>and in <code>views/villians/show.html</code> we have this HTML:
+<p>and in <code>views/villains/show.html</code> we have this HTML:
 
 </p>
-<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;h1&gt;</span>A villian!<span class="nt">&lt;/h1&gt;</span>
-<span class="nt">&lt;div</span> <span class="na">data-partial=</span><span class="s">&quot;villians/_stub&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;h1&gt;</span>A villain!<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">data-partial=</span><span class="s">&quot;villains/_stub&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
 </pre></div></code></pre>
 <p>the contents of the <code>stub</code> partial will be inserted and rendered in the <code>&lt;div&gt;</code> above.
 
@@ -4711,7 +5021,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 <h3 id="batman-view-bindings-data-replace">data-replace</h3>
 <h2 id="batman-view-filters">Batman View Filters</h2>
 <h3 id="batman-view-filters-raw">raw(value) : string</h3>
-<p>The <code>raw</code> filter renders the value unescaped.
+<p>The <code>raw</code> filter renders the unescaped value.
 
 </p>
 <pre><code class="html"><div class="highlight"><pre><span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;someHTMLyString | raw&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>

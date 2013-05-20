@@ -1,7 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View class bindings'
-
+QUnit.module 'Batman.View class bindings',
 asyncTest 'it should allow a class to be bound', 6, ->
   source = '<div data-addclass-one="foo" data-removeclass-two="bar" class="zero"></div>'
   helpers.render source,

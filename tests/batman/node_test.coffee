@@ -7,7 +7,7 @@ tmpdir = temp.mkdirSync()
 
 oldGetModule = Batman.Request::getModule
 
-QUnit.module 'Batman.Request'
+QUnit.module 'Batman.Request',
   setup: ->
     @requestSpy = createSpy().whichReturns
       on: ->
@@ -47,8 +47,7 @@ test 'accepts GET data as string', 1, ->
   req = @requestSpy.lastCallArguments.shift()
   equal req.path, '/some/test/url.html?foo=bar'
 
-QUnit.module 'Batman command line helpers'
-
+QUnit.module 'Batman command line helpers',
 batman = path.resolve __dirname, '..', '..', 'tools', 'batman'
 console.warn batman
 asyncTest "boot up", ->

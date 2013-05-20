@@ -1,4 +1,4 @@
-QUnit.module "$mixin"
+QUnit.module "$mixin",
   setup: ->
     @base = {x: "x"}
 

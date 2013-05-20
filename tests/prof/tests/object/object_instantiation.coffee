@@ -1,7 +1,7 @@
 Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
-TestStorageAdapter = require '../lib/test_storage_adapter'
-Clunk  = require '../lib/clunk'
+TestStorageAdapter = require '../lib/test_storage_adapter.coffee'
+Clunk  = require '../lib/clunk.coffee'
 
 clunks = []
 

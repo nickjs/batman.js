@@ -1,4 +1,4 @@
-QUnit.module "Batman.StateMachine"
+QUnit.module "Batman.StateMachine",
   setup: ->
     class @SwitchStateMachine extends Batman.StateMachine
       @transitions
@@ -60,6 +60,42 @@ test "should allow observing state transition", 2, ->
     ok true, 'callback is called'
     equal @sm.get('state'), 'off', 'State should have changed when callback fires'
   @sm.switch()
+
+test "should allow observing before a state change occurs", 3, ->
+  @sm.onBefore 'off', =>
+    ok true, 'callback is called'
+    equal @sm.isTransitioning, false, 'Should not be transitioning when callback fires'
+    equal @sm.get('state'), 'on', 'State should not have changed when callback fires'
+  @sm.switch()
+
+test "should allow removing enter observing callbacks", 1, ->
+  cb = createSpy()
+  @sm.onEnter 'off', cb
+  @sm.offEnter 'off', cb
+  @sm.switch
+  ok !cb.called
+
+test "should allow removing exit observing callbacks", 1, ->
+  cb = createSpy()
+  @sm.onExit 'on', cb
+  @sm.offExit 'on', cb
+  @sm.switch
+  ok !cb.called
+
+test "should allow removing transition observing callbacks", 1, ->
+  cb = createSpy()
+  @sm.onTransition 'on', 'off', cb
+  @sm.offTransition 'on', 'off', cb
+  @sm.switch
+  ok !cb.called
+
+test "should allow removing before observing callbacks", 1, ->
+  cb = createSpy()
+  @sm.onBefore 'off', cb
+  @sm.offBefore 'off', cb
+  @sm.switch
+  ok !cb.called
+
 
 test "should allow transitioning into the same state", 3, ->
   class Silly extends Batman.StateMachine

@@ -1,4 +1,5 @@
 #= require ./_batman
+#= require ./utilities/utilities
 #= require ./event_emitter/event_emitter
 #= require ./observable/observable
 #= require ./hash/simple_hash

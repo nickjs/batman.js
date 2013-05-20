@@ -62,6 +62,6 @@ class Batman.Request extends Batman.Object
       @observe 'url', (url) ->
         @send() if url?
 
-  # `send` is implmented in the platform layer files. One of those must be required for
+  # `send` is implemented in the platform layer files. One of those must be required for
   # `Batman.Request` to be useful.
   send: -> Batman.developer.error "Please source a dependency file for a request implementation"

@@ -80,11 +80,10 @@ _implementImmediates = (container) ->
   getHandle = -> "go#{++count}"
 
   if container.setImmediate and container.clearImmediate
-    Batman.setImmediate = container.setImmediate
-    Batman.clearImmediate = container.clearImmediate
+    Batman.setImmediate = -> container.setImmediate.apply(container, arguments)
+    Batman.clearImmediate = -> container.clearImmediate.apply(container, arguments)
   else if canUsePostMessage()
     prefix = 'com.batman.'
-    functions = new Batman.SimpleHash
     handler = (e) ->
       return unless ~e.data.search(prefix)
       handle = e.data.substring(prefix.length)
@@ -199,19 +198,16 @@ Batman.unescapeHTML = do ->
     return unless s?
     node = Batman._unescapeHTMLNode ||= document.createElement('DIV')
     node.innerHTML = s
-    if node.innerText?
-      node.innerText
-    else
-      node.textContent
+    Batman.DOM.textContent(node)
 
-# `translate` is hook for the i18n extra to override and implemnent. All strings which might
+# `translate` is hook for the i18n extra to override and implement. All strings which might
 # be shown to the user pass through this method. `translate` is aliased to `t` internally.
 Batman.translate = (x, values = {}) -> Batman.helpers.interpolate(Batman.get(Batman.translate.messages, x), values)
 Batman.translate.messages = {}
 Batman.t = -> Batman.translate(arguments...)
 
-Batman.redirect = (url) ->
-  Batman.navigator?.redirect url
+Batman.redirect = (url, replaceState=false) ->
+  Batman.navigator?.redirect(url, replaceState)
 
 # `Batman.initializeObject` is called by all the methods in Batman.Object to ensure that the
 # object's `_batman` property is initialized and it's own. Classes extending Batman.Object inherit

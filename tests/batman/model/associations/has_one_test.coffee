@@ -1,7 +1,7 @@
 {createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter} = if typeof require isnt 'undefined' then require '../model_helper' else window
 helpers = if typeof require is 'undefined' then window.viewHelpers else require '../../view/view_helper'
 
-QUnit.module "Batman.Model hasOne Associations"
+QUnit.module "Batman.Model hasOne Associations",
   setup: ->
     namespace = @namespace = {}
 
@@ -175,7 +175,7 @@ test "hasOne supports custom proxy classes", 1, ->
   shop = new Shop()
   ok shop.get('product') instanceof CoolHasOneProxy
 
-QUnit.module "Batman.Model hasOne Associations with inverseOf"
+QUnit.module "Batman.Model hasOne Associations with inverseOf",
   setup: ->
     namespace = {}
 

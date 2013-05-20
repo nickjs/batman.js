@@ -1,7 +1,7 @@
 Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
-Clunk  = require '../lib/clunk'
-Random = require '../lib/number_generator'
+Clunk  = require '../lib/clunk.coffee'
+Random = require '../lib/number_generator.coffee'
 
 # Batman.Set::indexedBy(key) returns a Batman.SetIndex
 Watson.ensureCommitted '540d76c21a03212d843b632bdad9e61c3b6d2b8a', ->

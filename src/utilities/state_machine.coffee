@@ -1,4 +1,6 @@
 #= require ../object
+#= require ../utilities/utilities
+#= require ../utilities/string_helpers
 
 class Batman.StateMachine extends Batman.Object
   @InvalidTransitionError: (@message = "") ->
@@ -43,9 +45,20 @@ class Batman.StateMachine extends Batman.Object
   isTransitioning: false
   transitionTable: {}
 
-  onTransition: (from, into, callback) -> @on("#{from}->#{into}", callback)
-  onEnter: (into, callback) -> @on("enter #{into}", callback)
-  onExit: (from, callback) -> @on("exit #{from}", callback)
+  _transitionEvent: (from, into) -> "#{from}->#{into}"
+  _enterEvent: (into) -> "enter #{into}"
+  _exitEvent: (from) -> "exit #{from}"
+  _beforeEvent: (into) -> "before #{into}"
+
+  onTransition: (from, into, callback) -> @on(@_transitionEvent(from, into), callback)
+  onEnter: (into, callback) -> @on(@_enterEvent(into), callback)
+  onExit: (from, callback) -> @on(@_exitEvent(from), callback)
+  onBefore: (into, callback) -> @on(@_beforeEvent(into), callback)
+
+  offTransition: (from, into, callback) -> @off(@_transitionEvent(from, into), callback)
+  offEnter: (into, callback) -> @off(@_enterEvent(into), callback)
+  offExit: (from, callback) -> @off(@_exitEvent(from), callback)
+  offBefore: (into, callback) -> @off(@_beforeEvent(into), callback)
 
   startTransition: Batman.Property.wrapTrackingPrevention (event) ->
     if @isTransitioning
@@ -58,11 +71,13 @@ class Batman.StateMachine extends Batman.Object
     if !nextState
       return false
 
+    @fire @_beforeEvent(nextState)
+
     @isTransitioning = true
-    @fire "exit #{previousState}"
+    @fire @_exitEvent(previousState)
     @set('_state', nextState)
-    @fire "#{previousState}->#{nextState}"
-    @fire "enter #{nextState}"
+    @fire @_transitionEvent(previousState, nextState)
+    @fire @_enterEvent(nextState)
     @fire event
     @isTransitioning = false
 

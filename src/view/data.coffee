@@ -15,18 +15,23 @@ Batman.extend Batman,
       delete div.test
     catch e
       Batman.canDeleteExpando = false
+
+  # lower and upper case for efficiency
   noData: # these throw exceptions if you attempt to add expandos to them
     "embed": true,
+    "EMBED": true,
     # Ban all objects except for Flash (which handle expandos)
     "object": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
-    "applet": true
+    "OBJECT": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
+    "applet": true,
+    "APPLET": true
 
   hasData: (elem) ->
     elem = (if elem.nodeType then Batman.cache[elem[Batman.expando]] else elem[Batman.expando])
     !!elem and !isEmptyDataObject(elem)
 
   data: (elem, name, data, pvt) -> # pvt is for internal use only
-    return  unless Batman.acceptData(elem)
+    return unless Batman.acceptData(elem)
     internalKey = Batman.expando
     getByName = typeof name == "string"
     cache = Batman.cache
@@ -78,7 +83,7 @@ Batman.extend Batman,
 
     return ret
 
-  removeData: (elem, name, pvt) -> # pvt is for internal use only
+  removeData: (elem, name, pvt, all) -> # pvt is for internal use only
     return unless Batman.acceptData(elem)
     internalKey = Batman.expando
     isNode = elem.nodeType
@@ -119,7 +124,7 @@ Batman.extend Batman,
     # We destroyed the entire user cache at once because it's faster than
     # iterating through each key, but we need to continue to persist internal
     # data if it existed
-    if internalCache
+    if internalCache && !all
       cache[id] = {}
       cache[id][internalKey] = internalCache
     # Otherwise, we need to eliminate the expando on the node to avoid
@@ -136,10 +141,12 @@ Batman.extend Batman,
   _data: (elem, name, data) ->
     Batman.data elem, name, data, true
 
-  # A method for determining if a DOM node can handle the data expando
   acceptData: (elem) ->
-    if elem.nodeName
-      match = Batman.noData[elem.nodeName.toLowerCase()]
+    elem.___acceptData ||= if elem.nodeName
+      match = Batman.noData[elem.nodeName]
       if match
-        return !(match == true or elem.getAttribute("classid") != match)
-    return true
+        !(match == true or elem.getAttribute("classid") != match)
+      else
+        true
+    else
+      true

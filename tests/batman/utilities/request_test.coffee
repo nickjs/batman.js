@@ -1,7 +1,7 @@
 oldSend = Batman.Request::send
 oldFile = Batman.container.File
 
-QUnit.module 'Batman.Request'
+QUnit.module 'Batman.Request',
   setup: ->
     @sendSpy = createSpy()
     Batman.Request::send = @sendSpy
@@ -109,7 +109,7 @@ class MockFormData extends MockClass
 
 class MockFile
 
-QUnit.module 'Batman.Request: serializing to FormData'
+QUnit.module 'Batman.Request: serializing to FormData',
   setup: ->
     Batman.container.FormData = MockFormData
     Batman.container.File = MockFile

@@ -1,7 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View value bindings'
-
+QUnit.module 'Batman.View value bindings',
 asyncTest 'it should allow arbitrary attributes to be bound', 2, ->
   source = '<div data-bind-foo="one" data-bind-data-bar="two" foo="before"></div>'
   helpers.render source,

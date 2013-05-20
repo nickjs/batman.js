@@ -1,7 +1,7 @@
 Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
-Clunk  = require '../lib/clunk'
-Random = require '../lib/number_generator'
+Clunk  = require '../lib/clunk.coffee'
+Random = require '../lib/number_generator.coffee'
 
 Watson.benchmark 'event firing', (error, suite) ->
   throw error if error

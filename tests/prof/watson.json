@@ -1,5 +1,14 @@
 {
-  "db": "mysql://root@localhost/watson",
+  "databases": {
+    "default": {
+      "type": "mysql",
+      "user": "root",
+      "host": "localhost",
+      "port": 13306,
+      "poolsize": 3,
+      "database": "watson"
+    }
+  },
   "path": "./reports",
   "tests": "./tests"
 }

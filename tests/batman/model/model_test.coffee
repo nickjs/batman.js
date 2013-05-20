@@ -78,6 +78,24 @@ test "createFromJSON will return an existing instance if in the identity map", -
   otherProduct = @Product.createFromJSON(id: 1)
   strictEqual product, otherProduct
 
+test "_makeOrFindRecordFromData with a new record will add it to the loaded set and apply the attributes", ->
+  @Product.encode('name', 'id')
+  equal @Product.get('loaded.length'), 0
+  result = @Product._makeOrFindRecordFromData({id: 1, name: 'foo'})
+  equal @Product.get('loaded.length'), 1
+  ok @Product.get('loaded').has(result)
+  equal result.get('name'), 'foo'
+
+test "_makeOrFindRecordFromData with an existing record will add it to the loaded set and apply the attributes", ->
+  @Product.encode('name', 'id')
+  product = @Product.createFromJSON(name: 'Test', id: 1, description: '  ')
+  equal @Product.get('loaded.length'), 1
+
+  result = @Product._makeOrFindRecordFromData({id: 1, name: 'foo'})
+  equal @Product.get('loaded.length'), 1
+  ok result == product
+  equal result.get('name'), 'foo'
+
 test "primary key can be changed by setting primary key on the model class", ->
   @Product.set 'primaryKey', 'uuid'
   product = new @Product(uuid: "abc123")
@@ -127,11 +145,25 @@ test 'options passed to persist should be mixed in to the storage adapter once i
 
 test "get('resourceName') should use the class level resourceName property", ->
   class Product extends Batman.Model
-    @resourceName: 'product'
+    @resourceName: 'foobar'
 
+  equal Product.get('resourceName'), 'foobar'
+
+test "get('resourceName') should use the prototype level resourceName property", ->
+  oldError = Batman.developer
+  Batman.developer.error = createSpy()
+
+  class Product extends Batman.Model
+    resourceName: 'foobar'
+
+  equal Product.get('resourceName'), 'foobar'
+  Batman.developer.error = oldError
+
+test "get('resourceName') should use the function name failing all else", ->
+  class Product extends Batman.Model
   equal Product.get('resourceName'), 'product'
 
-QUnit.module "Batman.Model class clearing"
+QUnit.module "Batman.Model class clearing",
   setup: ->
     class @Product extends Batman.Model
       @encode 'name', 'cost'

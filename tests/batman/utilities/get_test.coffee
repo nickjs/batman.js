@@ -1,5 +1,4 @@
-QUnit.module "Batman.get"
-
+QUnit.module "Batman.get",
 test "should invoke obj.get if it is a function", ->
   obj = get: createSpy()
 

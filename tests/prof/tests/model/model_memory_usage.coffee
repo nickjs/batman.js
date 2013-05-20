@@ -1,6 +1,6 @@
 Batman = require '../../../../lib/dist/batman.node'
 Watson = require 'watson'
-TestStorageAdapter = require '../lib/test_storage_adapter'
+TestStorageAdapter = require '../lib/test_storage_adapter.coffee'
 
 generateAttributes = (count) ->
   attributes = {}

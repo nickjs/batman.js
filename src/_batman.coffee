@@ -1,4 +1,6 @@
-# _Batman provides a convienient, parent class and prototype aware place to store hidden
+#= require namespace
+
+# _Batman provides a convenient, parent class and prototype aware place to store hidden
 # object state. Things like observers, accessors, and states belong in the `_batman` object
 # attached to every Batman.Object subclass and subclass instance.
 Batman._Batman = class _Batman
@@ -15,7 +17,7 @@ Batman._Batman = class _Batman
   # `get` is a prototype and class aware property access method. `get` will traverse the prototype chain, asking
   # for the passed key at each step, and then attempting to merge the results into one object.
   # It can only do this if at each level an `Array`, `Hash`, or `Set` is found, so try to use
-  # those if you need `_batman` inhertiance.
+  # those if you need `_batman` inheritance.
   get: (key) ->
     # Get all the keys from the ancestor chain
     results = @getAll(key)
@@ -64,7 +66,7 @@ Batman._Batman = class _Batman
 
   # `ancestors` traverses the prototype or class chain and returns the application of a function to each
   # object in the chain. `ancestors` does this _only_ to the `@object`'s ancestors, and not the `@object`
-  # itsself.
+  # itself.
   ancestors: (getter) ->
     @_allAncestors ||= @allAncestors()
 
