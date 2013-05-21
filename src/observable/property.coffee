@@ -152,7 +152,7 @@ class Batman.Property
 
   sourceChangeHandler: ->
     @_sourceChangeHandler ||= @_handleSourceChange.bind(@)
-    #Batman.developer.do => @_sourceChangeHandler.property = @
+    Batman.developer.do => @_sourceChangeHandler.property = @
     @_sourceChangeHandler
 
   _handleSourceChange: ->
