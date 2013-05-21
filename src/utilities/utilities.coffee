@@ -85,7 +85,7 @@ _implementImmediates = (container) ->
   else if canUsePostMessage()
     prefix = 'com.batman.'
     handler = (e) ->
-      return unless ~e.data.search(prefix)
+      return if typeof e.data isnt 'string' or !~e.data.search(prefix)
       handle = e.data.substring(prefix.length)
       tasks.unset(handle)?()
 
