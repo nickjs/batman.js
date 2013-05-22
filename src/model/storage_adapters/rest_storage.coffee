@@ -208,8 +208,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
       namespace = @recordJsonNamespace(env.subject.prototype)
       env.recordsAttributes = [@extractFromNamespace(env.json, namespace)]
 
-    env.result = env.records = for jsonRecordAttributes in env.recordsAttributes
-      @getRecordFromData(jsonRecordAttributes, env.subject)
+    env.result = env.records = @getRecordsFromData(env.recordsAttributes, env.subject)
     next()
 
   @::after 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
