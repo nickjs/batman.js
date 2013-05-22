@@ -160,7 +160,7 @@ class Batman.Model extends Batman.Object
 
   @_mapIdentity: (record) -> @_mapIdentities([record])[0]
 
-  @_makeOrFindRecordFromData: (attributes) ->
+  @_loadRecord: (attributes) ->
     if id = attributes[@primaryKey]
       if existingRecord = @get('loaded.indexedByUnique.id').get(id)
         existingRecord._withoutDirtyTracking -> @fromJSON(attributes)
@@ -168,8 +168,19 @@ class Batman.Model extends Batman.Object
 
     newRecord = new @
     newRecord._withoutDirtyTracking -> @fromJSON(attributes)
+    newRecord
+
+  @_makeOrFindRecordFromData: (attributes) ->
+    newRecord = @_loadRecord(attributes)
     @_mapIdentity(newRecord)
     newRecord
+
+  @_makeOrFindRecordsFromData: (attributeSet) ->
+    newRecords = for attributes in attributeSet
+      @_loadRecord(attributes)
+
+    @_mapIdentities(newRecords)
+    newRecords
 
   @_mapIdentities: (records) ->
     newRecords = []

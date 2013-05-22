@@ -72,8 +72,7 @@ class Batman.LocalStorage extends Batman.StorageAdapter
     next()
 
   @::after 'readAll', @skipIfError (env, next) ->
-    env.result = env.records = for recordAttributes in env.recordsAttributes
-      @getRecordFromData(recordAttributes, env.subject)
+    env.result = env.records = @getRecordsFromData(env.recordsAttributes, env.subject)
     next()
 
   read: @skipIfError (env, next) ->
