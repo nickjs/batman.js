@@ -16,6 +16,31 @@ class Batman.SimpleHash
     else
       key = @prefixedKey(key)
       @_storage.hasOwnProperty(key)
+
+  getObject: (key) ->
+    return undefined unless @_objectStorage
+    if pairs = @_objectStorage[@hashKeyFor(key)]
+      for pair in pairs
+        return pair[1] if @equality(pair[0], key)
+
+  getString: (key) ->
+    @_storage["_" + key]
+
+  setObject: (key,val) ->
+    @_objectStorage ||= {}
+    pairs = @_objectStorage[@hashKeyFor(key)] ||= []
+    for pair in pairs
+      if @equality(pair[0], key)
+        return pair[1] = val
+    @length++
+    pairs.push([key, val])
+    val
+    
+  setString: (key,val) ->
+    key = "_" + key
+    @length++ unless @_storage[key]?
+    @_storage[key] = val
+      
   get: (key) ->
     if @objectKey(key)
       return undefined unless @_objectStorage
@@ -24,6 +49,7 @@ class Batman.SimpleHash
           return pair[1] if @equality(pair[0], key)
     else
       @_storage[@prefixedKey(key)]
+
   set: (key, val) ->
     if @objectKey(key)
       @_objectStorage ||= {}

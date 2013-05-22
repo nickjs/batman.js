@@ -11,7 +11,10 @@ Batman.Observable =
     Batman.initializeObject @
     propertyClass = @propertyClass or Batman.Keypath
     properties = @_batman.properties ||= new Batman.SimpleHash
-    properties.get(key) or properties.set(key, new propertyClass(this, key))
+    if properties.objectKey( key )
+      return properties.getObject(key) or properties.setObject( key, new propertyClass(this, key ) )
+    else
+      return properties.getString(key) or properties.setString(key, new propertyClass(this, key))
   get: (key) ->
     @property(key).getValue()
   set: (key, val) ->

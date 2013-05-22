@@ -145,7 +145,7 @@ class Batman.Property extends Batman.PropertyEvent
 
   isCached: -> @isCachable() and @cached
 
-  isFinal: -> !!@accessor()['final']
+  isFinal: -> @final ||= !!@accessor()['final']
 
   refresh: ->
     @cached = no
