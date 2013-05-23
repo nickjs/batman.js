@@ -43,6 +43,16 @@ test "calling mutators from inside an accessor does not add a new source", ->
 
   deepEqual @object.property('foo').sources, []
 
+test "changing a source when the dependent is unobserved will clear the dependent's sources and remove the associated handlers because they are no longer valid", ->
+  @class.accessor 'foo', -> @get('bar') || @get('baz')
+  @object.set('bar', 'barVal')
+  @object.set('baz', 'bazVal')
+  @object.get('foo')
+  @object.set('bar', false)
+  ok !@object.property('foo').sources
+  ok !@object.property('bar').handlers
+  ok !@object.property('baz').handlers
+
 QUnit.module 'Batman.Property laziness',
   setup: ->
     @class = class extends Batman.Object

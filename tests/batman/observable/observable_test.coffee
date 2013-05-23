@@ -339,6 +339,16 @@ test "observeAndFire(key, callback) adds the callback and then calls it immediat
   @obj.observeAndFire 'foo.bar.baz.qux', callback
   deepEqual callback.lastCallArguments, ['quxVal', 'quxVal', 'foo.bar.baz.qux']
 
+test "observeAndFire(key, callback) fires with the correct current value, even if a property source was changed after the dependent property was cached but while the dependent property was not being observed", ->
+  klass = class extends Batman.Object
+    @accessor 'foo', -> @get('bar')
+  obj = new klass
+  obj.set('bar', 1) # initialize source
+  obj.get('foo') # cache dependent
+  obj.set('bar', 2) # change source
+  obj.observeAndFire('foo', spy = createSpy())
+  equal spy.lastCallArguments[0], 2
+
 ###
 # observeOnce(key, callback)
 ###

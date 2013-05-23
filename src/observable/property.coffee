@@ -165,6 +165,7 @@ class Batman.Property extends Batman.PropertyEvent
       @_needsRefresh = yes
     else if not @isFinal() && not @hasObservers()
       @cached = no
+      @_removeHandlers()
     else
       @refresh()
 
