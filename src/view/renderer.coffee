@@ -14,11 +14,11 @@ class Batman.Renderer extends Batman.Object
     @startTime = new Date
     @prevent 'parsed'
     @prevent 'rendered'
-    @parseNode @node
+    @parseNodes @node
 
   resume: =>
     @startTime = new Date
-    @parseNode @resumeNode
+    @parseNodes @resumeNode
 
   finish: ->
     @startTime = null
@@ -56,12 +56,19 @@ class Batman.Renderer extends Batman.Object
     else
       0
 
-  parseNode: (node) ->
-    if @deferEvery && (new Date - @startTime) > @deferEvery
-      @resumeNode = node
-      @timeout = Batman.setImmediate @resume
-      return
+  parseNodes: (node) ->
+    while node
+      if @deferEvery && (new Date - @startTime) > @deferEvery
+        @resumeNode = node
+        @timeout = Batman.setImmediate @resume
+        return
+      skipChildren = @parseNode(node)
 
+      node = @nextNode( node, skipChildren )
+    @finish()
+
+  parseNode: (node) ->
+    skipChildren = false
     if node.getAttribute and node.attributes
       bindings = []
       for attribute in node.attributes
@@ -89,8 +96,7 @@ class Batman.Renderer extends Batman.Object
         else if binding?.skipChildren
           skipChildren = true
           break
-
-    if (nextNode = @nextNode(node, skipChildren)) then @parseNode(nextNode) else @finish()
+    return skipChildren
 
   nextNode: (node, skipChildren) ->
     if not skipChildren
