@@ -28,16 +28,12 @@ class Batman.View extends Batman.Object
     @subviews = new Batman.Hash
     @_yieldNodes = {}
 
-    @subviews.on 'itemsWereAdded', (subviewNames...) =>
-      for name in subviewNames
-        subview = @subviews.get(name)
-        @_addSubview(subview, name)
+    @subviews.on 'itemsWereAdded', (subviewNames, newSubviews) =>
+      @_addSubview(subview, subviewNames[i]) for subview, i in newSubviews
       return
 
-    @subviews.on 'itemsWereRemoved', (subviewNames...) =>
-      for name in subviewNames
-        subview = @subviews.get(name)
-        subview._removeFromSuperview()
+    @subviews.on 'itemsWereRemoved', (subviewNames, oldSubviews) =>
+      subview._removeFromSuperview() for subview in oldSubviews
       return
 
     @subviews.on 'itemsWereChanged', (subviewNames, newSubviews, oldSubviews) =>
@@ -75,18 +71,20 @@ class Batman.View extends Batman.Object
   @accessor 'node',
     get: ->
       return @node if @node
+
       node = document.createElement('div')
       node.innerHTML = @get('html')
       @set('node', node)
+
     set: (key, node) ->
       @node = node
-
       Batman.developer.do =>
         (if node == document then document.body else node).setAttribute('data-batman-view', @constructor.name)
 
       @initializeYields()
       @initializeBindings()
-      node
+
+      return node
 
   initializeYields: ->
     yieldNodes = Batman.DOM.querySelectorAll(@node, '[data-yield]')
