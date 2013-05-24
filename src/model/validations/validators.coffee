@@ -4,6 +4,8 @@ Batman.Validators = []
 
 Batman.extend Batman.translate.messages,
   errors:
+    base:
+      format: "%{message}"
     format: "%{attribute} %{message}"
     messages:
       too_short: "must be at least %{count} characters"
