@@ -76,6 +76,18 @@ test "set(key, value) fires an itemsWereAdded event", ->
   @hash.set 'foo', 'bar'
   deepEqual spy.lastCallArguments, ['foo']
 
+test "set(key, value) of an already existing key fires an itemsWereChanged event", ->
+  @hash.on 'itemsWereChanged', spy = createSpy()
+  @hash.set 'foo', 'bar'
+  @hash.set 'foo', 'baz'
+  deepEqual spy.lastCallArguments, [['foo'], ['baz'], ['bar']]
+
+test "set(key, value) of an already existing key will not fire itemsWereAdded event", ->
+  @hash.on 'itemsWereAdded', spy = createSpy()
+  @hash.set 'foo', 'bar'
+  @hash.set 'foo', 'baz'
+  equal spy.callCount, 1
+
 test "unset(key) unsets a key and its value from the hash, returning the existing value", ->
   @hash.set 'foo', 'bar'
   equal @hash.unset('foo'), 'bar'
@@ -484,4 +496,30 @@ test "using arrays of Batman.Model objects with mutable IDs as keys", ->
   product.set('id', 5)
 
   strictEqual @hash.get(arr), "array value"
-  
+
+
+test "updating a hash fires proper 'itemsWereAdded' and 'itemsWereChanged' events", ->
+  @hash.set 'foo', 'bar'
+  @hash.set 'baz', 'qux'
+  @hash.set 'hello', 'world'
+
+  @hash.on 'itemsWereAdded', addedSpy = createSpy()
+  @hash.on 'itemsWereChanged', changedSpy = createSpy()
+
+  @hash.update {foo: 'lorem', baz: 'ipsum', random: 'var'}
+
+  deepEqual addedSpy.lastCallArguments, ['random']
+  deepEqual changedSpy.lastCallArguments, [['foo', 'baz'], ['lorem', 'ipsum'], ['bar', 'qux']]
+
+test "replacing a hash fires proper 'itemsWereAdded' and 'itemsWereRemoved' events", ->
+  @hash.set 'foo', 'bar'
+  @hash.set 'baz', 'qux'
+  @hash.set 'hello', 'world'
+
+  @hash.on 'itemsWereAdded', addedSpy = createSpy()
+  @hash.on 'itemsWereChanged', changedSpy = createSpy()
+
+  @hash.replace {foo: 'lorem', baz: 'ipsum', random: 'var'}
+
+  deepEqual addedSpy.lastCallArguments, ['random']
+  deepEqual changedSpy.lastCallArguments, [['foo', 'baz'], ['lorem', 'ipsum'], ['bar', 'qux']]
