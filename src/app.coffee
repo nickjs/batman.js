@@ -124,7 +124,7 @@ class Batman.App extends Batman.Object
       if typeof layout == 'string'
         layoutClass = @[Batman.helpers.camelize(layout) + 'View']
     else
-      layoutClass = Batman.View unless layout == null
+      layoutClass = (class LayoutView extends Batman.View) unless layout == null
 
     if layoutClass
       layout = @set 'layout', new layoutClass

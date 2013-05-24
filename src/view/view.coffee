@@ -60,6 +60,9 @@ class Batman.View extends Batman.Object
     set: (key, node) ->
       @node = node
 
+      Batman.developer.do =>
+        (if node == document then document.body else node).setAttribute('data-batman-view', @constructor.name)
+
       @initializeBindings()
       node
 
