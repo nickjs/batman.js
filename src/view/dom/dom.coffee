@@ -18,18 +18,6 @@ Batman.DOM =
   scrollIntoView: (elementID) ->
     document.getElementById(elementID)?.scrollIntoView?()
 
-  partial: (container, path, context, renderer) ->
-    renderer.prevent 'rendered'
-
-    view = new Batman.View
-      source: path
-      context: context
-
-    view.on 'ready', ->
-      Batman.DOM.setInnerHTML container, ''
-      Batman.DOM.appendChild container, view.get('node')
-      renderer.allowAndFire 'rendered'
-
   propagateBindingEvent: (binding, node) ->
     while (current = (current || node).parentNode)
       parentBindings = Batman._data current, 'bindings'
@@ -58,39 +46,16 @@ Batman.DOM =
     Batman.DOM.propagateBindingEvent(binding, node)
     true
 
-  onParseExit: (node, callback) ->
-    set = Batman._data(node, 'onParseExit') || Batman._data(node, 'onParseExit', new Batman.SimpleSet)
-    set.add callback if callback?
-    set
-
-  forgetParseExit: (node, callback) -> Batman.removeData(node, 'onParseExit', true)
-
-  defineView: (name, node) ->
-    contents = node.innerHTML
-    Batman.View.store.set(Batman.Navigator.normalizePath(name), contents)
-    contents
+  # defineView: (name, node) ->
+  #   contents = node.innerHTML
+  #   Batman.View.store.set(Batman.Navigator.normalizePath(name), contents)
+  #   contents
 
   setStyleProperty: (node, property, value, importance) ->
     if node.style.setProperty
       node.style.setProperty(property, value, importance)
     else
       node.style.setAttribute(property, value, importance)
-
-  removeOrDestroyNode: (node) ->
-    view = Batman._data(node, 'view')
-    view ||= Batman._data(node, 'yielder')
-    if view? && view.get('cached')
-      Batman.DOM.removeNode(node)
-    else
-      Batman.DOM.destroyNode(node)
-
-  insertBefore: (parentNode, newNode, referenceNode = null) ->
-    if !referenceNode or parentNode.childNodes.length <= 0
-      Batman.DOM.appendChild parentNode, newNode
-    else
-      Batman.DOM.willInsertNode(newNode)
-      parentNode.insertBefore newNode, referenceNode
-      Batman.DOM.didInsertNode(newNode)
 
   valueForNode: (node, value = '', escapeValue = true) ->
     isSetting = arguments.length > 1
@@ -148,45 +113,6 @@ Batman.DOM =
 
   stopPropagation: (e) ->
     if e.stopPropagation then e.stopPropagation() else e.cancelBubble = true
-
-  willInsertNode: (node) ->
-    view = Batman._data node, 'view'
-    view?.fire 'beforeAppear', node
-    Batman.DOM.willInsertNode(child) for child in node.childNodes
-    true
-
-  didInsertNode: (node) ->
-    view = Batman._data node, 'view'
-    if view
-      view.fire 'appear', node
-      view.applyYields()
-    Batman.DOM.didInsertNode(child) for child in node.childNodes
-    true
-
-  willRemoveNode: (node) ->
-    view = Batman._data node, 'view'
-    if view
-      view.fire 'beforeDisappear', node
-    Batman.DOM.willRemoveNode(child) for child in node.childNodes
-    true
-
-  didRemoveNode: (node) ->
-    view = Batman._data node, 'view'
-    if view
-      view.retractYields()
-      view.fire 'disappear', node
-    Batman.DOM.didRemoveNode(child) for child in node.childNodes
-    true
-
-  willDestroyNode: (node) ->
-    view = Batman._data node, 'view'
-    if view
-      view.fire 'beforeDestroy', node
-      view.get('yields').forEach (name, actions) ->
-        for {node} in actions
-          Batman.DOM.willDestroyNode(node)
-    Batman.DOM.willDestroyNode(child) for child in node.childNodes
-    true
 
   didDestroyNode: (node) ->
     view = Batman._data node, 'view'

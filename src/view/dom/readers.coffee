@@ -1,7 +1,7 @@
 #= require ./dom
 
 class Batman.DOM.ReaderBindingDefinition
-  constructor: (@node, @keyPath, @context, @renderer) ->
+  constructor: (@node, @keyPath, @context, @renderer, @view) ->
 
 Batman.BindingDefinitionOnlyObserve =
   Data: 'data'
@@ -78,17 +78,19 @@ Batman.DOM.readers =
   renderif: (definition) ->
     new Batman.DOM.DeferredRenderingBinding(definition)
 
-  yield: (definition) ->
-    {node, keyPath} = definition
-    Batman.DOM.onParseExit(node, -> Batman.DOM.Yield.withName(keyPath).set('containerNode', node))
 
   contentfor: (definition) ->
-    {node, value, swapMethod, renderer, keyPath} = definition
+    {node, swapMethod, renderer, keyPath} = definition
     swapMethod ||= 'append'
 
-    Batman.DOM.onParseExit node, ->
-      node.parentNode?.removeChild(node)
-      renderer.view.pushYieldAction(keyPath, swapMethod, node)
+    node.parentNode.removeChild(node)
+
+    contentView = new Batman.View
+    contentView.get('node').innerHTML = node.innerHTML
+
+    parentView = definition.view.firstAncestorWithYieldNamed(keyPath)
+    parentView.subviews.set(keyPath, contentView)
+
 
   replace: (definition) ->
     definition.swapMethod = 'replace'

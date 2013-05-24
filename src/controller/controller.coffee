@@ -11,8 +11,6 @@ class Batman.Controller extends Batman.Object
         Batman.developer.error("Please define `routingKey` on the prototype of #{Batman.functionName(@constructor)} in order for your controller to be minification safe.") if Batman.config.minificationErrors
         Batman.functionName(@constructor).replace(/Controller$/, '')
 
-  @accessor '_renderContext', -> Batman.RenderContext.root().descend(@)
-
   _optionsFromFilterArguments = (options, nameOrFunction) ->
     if not nameOrFunction
       nameOrFunction = options
@@ -88,11 +86,7 @@ class Batman.Controller extends Batman.Object
     @set 'action', action
     @set 'params', params
 
-    Batman.DOM.Yield.cycleAll()
-
     @executeAction(action, params)
-
-    Batman.DOM.Yield.clearAllStale()
 
     redirectTo = @_afterFilterRedirect
     delete @_afterFilterRedirect
@@ -150,25 +144,22 @@ class Batman.Controller extends Batman.Object
       return
 
     action = frame?.action || @get('action')
+    options?.into ||= @defaultRenderYield
 
-    if options
-      options.into ||= @defaultRenderYield
-
-    if not options.view
+    if view = options.view
+      options.view = null
+    else
       options.viewClass ||= @_viewClassForAction(action)
-      options.context ||= @get('_renderContext')
       options.source ||= Batman.helpers.underscore(@get('routingKey') + '/' + action)
       view = @renderCache.viewForOptions(options)
-    else
-      view = options.view
-      options.view = null
 
     if view
-      Batman.currentApp?.prevent 'ready'
-      view.once 'ready', =>
-        Batman.DOM.Yield.withName(options.into).replace view.get('node')
-        Batman.currentApp?.allowAndFire 'ready'
-        frame?.finishOperation()
+      view.set('controller', this)
+      @set('view', view)
+
+      # view.once 'ready', =>
+      Batman.currentApp.layout.subviews.set('main', view)
+      frame?.finishOperation()
     view
 
   scrollToHash: (hash = @get('params')['#'])-> Batman.DOM.scrollIntoView(hash)
