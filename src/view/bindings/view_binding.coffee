@@ -2,17 +2,11 @@
 
 class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
   skipChildren: true
-  bindImmediately: false
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
   constructor: (definition) ->
-    super
-
-    @yieldName = "view-#{@hashKey()}"
     @superview = definition.view
-    @superview.declareYieldNode(@yieldName, @node)
-
-    @bind()
+    super
 
 
   dataChange: (viewClassOrInstance) ->
@@ -22,6 +16,8 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     else
       @view = new viewClassOrInstance
 
+    @yieldName = "<#{@view.constructor.name}-#{@view._batmanID()}>"
+    @superview.declareYieldNode(@yieldName, @node)
     @superview.subviews.set(@yieldName, @view)
 
   die: ->
