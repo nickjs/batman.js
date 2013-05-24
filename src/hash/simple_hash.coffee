@@ -35,12 +35,12 @@ class Batman.SimpleHash
     @length++
     pairs.push([key, val])
     val
-    
+
   setString: (key,val) ->
     key = "_" + key
     @length++ unless @_storage[key]?
     @_storage[key] = val
-      
+
   get: (key) ->
     if @objectKey(key)
       return undefined unless @_objectStorage
@@ -118,9 +118,13 @@ class Batman.SimpleHash
     result
   toArray: @::keys
   clear: ->
+    oldStorage = value for _, value of @_storage
     @_storage = {}
     delete @_objectStorage
     @length = 0
+
+    return oldStorage
+
   isEmpty: ->
     @length is 0
   merge: (others...) ->
