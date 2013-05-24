@@ -425,3 +425,7 @@ test "ValidationError should get full message", ->
 test "ValidationError should humanize attribute in the full message", ->
   error = new Batman.ValidationError("fooBarBaz", "isn't valid")
   equal error.get('fullMessage'), "Foo bar baz isn't valid"
+
+test "ValidationError doesn't add 'base' to fullMessage", ->
+  error = new Batman.ValidationError('base', "Model isn't valid")
+  equal error.get('fullMessage'), "Model isn't valid"
