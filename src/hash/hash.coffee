@@ -31,8 +31,13 @@ class Batman.Hash extends Batman.Object
     get: Batman.SimpleHash::get
 
     set: @mutation (key, value) ->
+      oldResult = Batman.SimpleHash::get.call(this, key)
       result = Batman.SimpleHash::set.call(this, key, value)
-      @fire('itemsWereAdded', key)
+
+      if oldResult? and oldResult != result
+        @fire('itemsWereChanged', [key], [result], [oldResult])
+      else
+        @fire('itemsWereAdded', key)
 
       result
 
@@ -44,16 +49,18 @@ class Batman.Hash extends Batman.Object
   @accessor @defaultAccessor
 
   _preventMutationEvents: (block) ->
-    @prevent 'change'
-    @prevent 'itemsWereAdded'
-    @prevent 'itemsWereRemoved'
+    @prevent('change')
+    @prevent('itemsWereAdded')
+    @prevent('itemsWereChanged')
+    @prevent('itemsWereRemoved')
 
     try
       block.call(this)
     finally
-      @allow 'change'
-      @allow 'itemsWereAdded'
-      @allow 'itemsWereRemoved'
+      @allow('change')
+      @allow('itemsWereAdded')
+      @allow('itemsWereChanged')
+      @allow('itemsWereRemoved')
 
   clear: @mutation ->
     keys = @keys()
@@ -65,27 +72,47 @@ class Batman.Hash extends Batman.Object
 
   update: @mutation (object) ->
     addedKeys = []
+    changedKeys = []
+    changedNewValues = []
+    changedOldValues = []
+
     @_preventMutationEvents ->
       Batman.forEach object, (k, v) =>
-        addedKeys.push(k) unless @hasKey(k)
-        @set(k,v)
+        if @hasKey(k)
+          changedKeys.push(k)
+          changedOldValues.push(@get(k))
+          changedNewValues.push(@set(k,v))
+        else
+          addedKeys.push(k)
+          @set(k,v)
 
     @fire('itemsWereAdded', addedKeys...) if addedKeys.length > 0
+    @fire('itemsWereChanged', changedKeys, changedNewValues, changedOldValues) if changedKeys.length > 0
 
   replace: @mutation (object) ->
     addedKeys = []
     removedKeys = []
+    changedKeys = []
+    changedOldValues = []
+    changedNewValues = []
+
     @_preventMutationEvents ->
-      @forEach (k, _) =>
-        unless Batman.objectHasKey(object, k)
+      @forEach (k) =>
+        if not Batman.objectHasKey(object, k)
           @unset(k)
           removedKeys.push(k)
 
       Batman.forEach object, (k,v) =>
-        addedKeys.push(k) unless @hasKey(k)
-        @set(k,v)
+        if @hasKey(k)
+          changedKeys.push(k)
+          changedOldValues.push(@get(k))
+          changedNewValues.push(@set(k,v))
+        else
+          addedKeys.push(k)
+          @set(k,v)
 
     @fire('itemsWereAdded', addedKeys...) if addedKeys.length > 0
+    @fire('itemsWereChanged', changedKeys, changedNewValues, changedOldValues) if changedKeys.length > 0
     @fire('itemsWereRemoved', removedKeys...) if removedKeys.length > 0
 
   for k in ['equality', 'hashKeyFor', 'objectKey', 'prefixedKey', 'unprefixedKey']
