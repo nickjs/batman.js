@@ -71,7 +71,7 @@ class Batman.Renderer extends Batman.Object
     if node.getAttribute and node.attributes
       bindings = []
       for attribute in node.attributes
-        continue unless attribute.nodeName?.substr(0, 4) is "data"
+        continue unless attribute.nodeName?.substr(0, 5) is "data-"
         name = attribute.nodeName.substr(5)
 
         attrIndex = name.indexOf('-')
