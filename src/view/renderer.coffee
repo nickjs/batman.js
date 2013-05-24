@@ -5,9 +5,8 @@
 # fragment is particularly long.
 class Batman.Renderer extends Batman.Object
   deferEvery: 50
-  constructor: (@node, @context, @view) ->
+  constructor: (@node, @view) ->
     super()
-    Batman.developer.error "Must pass a RenderContext to a renderer for rendering" unless @context instanceof Batman.RenderContext
     @immediate = Batman.setImmediate @start
 
   start: =>
@@ -84,18 +83,14 @@ class Batman.Renderer extends Batman.Object
       for [name, attr, value] in bindings.sort(@_sortBindings)
         binding = if attr
           if reader = Batman.DOM.attrReaders[name]
-            bindingDefinition = new Batman.DOM.AttrReaderBindingDefinition(node, attr, value, @context, this, @view)
+            bindingDefinition = new Batman.DOM.AttrReaderBindingDefinition(node, attr, value, @view, this)
             reader(bindingDefinition)
         else
           if reader = Batman.DOM.readers[name]
-            bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @context, this, @view)
+            bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @view, this)
             reader(bindingDefinition)
 
-        if binding instanceof Batman.RenderContext
-          # oldContext = @context
-          # @context = binding
-          # Batman.DOM.onParseExit(node, => @context = oldContext)
-        else if binding?.skipChildren
+        if binding?.skipChildren
           skipChildren = true
           break
     return skipChildren

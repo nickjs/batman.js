@@ -14,7 +14,7 @@ class Batman.View extends Batman.Object
       bindingKey = "_argumentBinding#{key}"
       @[bindingKey]?.die()
 
-      definition = new Batman.DOM.ReaderBindingDefinition(node, keyPath, context)
+      definition = new Batman.DOM.ReaderBindingDefinition(node, keyPath, this)
       @[bindingKey] = new Batman.DOM.ViewArgumentBinding(definition)
 
   subviews: {}
@@ -95,14 +95,37 @@ class Batman.View extends Batman.Object
       @declareYieldNode(yieldName, node)
 
   initializeBindings: ->
-    new Batman.Renderer(@node, Batman.RenderContext.root(), this)
+    new Batman.Renderer(@node, this)
+
+  targetForKeypath: (keypath) ->
+    base = keypath.split('.')[0].split('|')[0].trim()
+    lookupNode = this
+
+    while lookupNode
+      if Batman.get(lookupNode, base)?
+        return lookupNode
+
+      controller = lookupNode.controller if lookupNode.isView && lookupNode.controller
+
+      if lookupNode.isView and lookupNode.superview
+        lookupNode = lookupNode.superview
+      else if controller
+        lookupNode = controller
+        controller = null
+      else if lookupNode != Batman.currentApp
+        lookupNode = Batman.currentApp
+      else
+        lookupNode = null
 
   lookupKeypath: (keypath) ->
+    target = @targetForKeypath(keypath)
+    Batman.get(target, keypath) if target
 
   declareYieldNode: (yieldName, node) ->
     @_yieldNodes[yieldName] = node
 
   firstAncestorWithYieldNamed: (yieldName) ->
-    return this if yieldName of @_yieldNodes
-    while superview = @superview
+    superview = this
+    while superview
       return superview if yieldName of superview._yieldNodes
+      superview = superview.superview

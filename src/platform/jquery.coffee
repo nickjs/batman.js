@@ -3,24 +3,24 @@ Batman.extend Batman.DOM,
   querySelector: (node, selector) -> jQuery(selector, node)[0]
   setInnerHTML: (node, html) ->
     childNodes = (child for child in node.childNodes)
-    Batman.DOM.willRemoveNode(child) for child in childNodes
+    # Batman.DOM.willRemoveNode(child) for child in childNodes
     result = jQuery(node).html(html)
-    Batman.DOM.didRemoveNode(child) for child in childNodes
+    # Batman.DOM.didRemoveNode(child) for child in childNodes
     result
   removeNode: (node) ->
-    Batman.DOM.willRemoveNode(node)
+    # Batman.DOM.willRemoveNode(node)
     node.parentNode?.removeChild node
-    Batman.DOM.didRemoveNode(node)
+    # Batman.DOM.didRemoveNode(node)
   destroyNode: (node) ->
-    Batman.DOM.willDestroyNode(node)
-    Batman.DOM.willRemoveNode(node)
+    # Batman.DOM.willDestroyNode(node)
+    # Batman.DOM.willRemoveNode(node)
     jQuery(node).remove()
-    Batman.DOM.didRemoveNode(node)
-    Batman.DOM.didDestroyNode(node)
+    # Batman.DOM.didRemoveNode(node)
+    # Batman.DOM.didDestroyNode(node)
   appendChild: (parent, child) ->
-    Batman.DOM.willInsertNode(child)
+    # Batman.DOM.willInsertNode(child)
     jQuery(parent).append(child)
-    Batman.DOM.didInsertNode(child)
+    # Batman.DOM.didInsertNode(child)
   textContent: (node) -> jQuery(node).text()
 
 Batman.Request::_parseResponseHeaders = (xhr) ->

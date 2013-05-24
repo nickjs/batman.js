@@ -39,15 +39,12 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     get: ->
       unfilteredValue = @get('unfilteredValue')
       self = this
-      renderContext = @get('renderContext')
       if @filterFunctions.length > 0
-        Batman.developer.currentFilterStack = renderContext
-
         result = @filterFunctions.reduce((value, fn, i) ->
           # Get any argument keypaths from the context stored at parse time.
           args = self.filterArguments[i].map (argument) ->
             if argument._keypath
-              self.renderContext.get(argument._keypath)
+              self.view.lookupKeypath(argument._keypath)
             else
               argument
 
@@ -55,9 +52,9 @@ class Batman.DOM.AbstractBinding extends Batman.Object
           args.unshift value
           args.push undefined while args.length < (fn.length - 1)
           args.push self
-          fn.apply(renderContext, args)
+          fn.apply(self.view, args)
         , unfilteredValue)
-        Batman.developer.currentFilterStack = null
+
         result
       else
         unfilteredValue
@@ -71,22 +68,18 @@ class Batman.DOM.AbstractBinding extends Batman.Object
       # If we're working with an `@key` and not an `@value`, find the context the key belongs to so we can
       # hold a reference to it for passing to the `dataChange` and `nodeChange` observers.
       if k = @get('key')
-        Batman.RenderContext.deProxy(Batman.getPath(this, ['keyContext', k]))
+        @view.lookupKeypath(k)
       else
         @get('value')
     set: (_, value) ->
       if k = @get('key')
-        keyContext = @get('keyContext')
-        # Supress sets on the window
-        if keyContext and keyContext != Batman.container
-          prop = Batman.Property.forBaseAndKey(keyContext, k)
-          prop.setValue(value)
+        target = @view.targetForKeypath(k)
+        if target and target isnt window
+          property = Batman.Property.forBaseAndKey(target, k)
+          property.setValue(value)
       else
         @set('value', value)
 
-
-  # The `keyContext` accessor is
-  @accessor 'keyContext', -> @renderContext.contextForKey(@key)
 
   onlyAll = Batman.BindingDefinitionOnlyObserve.All
   onlyData = Batman.BindingDefinitionOnlyObserve.Data
@@ -100,7 +93,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   skipParseFilter: false
 
   constructor: (definition) ->
-    {@node, @keyPath, context: @renderContext, @renderer} = definition
+    {@node, @keyPath, @renderer, @view} = definition
     @onlyObserve = definition.onlyObserve if definition.onlyObserve
     @skipParseFilter = definition.skipParseFilter if definition.skipParseFilter?
 
