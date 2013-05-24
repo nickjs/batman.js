@@ -3,7 +3,8 @@
 class Batman.ValidationError extends Batman.Object
   @accessor 'fullMessage', ->
     if @attribute == 'base'
-      @message
+      Batman.t 'errors.base',
+        message: @message
     else
       Batman.t 'errors.format',
         attribute: Batman.helpers.humanize(@attribute)
