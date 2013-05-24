@@ -2,36 +2,44 @@
 #= require ../object
 
 class Batman.Hash extends Batman.Object
+
   class @Metadata extends Batman.Object
     Batman.extend @prototype, Batman.Enumerable
+
     constructor: (@hash) ->
+
     @accessor 'length', ->
       @hash.registerAsMutableSource()
       @hash.length
+
     @accessor 'isEmpty', 'keys', 'toArray', (key) ->
       @hash.registerAsMutableSource()
       @hash[key]()
+
     forEach: -> @hash.forEach(arguments...)
 
   constructor: ->
     @meta = new @constructor.Metadata(this)
-    Batman.SimpleHash.apply(@, arguments)
+    Batman.SimpleHash.apply(this, arguments)
     super
 
   Batman.extend @prototype, Batman.Enumerable
   propertyClass: Batman.Property
 
   @defaultAccessor =
-    get: Batman.SimpleHash::get
-    set: @mutation (key, value) ->
-      result = Batman.SimpleHash::set.call(@, key, value)
-      @fire 'itemsWereAdded', key
-      result
-    unset: @mutation (key) ->
-      result = Batman.SimpleHash::unset.call(@, key)
-      @fire 'itemsWereRemoved', key if result?
-      result
     cache: false
+    get: Batman.SimpleHash::get
+
+    set: @mutation (key, value) ->
+      result = Batman.SimpleHash::set.call(this, key, value)
+      @fire('itemsWereAdded', key)
+
+      result
+
+    unset: @mutation (key) ->
+      result = Batman.SimpleHash::unset.call(this, key)
+      @fire('itemsWereRemoved', key) if result?
+      result
 
   @accessor @defaultAccessor
 
@@ -39,25 +47,31 @@ class Batman.Hash extends Batman.Object
     @prevent 'change'
     @prevent 'itemsWereAdded'
     @prevent 'itemsWereRemoved'
+
     try
       block.call(this)
     finally
       @allow 'change'
       @allow 'itemsWereAdded'
       @allow 'itemsWereRemoved'
+
   clear: @mutation ->
     keys = @keys()
     @_preventMutationEvents -> @forEach (k) => @unset(k)
-    result = Batman.SimpleHash::clear.call(@)
-    @fire 'itemsWereRemoved', keys...
+    result = Batman.SimpleHash::clear.call(this)
+
+    @fire('itemsWereRemoved', keys...)
     result
+
   update: @mutation (object) ->
     addedKeys = []
     @_preventMutationEvents ->
-      Batman.forEach object, (k,v) =>
+      Batman.forEach object, (k, v) =>
         addedKeys.push(k) unless @hasKey(k)
         @set(k,v)
+
     @fire('itemsWereAdded', addedKeys...) if addedKeys.length > 0
+
   replace: @mutation (object) ->
     addedKeys = []
     removedKeys = []
@@ -66,9 +80,11 @@ class Batman.Hash extends Batman.Object
         unless Batman.objectHasKey(object, k)
           @unset(k)
           removedKeys.push(k)
+
       Batman.forEach object, (k,v) =>
         addedKeys.push(k) unless @hasKey(k)
         @set(k,v)
+
     @fire('itemsWereAdded', addedKeys...) if addedKeys.length > 0
     @fire('itemsWereRemoved', removedKeys...) if removedKeys.length > 0
 
@@ -79,4 +95,4 @@ class Batman.Hash extends Batman.Object
     do (k) =>
       @prototype[k] = ->
         @registerAsMutableSource()
-        Batman.SimpleHash::[k].apply(@, arguments)
+        Batman.SimpleHash::[k].apply(this, arguments)
