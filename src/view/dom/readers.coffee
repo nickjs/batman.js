@@ -80,16 +80,19 @@ Batman.DOM.readers =
 
 
   contentfor: (definition) ->
-    {node, swapMethod, renderer, keyPath} = definition
+    {node, swapMethod, keyPath, view} = definition
     swapMethod ||= 'append'
-
-    node.parentNode.removeChild(node)
 
     contentView = new Batman.View
     contentView.get('node').innerHTML = node.innerHTML
 
-    parentView = definition.view.firstAncestorWithYieldNamed(keyPath)
+    parentView = view.firstAncestorWithYieldNamed(keyPath)
     parentView.subviews.set(keyPath, contentView)
+
+    view.on 'ready', -> # FIXME when parseNode goes away this doesn't need to nextTick
+      node.parentNode.removeChild(node)
+
+    {skipChildren: true}
 
 
   replace: (definition) ->

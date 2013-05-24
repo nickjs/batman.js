@@ -127,13 +127,11 @@ class Batman.App extends Batman.Object
       layoutClass = (class LayoutView extends Batman.View) unless layout == null
 
     if layoutClass
-      layout = @set 'layout', new layoutClass
-        context: @
-        node: document
+      layout = @set 'layout', new layoutClass(node: document)
 
     @hasRun = yes
     @fire('run')
-    @
+    return this
 
   @event('ready').oneShot = true
   @event('stop').oneShot = true

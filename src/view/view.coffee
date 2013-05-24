@@ -1,7 +1,28 @@
 class Batman.View extends Batman.Object
+
+  @option: (keys...) ->
+    @accessor keys...,
+      get: (key) ->        @get("argumentBindings.#{key}")?.get('filteredValue')
+      set: (key, value) -> @get("argumentBindings.#{key}")?.set('filteredValue', value)
+      unset: (key) ->      @get("argumentBindings.#{key}")?.unset('filteredValue')
+
+  @accessor 'argumentBindings', ->
+    new Batman.TerminalAccessible (key) =>
+      return unless node = @get('node')
+      keyPath = node.getAttribute "data-view-#{key}".toLowerCase()
+      return unless keyPath?
+      bindingKey = "_argumentBinding#{key}"
+      @[bindingKey]?.die()
+
+      definition = new Batman.DOM.ReaderBindingDefinition(node, keyPath, context)
+      @[bindingKey] = new Batman.DOM.ViewArgumentBinding(definition)
+
   subviews: {}
   superview: null
   controller: null
+
+  node: null
+  isView: true
 
   constructor: ->
     @subviews = new Batman.Hash
@@ -63,30 +84,23 @@ class Batman.View extends Batman.Object
       Batman.developer.do =>
         (if node == document then document.body else node).setAttribute('data-batman-view', @constructor.name)
 
+      @initializeYields()
       @initializeBindings()
       node
+
+  initializeYields: ->
+    yieldNodes = Batman.DOM.querySelectorAll(@node, '[data-yield]')
+    for node in yieldNodes
+      yieldName = node.getAttribute('data-yield')
+      @declareYieldNode(yieldName, node)
 
   initializeBindings: ->
     new Batman.Renderer(@node, Batman.RenderContext.root(), this)
 
-    yieldNodes = @node.querySelectorAll('[data-yield]')
-    for node in yieldNodes
-      name = node.getAttribute('data-yield')
-      @_yieldNodes[name] = node
-
-    return
-
-    # viewNodes = @node.querySelectorAll('[data-view]')
-    # viewNodes.forEach (viewNode) ->
-    #   identifier = Math.floor(Math.rand()*10) #FIXMEEEEEE
-    #   commentNode = document.createCommentNode("yield-#{identifier}")
-    #   viewNode.parentNode.replaceChild(commentNode, viewNode)
-
-    #   viewClass = Batman.View.findByClassName(viewNode.getAttribute('data-view'))
-    #   view = new viewClass
-    #   @addSubview(view, identifier)
-
   lookupKeypath: (keypath) ->
+
+  declareYieldNode: (yieldName, node) ->
+    @_yieldNodes[yieldName] = node
 
   firstAncestorWithYieldNamed: (yieldName) ->
     return this if yieldName of @_yieldNodes

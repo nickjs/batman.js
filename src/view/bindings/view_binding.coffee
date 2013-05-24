@@ -2,31 +2,30 @@
 
 class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
   skipChildren: true
+  bindImmediately: false
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
-  constructor: ->
+  constructor: (definition) ->
     super
-    @renderer.prevent 'rendered'
-    @node.removeAttribute 'data-view'
+
+    @yieldName = "view-#{@hashKey()}"
+    @superview = definition.view
+    @superview.declareYieldNode(@yieldName, @node)
+
+    @bind()
+
 
   dataChange: (viewClassOrInstance) ->
     return unless viewClassOrInstance?
     if viewClassOrInstance.isView
       @view = viewClassOrInstance
-      @view.set 'context', @renderContext
-      @view.set 'node', @node
     else
       @view = new viewClassOrInstance
-        node: @node
-        context: @renderContext
-        parentView: @renderer.view
 
-    @view.on 'ready', =>
-      @renderer.allowAndFire 'rendered'
-
-    @forget()
-    @_batman.properties?.forEach (key, property) -> property.die()
+    @superview.subviews.set(@yieldName, @view)
 
   die: ->
+    @superview.unset(@yieldName)
+    @superview = null
     @view = null
     super
