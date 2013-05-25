@@ -78,6 +78,7 @@ class Batman.View extends Batman.Object
 
     set: (key, node) ->
       @node = node
+      Batman._data(node, 'view', this)
       Batman.developer.do =>
         (if node == document then document.body else node).setAttribute('data-batman-view', @constructor.name)
 
@@ -127,3 +128,8 @@ class Batman.View extends Batman.Object
     while superview
       return superview if yieldName of superview._yieldNodes
       superview = superview.superview
+
+Batman.container.$context = (node) ->
+  while node
+    return view if view = Batman._data(node, 'view')
+    node = node.parentNode
