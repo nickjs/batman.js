@@ -107,6 +107,11 @@ class Batman.View extends Batman.Object
 
       controller = lookupNode.controller if lookupNode.isView && lookupNode.controller
 
+      if chain = lookupNode._lookupChain
+        for chainLookupNode in chain
+          if Batman.get(chainLookupNode, base)?
+            return chainLookupNode
+
       if lookupNode.isView and lookupNode.superview
         lookupNode = lookupNode.superview
       else if controller
@@ -120,6 +125,13 @@ class Batman.View extends Batman.Object
   lookupKeypath: (keypath) ->
     target = @targetForKeypath(keypath)
     Batman.get(target, keypath) if target
+
+  pushLookupProxy: (proxy) ->
+    @_lookupChain ||= []
+    @_lookupChain.push(proxy)
+
+  popLookupProxy: ->
+    @_lookupChain.pop()
 
   declareYieldNode: (yieldName, node) ->
     @_yieldNodes[yieldName] = node

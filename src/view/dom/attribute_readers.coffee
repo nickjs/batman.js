@@ -32,7 +32,7 @@ Batman.DOM.attrReaders =
     new bindingClass(definition)
 
   context: (definition) ->
-    definition.context.descendWithDefinition(definition)
+    definition.view.set(definition.attr, new Batman.ContextProxy(definition))
 
   event: (definition) ->
     new Batman.DOM.EventBinding(definition)

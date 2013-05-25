@@ -40,7 +40,7 @@ Batman.DOM.readers =
     new bindingClass(definition)
 
   context: (definition) ->
-    definition.context.descendWithDefinition(definition)
+    definition.view.pushLookupProxy(new Batman.ContextProxy(definition))
 
   mixin: (definition) ->
     definition.context = definition.context.descend(Batman.mixins)
