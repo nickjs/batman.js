@@ -8,9 +8,10 @@ class Batman.View extends Batman.Object
 
   @accessor 'argumentBindings', ->
     new Batman.TerminalAccessible (key) =>
-      return unless node = @get('node')
-      keyPath = node.getAttribute "data-view-#{key}".toLowerCase()
+      return unless node = @get('node').parentNode
+      keyPath = node.getAttribute("data-view-#{key}".toLowerCase())
       return unless keyPath?
+
       bindingKey = "_argumentBinding#{key}"
       @[bindingKey]?.die()
 
