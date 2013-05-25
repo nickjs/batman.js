@@ -81,5 +81,8 @@ class Alfred.Todo extends Batman.Model
   @wrapAccessor 'title', (core) ->
     set: (key, value) -> core.set.call(@, key, value?.trim())
 
+Batman.extend Batman.config,
+  pathToApp: '/examples/alfred/'
+
 window.Alfred = Alfred
 Alfred.run()
