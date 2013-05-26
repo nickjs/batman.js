@@ -60,7 +60,8 @@ class Batman.View extends Batman.Object
     # if @get('isInDOM')
       # subview.fire()
 
-    (@_yieldNodes[as] || @get('node')).appendChild(subview.get('node'))
+    rootNode = @_yieldNodes[as] || @get('node')
+    @addToDOM(rootNode, subview.get('node'))
     # subview.fire('viewDidAppear')
 
   _removeFromSuperview: ->
@@ -68,6 +69,8 @@ class Batman.View extends Batman.Object
     @get('node').parentNode?.removeChild(@node)
     @set('superview', null)
     # @fire('viewDidDisappear')
+
+  addToDOM: (rootNode, subviewNode) -> rootNode.appendChild(subviewNode)
 
   @accessor 'node',
     get: ->
@@ -81,6 +84,7 @@ class Batman.View extends Batman.Object
       @node = node
       Batman._data(node, 'view', this)
       Batman.developer.do =>
+        return if @node.nodeType is Node.COMMENT_NODE
         (if node == document then document.body else node).setAttribute('data-batman-view', @constructor.name)
 
       @initializeYields()
@@ -89,6 +93,8 @@ class Batman.View extends Batman.Object
       return node
 
   initializeYields: ->
+    return if @node.nodeType is Node.COMMENT_NODE
+
     yieldNodes = Batman.DOM.querySelectorAll(@node, '[data-yield]')
     for node in yieldNodes
       yieldName = node.getAttribute('data-yield')
