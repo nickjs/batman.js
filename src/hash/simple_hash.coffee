@@ -118,7 +118,7 @@ class Batman.SimpleHash
     result
   toArray: @::keys
   clear: ->
-    oldStorage = value for _, value of @_storage
+    oldStorage = (value for _, value of @_storage)
     @_storage = {}
     delete @_objectStorage
     @length = 0

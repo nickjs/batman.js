@@ -64,8 +64,8 @@ class Batman.Hash extends Batman.Object
 
   clear: @mutation ->
     keys = @keys()
-    @_preventMutationEvents -> @forEach (k) => @unset(k)
     values = Batman.SimpleHash::clear.call(this)
+    @_preventMutationEvents -> @forEach (k) => @unset(k)
 
     @fire('itemsWereRemoved', keys, values)
     values
