@@ -41,7 +41,9 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
   handleArrayChanged: (newItems) =>
     @view.subviews.clear()
+    @handleItemsAdded(newItems)
 
+  handleItemsAdded: (newItems) =>
     for item, index in newItems
       iterationView = new Batman.View
       iterationNode = @prototypeNode.cloneNode(true)
@@ -52,6 +54,12 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       @view.subviews.set("#{@iteratorName}-#{index}", iterationView)
 
     return
+
+  handleItemsRemoved: (oldItems...) =>
+    for item in oldItems
+      for own key, subview of @view.subviews.toObject()
+        @view.subviews.unset(key) if subview.get(@iteratorName) is item
+        break
 
   die: ->
     @superview.unset(@yieldName)
