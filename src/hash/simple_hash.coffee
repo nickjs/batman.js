@@ -117,13 +117,11 @@ class Batman.SimpleHash
     Batman.SimpleHash::forEach.call @, (key) -> result.push key
     result
   toArray: @::keys
+
   clear: ->
-    oldStorage = (value for _, value of @_storage)
     @_storage = {}
     delete @_objectStorage
     @length = 0
-
-    return oldStorage
 
   isEmpty: ->
     @length is 0

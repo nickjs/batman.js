@@ -1,3 +1,13 @@
+deepUnsortedEqual = (actual, expected, message) ->
+  equalCount = 0
+  for item in expected
+    for inner in actual
+      equalCount++ if QUnit.equiv(inner, item)
+
+  if equalCount == expected.length then result = true else result = false
+  QUnit.push(result, actual, expected, message)
+
+
 QUnit.module 'Batman.Hash',
   setup: ->
     @hash = new Batman.Hash
@@ -74,7 +84,7 @@ test "set(key, undefined) sets", ->
 test "set(key, value) fires an itemsWereAdded event", ->
   @hash.on 'itemsWereAdded', spy = createSpy()
   @hash.set 'foo', 'bar'
-  deepEqual spy.lastCallArguments, ['foo']
+  deepEqual spy.lastCallArguments, [['foo'], ['bar']]
 
 test "set(key, value) of an already existing key fires an itemsWereChanged event", ->
   @hash.on 'itemsWereChanged', spy = createSpy()
@@ -116,7 +126,7 @@ test "unset(key) fires an itemsWereRemoved event", ->
   @hash.set 'foo', 'bar'
   @hash.on 'itemsWereRemoved', spy = createSpy()
   @hash.unset 'foo'
-  deepEqual spy.lastCallArguments, ['foo']
+  deepEqual spy.lastCallArguments, [['foo'], ['bar']]
 
 test "length is maintained over get, set, and unset", ->
   Batman.developer.suppress =>
@@ -308,7 +318,7 @@ test "clear() removes all keys from the hash", ->
     @hash.on 'itemsWereRemoved', spy = createSpy()
     @hash.clear()
     equalHashLength @hash, 0
-    deepEqual spy.lastCallArguments.sort(), [key1, key2, 'foo', 'bar'].sort()
+    deepUnsortedEqual spy.lastCallArguments, [[key1, key2, 'foo', 'bar'], [1, 2, 'baz', 'buzz']]
 
 test "clear() fires key observers exactly once each, and exactly one 'change' and one 'itemsWereRemoved' event on the hash itself", ->
   Batman.developer.suppress =>
@@ -330,7 +340,7 @@ test "clear() fires key observers exactly once each, and exactly one 'change' an
     equal changeHandler.callCount, 1
     deepEqual changeHandler.lastCallArguments, [@hash, @hash]
     equal itemsWereRemovedHandler.callCount, 1
-    deepEqual itemsWereRemovedHandler.lastCallArguments, [objKey, 'foo']
+    deepUnsortedEqual itemsWereRemovedHandler.lastCallArguments, [[objKey, 'foo'], [1, 'bar']]
 
 test "merge(other) returns a new hash without modifying the original", ->
   Batman.developer.suppress =>
@@ -417,7 +427,7 @@ test "update(pojo) updates the keys and values with those of the given object", 
   equal changeHandler.callCount, 1
   deepEqual changeHandler.lastCallArguments, [@hash, @hash]
   equal itemsWereAddedHandler.callCount, 1
-  deepEqual itemsWereAddedHandler.lastCallArguments, ['size']
+  deepEqual itemsWereAddedHandler.lastCallArguments, [['size'], ['medium']]
 
 test "replace(pojo) replaces the keys and values with those of the given object", ->
   @hash.set('foo', 'foo1')
@@ -449,14 +459,12 @@ test "replace(pojo) replaces the keys and values with those of the given object"
   deepEqual sizeObserver.lastCallArguments, ['medium', undefined, 'size']
   equal changeHandler.callCount, 1
   deepEqual changeHandler.lastCallArguments, [@hash, @hash]
+  
   equal itemsWereAddedHandler.callCount, 1
-  equal itemsWereAddedHandler.lastCallArguments.length, 2
-  ok 'material' in itemsWereAddedHandler.lastCallArguments
-  ok 'size' in itemsWereAddedHandler.lastCallArguments
+  deepUnsortedEqual itemsWereAddedHandler.lastCallArguments, [['material', 'size'], ['silk', 'medium']]
+
   equal itemsWereRemovedHandler.callCount, 1
-  equal itemsWereRemovedHandler.lastCallArguments.length, 2
-  ok 'bar' in itemsWereRemovedHandler.lastCallArguments
-  ok 'baz' in itemsWereRemovedHandler.lastCallArguments
+  deepUnsortedEqual itemsWereRemovedHandler.lastCallArguments, [['bar', 'baz'], ['bar1', 'baz1']]
 
 test "update(hash) works with other batman hashes as expected", ->
   @hash.set('foo', 'foo')
@@ -508,7 +516,7 @@ test "updating a hash fires proper 'itemsWereAdded' and 'itemsWereChanged' event
 
   @hash.update {foo: 'lorem', baz: 'ipsum', random: 'var'}
 
-  deepEqual addedSpy.lastCallArguments, ['random']
+  deepEqual addedSpy.lastCallArguments, [['random'], ['var']]
   deepEqual changedSpy.lastCallArguments, [['foo', 'baz'], ['lorem', 'ipsum'], ['bar', 'qux']]
 
 test "replacing a hash fires proper 'itemsWereAdded' and 'itemsWereRemoved' events", ->
@@ -521,5 +529,5 @@ test "replacing a hash fires proper 'itemsWereAdded' and 'itemsWereRemoved' even
 
   @hash.replace {foo: 'lorem', baz: 'ipsum', random: 'var'}
 
-  deepEqual addedSpy.lastCallArguments, ['random']
+  deepEqual addedSpy.lastCallArguments, [['random'], ['var']]
   deepEqual changedSpy.lastCallArguments, [['foo', 'baz'], ['lorem', 'ipsum'], ['bar', 'qux']]
