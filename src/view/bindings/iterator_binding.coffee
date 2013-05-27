@@ -61,8 +61,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
 class Batman.IteratorView extends Batman.View
   loadView: ->
-    node = document.createComment("data-iterator=#{@iteratorName}")
-    @set('node', node)
+    return document.createComment("data-iterator=#{@iteratorName}")
 
   addToDOM: (sourceNode) ->
     sourceNode.parentNode.insertBefore(@get('node'), sourceNode)
@@ -73,7 +72,7 @@ class Batman.IterationView extends Batman.View
     Batman.developer.do =>
       node.setAttribute('data-iterator', @iteratorName)
 
-    @set('node', node)
+    return node
 
   addToDOM: (commentNode) ->
     commentNode.parentNode.insertBefore(@get('node'), commentNode)

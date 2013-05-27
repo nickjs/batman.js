@@ -1,4 +1,9 @@
+#= require ../object
+#= require ./html_store
+
 class Batman.View extends Batman.Object
+
+  @store: new Batman.HTMLStore
 
   @option: (keys...) ->
     @accessor keys...,
@@ -22,7 +27,10 @@ class Batman.View extends Batman.Object
   superview: null
   controller: null
 
+  source: null
+  html: null
   node: null
+
   isView: true
 
   constructor: ->
@@ -72,16 +80,30 @@ class Batman.View extends Batman.Object
     # @fire('viewDidDisappear')
 
   loadView: ->
-    node = document.createElement('div')
-    node.innerHTML = @get('html')
-    @set('node', node)
+    if html = @get('html')
+      node = document.createElement('div')
+      node.innerHTML = html
+      return node
 
   addToDOM: (parentNode) ->
     parentNode.appendChild(@get('node'))
 
+  @accessor 'html',
+    get: ->
+      return @html if @html?
+      return unless source = @get('source')
+
+      source = Batman.Navigator.normalizePath(source)
+      @html = @constructor.store.get(source)
+
+    set: Batman.Property.defaultAccessor.set
+
   @accessor 'node',
     get: ->
-      @loadView() if not @node
+      if not @node
+        node = @loadView()
+        @set('node', node) if node
+
       return @node
 
     set: (key, node) ->
