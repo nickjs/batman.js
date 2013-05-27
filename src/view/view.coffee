@@ -30,7 +30,7 @@ class Batman.View extends Batman.Object
     @_yieldNodes = {}
 
     @subviews.on 'itemsWereAdded', (subviewNames, newSubviews) =>
-      @_addSubview(subview, subviewNames[i]) for subview, i in newSubviews
+      @_addSubview(subviewNames[i], subview) for subview, i in newSubviews
       return
 
     @subviews.on 'itemsWereRemoved', (subviewNames, oldSubviews) =>
@@ -40,12 +40,12 @@ class Batman.View extends Batman.Object
     @subviews.on 'itemsWereChanged', (subviewNames, newSubviews, oldSubviews) =>
       for name, i in subviewNames
         oldSubviews[i]._removeFromSuperview()
-        @_addSubview(newSubviews[i], name)
+        @_addSubview(name, newSubviews[i])
       return
 
     super
 
-  _addSubview: (subview, as) ->
+  _addSubview: (as, subview) ->
     if siblingViews = subview.superview?.subviews
       for key, value of siblingViews.toObject() when value == subview
         siblingViews.unset(key)
