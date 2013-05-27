@@ -1,3 +1,4 @@
+#= require ../view
 #= require ./abstract_collection_binding
 
 class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
@@ -5,25 +6,21 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
   constructor: (definition) ->
-    {node: sourceNode, attr: @iteratorName, view: @superview} = definition
+    {node: sourceNode, attr: @iteratorName, view: superview} = definition
 
-    @yieldName = "<#{@iteratorName}Iterator-#{@_batmanID()}>"
-    commentNode = document.createComment(@yieldName)
+    @prototypeNode = sourceNode
+    @prototypeNode.removeAttribute("data-foreach-#{@iteratorName}")
 
-    @prototypeNode = sourceNode.cloneNode(true)
-    @prototypeNode.removeAttribute "data-foreach-#{@iteratorName}"
+    @iteratorView = new Batman.IteratorView(iteratorName: @iteratorName)
+    definition.node = @iteratorView.get('node')
 
-    view = new Batman.IterationView
-    view.set('node', commentNode)
+    @yieldName = "<#{@iteratorName}-iterator-#{@_batmanID()}>"
+    superview.declareYieldNode(@yieldName, sourceNode)
+    superview.subviews.set(@yieldName, @iteratorView)
 
-    @superview.declareYieldNode(@yieldName, sourceNode.parentNode)
-    @superview.subviews.set(@yieldName, view)
-
-    @superview.on 'ready', -> # FIXME When parseNode goes away this will not need to nextTick
+    superview.on 'ready', -> # FIXME When parseNode goes away this will not need to nextTick
       sourceNode.parentNode.removeChild(sourceNode)
 
-    definition.node = commentNode
-    definition.view = view
     super
 
   dataChange: (collection) ->
@@ -40,29 +37,43 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       @handleArrayChanged([])
 
   handleArrayChanged: (newItems) =>
-    @view.subviews.clear()
+    @iteratorView.subviews.clear()
     @handleItemsAdded(newItems)
 
   handleItemsAdded: (newItems) =>
     for item in newItems
-      iterationView = new Batman.View
-      iterationNode = @prototypeNode.cloneNode(true)
-
+      iterationView = new Batman.IterationView(prototypeNode: @prototypeNode, iteratorName: @iteratorName)
       iterationView.set(@iteratorName, item)
-      iterationView.set('node', iterationNode)
 
-      @view.subviews.set("#{@iteratorName}-#{iterationView._batmanID()}", iterationView)
+      @iteratorView.subviews.set(item, iterationView)
 
     return
 
-  handleItemsRemoved: (oldItems...) =>
+  handleItemsRemoved: (oldItems) =>
     for item in oldItems
-      for own key, subview of @view.subviews.toObject()
-        @view.subviews.unset(key) if subview.get(@iteratorName) is item
-        break
+      @iteratorView.subviews.unset(item)
 
   die: ->
     @superview.unset(@yieldName)
     @superview = null
     @view = null
     super
+
+class Batman.IteratorView extends Batman.View
+  loadView: ->
+    node = document.createComment("data-iterator=#{@iteratorName}")
+    @set('node', node)
+
+  addToDOM: (sourceNode) ->
+    sourceNode.parentNode.insertBefore(@get('node'), sourceNode)
+
+class Batman.IterationView extends Batman.View
+  loadView: ->
+    node = @prototypeNode.cloneNode(true)
+    Batman.developer.do =>
+      node.setAttribute('data-iterator', @iteratorName)
+
+    @set('node', node)
+
+  addToDOM: (commentNode) ->
+    commentNode.parentNode.insertBefore(@get('node'), commentNode)

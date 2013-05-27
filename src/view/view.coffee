@@ -88,8 +88,7 @@ class Batman.View extends Batman.Object
       @node = node
       Batman._data(node, 'view', this)
       Batman.developer.do =>
-        return if @node.nodeType is Node.COMMENT_NODE
-        (if node == document then document.body else node).setAttribute('data-batman-view', @constructor.name)
+        (if node == document then document.body else node).setAttribute?('data-batman-view', @constructor.name)
 
       @initializeYields()
       @initializeBindings()
