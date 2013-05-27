@@ -96,6 +96,7 @@ class Batman.Property extends Batman.PropertyEvent
           property = ancestor.property(key)
           handlers = property.handlers?.slice()
           iterator(object) for object in handlers if handlers
+    return
 
   observers: ->
     results = []

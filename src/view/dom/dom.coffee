@@ -185,6 +185,7 @@ Batman.DOM =
       view.get('yields').forEach (name, actions) ->
         for {node} in actions
           Batman.DOM.willDestroyNode(node)
+        return
     Batman.DOM.willDestroyNode(child) for child in node.childNodes
     true
 

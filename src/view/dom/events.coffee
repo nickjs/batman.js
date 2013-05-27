@@ -38,6 +38,7 @@ Batman.DOM.events =
     for eventName in eventNames
       Batman.DOM.addEventListener node, eventName, (args...) ->
         callback node, args..., context
+    return
 
   isEnter: (ev) -> (13 <= ev.keyCode <= 14) || (13 <= ev.which <= 14) || ev.keyIdentifier is 'Enter' || ev.key is 'Enter'
 

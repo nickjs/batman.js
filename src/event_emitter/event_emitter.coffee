@@ -23,11 +23,13 @@ Batman.EventEmitter =
 
   on: (keys..., handler) ->
     @event(key).addHandler(handler) for key in keys
+    return
   off: (keys..., handler) ->
     unless keys.length
       key = handler
       @event(key).clearHandlers()
     @event(key).removeHandler(handler) for key in keys
+    return
 
   once: (key, handler) ->
     event = @event(key)

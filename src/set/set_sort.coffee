@@ -17,7 +17,9 @@ class Batman.SetSort extends Batman.SetProxy
   startObserving: -> @_setObserver?.startObserving()
   stopObserving: -> @_setObserver?.stopObserving()
   toArray: -> @get('_storage')
-  forEach: (iterator, ctx) -> iterator.call(ctx,e,i,this) for e,i in @get('_storage')
+  forEach: (iterator, ctx) ->
+    iterator.call(ctx, e, i, this) for e, i in @get('_storage')
+    return
 
   find: (block) ->
     @base.registerAsMutableSource()

@@ -37,10 +37,12 @@ Batman.DOM.Yield = class Yield extends Batman.Object
     @cycle()
     for child in (child for child in @containerNode.childNodes)
       Batman.DOM.removeOrDestroyNode(child)
+    return
 
   clearStale: @queued ->
     for child in (child for child in @containerNode.childNodes) when !~@currentVersionNodes.indexOf(child)
       Batman.DOM.removeOrDestroyNode(child)
+    return
 
   append:  @queued (node) ->
     @currentVersionNodes.push node

@@ -32,6 +32,7 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
       @resetStyles()
       for own key of value
         @bindSingleAttribute key, "#{@keyPath}.#{key}"
+    return
 
   handleArrayChanged: (array) =>
     # Only hashes are bound to, so iterate over their keys and bind each specific attribute to the hash's value at that key.
@@ -53,6 +54,7 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
 
   resetStyles: ->
     @setStyle(cssName, cssValue) for own cssName, cssValue of @oldStyles
+    return
 
   resetBindings: ->
     for attribute, binding of @styleBindings
