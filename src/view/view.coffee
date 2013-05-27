@@ -71,16 +71,18 @@ class Batman.View extends Batman.Object
     @set('superview', null)
     # @fire('viewDidDisappear')
 
+  loadView: ->
+    node = document.createElement('div')
+    node.innerHTML = @get('html')
+    @set('node', node)
+
   addToDOM: (parentNode) ->
     parentNode.appendChild(@get('node'))
 
   @accessor 'node',
     get: ->
-      return @node if @node
-
-      node = document.createElement('div')
-      node.innerHTML = @get('html')
-      @set('node', node)
+      @loadView() if not @node
+      return @node
 
     set: (key, node) ->
       @node = node
