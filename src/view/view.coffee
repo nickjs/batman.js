@@ -60,8 +60,9 @@ class Batman.View extends Batman.Object
     # if @get('isInDOM')
       # subview.fire()
 
-    rootNode = @_yieldNodes[as] || @get('node')
-    @addToDOM(rootNode, subview.get('node'))
+    yieldNode = @_yieldNodes[as] if typeof as is 'string'
+    yieldNode ||= @get('node')
+    subview.addToDOM(yieldNode)
     # subview.fire('viewDidAppear')
 
   _removeFromSuperview: ->
@@ -70,7 +71,8 @@ class Batman.View extends Batman.Object
     @set('superview', null)
     # @fire('viewDidDisappear')
 
-  addToDOM: (rootNode, subviewNode) -> rootNode.appendChild(subviewNode)
+  addToDOM: (parentNode) ->
+    parentNode.appendChild(@get('node'))
 
   @accessor 'node',
     get: ->
