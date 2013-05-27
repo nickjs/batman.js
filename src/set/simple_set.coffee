@@ -19,7 +19,7 @@ class Batman.SimpleSet
     @length = @_storage.length
     if @fire and addedItems.length isnt 0
       @fire('change', this, this)
-      @fire('itemsWereAdded', addedItems...)
+      @fire('itemsWereAdded', addedItems)
     addedItems
   remove: (items...) ->
     removedItems = []
@@ -29,7 +29,7 @@ class Batman.SimpleSet
     @length = @_storage.length
     if @fire and removedItems.length isnt 0
       @fire('change', this, this)
-      @fire('itemsWereRemoved', removedItems...)
+      @fire('itemsWereRemoved', removedItems)
     removedItems
   find: (f) ->
     for item in @_storage
@@ -44,7 +44,7 @@ class Batman.SimpleSet
     @length = 0
     if @fire and items.length isnt 0
       @fire('change', this, this)
-      @fire('itemsWereRemoved', items...)
+      @fire('itemsWereRemoved', items)
     items
   replace: (other) ->
     try
