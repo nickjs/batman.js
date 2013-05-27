@@ -129,6 +129,10 @@ class Batman.App extends Batman.Object
     if layoutClass
       layout = @set 'layout', new layoutClass(node: document)
 
+    @layout.fire('viewWillAppear')
+    @layout.set('isInDOM', true)
+    @layout.fire('viewDidAppear')
+
     @hasRun = yes
     @fire('run')
     return this

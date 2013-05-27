@@ -8,7 +8,6 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     @superview = definition.view
     super
 
-
   dataChange: (viewClassOrInstance) ->
     return unless viewClassOrInstance?
     if viewClassOrInstance.isView

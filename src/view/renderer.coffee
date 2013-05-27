@@ -25,8 +25,6 @@ class Batman.Renderer extends Batman.Object
     @allowAndFire 'parsed'
     @allowAndFire 'rendered'
 
-    @view.fire('ready') # FIXMEEEEE
-
   stop: ->
     Batman.clearImmediate @immediate
     @fire 'stopped'

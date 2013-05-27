@@ -31,6 +31,7 @@ class Batman.View extends Batman.Object
   html: null
   node: null
 
+  isInDOM: false
   isView: true
 
   constructor: ->
@@ -59,34 +60,49 @@ class Batman.View extends Batman.Object
         siblingViews.unset(key)
         break
 
-    # subview.fire('viewWillAppear')
     subview.set('superview', this)
+    subview.fire('viewDidMoveToSuperview')
 
-    # @on 'viewWillAppear', -> subview.fire('viewWillAppear')
-    # @on 'viewDidAppear', -> subview.fire('viewDidAppear')
 
-    # if @get('isInDOM')
-      # subview.fire()
+    isInDOM = @get('isInDOM')
+    subview.fire('viewWillAppear') if isInDOM
 
     yieldNode = @_yieldNodes[as] if typeof as is 'string'
     yieldNode ||= @get('node')
     subview.addToDOM(yieldNode)
-    # subview.fire('viewDidAppear')
+    subview.set('isInDOM', isInDOM)
+
+    if isInDOM
+      subview.fire('viewDidAppear')
+    else
+      @on 'viewWillAppear', subview._fireViewWillAppear ||= -> subview.fire('viewWillAppear')
+      @on 'viewDidAppear', subview._fireViewDidAppear ||= -> subview.fire('viewDidAppear')
 
   _removeFromSuperview: ->
-    # @fire('viewWillDisappear')
-    @get('node').parentNode?.removeChild(@node)
+    @fire('viewWillRemoveFromSuperview')
+
+    superview = @get('superview')
+    superview.off('viewWillAppear', subview._fireViewWillAppear)
+    superview.off('viewDidAppear', subview._fireViewDidAppear)
+
+    isInDOM = @get('isInDOM')
+    @fire('viewWillDisappear') if isInDOM
+
+    @get('node')?.parentNode?.removeChild(@node)
     @set('superview', null)
-    # @fire('viewDidDisappear')
+
+    @fire('viewDidDisappear') if isInDOM
+
+
+  addToDOM: (parentNode) ->
+    node = @get('node')
+    parentNode.appendChild(node) if node
 
   loadView: ->
     if html = @get('html')
       node = document.createElement('div')
       node.innerHTML = html
       return node
-
-  addToDOM: (parentNode) ->
-    parentNode.appendChild(@get('node'))
 
   @accessor 'html',
     get: ->
@@ -103,6 +119,7 @@ class Batman.View extends Batman.Object
       if not @node
         node = @loadView()
         @set('node', node) if node
+        @fire('viewDidLoad')
 
       return @node
 
@@ -126,7 +143,8 @@ class Batman.View extends Batman.Object
       @declareYieldNode(yieldName, node)
 
   initializeBindings: ->
-    new Batman.Renderer(@node, this)
+    renderer = new Batman.Renderer(@node, this)
+    renderer.on 'rendered', => debugger; @fire('ready')
 
   targetForKeypathBase: (base) ->
     lookupNode = this
@@ -161,6 +179,7 @@ class Batman.View extends Batman.Object
     while superview
       return superview if yieldName of superview._yieldNodes
       superview = superview.superview
+
 
 Batman.container.$context ?= (node) ->
   while node
