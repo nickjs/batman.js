@@ -73,7 +73,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
         @get('value')
     set: (_, value) ->
       if k = @get('key')
-        target = @view.targetForKeypath(k)
+        target = @view.targetForKeypathBase(k)
         if target and target isnt window
           property = Batman.Property.forBaseAndKey(target, k)
           property.setValue(value)
