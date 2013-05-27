@@ -16,7 +16,7 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     else
       @view = new viewClassOrInstance
 
-    @yieldName = "<#{@view.constructor.name}-#{@view._batmanID()}>"
+    @yieldName = "<#{@view.constructor.name || 'UnknownView'}-#{@view._batmanID()}>"
     @superview.declareYieldNode(@yieldName, @node)
     @superview.subviews.set(@yieldName, @view)
 
