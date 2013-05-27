@@ -173,7 +173,7 @@ class Batman.View extends Batman.Object
       return superview if yieldName of superview._yieldNodes
       superview = superview.superview
 
-Batman.container.$context = (node) ->
+Batman.container.$context ?= (node) ->
   while node
     return view if view = Batman._data(node, 'view')
     node = node.parentNode
