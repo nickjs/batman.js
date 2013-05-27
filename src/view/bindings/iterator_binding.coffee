@@ -44,14 +44,14 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @handleItemsAdded(newItems)
 
   handleItemsAdded: (newItems) =>
-    for item, index in newItems
+    for item in newItems
       iterationView = new Batman.View
       iterationNode = @prototypeNode.cloneNode(true)
 
       iterationView.set(@iteratorName, item)
       iterationView.set('node', iterationNode)
 
-      @view.subviews.set("#{@iteratorName}-#{index}", iterationView)
+      @view.subviews.set("#{@iteratorName}-#{iterationView._batmanID()}", iterationView)
 
     return
 
