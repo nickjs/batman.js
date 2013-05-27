@@ -166,3 +166,16 @@ Batman.container.$context ?= (node) ->
   while node
     return view if view = Batman._data(node, 'view')
     node = node.parentNode
+
+Batman.container.$subviews ?= (view) ->
+  subviews = {}
+
+  view.subviews.forEach (key, subview) ->
+    obj = Batman.mixin({}, subview)
+    obj.constructor = subview.constructor
+    obj.subviews = if subview.subviews?.length then $subviews(subview) else null
+    Batman.unmixin(obj, {'_batman': true})
+
+    subviews[key.toString()] = obj
+
+  subviews
