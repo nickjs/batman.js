@@ -40,7 +40,7 @@ Batman.DOM.readers =
     new bindingClass(definition)
 
   context: (definition) ->
-    definition.view.pushLookupProxy(new Batman.ContextProxy(definition))
+    new Batman.DOM.ContextBinding(definition)
 
   showif: (definition) ->
     new Batman.DOM.ShowHideBinding(definition)

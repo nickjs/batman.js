@@ -128,8 +128,7 @@ class Batman.View extends Batman.Object
   initializeBindings: ->
     new Batman.Renderer(@node, this)
 
-  targetForKeypath: (keypath) ->
-    base = keypath.split('.')[0].split('|')[0].trim()
+  targetForKeypathBase: (base) ->
     lookupNode = this
 
     while lookupNode
@@ -137,11 +136,6 @@ class Batman.View extends Batman.Object
         return lookupNode
 
       controller = lookupNode.controller if lookupNode.isView && lookupNode.controller
-
-      if chain = lookupNode._lookupChain
-        for chainLookupNode in chain
-          if Batman.get(chainLookupNode, base)?
-            return chainLookupNode
 
       if lookupNode.isView and lookupNode.superview
         lookupNode = lookupNode.superview
@@ -154,15 +148,10 @@ class Batman.View extends Batman.Object
         lookupNode = null
 
   lookupKeypath: (keypath) ->
-    target = @targetForKeypath(keypath)
+    base = keypath.split('.')[0].split('|')[0].trim()
+    target = @targetForKeypathBase(base)
+
     Batman.get(target, keypath) if target
-
-  pushLookupProxy: (proxy) ->
-    @_lookupChain ||= []
-    @_lookupChain.push(proxy)
-
-  popLookupProxy: ->
-    @_lookupChain.pop()
 
   declareYieldNode: (yieldName, node) ->
     @_yieldNodes[yieldName] = node

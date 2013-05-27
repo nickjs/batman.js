@@ -14,7 +14,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @iteratorView = new Batman.IteratorView(iteratorName: @iteratorName)
     definition.node = @iteratorView.get('node')
 
-    @yieldName = "<#{@iteratorName}-iterator-#{@_batmanID()}>"
+    @yieldName = "<iterator-#{@_batmanID()}-#{@iteratorName}>"
     superview.declareYieldNode(@yieldName, sourceNode)
     superview.subviews.set(@yieldName, @iteratorView)
 
