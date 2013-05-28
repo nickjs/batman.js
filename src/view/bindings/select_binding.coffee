@@ -17,7 +17,8 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
 
       @selectedBindings.add(binding)
     else if binding instanceof Batman.DOM.IteratorBinding
-      binding.on 'nodeAdded', dataChangeHandler = => @_fireDataChange(@get('filteredValue'))
+      binding.on 'nodeAdded', dataChangeHandler = =>
+        @_fireDataChange(@get('filteredValue')) unless @dead
       binding.on 'nodeRemoved', dataChangeHandler
       binding.on 'die', ->
         binding.forget 'nodeAdded', dataChangeHandler
@@ -52,6 +53,7 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
       newValue.forEach (value) =>
         if children = valueToChild[value]
           node.selected = true for node in children
+        return
 
     # For a regular select box, update the value.
     else

@@ -8,8 +8,6 @@ class Batman.Renderer extends Batman.Object
     super()
     @parseNodes(@node)
 
-  bindingRegexp = /^data\-(.*)/
-
   bindingSortOrder = ["view", "renderif", "foreach", "formfor", "context", "bind", "source", "target"]
 
   bindingSortPositions = {}
@@ -31,20 +29,22 @@ class Batman.Renderer extends Batman.Object
     else
       0
 
-  parseNodes: (node) ->
-    while node
-      skipChildren = @parseNode(node)
-      node = @nextNode( node, skipChildren )
+  parseTree: (root) ->
+    while root
+      skipChildren = @parseNode(root)
+      root = @nextNode(root, skipChildren)
 
   parseNode: (node) ->
     skipChildren = false
     if node.getAttribute and node.attributes
       bindings = []
       for attribute in node.attributes
-        name = attribute.nodeName.match(bindingRegexp)?[1]
-        continue if not name
-        bindings.push if (names = name.split('-')).length > 1
-          [names[0], names[1..names.length].join('-'), attribute.value]
+        continue unless attribute.nodeName?.substr(0, 5) is "data-"
+        name = attribute.nodeName.substr(5)
+
+        attrIndex = name.indexOf('-')
+        bindings.push if attrIndex isnt -1
+          [name.substr(0, attrIndex), name.substr(attrIndex + 1), attribute.value]
         else
           [name, undefined, attribute.value]
 

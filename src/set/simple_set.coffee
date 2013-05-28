@@ -37,6 +37,7 @@ class Batman.SimpleSet
     return
   forEach: (iterator, ctx) ->
     iterator.call(ctx, key, null, this) for key in @_storage
+    return
   isEmpty: -> @length is 0
   clear: ->
     items = @_storage

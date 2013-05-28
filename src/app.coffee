@@ -28,47 +28,6 @@ class Batman.App extends Batman.Object
 
   @classAccessor '_renderContext', -> Batman.RenderContext.base.descend(@)
 
-  # Require path tells the require methods which base directory to look in.
-  @requirePath: ''
-
-  # The require class methods (`controller`, `model`, `view`) simply tells
-  # your app where to look for coffeescript source files. This
-  # implementation may change in the future.
-  Batman.developer.do =>
-    requireDeprecated = "Please use whatever means you'd like to load your code before calling App.run."
-
-    App.require = (path, names...) ->
-      Batman.developer.deprecated("App.require", requireDeprecated)
-      base = @requirePath + path
-      for name in names
-        @prevent 'run'
-
-        path = base + '/' + name + '.coffee'
-        new Batman.Request
-          url: path
-          type: 'html'
-          success: (response) =>
-            CoffeeScript.eval response
-            @allow 'run'
-            if not @isPrevented 'run'
-              @fire 'loaded'
-
-            @run() if @wantsToRun
-      @
-
-    @controller = (names...) ->
-      Batman.developer.deprecated("App.controller", requireDeprecated)
-      names = names.map (n) -> n + '_controller'
-      @require 'controllers', names...
-
-    @model = ->
-      Batman.developer.deprecated("App.model", requireDeprecated)
-      @require 'models', arguments...
-
-    @view = ->
-      Batman.developer.deprecated("App.view", requireDeprecated)
-      @require 'views', arguments...
-
   # Layout is the base view that other views can be yielded into. The
   # default behavior is that when `app.run()` is called, a new view will
   # be created for the layout using the `document` node as its content.

@@ -55,6 +55,7 @@ class Batman.StorageAdapter extends Batman.Object
     model = record?.constructor || @model
     model.get('storageKey') || Batman.helpers.pluralize(Batman.helpers.underscore(model.get('resourceName')))
 
+  getRecordFromData: (attributes, constructor = @model) -> constructor._makeOrFindRecordFromData(attributes)
   getRecordsFromData: (attributeSet, constructor = @model) -> constructor._makeOrFindRecordsFromData(attributeSet)
 
   @skipIfError: (f) ->
@@ -75,6 +76,7 @@ class Batman.StorageAdapter extends Batman.Object
         for position, filtersByKey of oldFilters
           for key, filtersList of filtersByKey
             @_batman.filters[position][key] = filtersList.slice(0)
+    true
 
   _addFilter: (position, keys..., filter) ->
     @_inheritFilters()

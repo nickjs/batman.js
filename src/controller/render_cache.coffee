@@ -45,6 +45,7 @@ class Batman.RenderCache extends Batman.Hash
   reset: ->
     for key in @keyQueue.slice(0)
       @unset(key)
+    return
 
   _addOrBubbleKey: (key) ->
     @_removeKeyFromQueue(key)

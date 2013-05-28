@@ -147,6 +147,8 @@ class Batman.View extends Batman.Object
       yieldName = node.getAttribute('data-yield')
       @declareYieldNode(yieldName, node)
 
+    return
+
   initializeBindings: ->
     new Batman.Renderer(@node, this)
     @fire('ready')

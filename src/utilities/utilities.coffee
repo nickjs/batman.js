@@ -143,6 +143,7 @@ Batman.forEach = (container, iterator, ctx) ->
     iterator.call(ctx, e, i, container) for e,i in container
   else
     iterator.call(ctx, k, v, container) for k,v of container
+  return
 
 Batman.objectHasKey = (object, key) ->
   if typeof object.hasKey is 'function'
