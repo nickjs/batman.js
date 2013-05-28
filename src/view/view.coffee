@@ -63,7 +63,6 @@ class Batman.View extends Batman.Object
     subview.set('superview', this)
     subview.fire('viewDidMoveToSuperview')
 
-
     isInDOM = @get('isInDOM')
     subview.fire('viewWillAppear') if isInDOM
 
@@ -88,20 +87,22 @@ class Batman.View extends Batman.Object
     isInDOM = @get('isInDOM')
     @fire('viewWillDisappear') if isInDOM
 
-    @get('node')?.parentNode?.removeChild(@node)
+    @removeFromDOM()
     @set('superview', null)
 
     @fire('viewDidDisappear') if isInDOM
-
 
   addToDOM: (parentNode) ->
     node = @get('node')
     parentNode.appendChild(node) if node
 
+  removeFromDOM: ->
+    Batman.DOM.removeNode(@get('node'))
+
   loadView: ->
     if html = @get('html')
       node = document.createElement('div')
-      node.innerHTML = html
+      Batman.DOM.setInnerHTML(node, html)
       return node
 
   @accessor 'html',
@@ -144,7 +145,7 @@ class Batman.View extends Batman.Object
 
   initializeBindings: ->
     renderer = new Batman.Renderer(@node, this)
-    renderer.on 'rendered', => debugger; @fire('ready')
+    renderer.on 'rendered', => @fire('ready')
 
   targetForKeypathBase: (base) ->
     lookupNode = this
