@@ -78,14 +78,11 @@ Batman.DOM.readers =
   renderif: (definition) ->
     new Batman.DOM.DeferredRenderingBinding(definition)
 
-
   contentfor: (definition) ->
     {node, swapMethod, keyPath, view} = definition
     swapMethod ||= 'append'
 
-    contentView = new Batman.View
-    contentView.get('node').innerHTML = node.innerHTML
-
+    contentView = new Batman.View(html: node.innerHTML)
     parentView = view.firstAncestorWithYieldNamed(keyPath)
     parentView.subviews.set(keyPath, contentView)
 
