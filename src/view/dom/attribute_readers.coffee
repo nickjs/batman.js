@@ -49,4 +49,3 @@ Batman.DOM.attrReaders =
 
   formfor: (definition) ->
     new Batman.DOM.FormBinding(definition)
-    definition.context.descendWithDefinition(definition)

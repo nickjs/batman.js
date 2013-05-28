@@ -151,6 +151,9 @@ class Batman.View extends Batman.Object
     renderer = new Batman.Renderer(@node, this)
     renderer.on 'rendered', => @fire('ready')
 
+  baseForKeypath: (keypath) ->
+    keypath.split('.')[0].split('|')[0].trim()
+
   targetForKeypathBase: (base) ->
     lookupNode = this
 
@@ -171,7 +174,7 @@ class Batman.View extends Batman.Object
         lookupNode = null
 
   lookupKeypath: (keypath) ->
-    base = keypath.split('.')[0].split('|')[0].trim()
+    base = @baseForKeypath(keypath)
     target = @targetForKeypathBase(base)
 
     Batman.get(target, keypath) if target

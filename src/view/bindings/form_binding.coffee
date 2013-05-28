@@ -1,40 +1,42 @@
-#= require ./abstract_attribute_binding
+#= require ./context_binding
 
-class Batman.DOM.FormBinding extends Batman.DOM.AbstractAttributeBinding
+class Batman.DOM.FormBinding extends Batman.DOM.ContextBinding
   @current: null
   errorClass: 'error'
   defaultErrorsListSelector: 'div.errors'
-  onlyObserve: Batman.BindingDefinitionOnlyObserve.None
 
   @accessor 'errorsListSelector', ->
     @get('node').getAttribute('data-errors-list') || @defaultErrorsListSelector
 
-  constructor: ->
+  constructor: (definition) ->
+    return {} if Batman._data(definition.node, 'view') instanceof Batman.ProxyView
     super
-    @contextName = @attributeName
-    delete @attributeName
 
-    Batman.DOM.events.submit @get('node'), (node, e) -> Batman.DOM.preventDefault e
+    Batman.DOM.events.submit(@node, (node, e) -> Batman.DOM.preventDefault(e))
     @setupErrorsList()
 
-  childBindingAdded: (binding) =>
-    if binding.isInputBinding && Batman.isChildOf(@get('node'), binding.get('node'))
-      if ~(index = binding.get('key').indexOf(@contextName)) # If the binding is to a key on the thing passed to formfor
-        node = binding.get('node')
-        field = binding.get('key').slice(index + @contextName.length + 1) # Slice off up until the context and the following dot
-        definition = new Batman.DOM.AttrReaderBindingDefinition(node, @errorClass, @get('keyPath') + " | get 'errors.#{field}.length'", @renderContext, @renderer)
+    @view.once 'childViewsReady', =>
+      selectors = ['input', 'textarea'].map (nodeName) => nodeName + "[data-bind^=\"#{@keyPath}\"]"
+      nodes = Batman.DOM.querySelectorAll(@node, selectors.join(', '))
+
+      for node in nodes
+        binding = node.getAttribute('data-bind')
+        field = binding.slice(binding.indexOf(@proxyName) + @proxyName.length + 1)
+
+        definition = new Batman.DOM.AttrReaderBindingDefinition(node, @errorClass, @proxyName + " | get 'errors.#{field}.length'", @view)
         new Batman.DOM.AddClassBinding(definition)
+      return
 
   setupErrorsList: ->
-    if @errorsListNode = Batman.DOM.querySelector(@get('node'), @get('errorsListSelector'))
+    if @errorsListNode = Batman.DOM.querySelector(@node, @get('errorsListSelector'))
       Batman.DOM.setInnerHTML @errorsListNode, @errorsListHTML()
 
       unless @errorsListNode.getAttribute 'data-showif'
-        @errorsListNode.setAttribute 'data-showif', "#{@contextName}.errors.length"
+        @errorsListNode.setAttribute 'data-showif', "#{@proxyName}.errors.length"
 
   errorsListHTML: ->
     """
     <ul>
-      <li data-foreach-error="#{@contextName}.errors" data-bind="error.fullMessage"></li>
+      <li data-foreach-error="#{@proxyName}.errors" data-bind="error.fullMessage"></li>
     </ul>
     """
