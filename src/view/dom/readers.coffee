@@ -63,12 +63,16 @@ Batman.DOM.readers =
     new Batman.DOM.ViewBinding(definition)
 
   partial: (definition) ->
-    Batman.DOM.partial definition.node, definition.keyPath, definition.context, definition.renderer
+    Batman.DOM.partial(definition.node, definition.keyPath, definition.view)
 
   defineview: (definition) ->
-    {node} = definition
-    Batman.DOM.onParseExit(node, -> node.parentNode?.removeChild(node))
-    Batman.DOM.defineView(definition.keyPath, node)
+    {node, view, keyPath} = definition
+
+    Batman.DOM.defineView(keyPath, node)
+
+    view.on 'ready', -> #FIXME when parseNode goes away this doesn't need to nextTick
+      node.parentNode.removeChild(node)
+
     {skipChildren: true}
 
   renderif: (definition) ->

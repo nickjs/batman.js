@@ -46,10 +46,17 @@ Batman.DOM =
     Batman.DOM.propagateBindingEvent(binding, node)
     true
 
-  # defineView: (name, node) ->
-  #   contents = node.innerHTML
-  #   Batman.View.store.set(Batman.Navigator.normalizePath(name), contents)
-  #   contents
+  partial: (node, path, superview) ->
+    view = new Batman.View(source: path)
+    yieldName = "<partial-#{view._batmanID()}-#{path}>"
+
+    superview.declareYieldNode(yieldName, node)
+    superview.subviews.set(yieldName, view)
+
+  defineView: (name, node) ->
+    contents = node.innerHTML
+    Batman.View.store.set(Batman.Navigator.normalizePath(name), contents)
+    contents
 
   setStyleProperty: (node, property, value, importance) ->
     if node.style.setProperty
