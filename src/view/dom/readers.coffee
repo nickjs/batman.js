@@ -56,6 +56,9 @@ Batman.DOM.readers =
     definition.invert = true
     new Batman.DOM.InsertionBinding(definition)
 
+  renderif: (definition) ->
+    new Batman.DOM.DeferredRenderingBinding(definition)
+
   route: (definition) ->
     new Batman.DOM.RouteBinding(definition)
 
@@ -75,12 +78,8 @@ Batman.DOM.readers =
 
     {skipChildren: true}
 
-  renderif: (definition) ->
-    new Batman.DOM.DeferredRenderingBinding(definition)
-
   contentfor: (definition) ->
     {node, swapMethod, keyPath, view} = definition
-    swapMethod ||= 'append'
 
     contentView = new Batman.View(html: node.innerHTML)
     parentView = view.firstAncestorWithYieldNamed(keyPath)
@@ -90,8 +89,3 @@ Batman.DOM.readers =
       node.parentNode.removeChild(node)
 
     {skipChildren: true}
-
-
-  replace: (definition) ->
-    definition.swapMethod = 'replace'
-    Batman.DOM.readers.contentfor(definition)
