@@ -4,14 +4,16 @@ class Batman.UniqueSetIndex extends Batman.SetIndex
   constructor: ->
     @_uniqueIndex = new Batman.Hash
     super
+
   @accessor (key) -> @_uniqueIndex.get(key)
-  _addItemToKey: (item, key) ->
-    @_resultSetForKey(key).add item
-    unless @_uniqueIndex.hasKey(key)
-      @_uniqueIndex.set(key, item)
-  _removeItemFromKey: (item, key) ->
-    resultSet = @_resultSetForKey(key)
+
+  _addItems: (key, items) ->
     super
+    unless @_uniqueIndex.hasKey(key)
+      @_uniqueIndex.set(key, items[0])
+
+  _removeItems: (key, items) ->
+    resultSet = super
     if resultSet.isEmpty()
       @_uniqueIndex.unset(key)
     else
