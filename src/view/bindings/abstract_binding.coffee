@@ -93,7 +93,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
   skipParseFilter: false
 
   constructor: (definition) ->
-    {@node, @keyPath, @renderer, @view} = definition
+    {@node, @keyPath, @view} = definition
     @onlyObserve = definition.onlyObserve if definition.onlyObserve
     @skipParseFilter = definition.skipParseFilter if definition.skipParseFilter?
 
@@ -141,8 +141,6 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
     @node = null
     @keyPath = null
-    @renderContext = null
-    @renderer = null
 
     @dead = true
     return true

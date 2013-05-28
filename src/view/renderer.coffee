@@ -81,11 +81,11 @@ class Batman.Renderer extends Batman.Object
       for [name, attr, value] in bindings.sort(@_sortBindings)
         binding = if attr
           if reader = Batman.DOM.attrReaders[name]
-            bindingDefinition = new Batman.DOM.AttrReaderBindingDefinition(node, attr, value, @view, this)
+            bindingDefinition = new Batman.DOM.AttrReaderBindingDefinition(node, attr, value, @view)
             reader(bindingDefinition)
         else
           if reader = Batman.DOM.readers[name]
-            bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @view, this)
+            bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @view)
             reader(bindingDefinition)
 
         if binding?.skipChildren

@@ -1,7 +1,7 @@
 #= require ./dom
 
 class Batman.DOM.ReaderBindingDefinition
-  constructor: (@node, @keyPath, @view, @renderer) ->
+  constructor: (@node, @keyPath, @view) ->
 
 Batman.BindingDefinitionOnlyObserve =
   Data: 'data'
