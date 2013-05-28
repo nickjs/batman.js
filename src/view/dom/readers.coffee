@@ -57,7 +57,7 @@ Batman.DOM.readers =
     new Batman.DOM.InsertionBinding(definition)
 
   renderif: (definition) ->
-    new Batman.DOM.DeferredRenderingBinding(definition)
+    new Batman.DOM.DeferredRenderBinding(definition)
 
   route: (definition) ->
     new Batman.DOM.RouteBinding(definition)
