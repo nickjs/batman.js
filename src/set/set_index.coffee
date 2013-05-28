@@ -13,9 +13,9 @@ class Batman.SetIndex extends Batman.Object
       @_setObserver = new Batman.SetObserver(@base)
       @_setObserver.observedItemKeys = [@key]
       @_setObserver.observerForItemAndKey = @observerForItemAndKey.bind(@)
-      @_setObserver.on 'itemsWereAdded', (items...) =>
+      @_setObserver.on 'itemsWereAdded', (items) =>
         @_addItem(item) for item in items
-      @_setObserver.on 'itemsWereRemoved', (items...) =>
+      @_setObserver.on 'itemsWereRemoved', (items) =>
         @_removeItem(item) for item in items
     @base.forEach @_addItem.bind(@)
     @startObserving()
