@@ -6,11 +6,10 @@ class Batman.DOM.ContextBinding extends Batman.DOM.AbstractBinding
   skipChildren: true
 
   constructor: (definition) ->
-    {node, keyPath, view: superview} = definition
+    {node, keyPath, view: superview, attr: @proxyName} = definition
     return {} if Batman._data(node, 'view') instanceof Batman.ProxyView
 
-    @proxyName = definition.attr
-    @proxyView = new Batman.ProxyView(proxyName: @proxyName, node: node)
+    @proxyView = new Batman.ProxyView(displayName: keyPath, proxyName: @proxyName, node: node)
     superview.subviews.set("<context-#{@_batmanID()}-#{keyPath}>", @proxyView)
 
     super

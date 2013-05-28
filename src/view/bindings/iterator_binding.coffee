@@ -11,7 +11,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @prototypeNode = sourceNode
     @prototypeNode.removeAttribute("data-foreach-#{@iteratorName}")
 
-    @iteratorView = new Batman.IteratorView(iteratorName: @iteratorName)
+    @iteratorView = new Batman.IteratorView(iteratorPath: definition.keyPath, iteratorName: @iteratorName)
     definition.node = @iteratorView.get('node')
 
     @yieldName = "<iterator-#{@_batmanID()}-#{@iteratorName}>"
@@ -42,7 +42,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
   handleItemsAdded: (newItems) =>
     for item in newItems
-      iterationView = new Batman.IterationView(prototypeNode: @prototypeNode, iteratorName: @iteratorName)
+      iterationView = new Batman.IterationView(displayName: @iteratorName, prototypeNode: @prototypeNode, iteratorName: @iteratorName)
       iterationView.set(@iteratorName, item)
 
       @iteratorView.subviews.set(item, iterationView)
@@ -61,18 +61,14 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
 class Batman.IteratorView extends Batman.View
   loadView: ->
-    return document.createComment("data-iterator=#{@iteratorName}")
+    return document.createComment("data-iterator=#{@iteratorPath}")
 
   addToDOM: (sourceNode) ->
     sourceNode.parentNode.insertBefore(@get('node'), sourceNode)
 
 class Batman.IterationView extends Batman.View
   loadView: ->
-    node = @prototypeNode.cloneNode(true)
-    Batman.developer.do =>
-      node.setAttribute('data-iterator', @iteratorName)
-
-    return node
+    @prototypeNode.cloneNode(true)
 
   addToDOM: (commentNode) ->
     commentNode.parentNode.insertBefore(@get('node'), commentNode)
