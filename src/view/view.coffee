@@ -6,22 +6,8 @@ class Batman.View extends Batman.Object
   @store: new Batman.HTMLStore
 
   @option: (keys...) ->
-    @accessor keys...,
-      get: (key) ->        @get("argumentBindings.#{key}")?.get('filteredValue')
-      set: (key, value) -> @get("argumentBindings.#{key}")?.set('filteredValue', value)
-      unset: (key) ->      @get("argumentBindings.#{key}")?.unset('filteredValue')
-
-  @accessor 'argumentBindings', ->
-    new Batman.TerminalAccessible (key) =>
-      return unless node = @get('node').parentNode
-      keyPath = node.getAttribute("data-view-#{key}".toLowerCase())
-      return unless keyPath?
-
-      bindingKey = "_argumentBinding#{key}"
-      @[bindingKey]?.die()
-
-      definition = new Batman.DOM.ReaderBindingDefinition(node, keyPath, this)
-      @[bindingKey] = new Batman.DOM.ViewArgumentBinding(definition)
+    Batman.initializeObject(this)
+    @_batman.set('options', keys)
 
   subviews: {}
   superview: null

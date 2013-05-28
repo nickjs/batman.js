@@ -15,6 +15,12 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     else
       @view = new viewClassOrInstance
 
+    options = @view.constructor._batman.get('options')
+    if options
+      for option in options when keyPath = @node.getAttribute("data-view-#{option}")
+        definition = new Batman.DOM.ReaderBindingDefinition(@node, keyPath, @superview)
+        new Batman.DOM.ViewArgumentBinding(definition, option)
+
     @yieldName = "<#{@view.constructor.name || 'UnknownView'}-#{@view._batmanID()}>"
     @superview.declareYieldNode(@yieldName, @node)
     @superview.subviews.set(@yieldName, @view)
@@ -24,3 +30,12 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     @superview = null
     @view = null
     super
+
+class Batman.DOM.ViewArgumentBinding extends Batman.DOM.AbstractBinding
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
+
+  constructor: (definition, @option) ->
+    super(definition)
+
+  dataChange: (value) ->
+    @view.set(@option, value)
