@@ -4,33 +4,9 @@
 # It is a continuation style parser, designed not to block for longer than 50ms at a time if the document
 # fragment is particularly long.
 class Batman.Renderer extends Batman.Object
-  deferEvery: 50
   constructor: (@node, @view) ->
     super()
-    @immediate = Batman.setImmediate @start
-
-  start: =>
-    @startTime = new Date
-    @prevent 'parsed'
-    @prevent 'rendered'
-    @parseNodes @node
-
-  resume: =>
-    @startTime = new Date
-    @parseNodes @resumeNode
-
-  finish: ->
-    @startTime = null
-    @prevent 'stopped'
-    @allowAndFire 'parsed'
-    @allowAndFire 'rendered'
-
-  stop: ->
-    Batman.clearImmediate @immediate
-    @fire 'stopped'
-
-  for k in ['parsed', 'rendered', 'stopped']
-    @::event(k).oneShot = true
+    @parseNodes(@node)
 
   bindingRegexp = /^data\-(.*)/
 
@@ -57,14 +33,8 @@ class Batman.Renderer extends Batman.Object
 
   parseNodes: (node) ->
     while node
-      if @deferEvery && (new Date - @startTime) > @deferEvery
-        @resumeNode = node
-        @timeout = Batman.setImmediate @resume
-        return
       skipChildren = @parseNode(node)
-
       node = @nextNode( node, skipChildren )
-    @finish()
 
   parseNode: (node) ->
     skipChildren = false

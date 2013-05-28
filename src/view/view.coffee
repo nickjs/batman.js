@@ -148,8 +148,8 @@ class Batman.View extends Batman.Object
       @declareYieldNode(yieldName, node)
 
   initializeBindings: ->
-    renderer = new Batman.Renderer(@node, this)
-    renderer.on 'rendered', => @fire('ready')
+    new Batman.Renderer(@node, this)
+    @fire('ready')
 
   baseForKeypath: (keypath) ->
     keypath.split('.')[0].split('|')[0].trim()

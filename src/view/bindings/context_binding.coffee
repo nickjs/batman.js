@@ -23,7 +23,7 @@ class Batman.ProxyView extends Batman.View
   isProxyView: true
 
   targetForKeypathBase: (base) ->
-    if not @proxyName and @_proxiedObject
+    if not @proxyName and @get('_proxiedObject')
       if Batman.get(@_proxiedObject, base)?
         return @_proxiedObject
 
