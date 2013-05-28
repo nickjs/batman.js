@@ -5,7 +5,7 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
   @accessor 'dispatcher', ->
-    @renderContext.get('dispatcher') || Batman.App.get('current.dispatcher')
+    @view.lookupKeypath('dispatcher') || Batman.App.get('current.dispatcher')
 
   bind: ->
     if @node.nodeName.toUpperCase() is 'A'
@@ -13,7 +13,7 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
 
     super
 
-    Batman.DOM.events.click @node, @routeClick
+    Batman.DOM.events.click(@node, @routeClick)
 
   routeClick: (node, event) =>
       return if event.__batmanActionTaken
@@ -27,7 +27,7 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
 
     if @onAnchorTag
       if path and Batman.navigator
-        path = Batman.navigator.linkTo path
+        path = Batman.navigator.linkTo(path)
       else
         path = "#"
 
