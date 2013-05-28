@@ -63,6 +63,9 @@ class Batman.View extends Batman.Object
     subview.set('superview', this)
     subview.fire('viewDidMoveToSuperview')
 
+    @prevent('childViewsReady')
+    subview.once('ready', @_fireChildViewsReady ||= => @allowAndFire('childViewsReady'))
+
     isInDOM = @get('isInDOM')
     subview.fire('viewWillAppear') if isInDOM
 
@@ -74,15 +77,16 @@ class Batman.View extends Batman.Object
     if isInDOM
       subview.fire('viewDidAppear')
     else
-      @on 'viewWillAppear', subview._fireViewWillAppear ||= -> subview.fire('viewWillAppear')
-      @on 'viewDidAppear', subview._fireViewDidAppear ||= -> subview.fire('viewDidAppear')
+      @on('viewWillAppear', subview._fireViewWillAppear ||= -> subview.fire('viewWillAppear'))
+      @on('viewDidAppear', subview._fireViewDidAppear ||= -> subview.fire('viewDidAppear'))
 
   _removeFromSuperview: ->
     @fire('viewWillRemoveFromSuperview')
 
     superview = @get('superview')
-    superview.off('viewWillAppear', subview._fireViewWillAppear)
-    superview.off('viewDidAppear', subview._fireViewDidAppear)
+    superview.off('viewWillAppear', @_fireViewWillAppear)
+    superview.off('viewDidAppear', @_fireViewDidAppear)
+    @off('ready', superview._fireChildViewsReady)
 
     isInDOM = @get('isInDOM')
     @fire('viewWillDisappear') if isInDOM
@@ -187,7 +191,7 @@ Batman.container.$context ?= (node) ->
     return view if view = Batman._data(node, 'view')
     node = node.parentNode
 
-Batman.container.$subviews ?= (view) ->
+Batman.container.$subviews ?= (view = Batman.currentApp.layout) ->
   subviews = {}
 
   view.subviews.forEach (key, subview) ->
