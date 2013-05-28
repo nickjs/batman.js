@@ -6,7 +6,7 @@
 class Batman.Renderer extends Batman.Object
   constructor: (@node, @view) ->
     super()
-    @parseNodes(@node)
+    @parseTree(@node)
 
   bindingSortOrder = ["view", "renderif", "foreach", "formfor", "context", "bind", "source", "target"]
 
