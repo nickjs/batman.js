@@ -9,23 +9,22 @@ class Batman.DOM.FormBinding extends Batman.DOM.ContextBinding
     @get('node').getAttribute('data-errors-list') || @defaultErrorsListSelector
 
   constructor: (definition) ->
-    return {} if Batman._data(definition.node, 'view') instanceof Batman.ProxyView
-    super
+    {@node, attr: @proxyName, keyPath} = definition
+    return {} if Batman._data(@node, 'view') instanceof Batman.ProxyView
 
     Batman.DOM.events.submit(@node, (node, e) -> Batman.DOM.preventDefault(e))
     @setupErrorsList()
 
-    @view.once 'childViewsReady', =>
-      selectors = ['input', 'textarea'].map (nodeName) => nodeName + "[data-bind^=\"#{@keyPath}\"]"
-      nodes = Batman.DOM.querySelectorAll(@node, selectors.join(', '))
+    selectors = ['input', 'textarea'].map (nodeName) => nodeName + "[data-bind^=\"#{keyPath}\"]"
+    selectedNodes = Batman.DOM.querySelectorAll(@node, selectors.join(', '))
 
-      for node in nodes
-        binding = node.getAttribute('data-bind')
-        field = binding.slice(binding.indexOf(@proxyName) + @proxyName.length + 1)
+    for selectedNode in selectedNodes
+      binding = selectedNode.getAttribute('data-bind')
+      field = binding.slice(binding.indexOf(@proxyName) + @proxyName.length + 1)
 
-        definition = new Batman.DOM.AttrReaderBindingDefinition(node, @errorClass, @proxyName + " | get 'errors.#{field}.length'", @view)
-        new Batman.DOM.AddClassBinding(definition)
-      return
+      selectedNode.setAttribute("data-addclass-#{@errorClass}", "#{@proxyName}.errors.#{field}.length")
+
+    super
 
   setupErrorsList: ->
     if @errorsListNode = Batman.DOM.querySelector(@node, @get('errorsListSelector'))
