@@ -64,13 +64,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
   # The `unfilteredValue` is whats evaluated each time any dependents change.
   @accessor 'unfilteredValue',
-    get: ->
-      # If we're working with an `@key` and not an `@value`, find the context the key belongs to so we can
-      # hold a reference to it for passing to the `dataChange` and `nodeChange` observers.
-      if k = @get('key')
-        @view.lookupKeypath(k)
-      else
-        @get('value')
+    get: -> @_unfilteredValue(@get('key'))
     set: (_, value) ->
       if k = @get('key')
         target = @view.targetForKeypathBase(k)
@@ -79,6 +73,14 @@ class Batman.DOM.AbstractBinding extends Batman.Object
           property.setValue(value)
       else
         @set('value', value)
+
+  _unfilteredValue: (key) ->
+    # If we're working with an `@key` and not an `@value`, find the context the key belongs to so we can
+    # hold a reference to it for passing to the `dataChange` and `nodeChange` observers.
+    if key
+      @view.lookupKeypath(key)
+    else
+      @get('value')
 
 
   onlyAll = Batman.BindingDefinitionOnlyObserve.All
