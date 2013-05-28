@@ -14,11 +14,11 @@ class Batman.Renderer extends Batman.Object
     @startTime = new Date
     @prevent 'parsed'
     @prevent 'rendered'
-    @parseNodes @node
+    @parseTree @node
 
   resume: =>
     @startTime = new Date
-    @parseNodes @resumeNode
+    @parseTree @resumeNode
 
   finish: ->
     @startTime = null
@@ -32,8 +32,6 @@ class Batman.Renderer extends Batman.Object
 
   for k in ['parsed', 'rendered', 'stopped']
     @::event(k).oneShot = true
-
-  bindingRegexp = /^data\-(.*)/
 
   bindingSortOrder = ["view", "renderif", "foreach", "formfor", "context", "bind", "source", "target"]
 
@@ -56,15 +54,16 @@ class Batman.Renderer extends Batman.Object
     else
       0
 
-  parseNodes: (node) ->
-    while node
+  parseTree: (root) ->
+    while root
       if @deferEvery && (new Date - @startTime) > @deferEvery
-        @resumeNode = node
+        @resumeNode = root
         @timeout = Batman.setImmediate @resume
         return
-      skipChildren = @parseNode(node)
 
-      node = @nextNode( node, skipChildren )
+      skipChildren = @parseNode(root)
+      root = @nextNode(root, skipChildren)
+
     @finish()
 
   parseNode: (node) ->
@@ -72,10 +71,12 @@ class Batman.Renderer extends Batman.Object
     if node.getAttribute and node.attributes
       bindings = []
       for attribute in node.attributes
-        name = attribute.nodeName.match(bindingRegexp)?[1]
-        continue if not name
-        bindings.push if (names = name.split('-')).length > 1
-          [names[0], names[1..names.length].join('-'), attribute.value]
+        continue unless attribute.nodeName?.substr(0, 5) is "data-"
+        name = attribute.nodeName.substr(5)
+
+        attrIndex = name.indexOf('-')
+        bindings.push if attrIndex isnt -1
+          [name.substr(0, attrIndex), name.substr(attrIndex + 1), attribute.value]
         else
           [name, undefined, attribute.value]
 
