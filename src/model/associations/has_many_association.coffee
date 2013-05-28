@@ -43,25 +43,40 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       existingRelations = association.setForRecord(parentRecord)
       newRelations = existingRelations.filter((relation) -> relation.isNew()).toArray()
 
+      recordsToMap = []
+      recordsToMake = []
+
+      relatedRecords = relatedModel.get('loaded.indexedByUnique.id')
+
       for jsonObject in data
         id = jsonObject[relatedModel.primaryKey]
-        existingRecord = relatedModel.get('loaded.indexedByUnique.id').get(id)
+        existingRecord = relatedRecords.get(id)
 
         if existingRecord?
           existingRecord._withoutDirtyTracking -> @fromJSON jsonObject
-          record = existingRecord
+          existingRelations.add(existingRecord)
+
+          if association.options.inverseOf
+            existingRecord.set(association.options.inverseOf, parentRecord)
         else
           if newRelations.length > 0
             savedRecord = newRelations.shift()
             savedRecord._withoutDirtyTracking -> @fromJSON jsonObject
-            record = relatedModel._mapIdentity(savedRecord)
+            recordsToMap.push(savedRecord)
           else
-            record = relatedModel._makeOrFindRecordFromData(jsonObject)
+            recordsToMake.push(jsonObject)
 
-        existingRelations.add record
+      mappedRecords = relatedModel._mapIdentities(recordsToMap)
+      existingRelations.add(mappedRecords...)
 
-        if association.options.inverseOf
-          record.set association.options.inverseOf, parentRecord
+      newRecords = relatedModel._makeOrFindRecordsFromData(recordsToMake)
+      existingRelations.add(newRecords...)
+
+      if association.options.inverseOf
+        for record in mappedRecords
+          record.set(association.options.inverseOf, parentRecord)
+        for record in newRecords
+          record.set(association.options.inverseOf, parentRecord)
 
       existingRelations.markAsLoaded()
       existingRelations
