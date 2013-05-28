@@ -70,6 +70,7 @@ class Batman.Model extends Batman.Object
           validators.push
             keys: keys
             validator: new validatorClass(matches)
+    return
 
   @classAccessor 'resourceName',
     get: ->

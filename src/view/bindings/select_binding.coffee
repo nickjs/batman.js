@@ -53,6 +53,7 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
       newValue.forEach (value) =>
         if children = valueToChild[value]
           node.selected = true for node in children
+        return
 
     # For a regular select box, update the value.
     else

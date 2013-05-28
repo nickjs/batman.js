@@ -56,6 +56,7 @@ ObjectFunctions =
       # Otherwise, add key accessors for each key given.
       @_batman.keyAccessors ||= new Batman.SimpleHash
       @_batman.keyAccessors.set(key, getAccessorObject(this, accessor)) for key in keys
+    true
 
   _defineWrapAccessor: (keys..., wrapper) ->
     Batman.initializeObject(this)
@@ -64,6 +65,7 @@ ObjectFunctions =
     else
       for key in keys
         @_defineAccessor key, wrapSingleAccessor(@_defineAccessor(key), wrapper)
+    true
 
   _resetPromises: ->
     return unless @_batman.promises?

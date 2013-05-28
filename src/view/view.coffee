@@ -109,16 +109,19 @@ class Batman.View extends Batman.Object
     @get('yields').forEach (name, actions) ->
       for {node} in actions
         Batman.DOM.didDestroyNode(node)
+      return
 
   applyYields: ->
     @get('yields').forEach (name, nodes) ->
       yieldObject = Batman.DOM.Yield.withName(name)
       for {node, action} in nodes
         yieldObject[action](node)
+      return
 
   retractYields: ->
     @get('yields').forEach (name, nodes) ->
       node.parentNode?.removeChild(node) for {node} in nodes
+      return
 
   pushYieldAction: (key, action, node) ->
     @_setNodeYielder(node)

@@ -76,6 +76,7 @@ class Batman.StorageAdapter extends Batman.Object
         for position, filtersByKey of oldFilters
           for key, filtersList of filtersByKey
             @_batman.filters[position][key] = filtersList.slice(0)
+    true
 
   _addFilter: (position, keys..., filter) ->
     @_inheritFilters()

@@ -130,7 +130,9 @@ class Batman.SimpleHash
       hash.forEach (obj, value) ->
         merged.set obj, value
     merged
-  update: (object) -> @set(k,v) for k,v of object
+  update: (object) ->
+    @set(k,v) for k,v of object
+    return
   replace: (object) ->
     @forEach (key, value) =>
       @unset(key) unless key of object

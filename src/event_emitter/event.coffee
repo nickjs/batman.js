@@ -28,6 +28,7 @@ class Batman.Event
       for ancestor in @base._batman?.ancestors()
         if ancestor.isEventEmitter and ancestor._batman?.events?.hasOwnProperty(key)
           ancestor.event(key, false)?.handlers?.slice().forEach(iterator)
+    return
   clearHandlers: -> @handlers = undefined
   handlerContext: -> @base
   prevent: -> ++@_preventCount
