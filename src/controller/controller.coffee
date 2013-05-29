@@ -144,7 +144,6 @@ class Batman.Controller extends Batman.Object
       return
 
     action = frame?.action || @get('action')
-    options?.into ||= @defaultRenderYield
 
     if view = options.view
       options.view = null
@@ -157,8 +156,7 @@ class Batman.Controller extends Batman.Object
       view.set('controller', this)
       @set('view', view)
 
-      # view.once 'ready', =>
-      Batman.currentApp.layout.subviews.set('main', view)
+      Batman.currentApp.layout.subviews.set(options.into || @defaultRenderYield, view)
       frame?.finishOperation()
     view
 

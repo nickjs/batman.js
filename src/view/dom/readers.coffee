@@ -50,11 +50,11 @@ Batman.DOM.readers =
     new Batman.DOM.ShowHideBinding(definition)
 
   insertif: (definition) ->
-    new Batman.DOM.InsertionBinding(definition)
+    new Batman.DOM.ShowHideBinding(definition)
 
   removeif: (definition) ->
     definition.invert = true
-    new Batman.DOM.InsertionBinding(definition)
+    new Batman.DOM.ShowHideBinding(definition)
 
   renderif: (definition) ->
     new Batman.DOM.DeferredRenderBinding(definition)

@@ -9,12 +9,14 @@
 
     <script src="../lib/coffee-script.js"></script>
     <script src="../lib/es5-shim.js"></script>
-    <script src="../lib/dist/batman.js"></script>
+    <script src="../lib/batman.js"></script>
+    <script src="../lib/batman.solo.js"></script>
+
 </head>
 
 <body>
     <div id="container">
-        <h1 data-mixin="animation" data-hideif="person.hasName">Please enter your name</h1>
+        <h1 data-hideif="person.hasName">Please enter your name</h1>
 
         <form class="span-12">
             <fieldset>
@@ -30,15 +32,92 @@
             </fieldset>
         </form>
 
-        <h2 data-showif="person.hasName" data-mixin="animation">Hello, <span data-bind="person.fullName"></span></h2>
+        <h2 data-showif="person.hasName">Hello, <span data-bind="person.fullName"></span></h2>
 
         <button data-bind-disabled="person.hasName | not" data-event-click="person.reset">Reset</button>
+
+
+
+
+
+
+
+        <h2>Iterator Binding Test</h2>
+        <div>hello</div>
+          <div data-foreach-user="people">
+            <span data-bind="user.fullName"></span>
+          </div>
+        <div>goodbye</div>
+
+
+
+
+
+
+        <h2>View Test</h2>
+        <div data-defineview="person/view">
+          <p data-addclass-error="person.firstName.length">Define view</p>
+        </div>
+        <div data-partial="person/view"></div>
+
+
+
+
+
+        <h2>content binding test</h2>
+        <div data-context="people.first">
+          lolwut
+          <div data-bind="fullName"></div>
+        </div>
+        <div data-context-person="people.last">
+          <div data-bind="person.fullName"></div>
+        </div>
+        <div data-bind="fullName"></div>
+        <div data-bind="person.fullName"></div>
+
+
+
+
+
+
+        <h2>Form For Test</h2>
+        <form data-formfor-person="person" data-event-submit="savePerson">
+          <div class="errors"></div>
+          <input type="text" data-bind="person.firstName" />
+          <input type="submit" value="Submit!" />
+        </form>
     </div>
 
     <script type="text/coffeescript">
+      window.id = 0
+
       class Hello extends Batman.App
+        @savePerson: (_, __, view) ->
+          person = view.get('person')
+          person.save()
+
+
+      class Hello.PersonView extends Batman.View
+
+        @::on 'viewDidAppear', ->
+          console.log("APPEAR")
+
+        @::on 'ready', ->
+          console.log("READY")
 
       class Person extends Batman.Model
+        @persist Batman.LocalStorage
+        @resourceName: "person"
+
+        @validate 'firstName', presence: true
+        @encode 'firstName', 'lastName'
+
+        constructor: (firstName, lastName) ->
+          @set('id', window.id++)
+          @set('firstName', firstName)
+          @set('lastName', lastName)
+
+
         @accessor 'fullName', -> "#{@get('firstName') or ''} #{@get('lastName') or ''}"
         @accessor 'hasName', -> @get('firstName') or @get('lastName')
 
@@ -48,6 +127,12 @@
           @
 
       Hello.person = (new Person()).reset()
+
+      Hello.people = new Batman.Set(new Person('Test', 'User'), new Person('Second', 'User'))
+
+      window.Person = Person
+      window.Hello = Hello
+
       Hello.run()
     </script>
 </body>
