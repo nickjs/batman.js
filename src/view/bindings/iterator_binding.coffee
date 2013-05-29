@@ -41,13 +41,15 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @handleItemsAdded(newItems)
 
   handleItemsAdded: (newItems) =>
+    fragment = document.createDocumentFragment()
+
     for item in newItems
-      iterationView = new Batman.IterationView(displayName: @iteratorName, prototypeNode: @prototypeNode, iteratorName: @iteratorName)
+      iterationView = new Batman.IterationView(displayName: @iteratorName, prototypeNode: @prototypeNode, iteratorName: @iteratorName, fragment: fragment)
       iterationView.set(@iteratorName, item)
 
       @iteratorView.subviews.set(item, iterationView)
 
-    return
+    @iteratorView.insertFragment(fragment)
 
   handleItemsRemoved: (oldItems) =>
     for item in oldItems
@@ -63,6 +65,10 @@ class Batman.IteratorView extends Batman.View
   loadView: ->
     return document.createComment("data-iterator=#{@iteratorPath}")
 
+  insertFragment: (fragment) ->
+    node = @get('node')
+    node.parentNode.insertBefore(fragment, node)
+
   addToDOM: (sourceNode) ->
     sourceNode.parentNode.insertBefore(@get('node'), sourceNode)
 
@@ -71,4 +77,4 @@ class Batman.IterationView extends Batman.View
     @prototypeNode.cloneNode(true)
 
   addToDOM: (commentNode) ->
-    commentNode.parentNode.insertBefore(@get('node'), commentNode)
+    @fragment.appendChild(@get('node'))
