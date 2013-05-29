@@ -14,6 +14,7 @@ class Batman.IteratorView extends Batman.View
     iterationView.set(@iteratorName, item)
 
     @subviews.set(item, iterationView)
+    iterationView.initializeBindings()
 
   finishAppendItems: ->
     node = @get('node')
@@ -33,4 +34,5 @@ class Batman.IterationView extends Batman.View
 
     super
 
+  bindImmediately: false
   addToDOM: null
