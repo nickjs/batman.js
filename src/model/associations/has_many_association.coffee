@@ -40,43 +40,37 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
         Batman.developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"
         return
 
-      existingRelations = association.setForRecord(parentRecord)
-      newRelations = existingRelations.filter((relation) -> relation.isNew()).toArray()
+      children = association.setForRecord(parentRecord)
+      newChildren = children.filter((relation) -> relation.isNew()).toArray()
 
       recordsToMap = []
-      recordsToMake = []
+      recordsToAdd = []
 
       relatedRecords = relatedModel.get('loaded.indexedByUnique.id')
 
       for jsonObject in data
         id = jsonObject[relatedModel.primaryKey]
-        existingRecord = relatedRecords.get(id)
+        record = relatedRecords.get(id)
 
-        if existingRecord?
-          existingRecord._withoutDirtyTracking -> @fromJSON jsonObject
-          existingRelations.add(existingRecord)
-
-          if association.options.inverseOf
-            existingRecord.set(association.options.inverseOf, parentRecord)
+        if record?
+          recordsToAdd.push(record)
         else
-          if newRelations.length > 0
-            savedRecord = newRelations.shift()
-            savedRecord._withoutDirtyTracking -> @fromJSON jsonObject
-            recordsToMap.push(savedRecord)
+          if newChildren.length > 0
+            record = newChildren.shift()
+            recordsToMap.push(record)
           else
-            recordsToMake.push(jsonObject)
+            record = new relatedModel
+            recordsToMap.push(record)
+            recordsToAdd.push(record)
 
-      mappedRecords = relatedModel._mapIdentities(recordsToMap)
-      existingRelations.add(mappedRecords...)
+        record._withoutDirtyTracking -> @fromJSON jsonObject
 
-      newRecords = relatedModel._makeOrFindRecordsFromData(recordsToMake)
-      existingRelations.add(newRecords...)
-
-      if association.options.inverseOf
-        for record in mappedRecords
-          record.set(association.options.inverseOf, parentRecord)
-        for record in newRecords
+        if association.options.inverseOf
           record.set(association.options.inverseOf, parentRecord)
 
-      existingRelations.markAsLoaded()
-      existingRelations
+      # We're already sure that these records aren't in the map already, since we just checked
+      relatedModel.get('loaded').add(recordsToMap...)
+
+      children.add(recordsToAdd...)
+      children.markAsLoaded()
+      children
