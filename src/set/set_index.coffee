@@ -15,45 +15,21 @@ class Batman.SetIndex extends Batman.Object
       @_setObserver = new Batman.SetObserver(@base)
       @_setObserver.observedItemKeys = [@key]
       @_setObserver.observerForItemAndKey = @observerForItemAndKey.bind(@)
+      @_setObserver.on 'itemsWereAdded', (items...) => @_addItems(items)
+      @_setObserver.on 'itemsWereRemoved', (items...) => @_removeItems(items)
 
-      @_setObserver.on 'itemsWereAdded', (items...) =>
-        @itemsByKey(items).forEach @_addItems.bind(@)
-        return
-
-      @_setObserver.on 'itemsWereRemoved', (items...) =>
-        @itemsByKey(items).forEach @_removeItems.bind(@)
-        return
-
-    @itemsByKey(@base).forEach @_addItems.bind(@)
+    @_addItems(@base._storage)
     @startObserving()
 
   @accessor (key) -> @_resultSetForKey(key)
-
-  itemsByKey: (items) ->
-    byKey = new Batman.SimpleHash
-    if items.forEach
-      items.forEach (item) =>
-        key = @_keyForItem(item)
-        arr = byKey.get(key)
-        unless arr
-          arr = byKey.set(key, [])
-        arr.push(item)
-    else
-      for item in items
-        key = @_keyForItem(item)
-        arr = byKey.get(key)
-        unless arr
-          arr = byKey.set(key, [])
-        arr.push(item)
-    byKey
 
   startObserving: -> @_setObserver?.startObserving()
   stopObserving: -> @_setObserver?.stopObserving()
 
   observerForItemAndKey: (item, key) ->
     (newKey, oldKey) =>
-      @_removeItems(oldKey, [item])
-      @_addItems(newKey, [item])
+      @_removeItemsFromKey(oldKey, [item])
+      @_addItemsToKey(newKey, [item])
 
   forEach: (iterator, ctx) ->
     @_storage.forEach (key, set) =>
@@ -64,12 +40,45 @@ class Batman.SetIndex extends Batman.Object
     @_storage.forEach (key, set) -> results.push(key) if set.get('length') > 0
     results
 
-  _addItems: (key, items) ->
+  # Batch consecutive keys with the same items
+  _addItems: (items) ->
+    return unless items?.length
+    lastKey = @_keyForItem(items[0])
+    itemsForKey = []
+
+    for item, index in items
+      if Batman.SimpleHash::equality(lastKey, (key = @_keyForItem(item)))
+        itemsForKey.push(item)
+      else
+        @_addItemsToKey(lastKey, itemsForKey)
+        itemsForKey = [item]
+        lastKey = key
+
+    if itemsForKey.length
+      @_addItemsToKey(lastKey, itemsForKey)
+
+  _removeItems: (items) ->
+    return unless items?.length
+    lastKey = @_keyForItem(items[0])
+    itemsForKey = []
+
+    for item, index in items
+      if Batman.SimpleHash::equality(lastKey, (key = @_keyForItem(item)))
+        itemsForKey.push(item)
+      else
+        @_removeItemsFromKey(lastKey, itemsForKey)
+        itemsForKey = [item]
+        lastKey = key
+
+    if itemsForKey.length
+      @_removeItemsFromKey(lastKey, itemsForKey)
+
+  _addItemsToKey: (key, items) ->
     resultSet = @_resultSetForKey(key)
     resultSet.add(items...)
     resultSet
 
-  _removeItems: (key, items) ->
+  _removeItemsFromKey: (key, items) ->
     resultSet = @_resultSetForKey(key)
     resultSet.remove(items...)
     resultSet
