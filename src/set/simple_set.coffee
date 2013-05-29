@@ -40,8 +40,8 @@ class Batman.SimpleSet
       @allow?('change', 'itemsWereRemoved', 'itemsWereAdded')
 
       @fire?('change', this, this) if itemsAdded.length > 0 || itemsRemoved.length > 0
-      @fire?('itemsWereAdded', itemsAdded) if itemsAdded.length > 0
-      @fire?('itemsWereRemoved', itemsRemoved) if itemsRemoved.length > 0
+      @fire?('itemsWereAdded', itemsAdded...) if itemsAdded.length > 0
+      @fire?('itemsWereRemoved', itemsRemoved...) if itemsRemoved.length > 0
     {added: itemsAdded, removed: itemsRemoved}
   find: (f) ->
     for item in @_storage
