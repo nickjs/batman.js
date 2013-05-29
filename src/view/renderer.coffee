@@ -8,7 +8,7 @@ class Batman.Renderer extends Batman.Object
     super()
     @parseTree(@node)
 
-  bindingSortOrder = ["view", "renderif", "foreach", "formfor", "context", "bind", "source", "target"]
+  bindingSortOrder = ["foreach", "renderif", "view", "formfor", "context", "bind", "source", "target"]
 
   bindingSortPositions = {}
   bindingSortPositions[name] = pos for name, pos in bindingSortOrder
