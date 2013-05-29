@@ -57,10 +57,10 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
         else
           if newChildren.length > 0
             record = newChildren.shift()
-            recordsToMap.push(record)
+            recordsToMap.push(record) if id?
           else
             record = new relatedModel
-            recordsToMap.push(record)
+            recordsToMap.push(record) if id?
             recordsToAdd.push(record)
 
         record._withoutDirtyTracking -> @fromJSON jsonObject
