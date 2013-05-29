@@ -59,6 +59,63 @@ basicSetTestSuite = ->
 
     equal @set.length, 1
 
+  test "addAndRemove only adds item to the set if no items to remove are passed", ->
+    @set.on 'itemsWereAdded', 'change', listen = createSpy()
+    @set.on 'itemsWereRemoved', removeSpy = createSpy()
+
+    itemsToAdd = [o1 = {}, o2 = {}, o3 = {}]
+    change = @set.addAndRemove(itemsToAdd)
+
+    deepEqual(change, {added: itemsToAdd, removed: []})
+
+    equal @set.length, 3
+    ok @set.has(o1)
+    ok @set.has(o2)
+    ok @set.has(o3)
+    equal listen.callCount, 2
+    ok !removeSpy.called
+
+  test "addAndRemove only removes item to the set if no items to add are passed", ->
+    itemsToAdd = [o1 = {}, o2 = {}, o3 = {}]
+    @set.add(itemsToAdd...)
+
+    @set.on 'itemsWereAdded', addSpy = createSpy()
+    @set.on 'itemsWereRemoved', 'change', listen = createSpy()
+
+    change = @set.addAndRemove([], [o1, o2])
+
+    deepEqual(change, {added: [], removed: [o1, o2]})
+
+    equal @set.length, 1
+    ok !@set.has(o1)
+    ok !@set.has(o2)
+    ok @set.has(o3)
+    equal listen.callCount, 2
+    ok !addSpy.called
+
+
+  test "addAndRemove adds and removes elements from the set", ->
+    itemsToAdd = [o1 = {}, o2 = {}, o3 = {}]
+    @set.add(itemsToAdd...)
+
+    @set.on 'itemsWereAdded', addSpy = createSpy()
+    @set.on 'itemsWereAdded', changeSpy = createSpy()
+    @set.on 'itemsWereRemoved', removeSpy = createSpy()
+
+    change = @set.addAndRemove([o4 = {}], [o1, o2])
+
+    deepEqual(change, {added: [o4], removed: [o1, o2]})
+
+    equal @set.length, 2
+    ok !@set.has(o1)
+    ok !@set.has(o2)
+    ok @set.has(o3)
+    ok @set.has(o4)
+    equal addSpy.callCount, 1
+    equal changeSpy.callCount, 1
+    equal removeSpy.callCount, 1
+
+
   test "find(f) returns the first item for which f is true", 1, ->
     @set.add(1, 2, 3, 5)
     result = @set.find (n) -> n % 2 is 0
