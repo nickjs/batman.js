@@ -4,13 +4,15 @@ class Batman.DOM.ContextBinding extends Batman.DOM.AbstractAttributeBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
   backWithView: true
 
+  bindingName: 'context'
+
   constructor: ->
     super
 
     contextAttribute = if @attributeName
-      "data-context-#{@attributeName}"
+      "data-#{@bindingName}-#{@attributeName}"
     else
-      'data-context'
+      "data-#{@bindingName}"
 
     @node.removeAttribute(contextAttribute)
     @node.insertBefore(document.createComment("#{contextAttribute}=\"#{@keyPath}\""), @node.firstChild)

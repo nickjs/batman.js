@@ -72,11 +72,10 @@ Batman.DOM.readers =
     {node, view, keyPath} = definition
 
     Batman.DOM.defineView(keyPath, node)
-
     view.on 'ready', -> #FIXME when parseNode goes away this doesn't need to nextTick
       node.parentNode.removeChild(node)
 
-    {skipChildren: true}
+    return {skipChildren: true}
 
   contentfor: (definition) ->
     {node, swapMethod, keyPath, view} = definition

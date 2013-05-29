@@ -15,8 +15,7 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     else
       @view = new viewClassOrInstance
 
-    options = @view.constructor._batman.get('options')
-    if options
+    if options = @view.constructor._batman.get('options')
       for option in options when keyPath = @node.getAttribute("data-view-#{option}")
         definition = new Batman.DOM.ReaderBindingDefinition(@node, keyPath, @superview)
         new Batman.DOM.ViewArgumentBinding(definition, option)

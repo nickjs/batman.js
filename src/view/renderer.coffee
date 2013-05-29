@@ -8,8 +8,8 @@ class Batman.Renderer extends Batman.Object
     super()
     @parseTree(@node)
 
-  bindingSortOrder = ["foreach", "renderif", "view", "formfor", "context", "bind", "source", "target"]
-  viewBackedBindings = ["foreach", "renderif", "view", "formfor", "context"]
+  bindingSortOrder = ["defineview", "foreach", "renderif", "view", "formfor", "context", "bind", "source", "target"]
+  viewBackedBindings = ["foreach", "renderif", "formfor", "context"]
 
   bindingSortPositions = {}
   bindingSortPositions[name] = pos for name, pos in bindingSortOrder
@@ -60,6 +60,9 @@ class Batman.Renderer extends Batman.Object
           if reader = Batman.DOM.readers[name]
             bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @view)
             reader(bindingDefinition)
+
+        if binding?.skipChildren
+          return true
 
         if binding?.backWithView
           isViewBacked = true

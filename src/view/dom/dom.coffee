@@ -48,7 +48,7 @@ Batman.DOM =
 
   partial: (node, path, superview) ->
     view = new Batman.View(source: path)
-    yieldName = "<partial-#{view._batmanID()}-#{path}>"
+    yieldName = "<partial-view-#{view._batmanID()}-#{path}>"
 
     superview.declareYieldNode(yieldName, node)
     superview.subviews.set(yieldName, view)
