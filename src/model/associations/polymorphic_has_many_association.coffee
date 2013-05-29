@@ -70,19 +70,19 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
         record = relatedModel.get('loaded.indexedByUnique.id').get(id)
 
         if record?
-          record._withoutDirtyTracking -> @fromJSON jsonObject
+          record._withoutDirtyTracking -> @fromJSON(jsonObject)
           recordsToAdd.push(record)
         else
           if newChildren.length > 0
             savedRecord = newChildren.shift()
-            savedRecord._withoutDirtyTracking -> @fromJSON jsonObject
+            savedRecord._withoutDirtyTracking -> @fromJSON(jsonObject)
             record = relatedModel._mapIdentity(savedRecord)
           else
             record = relatedModel._makeOrFindRecordFromData(jsonObject)
             recordsToAdd.push(record)
 
         if association.options.inverseOf
-          record.set association.options.inverseOf, parentRecord
+          record.set(association.options.inverseOf, parentRecord)
 
       children.add(recordsToAdd...)
       children.markAsLoaded()

@@ -63,7 +63,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
             recordsToMap.push(record) if id?
             recordsToAdd.push(record)
 
-        record._withoutDirtyTracking -> @fromJSON jsonObject
+        record._withoutDirtyTracking -> @fromJSON(jsonObject)
 
         if association.options.inverseOf
           record.set(association.options.inverseOf, parentRecord)
