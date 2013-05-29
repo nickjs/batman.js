@@ -1,9 +1,9 @@
 class Batman.IteratorView extends Batman.View
   loadView: ->
-    @prototypeNode.removeAttribute("data-foreach-#{@iteratorName}")
     return document.createComment("iterator-#{@iteratorName}=#{@iteratorPath}")
 
   addToDOM: ->
+    @prototypeNode.removeAttribute("data-foreach-#{@iteratorName}")
     @prototypeNode.parentNode.insertBefore(@get('node'), @prototypeNode)
 
   beginAppendItems: ->

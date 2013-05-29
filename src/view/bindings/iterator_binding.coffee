@@ -4,6 +4,7 @@
 class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
   backWithView: Batman.IteratorView
+  skipChildren: true
 
   constructor: (definition) ->
     prototypeNode = definition.node
