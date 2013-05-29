@@ -12,13 +12,13 @@ class Batman.DOM.ShowHideBinding extends Batman.DOM.AbstractBinding
     super
 
   dataChange: (value) ->
-    view = Batman._data @node, 'view'
+    view = Batman._data(@node, 'view') || Batman._data(@node, 'backingView')
 
     if !!value is not @invert
-      view?.fire 'beforeAppear', @node
+      view?.fire('viewWillShow')
       @node.style.display = @originalDisplay
-      view?.fire 'appear', @node
+      view?.fire('viewDidShow')
     else
-      view?.fire 'beforeDisappear', @node
+      view?.fire('viewWillHide')
       Batman.DOM.setStyleProperty(@node, 'display', 'none', 'important')
-      view?.fire 'disappear', @node
+      view?.fire('viewDidHide')

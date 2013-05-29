@@ -7,7 +7,7 @@ class Batman.DOM.ValueBinding extends Batman.DOM.AbstractBinding
 
   nodeChange: (node, context) ->
     if @isTwoWay()
-      @set 'filteredValue', @node.value
+      @set('filteredValue', @node.value)
 
   dataChange: (value, node) ->
-    Batman.DOM.valueForNode @node, value, @escapeValue
+    Batman.DOM.valueForNode(@node, value, @escapeValue)
