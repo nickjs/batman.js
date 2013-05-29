@@ -93,13 +93,6 @@ basicSetTestSuite = ->
     equal listen.callCount, 1
     ok !addSpy.called
 
-  test "addAndRemove cleans up event prevention", ->
-    @set.addAndRemove([], [])
-
-    ok !@set.isPrevented('itemsWereAdded')
-    ok !@set.isPrevented('itemsWereRemoved')
-    ok !@set.isPrevented('change')
-
   test "addAndRemove adds and removes elements from the set", ->
     itemsToAdd = [o1 = {}, o2 = {}, o3 = {}]
     @set.add(itemsToAdd...)
