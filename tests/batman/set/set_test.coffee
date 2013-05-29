@@ -60,7 +60,7 @@ basicSetTestSuite = ->
     equal @set.length, 1
 
   test "addAndRemove only adds item to the set if no items to remove are passed", ->
-    @set.on 'itemsWereAdded', 'change', listen = createSpy()
+    @set.on 'itemsWereAdded', listen = createSpy()
     @set.on 'itemsWereRemoved', removeSpy = createSpy()
 
     itemsToAdd = [o1 = {}, o2 = {}, o3 = {}]
@@ -72,7 +72,7 @@ basicSetTestSuite = ->
     ok @set.has(o1)
     ok @set.has(o2)
     ok @set.has(o3)
-    equal listen.callCount, 2
+    equal listen.callCount, 1
     ok !removeSpy.called
 
   test "addAndRemove only removes item to the set if no items to add are passed", ->
@@ -80,7 +80,7 @@ basicSetTestSuite = ->
     @set.add(itemsToAdd...)
 
     @set.on 'itemsWereAdded', addSpy = createSpy()
-    @set.on 'itemsWereRemoved', 'change', listen = createSpy()
+    @set.on 'itemsWereRemoved', listen = createSpy()
 
     change = @set.addAndRemove([], [o1, o2])
 
@@ -90,7 +90,7 @@ basicSetTestSuite = ->
     ok !@set.has(o1)
     ok !@set.has(o2)
     ok @set.has(o3)
-    equal listen.callCount, 2
+    equal listen.callCount, 1
     ok !addSpy.called
 
   test "addAndRemove cleans up event prevention", ->
