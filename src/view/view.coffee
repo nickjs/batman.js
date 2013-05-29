@@ -187,7 +187,7 @@ class Batman.View extends Batman.Object
 
 Batman.container.$context ?= (node) ->
   while node
-    return view if view = Batman._data(node, 'view')
+    return view if view = (Batman._data(node, 'backingView') || Batman._data(node, 'view'))
     node = node.parentNode
 
 Batman.container.$subviews ?= (view = Batman.currentApp.layout) ->
