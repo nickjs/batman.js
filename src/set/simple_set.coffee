@@ -32,16 +32,16 @@ class Batman.SimpleSet
       @fire('itemsWereRemoved', removedItems...)
     removedItems
   addAndRemove: (itemsToAdd, itemsToRemove) ->
-    @prevent?('change')
-    @prevent?('itemsWereRemoved')
-    @prevent?('itemsWereAdded')
+    @prevent?('change', 'itemsWereRemoved', 'itemsWereAdded')
     try
       itemsAdded = @add((itemsToAdd || [])...)
       itemsRemoved = @remove((itemsToRemove || [])...)
     finally
-      @allowAndFire?('change', this, this) if itemsAdded.length > 0 || itemsRemoved.length > 0
-      @allowAndFire?('itemsWereAdded', itemsAdded) if itemsAdded.length > 0
-      @allowAndFire?('itemsWereRemoved', itemsRemoved) if itemsRemoved.length > 0
+      @allow?('change', 'itemsWereRemoved', 'itemsWereAdded')
+
+      @fire?('change', this, this) if itemsAdded.length > 0 || itemsRemoved.length > 0
+      @fire?('itemsWereAdded', itemsAdded) if itemsAdded.length > 0
+      @fire?('itemsWereRemoved', itemsRemoved) if itemsRemoved.length > 0
     {added: itemsAdded, removed: itemsRemoved}
   find: (f) ->
     for item in @_storage
