@@ -1,31 +1,19 @@
-#= require ../view
-#= require ./abstract_binding
+#= require ./abstract_attribute_binding
 
-class Batman.DOM.ContextBinding extends Batman.DOM.AbstractBinding
+class Batman.DOM.ContextBinding extends Batman.DOM.AbstractAttributeBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
-  skipChildren: true
+  backWithView: true
 
-  constructor: (definition) ->
-    {node, keyPath, view: superview, attr: @proxyName} = definition
-    return {} if Batman._data(node, 'view') instanceof Batman.ProxyView
-
-    @proxyView = new Batman.ProxyView(displayName: keyPath, proxyName: @proxyName, node: node)
-    superview.subviews.set("<context-#{@_batmanID()}-#{keyPath}>", @proxyView)
-
+  constructor: ->
     super
+
+    contextAttribute = if @attributeName
+      "data-context-#{@attributeName}"
+    else
+      'data-context'
+
+    @node.removeAttribute(contextAttribute)
+    @node.insertBefore(document.createComment("#{contextAttribute}=\"#{@keyPath}\""), @node.firstChild)
 
   dataChange: (proxiedObject) ->
-    @proxyView.set(@proxyName || '_proxiedObject', proxiedObject)
-
-class Batman.ProxyView extends Batman.View
-  _proxiedObject: null
-  isProxyView: true
-
-  targetForKeypathBase: (base) ->
-    if not @proxyName and @get('_proxiedObject')
-      if Batman.get(@_proxiedObject, base)?
-        return @_proxiedObject
-
-    super
-
-  addToDOM: ->
+    @backingView.set(@attributeName || 'proxiedObject', proxiedObject)

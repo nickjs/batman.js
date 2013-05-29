@@ -17,6 +17,8 @@ class Batman.View extends Batman.Object
   html: null
   node: null
 
+  bindImmediately: true
+
   isInDOM: false
   isView: true
 
@@ -57,7 +59,7 @@ class Batman.View extends Batman.Object
 
     yieldNode = @_yieldNodes[as] if typeof as is 'string'
     yieldNode ||= @get('node')
-    subview.addToDOM(yieldNode)
+    subview.addToDOM?(yieldNode)
     subview.set('isInDOM', isInDOM)
 
     if isInDOM
@@ -77,7 +79,7 @@ class Batman.View extends Batman.Object
     isInDOM = @get('isInDOM')
     @fire('viewWillDisappear') if isInDOM
 
-    @removeFromDOM()
+    @removeFromDOM?()
     @set('superview', null)
 
     @fire('viewDidDisappear') if isInDOM
@@ -116,13 +118,15 @@ class Batman.View extends Batman.Object
 
     set: (key, node) ->
       @node = node
+      return if not node
+
       Batman._data(node, 'view', this)
       Batman.developer.do =>
         extraInfo = @get('displayName') || @get('source')
         (if node == document then document.body else node).setAttribute?('data-batman-view', @constructor.name + if extraInfo then ": #{extraInfo}" else '')
 
       @initializeYields()
-      @initializeBindings()
+      @initializeBindings() if @bindImmediately
 
       return node
 
@@ -144,15 +148,18 @@ class Batman.View extends Batman.Object
     keypath.split('.')[0].split('|')[0].trim()
 
   targetForKeypathBase: (base) ->
-    lookupNode = this
+    proxiedObject = @proxiedObject
+    lookupNode = proxiedObject || this
 
     while lookupNode
       if Batman.get(lookupNode, base)?
         return lookupNode
 
-      controller = lookupNode.controller if lookupNode.isView && lookupNode.controller
+      controller = lookupNode.controller if lookupNode.isView and lookupNode.controller
 
-      if lookupNode.isView and lookupNode.superview
+      if proxiedObject and lookupNode == proxiedObject
+        lookupNode = this
+      else if lookupNode.isView and lookupNode.superview
         lookupNode = lookupNode.superview
       else if controller
         lookupNode = controller

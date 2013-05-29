@@ -1,5 +1,6 @@
 #= require ../dom/dom
 #= require ../../object
+#= require ../view
 
 # Bindings are shortlived objects which manage the observation of any keypaths a `data` attribute depends on.
 # Bindings parse any keypaths which are filtered and use an accessor to apply the filters, and thus enjoy
@@ -99,8 +100,12 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     @onlyObserve = definition.onlyObserve if definition.onlyObserve
     @skipParseFilter = definition.skipParseFilter if definition.skipParseFilter?
 
+
     # Pull out the `@key` and filter from the `@keyPath`.
     @parseFilter() if not @skipParseFilter
+
+    viewClass = @backWithView if typeof @backWithView is 'function'
+    @setupBackingView(viewClass, definition.viewOptions) if @backWithView
 
     # Observe the node and the data.
     @bind() if @bindImmediately
@@ -204,3 +209,23 @@ class Batman.DOM.AbstractBinding extends Batman.Object
         bool || string || object
       start + replacement
     JSON.parse("[#{segment}]")
+
+  setupBackingView: (viewClass, viewOptions) ->
+    return @backingView if @backingView
+    return @backingView if @node and @backingView = Batman._data(@node, 'backingView')
+
+    @superview = @view
+
+    viewOptions ||= {}
+    viewOptions.node ?= @node
+
+    @backingView = new (viewClass || Batman.BackingView)(viewOptions)
+    @superview.subviews.set("<backing-view-#{@_batmanID()}>", @backingView)
+    Batman._data(@node, 'backingView', @backingView) if @node
+
+    return @backingView
+
+class Batman.BackingView extends Batman.View
+  bindImmediately: false
+  addToDOM: null
+  removeFromDOM: null

@@ -9,6 +9,7 @@ class Batman.Renderer extends Batman.Object
     @parseTree(@node)
 
   bindingSortOrder = ["foreach", "renderif", "view", "formfor", "context", "bind", "source", "target"]
+  viewBackedBindings = ["foreach", "renderif", "view", "formfor", "context"]
 
   bindingSortPositions = {}
   bindingSortPositions[name] = pos for name, pos in bindingSortOrder
@@ -35,7 +36,7 @@ class Batman.Renderer extends Batman.Object
       root = @nextNode(root, skipChildren)
 
   parseNode: (node) ->
-    skipChildren = false
+    isViewBacked = false
     if node.getAttribute and node.attributes
       bindings = []
       for attribute in node.attributes
@@ -49,6 +50,8 @@ class Batman.Renderer extends Batman.Object
           [name, undefined, attribute.value]
 
       for [name, attr, value] in bindings.sort(@_sortBindings)
+        continue if isViewBacked and viewBackedBindings.indexOf(name) == -1
+
         binding = if attr
           if reader = Batman.DOM.attrReaders[name]
             bindingDefinition = new Batman.DOM.AttrReaderBindingDefinition(node, attr, value, @view)
@@ -58,10 +61,13 @@ class Batman.Renderer extends Batman.Object
             bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @view)
             reader(bindingDefinition)
 
-        if binding?.skipChildren
-          skipChildren = true
-          break
-    return skipChildren
+        if binding?.backWithView
+          isViewBacked = true
+
+    if isViewBacked and backingView = Batman._data(node, 'backingView')
+      backingView.initializeBindings()
+
+    return isViewBacked
 
   nextNode: (node, skipChildren) ->
     if not skipChildren
