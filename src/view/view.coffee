@@ -92,7 +92,7 @@ class Batman.View extends Batman.Object
     Batman.DOM.removeNode(@get('node'))
 
   loadView: ->
-    if html = @get('html')
+    if (html = @get('html'))?
       node = document.createElement('div')
       Batman.DOM.setInnerHTML(node, html)
       return node
