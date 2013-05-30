@@ -64,7 +64,7 @@ Batman.DOM.events =
 
     node
 
-  other: (node, eventName, callback, context) ->
+  other: (node, eventName, callback, view) ->
     Batman.DOM.addEventListener(node, eventName, (args...) -> callback node, args..., view)
 
 Batman.DOM.eventIsAllowed = (eventName, event) ->
