@@ -14,7 +14,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     super
 
     @superview.on 'ready', -> # FIXME When parseNode goes away this will not need to nextTick
-      prototypeNode.parentNode.removeChild(prototypeNode)
+      prototypeNode.parentNode?.removeChild(prototypeNode)
 
   dataChange: (collection) ->
     if collection?
