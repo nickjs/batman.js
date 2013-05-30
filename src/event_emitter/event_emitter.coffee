@@ -42,13 +42,11 @@ Batman.EventEmitter =
       result = wrappedFunction.apply(this, arguments)
       @event('change', false)?.fire(this, this)
       result
-  prevent: (keys...) ->
-    for key in keys
-      @event(key).prevent()
+  prevent: (key) ->
+    @event(key).prevent()
     this
-  allow: (keys...) ->
-    for key in keys
-      @event(key).allow()
+  allow: (key) ->
+    @event(key).allow()
     this
   isPrevented: (key) ->
     @event(key, false)?.isPrevented()
