@@ -12,25 +12,41 @@ class Batman.SimpleSet
 
   has: (item) -> !!(~@_indexOfItem(item))
   add: (items...) ->
+    addedItems = @_add(items...)
+    if @fire and addedItems.length isnt 0
+      @fire('change', this, this)
+      @fire('itemsWereAdded', addedItems...)
+    addedItems
+  _add: (items...) ->
     addedItems = []
     for item in items when !~@_indexOfItem(item)
       @_storage.push item
       addedItems.push item
     @length = @_storage.length
-    if @fire and addedItems.length isnt 0
-      @fire('change', this, this)
-      @fire('itemsWereAdded', addedItems...)
     addedItems
   remove: (items...) ->
+    removedItems = @_remove(items...)
+    if @fire and removedItems.length isnt 0
+      @fire('change', this, this)
+      @fire('itemsWereRemoved', removedItems...)
+    removedItems
+  _remove: (items...) ->
     removedItems = []
     for item in items when ~(index = @_indexOfItem(item))
       @_storage.splice(index, 1)
       removedItems.push item
     @length = @_storage.length
-    if @fire and removedItems.length isnt 0
-      @fire('change', this, this)
-      @fire('itemsWereRemoved', removedItems...)
     removedItems
+  addAndRemove: (itemsToAdd, itemsToRemove) ->
+    itemsAdded = @_add((itemsToAdd || [])...)
+    itemsRemoved = @_remove((itemsToRemove || [])...)
+
+    if @fire
+      @fire('change', this, this) if itemsAdded.length > 0 || itemsRemoved.length > 0
+      @fire('itemsWereAdded', itemsAdded...) if itemsAdded.length > 0
+      @fire('itemsWereRemoved', itemsRemoved...) if itemsRemoved.length > 0
+
+    {added: itemsAdded, removed: itemsRemoved}
   find: (f) ->
     for item in @_storage
       return item if f(item)
