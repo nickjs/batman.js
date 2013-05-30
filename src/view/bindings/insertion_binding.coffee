@@ -5,26 +5,30 @@ class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
 
   constructor: (definition) ->
     {@invert} = definition
-    @placeholderNode = document.createComment "detached node #{@get('_batmanID')}"
-
     super
 
-    Batman.DOM.onParseExit @node, =>
+    @placeholderNode = document.createComment("insertif=\"#{@keyPath}\"")
+    @view.on 'ready', =>
       @bind()
-      Batman.DOM.trackBinding(@, @placeholderNode) if @placeholderNode?
 
   dataChange: (value) ->
+    view = Batman._data(@node, 'view') || Batman._data(@node, 'backingView')
     parentNode = @placeholderNode.parentNode || @node.parentNode
-    if !!value is not @invert
+
+    if !!value is !@invert
       # Show
-      if !@node.parentNode?
-        Batman.DOM.insertBefore parentNode, @node, @placeholderNode
-        parentNode.removeChild @placeholderNode
+      view?.fire('viewWillShow')
+      if not @node.parentNode?
+        parentNode.insertBefore(@node, @placeholderNode)
+        Batman.DOM.removeNode(@placeholderNode)
+      view?.fire('viewDidShow')
     else
       # Hide
+      view?.fire('viewWillHide')
       if @node.parentNode?
-        parentNode.insertBefore @placeholderNode, @node
-        Batman.DOM.removeNode @node
+        parentNode.insertBefore(@placeholderNode, @node)
+        Batman.DOM.removeNode(@node)
+      view?.fire('viewDidHide')
 
   die: ->
     return if @dead
