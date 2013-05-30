@@ -184,6 +184,13 @@ class Batman.View extends Batman.Object
       return superview if yieldName of superview._yieldNodes
       superview = superview.superview
 
+  die: ->
+    @fire('destroy', @node)
+    @forget()
+    @_batman.properties?.forEach (key, property) -> property.die()
+    @subview.forEach (name, subview) -> subview.die()
+    @_removeFromSuperview() if @superview
+
 
 Batman.container.$context ?= (node) ->
   while node
