@@ -6,10 +6,10 @@ class Batman.PolymorphicAssociationSetIndex extends Batman.SetIndex
 
   _resultSetForKey: (key) -> @association.setForKey(key)
 
-  _addItem: (item) ->
-    return unless @association.modelType() is item.get(@association.foreignTypeKey)
-    super
+  _addItemsToKey: (key, items) ->
+    filteredItems = (item for item in items when @association.modelType() is item.get(@association.foreignTypeKey))
+    super(key, filteredItems)
 
-  _removeItem: (item) ->
-    return unless @association.modelType() is item.get(@association.foreignTypeKey)
-    super
+  _removeItemsFromKey: (key, items) ->
+    filteredItems = (item for item in items when @association.modelType() is item.get(@association.foreignTypeKey))
+    super(key, filteredItems)
