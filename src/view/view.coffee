@@ -131,7 +131,7 @@ class Batman.View extends Batman.Object
       return node
 
   initializeYields: ->
-    return if @node.nodeType is Node.COMMENT_NODE
+    return if @node.nodeType is @node.COMMENT_NODE
 
     yieldNodes = Batman.DOM.querySelectorAll(@node, '[data-yield]')
     for node in yieldNodes
