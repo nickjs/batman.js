@@ -1,6 +1,6 @@
 glob = require 'glob'
 path = require 'path'
-coffee = require 'coffee-script'
+coffee = require 'coffee-script-mapped'
 # Load test runner
 qqunit = require 'qqunit'
 
@@ -20,10 +20,6 @@ qqunit.Environment.jsdom.jQueryify window, path.join(__dirname, 'lib', 'jquery.j
   catch e
     console.error e.stack
     process.exit 1
-
-  process.on 'uncaughtException', (err) ->
-    console.log '\n\nUncaught Exception', err, '\n'
-    console.log err.stack, '\n'
 
   console.log "Running Batman test suite. #{tests.length} files required."
   qqunit.Runner.run tests, (stats) ->

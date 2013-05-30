@@ -6,7 +6,7 @@
 
   path = require('path');
 
-  coffee = require('coffee-script');
+  coffee = require('coffee-script-mapped');
 
   qqunit = require('qqunit');
 
