@@ -20,7 +20,7 @@ Watson.benchmark 'IteratorBinding performance', (error, suite) ->
     context = Batman.RenderContext.base.descend {items: getSet(count)}
 
   setNode    = (source) ->
-    Batman.DOM.destroyNode(node) if node
+    Batman.DOM.removeNode(node) if node
     node = document.createElement("div")
     node.innerHTML = source
     root.appendChild(node)

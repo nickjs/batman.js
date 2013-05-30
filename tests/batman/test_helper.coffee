@@ -18,8 +18,8 @@ globalPreparation = ->
   Batman.config.minificationErrors = false
 
 QUnit.moduleStart ->
-  globalPreparation?();
-  globalPreparation = undefined;
+  globalPreparation?()
+  globalPreparation = undefined
 
 # set Batman.config:
 QUnit.testStart ->

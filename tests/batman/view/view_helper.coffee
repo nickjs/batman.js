@@ -97,30 +97,24 @@ exports.splitAndSortedEquals = (a, b, split = ',') ->
 # be async and rely on the view.ready one shot event for running assertions.
 outstandingNodes = []
 
-exports.render = (source, jqueryize = true, context = {}, callback = ->) ->
-  node = nodeReference = document.createElement 'div'
-  node.innerHTML = source
+exports.render = (html, jqueryize = true, context = {}, callback = ->) ->
   unless !!jqueryize == jqueryize
     [context, callback] = [jqueryize, context]
   else
     if typeof context == 'function'
       callback = context
 
-  context = if context.get && context.set then context else Batman(context)
-  view = new Batman.View
-    context: context
-    node: node
+  context.html = html
+  view = new Batman.View(context)
 
   view.on 'ready', ->
-    outstandingNodes.push view.get('node')
+    outstandingNodes.push(view.get('node'))
     node = if jqueryize then $(view.get('node')).children() else view.get('node')
-    Batman.DOM.willInsertNode(view.get('node'))
-    Batman.DOM.didInsertNode(view.get('node'))
     callback(node, view)
 
   view.get('node')
 
 # Destroy outstanding nodes
 QUnit.testDone ->
-  Batman.DOM.destroyNode(node) for node in outstandingNodes
+  Batman.DOM.removeNode(node) for node in outstandingNodes
   outstandingNodes = []

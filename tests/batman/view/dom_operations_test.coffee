@@ -35,28 +35,6 @@ asyncTest "removeNode fires beforeDisappear and disappear events on views about 
     Batman.DOM.removeNode(node.childNodes[0])
     QUnit.start()
 
-asyncTest "destroyNode fires beforeDisappear, beforeDestroy, disappear, and destroy events on views about to be removed", 8, ->
-  helpers.render @simpleSource, false, @context, (node) =>
-    @context.OuterView.instance.on 'beforeDisappear', -> ok true
-    @context.OuterView.instance.on 'beforeDestroy',   -> ok true
-    @context.OuterView.instance.on 'disappear',       -> ok !@get('node').parentNode
-    @context.OuterView.instance.on 'destroy',         -> ok !@get('node').parentNode
-    @context.InnerView.instance.on 'beforeDisappear', -> ok true
-    @context.InnerView.instance.on 'beforeDestroy',   -> ok true
-    @context.InnerView.instance.on 'disappear',       -> ok true
-    @context.InnerView.instance.on 'destroy',         -> ok true
-
-    Batman.DOM.destroyNode(node.childNodes[0])
-    QUnit.start()
-
-asyncTest "destroyNode fires calls die on views about to be removed", 1, ->
-  helpers.render @simpleSource, false, @context, (node) =>
-    view = Batman._data node, 'view'
-    view.die = spy = createSpy()
-    Batman.DOM.destroyNode(node)
-    ok spy.called
-    QUnit.start()
-
 asyncTest "appendChild fires beforeAppear and appear events on views being added", 4, ->
   helpers.render @simpleSource, false, @context, (node) =>
     newElement = $('<div/>')[0]
@@ -81,86 +59,6 @@ asyncTest "insertBefore fires beforeAppear and appear events on views being adde
     Batman.DOM.insertBefore newElement, @context.OuterView.instance.get('node')
     QUnit.start()
 
-asyncTest "removeOrDestroyNode removes but does not destroy cached views", 1, ->
-  @context.OuterView::cached = true
-  failNow = true
-  helpers.render @simpleSource, false, @context, (node) =>
-    ok @context.OuterView.instance.get('cached')
-    @context.OuterView.instance.on 'destroy', -> ok false if failNow
-    Batman.DOM.removeOrDestroyNode(node.childNodes[0])
-    failNow = false
-    QUnit.start()
-
-asyncTest "removeOrDestroyNode destroys non-cached views", 2, ->
-  helpers.render @simpleSource, false, @context, (node) =>
-    @context.OuterView.instance.on 'destroy', -> ok true
-    @context.InnerView.instance.on 'destroy', -> ok true
-    Batman.DOM.removeOrDestroyNode(node.childNodes[0])
-    QUnit.start()
-
-asyncTest "removeOrDestroyNode removes yielded nodes when their parents are removed (because they are cached)", 1, ->
-  source = """
-    <div class="foo" data-yield="foo"></div>
-    <div class="cached" data-view="CachedView">
-      <div data-contentfor="foo">
-        <div data-view="InnerView">cached content</div>
-      </div>
-    </div>
-  """
-
-  @context.CachedView = class CachedView extends @TestView
-    cached: true
-
-  failNow = true
-  helpers.render source, false, @context, (node) =>
-    @context.CachedView.instance.on 'destroy', -> ok false if failNow
-    @context.InnerView.instance.on  'destroy', -> ok false if failNow
-    Batman.DOM.removeOrDestroyNode($('.cached', node)[0])
-
-    equal $('.foo', node).html(), ""
-    failNow = false
-    QUnit.start()
-
-asyncTest "removeOrDestroyNode removes yielded nodes when the yield is cleared if the yielded node's parent is cached", 1, ->
-  source = """
-    <div class="foo" data-yield="foo"></div>
-    <div class="cached" data-view="CachedView">
-      <div data-contentfor="foo">
-        <div data-view="InnerView">cached content</div>
-      </div>
-    </div>
-  """
-  @context.CachedView = class CachedView extends @TestView
-    cached: true
-
-  failNow = true
-  helpers.render source, false, @context, (node) =>
-    @context.CachedView.instance.on 'destroy', -> ok false if failNow
-    @context.InnerView.instance.on  'destroy', -> ok false if failNow
-    @context.InnerView.instance.on  'disappear', -> ok true
-    Batman.DOM.Yield.withName('foo').clear()
-    failNow = false
-    QUnit.start()
-
-asyncTest "removeOrDestroyNode destroys yielded nodes when the yield is cleared if the yielded node's parent is not cached", 1, ->
-  source = """
-    <div class="bar" data-yield="bar"></div>
-    <div class="notcached" data-view="OuterView">
-      <div data-contentfor="bar">
-        <div data-view="InnerView">
-          uncached content
-        </div>
-      </div>
-    </div>
-  """
-  failNow = true
-  helpers.render source, false, @context, (node) =>
-    @context.InnerView.instance.on  'destroy', -> ok true
-    @context.OuterView.instance.on  'destroy', -> ok false if failNow
-    Batman.DOM.Yield.withName('bar').clear()
-    failNow = false
-    QUnit.start()
-
 test "addEventListener and removeEventListener store and remove callbacks using Batman.data", ->
   div = document.createElement 'div'
   f = ->
@@ -177,7 +75,7 @@ test "textContent should return textContent", ->
   node = $("<a>test</a>")[0]
   equal Batman.DOM.textContent(node), 'test'
 
-asyncTest "destroyNode: destroys yielded childNodes when their parents are destroyed", 2, ->
+asyncTest "removeNode: destroys yielded childNodes when their parents are destroyed", 2, ->
   source = """
     <div class="bar" data-yield="bar"></div>
     <div class="notcached" data-view="OuterView">
@@ -191,13 +89,13 @@ asyncTest "destroyNode: destroys yielded childNodes when their parents are destr
   helpers.render source, false, @context, (node) =>
     @context.OuterView.instance.on 'destroy', -> ok true
     @context.InnerView.instance.on  'destroy', -> ok true
-    Batman.DOM.destroyNode($('.notcached', node)[0])
+    Batman.DOM.removeNode($('.notcached', node)[0])
 
     equal $('.bar', node).html(), ""
 
     QUnit.start()
 
-asyncTest "destroyNode: destroys nodes inside a yield when the yield is destroyed", 1, ->
+asyncTest "removeNode: destroys nodes inside a yield when the yield is destroyed", 1, ->
   source = """
     <div class="bar" data-yield="bar"></div>
     <div class="notcached" data-view="OuterView">
@@ -211,10 +109,10 @@ asyncTest "destroyNode: destroys nodes inside a yield when the yield is destroye
 
   helpers.render source, false, @context, (node) =>
     @context.InnerView.instance.on 'destroy', -> ok true
-    Batman.DOM.destroyNode($('.bar', node)[0])
+    Batman.DOM.removeNode($('.bar', node)[0])
     QUnit.start()
 
-asyncTest "destroyNode: bindings are kept in Batman.data and destroyed when the node is removed", 6, ->
+asyncTest "removeNode: bindings are kept in Batman.data and destroyed when the node is removed", 6, ->
   context = new Batman.Object bar: true
   context.accessor 'foo', (spy = createSpy -> @get('bar'))
   helpers.render '<div data-addclass-foo="foo"><div data-addclass-foo="foo"></div></div>', context, (node) ->
@@ -226,14 +124,14 @@ asyncTest "destroyNode: bindings are kept in Batman.data and destroyed when the 
       bindings = Batman._data node, 'bindings'
       ok bindings.length > 0
 
-      Batman.DOM.destroyNode node
+      Batman.DOM.removeNode node
       deepEqual Batman._data(node), {}
 
     context.set('bar', false)
     equal spy.callCount, 1
     QUnit.start()
 
-asyncTest "destroyNode: iterators are kept in Batman.data and destroyed when the parent node is removed", 5, ->
+asyncTest "removeNode: iterators are kept in Batman.data and destroyed when the parent node is removed", 5, ->
   context = new Batman.Object bar: 'baz'
   set = null
   context.accessor 'foo', (setSpy = createSpy -> set = new Batman.Set @get('bar'), 'qux')
@@ -243,7 +141,7 @@ asyncTest "destroyNode: iterators are kept in Batman.data and destroyed when the
     parent = node[0]
     toArraySpy = spyOn(set, 'toArray')
 
-    Batman.DOM.destroyNode(parent)
+    Batman.DOM.removeNode(parent)
     deepEqual Batman._data(parent), {}
 
     context.set('bar', false)
@@ -254,7 +152,7 @@ asyncTest "destroyNode: iterators are kept in Batman.data and destroyed when the
     equal toArraySpy.callCount, 0
     QUnit.start()
 
-asyncTest "destroyNode: Batman.DOM.Style objects are kept in Batman.data and destroyed when their node is removed", ->
+asyncTest "removeNode: Batman.DOM.Style objects are kept in Batman.data and destroyed when their node is removed", ->
   context = Batman
     styles: new Batman.Hash(color: 'green')
 
@@ -266,7 +164,7 @@ asyncTest "destroyNode: Batman.DOM.Style objects are kept in Batman.data and des
     node = node[0]
     itemsAddedSpy = spyOn(context.get('styles'), 'itemsWereAdded')
 
-    Batman.DOM.destroyNode(node)
+    Batman.DOM.removeNode(node)
     deepEqual Batman._data(node), {}
 
     context.set('styles', false)
@@ -277,7 +175,7 @@ asyncTest "destroyNode: Batman.DOM.Style objects are kept in Batman.data and des
     equal itemsAddedSpy.callCount, 0
     QUnit.start()
 
-asyncTest "destroyNode: listeners are kept in Batman.data and destroyed when the node is removed", 8, ->
+asyncTest "removeNode: listeners are kept in Batman.data and destroyed when the node is removed", 8, ->
   context = new Batman.Object foo: ->
 
   helpers.render '<div data-event-click="foo"><div data-event-click="foo"></div></div>', context, (node) ->
@@ -295,7 +193,7 @@ asyncTest "destroyNode: listeners are kept in Batman.data and destroyed when the
         n.detachEvent = ->
         spy = spyOn n, 'detachEvent'
 
-      Batman.DOM.destroyNode n
+      Batman.DOM.removeNode n
 
       ok spy.called
       deepEqual Batman.data(n), {}

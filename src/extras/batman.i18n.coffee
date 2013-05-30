@@ -55,4 +55,4 @@ Batman.Filters.t = Batman.Filters.translate = Batman.Filters.interpolate
 translationsAlias = Batman()
 translationsAlias.accessor 't', -> Batman.I18N.get('translations')
 
-Batman.RenderContext.base = Batman.RenderContext.base.descend(translationsAlias)
+# Batman.RenderContext.base = Batman.RenderContext.base.descend(translationsAlias)
