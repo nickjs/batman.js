@@ -26,8 +26,6 @@ class Batman.App extends Batman.Object
   @classAccessor 'dispatcher', -> new Batman.Dispatcher(@, @get('routeMap'))
   @classAccessor 'controllers', -> @get('dispatcher.controllers')
 
-  @classAccessor '_renderContext', -> Batman.RenderContext.base.descend(@)
-
   # Layout is the base view that other views can be yielded into. The
   # default behavior is that when `app.run()` is called, a new view will
   # be created for the layout using the `document` node as its content.
