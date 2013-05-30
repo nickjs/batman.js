@@ -9,25 +9,26 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     super
 
   dataChange: (viewClassOrInstance) ->
-    return unless viewClassOrInstance?
-    if viewClassOrInstance.isView
-      @view = viewClassOrInstance
-    else
-      @view = new viewClassOrInstance
+    @viewInstance?.removeFromSuperview()
 
-    if options = @view.constructor._batman.get('options')
+    return if not viewClassOrInstance
+    if viewClassOrInstance.isView
+      @viewInstance = viewClassOrInstance
+    else
+      @viewInstance = new viewClassOrInstance
+
+    if options = @viewInstance.constructor._batman.get('options')
       for option in options when keyPath = @node.getAttribute("data-view-#{option.toLowerCase()}")
         definition = new Batman.DOM.ReaderBindingDefinition(@node, keyPath, @superview)
-        new Batman.DOM.ViewArgumentBinding(definition, option, @view)
+        new Batman.DOM.ViewArgumentBinding(definition, option, @viewInstance)
 
-    @yieldName ||= "<#{@view.constructor.name || 'UnknownView'}-#{@_batmanID()}>"
-    @superview.declareYieldNode(@yieldName, @node)
-    @superview.subviews.set(@yieldName, @view)
+    @viewInstance.set('parentNode', @node)
+    @superview.subviews.add(@viewInstance)
 
   die: ->
-    @superview.unset(@yieldName)
+    @viewInstance.removeFromSuperview()
     @superview = null
-    @view = null
+    @viewInstance = null
     super
 
 class Batman.DOM.ViewArgumentBinding extends Batman.DOM.AbstractBinding

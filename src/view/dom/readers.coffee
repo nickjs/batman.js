@@ -66,25 +66,35 @@ Batman.DOM.readers =
     new Batman.DOM.ViewBinding(definition)
 
   partial: (definition) ->
-    Batman.DOM.partial(definition.node, definition.keyPath, definition.view)
+    {node, keyPath, view} = definition
+
+    partialView = new Batman.View(source: keyPath, parentNode: node)
+
+    skipChildren: true
+    ready: ->
+      view.subviews.add(partialView)
 
   defineview: (definition) ->
     {node, view, keyPath} = definition
 
-    Batman.DOM.defineView(keyPath, node)
-    view.on 'ready', -> #FIXME when parseNode goes away this doesn't need to nextTick
-      node.parentNode.removeChild(node)
+    Batman.View.store.set(Batman.Navigator.normalizePath(keyPath), node.innerHTML)
 
-    return {skipChildren: true}
+    skipChildren: true
+    ready: ->
+      node.parentNode.removeChild(node)
 
   contentfor: (definition) ->
-    {node, swapMethod, keyPath, view} = definition
+    {node, keyPath, view} = definition
 
-    contentView = new Batman.View(html: node.innerHTML)
-    parentView = view.firstAncestorWithYieldNamed(keyPath)
-    parentView.subviews.set(keyPath, contentView)
+    contentView = new Batman.View(html: node.innerHTML, contentFor: keyPath)
+    view.subviews.add(contentView)
 
-    view.on 'ready', -> # FIXME when parseNode goes away this doesn't need to nextTick
+    skipChildren: true
+    ready: ->
       node.parentNode.removeChild(node)
 
-    {skipChildren: true}
+  yield: (definition) ->
+    yieldObject = Batman.DOM.Yield.withName(definition.keyPath)
+    yieldObject.set('containerNode', definition.node)
+
+    skipChildren: true

@@ -12,7 +12,7 @@ Batman.extend Batman.DOM,
   setInnerHTML: (node, html) ->
     node?.innerHTML = html
 
-  removeNode: (node) ->
+  destroyNode: (node) ->
     node?.parentNode?.removeChild(node)
 
   textContent: (node) ->

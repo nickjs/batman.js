@@ -1,18 +1,19 @@
 class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
-  isTwoWay: false
-  bindImmediately: false
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
+  bindImmediately: false
 
   constructor: (definition) ->
     {@invert} = definition
     super
 
     @placeholderNode = document.createComment("insertif=\"#{@keyPath}\"")
-    @view.on 'ready', =>
-      @bind()
+
+  ready: ->
+    @bind()
 
   dataChange: (value) ->
-    view = Batman._data(@node, 'view') || Batman._data(@node, 'backingView')
+    debugger
+    view = Batman.View.viewForNode(@node, false)
     parentNode = @placeholderNode.parentNode || @node.parentNode
 
     if !!value is !@invert
@@ -31,14 +32,5 @@ class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
       view?.fire('viewDidHide')
 
   die: ->
-    return if @dead
-    {node, placeholderNode} = this
-    filteredValue = @get('filteredValue')
-
+    @placeholderNode = null
     super
-
-    # If the tree is currently hidden, destroy it too
-    if !!filteredValue is not @invert
-      Batman.DOM.destroyNode(placeholderNode)
-    else
-      Batman.DOM.destroyNode(node)

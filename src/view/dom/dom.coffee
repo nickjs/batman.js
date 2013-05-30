@@ -18,46 +18,6 @@ Batman.DOM =
   scrollIntoView: (elementID) ->
     document.getElementById(elementID)?.scrollIntoView?()
 
-  propagateBindingEvent: (binding, node) ->
-    while (current = (current || node).parentNode)
-      parentBindings = Batman._data current, 'bindings'
-      if parentBindings?
-        for parentBinding in parentBindings
-          parentBinding.childBindingAdded?(binding)
-    return
-
-  propagateBindingEvents: (newNode) ->
-    Batman.DOM.propagateBindingEvents(child) for child in newNode.childNodes
-    if bindings = Batman._data newNode, 'bindings'
-      for binding in bindings
-        Batman.DOM.propagateBindingEvent(binding, newNode)
-    return
-
-  # Adds a binding or binding-like object to the `bindings` set in a node's
-  # data, so that upon node removal we can unset the binding and any other objects
-  # it retains. Also notify any parent bindings of the appearance of new bindings underneath
-  trackBinding: (binding, node) ->
-    if bindings = Batman._data node, 'bindings'
-      bindings.push(binding)
-    else
-      Batman._data node, 'bindings', [binding]
-
-    Batman.DOM.fire('bindingAdded', binding)
-    Batman.DOM.propagateBindingEvent(binding, node)
-    true
-
-  partial: (node, path, superview) ->
-    view = new Batman.View(source: path)
-    yieldName = "<partial-view-#{view._batmanID()}-#{path}>"
-
-    superview.declareYieldNode(yieldName, node)
-    superview.subviews.set(yieldName, view)
-
-  defineView: (name, node) ->
-    contents = node.innerHTML
-    Batman.View.store.set(Batman.Navigator.normalizePath(name), contents)
-    contents
-
   setStyleProperty: (node, property, value, importance) ->
     if node.style.setProperty
       node.style.setProperty(property, value, importance)
@@ -120,27 +80,3 @@ Batman.DOM =
 
   stopPropagation: (e) ->
     if e.stopPropagation then e.stopPropagation() else e.cancelBubble = true
-
-  didDestroyNode: (node) ->
-    view = Batman._data node, 'view'
-    if view
-      view.die()
-
-    # break down all bindings
-    if bindings = Batman._data node, 'bindings'
-      bindings.forEach (binding) -> binding.die()
-
-    # remove all event listeners
-    if listeners = Batman._data node, 'listeners'
-      for eventName, eventListeners of listeners
-        eventListeners.forEach (listener) ->
-          Batman.DOM.removeEventListener node, eventName, listener
-
-    # remove all bindings and other data associated with this node
-    Batman.removeData node, null, null, true  # internal and external data (Batman._data and Batman.data)
-
-    Batman.DOM.didDestroyNode(child) for child in node.childNodes
-    true
-
-Batman.mixin Batman.DOM, Batman.EventEmitter, Batman.Observable
-Batman.DOM.event('bindingAdded')

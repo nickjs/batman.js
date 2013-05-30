@@ -84,11 +84,11 @@ class Batman.App extends Batman.Object
       layoutClass = (class LayoutView extends Batman.View) unless layout == null
 
     if layoutClass
-      layout = @set 'layout', new layoutClass(node: document)
-
-    @layout.fire('viewWillAppear')
-    @layout.set('isInDOM', true)
-    @layout.fire('viewDidAppear')
+      layout = @set('layout', new layoutClass(node: document.documentElement))
+      layout.propagateToSubviews('viewWillAppear')
+      layout.initializeBindings()
+      layout.propagateToSubviews('isInDOM', true)
+      layout.propagateToSubviews('viewDidAppear')
 
     @hasRun = yes
     @fire('run')

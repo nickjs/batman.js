@@ -9,7 +9,13 @@ class Batman.View extends Batman.Object
     Batman.initializeObject(this)
     @_batman.set('options', keys)
 
-  subviews: {}
+  @viewForNode: (node, climbTree) ->
+    climbTree = true if not climbTree?
+    while node
+      return view if view = Batman._data(node, 'view')
+      node = node.parentNode if climbTree
+
+  subviews: []
   superview: null
   controller: null
 
@@ -17,36 +23,25 @@ class Batman.View extends Batman.Object
   html: null
   node: null
 
-  bindImmediately: true
-
+  isBound: false
   isInDOM: false
   isView: true
 
   constructor: ->
-    @subviews = new Batman.Hash
-    @_yieldNodes = {}
+    @subviews = new Batman.Set
 
-    @subviews.on 'itemsWereAdded', (subviewNames, newSubviews) =>
-      @_addSubview(subviewNames[i], subview) for subview, i in newSubviews
+    @subviews.on 'itemsWereAdded', (newSubviews) =>
+      @_addSubview(subview) for subview in newSubviews
       return
 
-    @subviews.on 'itemsWereRemoved', (subviewNames, oldSubviews) =>
+    @subviews.on 'itemsWereRemoved', (oldSubviews) =>
       subview._removeFromSuperview() for subview in oldSubviews
-      return
-
-    @subviews.on 'itemsWereChanged', (subviewNames, newSubviews, oldSubviews) =>
-      for name, i in subviewNames
-        oldSubviews[i]._removeFromSuperview()
-        @_addSubview(name, newSubviews[i])
       return
 
     super
 
-  _addSubview: (as, subview) ->
-    if siblingViews = subview.superview?.subviews
-      for key, value of siblingViews.toObject() when value == subview
-        siblingViews.unset(key)
-        break
+  _addSubview: (subview) ->
+    subview.removeFromSuperview()
 
     subview.set('superview', this)
     subview.fire('viewDidMoveToSuperview')
@@ -54,42 +49,67 @@ class Batman.View extends Batman.Object
     @prevent('childViewsReady')
     subview.once('ready', @_fireChildViewsReady ||= => @allowAndFire('childViewsReady'))
 
-    isInDOM = @get('isInDOM')
-    subview.fire('viewWillAppear') if isInDOM
+    @initializeBindings()
 
-    yieldNode = @_yieldNodes[as] if typeof as is 'string'
-    yieldNode ||= @get('node')
-    subview.addToDOM?(yieldNode)
-    subview.set('isInDOM', isInDOM)
+    if yieldName = subview.contentFor
+      yieldObject = Batman.DOM.Yield.withName(subview.contentFor)
+      yieldObject.set('contentView', subview)
 
-    if isInDOM
-      subview.fire('viewDidAppear')
     else
-      @on('viewWillAppear', subview._fireViewWillAppear ||= -> subview.fire('viewWillAppear'))
-      @on('viewDidAppear', subview._fireViewDidAppear ||= -> subview.fire('viewDidAppear'))
+      parentNode = subview.parentNode
+      parentNode = Batman.DOM.querySelector(@get('node'), parentNode) if typeof parentNode is 'string'
+      parentNode = @node if not parentNode
+
+      subview.addToParentNode(parentNode)
 
   _removeFromSuperview: ->
     @fire('viewWillRemoveFromSuperview')
 
     superview = @get('superview')
-    superview.off('viewWillAppear', @_fireViewWillAppear)
-    superview.off('viewDidAppear', @_fireViewDidAppear)
     @off('ready', superview._fireChildViewsReady)
 
-    isInDOM = @get('isInDOM')
-    @fire('viewWillDisappear') if isInDOM
+    destroy = true # FIXME
+    @removeFromParentNode(destroy)
+    @destroyBindings() if detroy
 
-    @removeFromDOM?()
     @set('superview', null)
 
-    @fire('viewDidDisappear') if isInDOM
+  removeFromSuperview: ->
+    @superview?.subviews.remove(this)
 
-  addToDOM: (parentNode) ->
+  addToParentNode: (parentNode) ->
     node = @get('node')
+    isInDOM = document.body.contains(node)
+
+    subview.propagateToSubviews('viewWillAppear') if isInDOM
+
     parentNode.appendChild(node) if node
 
-  removeFromDOM: ->
-    Batman.DOM.removeNode(@get('node'))
+    subview.propagateToSubviews('isInDOM', isInDOM)
+    subview.propagateToSubviews('viewDidAppear') if isInDOM
+
+  removeFromParentNode: (destroy) ->
+    node = @get('node')
+    isInDOM = document.body.contains(node)
+
+    @propagateToSubviews('viewWillDisappear') if isInDOM
+
+    if destroy
+      Batman.DOM.destroyNode(@node)
+    else
+      @node.parentNode?.removeChild(@node)
+
+    @propagateToSubviews('isInDOM', false)
+    @propagateToSubviews('viewDidDisappear')
+
+  propagateToSubviews: (eventName, value) ->
+    if value?
+      @set(eventName, value)
+    else
+      @fire(eventName)
+      @[eventName]?()
+
+    subview.propagateToSubviews(eventName, value) for subview in @subviews._storage
 
   loadView: ->
     if (html = @get('html'))?
@@ -125,24 +145,16 @@ class Batman.View extends Batman.Object
         extraInfo = @get('displayName') || @get('source')
         (if node == document then document.body else node).setAttribute?('data-batman-view', @constructor.name + if extraInfo then ": #{extraInfo}" else '')
 
-      @initializeYields()
-      @initializeBindings() if @bindImmediately
-
       return node
 
-  initializeYields: ->
-    return if @node.nodeType is @node.COMMENT_NODE
-
-    yieldNodes = Batman.DOM.querySelectorAll(@node, '[data-yield]')
-    for node in yieldNodes
-      yieldName = node.getAttribute('data-yield')
-      @declareYieldNode(yieldName, node)
-
-    return
-
   initializeBindings: ->
+    return if @isBound
     new Batman.Renderer(@node, this)
+
+    @set('isBound', true)
     @fire('ready')
+
+  destroyBindings: ->
 
   baseForKeypath: (keypath) ->
     keypath.split('.')[0].split('|')[0].trim()
@@ -175,22 +187,12 @@ class Batman.View extends Batman.Object
 
     Batman.get(target, keypath) if target
 
-  declareYieldNode: (yieldName, node) ->
-    @_yieldNodes[yieldName] = node
-
-  firstAncestorWithYieldNamed: (yieldName) ->
-    superview = this
-    while superview
-      return superview if yieldName of superview._yieldNodes
-      superview = superview.superview
-
   die: ->
     @fire('destroy', @node)
     @forget()
     @_batman.properties?.forEach (key, property) -> property.die()
     @subview.forEach (name, subview) -> subview.die()
     @_removeFromSuperview() if @superview
-
 
 Batman.container.$context ?= (node) ->
   while node

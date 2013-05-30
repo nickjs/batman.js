@@ -154,10 +154,10 @@ class Batman.Controller extends Batman.Object
 
     if view
       view.set('controller', this)
-      @set('view', view)
-
+      @set('currentView', view)
       Batman.currentApp.layout.subviews.set(options.into || @defaultRenderYield, view)
       frame?.finishOperation()
+
     view
 
   scrollToHash: (hash = @get('params')['#'])-> Batman.DOM.scrollIntoView(hash)

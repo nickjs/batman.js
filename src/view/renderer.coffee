@@ -61,6 +61,9 @@ class Batman.Renderer extends Batman.Object
             bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @view)
             reader(bindingDefinition)
 
+        if binding?.ready # FIXME when nextNode gets less stupid this can be immediate
+          @view.on('ready', -> binding.ready.call(binding))
+
         if binding?.skipChildren
           return true
 
