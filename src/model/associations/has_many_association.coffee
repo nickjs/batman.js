@@ -40,28 +40,38 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
         Batman.developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"
         return
 
-      existingRelations = association.setForRecord(parentRecord)
-      newRelations = existingRelations.filter((relation) -> relation.isNew()).toArray()
+      children = association.setForRecord(parentRecord)
+      newChildren = children.filter((relation) -> relation.isNew()).toArray()
+
+      recordsToMap = []
+      recordsToAdd = []
+
+      relatedRecords = relatedModel.get('loaded.indexedByUnique.id')
 
       for jsonObject in data
         id = jsonObject[relatedModel.primaryKey]
-        existingRecord = relatedModel.get('loaded.indexedByUnique.id').get(id)
+        record = relatedRecords.get(id)
 
-        if existingRecord?
-          existingRecord._withoutDirtyTracking -> @fromJSON jsonObject
-          record = existingRecord
+        if record?
+          recordsToAdd.push(record)
         else
-          if newRelations.length > 0
-            savedRecord = newRelations.shift()
-            savedRecord._withoutDirtyTracking -> @fromJSON jsonObject
-            record = relatedModel._mapIdentity(savedRecord)
+          if newChildren.length > 0
+            record = newChildren.shift()
+            recordsToMap.push(record) if id?
           else
-            record = relatedModel._makeOrFindRecordFromData(jsonObject)
+            record = new relatedModel
+            recordsToMap.push(record) if id?
+            recordsToAdd.push(record)
 
-        existingRelations.add record
+        record._withoutDirtyTracking ->
+          @fromJSON(jsonObject)
 
-        if association.options.inverseOf
-          record.set association.options.inverseOf, parentRecord
+          if association.options.inverseOf
+            record.set(association.options.inverseOf, parentRecord)
 
-      existingRelations.markAsLoaded()
-      existingRelations
+      # We're already sure that these records aren't in the map already, since we just checked
+      relatedModel.get('loaded').add(recordsToMap...)
+
+      children.add(recordsToAdd...)
+      children.markAsLoaded()
+      children
