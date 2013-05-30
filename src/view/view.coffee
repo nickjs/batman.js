@@ -13,7 +13,8 @@ class Batman.View extends Batman.Object
     climbTree = true if not climbTree?
     while node
       return view if view = Batman._data(node, 'view')
-      node = node.parentNode if climbTree
+      return if not climbTree
+      node = node.parentNode
 
   subviews: []
   superview: null
@@ -49,7 +50,7 @@ class Batman.View extends Batman.Object
     @prevent('childViewsReady')
     subview.once('ready', @_fireChildViewsReady ||= => @allowAndFire('childViewsReady'))
 
-    @initializeBindings()
+    subview.initializeBindings()
 
     if yieldName = subview.contentFor
       yieldObject = Batman.DOM.Yield.withName(subview.contentFor)
@@ -78,15 +79,13 @@ class Batman.View extends Batman.Object
     @superview?.subviews.remove(this)
 
   addToParentNode: (parentNode) ->
-    node = @get('node')
-    isInDOM = document.body.contains(node)
+    isInDOM = document.body.contains(parentNode)
+    @propagateToSubviews('viewWillAppear') if isInDOM
 
-    subview.propagateToSubviews('viewWillAppear') if isInDOM
+    parentNode.appendChild(node) if node = @get('node')
 
-    parentNode.appendChild(node) if node
-
-    subview.propagateToSubviews('isInDOM', isInDOM)
-    subview.propagateToSubviews('viewDidAppear') if isInDOM
+    @propagateToSubviews('isInDOM', isInDOM)
+    @propagateToSubviews('viewDidAppear') if isInDOM
 
   removeFromParentNode: (destroy) ->
     node = @get('node')

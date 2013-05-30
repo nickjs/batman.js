@@ -7,14 +7,19 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   skipChildren: true
 
   constructor: (definition) ->
-    prototypeNode = definition.node
-    definition.viewOptions = {prototypeNode, iteratorName: definition.attr, iteratorPath: definition.keyPath}
+    @iteratorName = definition.attr
+    @prototypeNode = definition.node
+    @prototypeNode.removeAttribute("data-foreach-#{@iteratorName}")
+
+    definition.viewOptions = {@prototypeNode, @iteratorName, iteratorPath: definition.keyPath}
     definition.node = null
 
     super
 
-    @superview.on 'ready', -> # FIXME When parseNode goes away this will not need to nextTick
-      prototypeNode.parentNode?.removeChild(prototypeNode)
+  ready: ->
+    parentNode = @prototypeNode.parentNode
+    parentNode.insertBefore(@backingView.get('node'), @prototypeNode)
+    parentNode.removeChild(@prototypeNode)
 
   dataChange: (collection) ->
     if collection?
@@ -28,6 +33,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
         @handleArrayChanged(items)
     else
       @handleArrayChanged([])
+    return
 
   handleArrayChanged: (newItems) =>
     @backingView.subviews.clear()
@@ -39,4 +45,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @backingView.finishAppendItems()
 
   handleItemsRemoved: (oldItems) =>
-    @backingView.subviews.unset(item) for item in oldItems
+    for subview in @backingView.subviews._storage
+      if subview.get(@attributeName) == item
+        subview.removeFromSuperview()
+    return

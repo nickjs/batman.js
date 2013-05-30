@@ -12,7 +12,7 @@ class Batman.DOM.ShowHideBinding extends Batman.DOM.AbstractBinding
     super
 
   dataChange: (value) ->
-    view = Batman._data(@node, 'view') || Batman._data(@node, 'backingView')
+    view = Batman.View.viewForNode(@node, false)
 
     if !!value is not @invert
       view?.fire('viewWillShow')
