@@ -82,7 +82,8 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
             recordsToAdd.push(record)
 
         if association.options.inverseOf
-          record.set(association.options.inverseOf, parentRecord)
+          record._withoutDirtyTracking ->
+            record.set(association.options.inverseOf, parentRecord)
 
       children.add(recordsToAdd...)
       children.markAsLoaded()
