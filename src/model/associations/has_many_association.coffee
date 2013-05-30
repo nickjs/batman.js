@@ -63,10 +63,11 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
             recordsToMap.push(record) if id?
             recordsToAdd.push(record)
 
-        record._withoutDirtyTracking -> @fromJSON(jsonObject)
+        record._withoutDirtyTracking ->
+          @fromJSON(jsonObject)
 
-        if association.options.inverseOf
-          record.set(association.options.inverseOf, parentRecord)
+          if association.options.inverseOf
+            record.set(association.options.inverseOf, parentRecord)
 
       # We're already sure that these records aren't in the map already, since we just checked
       relatedModel.get('loaded').add(recordsToMap...)
