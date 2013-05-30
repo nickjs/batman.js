@@ -43,9 +43,9 @@ asyncTest 'it should allow a multiple similiar class names to be bound', 7, ->
 asyncTest 'it should allow multiple class names to be bound and updated', ->
   source = '<div data-bind-class="classes"></div>'
   context = Batman classes: 'foo bar'
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     equal node[0].className, 'foo bar'
-    context.set 'classes', 'bar baz'
+    view.set('classes', 'bar baz')
     equal node[0].className, 'bar baz'
     QUnit.start()
 
@@ -55,12 +55,12 @@ asyncTest 'it should allow an already present class to be removed', 6, ->
   context = Batman
     foo: true
     bar: false
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     ok node.hasClass('zero')
     ok node.hasClass('two')
     ok node.hasClass('three')
 
-    context.set 'bar', true
+    view.set('bar', true)
     ok node.hasClass('zero')
     ok !node.hasClass('two')
     ok node.hasClass('three')
@@ -72,12 +72,12 @@ asyncTest 'it should not remove an already present similar class name', 6, ->
   context = Batman
     foo: true
     bar: false
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     ok node.hasClass('zero')
     ok node.hasClass('bar')
     ok node.hasClass('foobar')
 
-    context.set 'bar', true
+    view.set('bar', true)
     ok node.hasClass('zero')
     ok node.hasClass('bar')
     ok !node.hasClass('foobar')
@@ -89,11 +89,12 @@ asyncTest 'it should allow multiple class names to be bound and updated via set'
   context = Batman
     classes: new Batman.Set('foo', 'bar', 'baz')
 
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     ok node.hasClass('foo')
     ok node.hasClass('bar')
     ok node.hasClass('baz')
-    context.get('classes').remove('foo')
+
+    view.get('classes').remove('foo')
     ok !node.hasClass('foo')
     ok node.hasClass('bar')
     ok node.hasClass('baz')
@@ -108,9 +109,9 @@ asyncTest 'it should allow multiple class names to be bound and updated via hash
       bar: true
       baz: true
 
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     equal node[0].className, 'foo bar baz'
-    context.get('classes').unset('foo')
+    view.get('classes').unset('foo')
     equal node[0].className, 'bar baz'
 
     QUnit.start()
@@ -123,9 +124,9 @@ asyncTest 'it should allow multiple class names to be bound via object', ->
       bar: true
       baz: true
 
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     equal node[0].className, 'foo bar baz'
-    context.set('classes', {bar: true, baz: true})
+    view.set('classes', {bar: true, baz: true})
     equal node[0].className, 'bar baz'
     QUnit.start()
 

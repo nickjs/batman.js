@@ -160,8 +160,9 @@ asyncTest 'should render chained filters with arguments', 1, ->
 asyncTest 'should update bindings with the filtered value if they change', 1, ->
   context = Batman
     foo: 'bar'
-  helpers.render '<div data-bind="foo | upcase"></div>', context, (node) ->
-    context.set('foo', 'baz')
+
+  helpers.render '<div data-bind="foo | upcase"></div>', context, (node, view) ->
+    view.set('foo', 'baz')
     equal node.html(), 'BAZ'
     QUnit.start()
 
@@ -229,12 +230,8 @@ asyncTest 'should allow a mix of keypaths and simple values as arguments to filt
       QUnit.start()
 
 renderWithoutBatmanizing = (source, context, callback) ->
-  node = document.createElement('div')
-  node.innerHTML = source
-
-  view = new Batman.View
-    node: node
-    context: context
+  context.html = source
+  view = new Batman.View(context)
 
   view.on 'ready', callback
   view.get('node')
@@ -273,9 +270,9 @@ asyncTest 'should update bindings when argument keypaths change', 2, ->
     foo: [1,2,3]
     bar: ''
 
-  helpers.render '<div data-bind="foo | join bar"></div>', context, (node) ->
+  helpers.render '<div data-bind="foo | join bar"></div>', context, (node, view) ->
     equal node.html(), '123'
-    context.set('bar', "-")
+    view.set('bar', "-")
     equal node.html(), '1-2-3'
 
     QUnit.start()
@@ -286,55 +283,49 @@ asyncTest 'should update bindings when argument keypaths change in the middle of
       bar: '.'
     array: [1,2,3]
 
-  helpers.render '<div data-bind="array | join foo.bar"></div>', context, (node) ->
+  helpers.render '<div data-bind="array | join foo.bar"></div>', context, (node, view) ->
     equal node.html(), '1.2.3'
-    context.set('foo', Batman(bar: '-'))
+    view.set('foo', Batman(bar: '-'))
     equal node.html(), '1-2-3'
 
     QUnit.start()
 
-asyncTest 'should update bindings when argument keypaths change context', 2, ->
+test 'should update bindings when argument keypaths change context', ->
   context = Batman
     foo: '.'
-    array: [1,2,3]
+    array: [1,2,3],
+    html: ''
 
   closer = Batman
     closer: true
+    html: '<div data-bind="array | join foo"></div>'
 
-  node = document.createElement 'div'
-  node.innerHTML = '<div data-bind="array | join foo"></div>'
-  context = Batman.RenderContext.root().descend(context).descend(closer)
-  view = new Batman.View
-    context: context
-    node: node.childNodes[0]
+  outerView = new Batman.View(context)
+  innerView = new Batman.View(closer)
 
-  view.on 'ready', ->
-    node = view.get('node')
-    equal node.innerHTML, '1.2.3'
-    closer.set('foo', '-')
-    equal node.innerHTML, '1-2-3'
+  outerView.subviews.set('innerView', innerView)
 
-    QUnit.start()
+  node = innerView.get('node')
+  equal(node.children[0].innerHTML, '1.2.3')
 
-  view.get('node')
+  innerView.set('foo', '-')
+  equal(node.children[0].innerHTML, '1-2-3')
 
-asyncTest 'it should update the data object if value bindings aren\'t filtered', 3, ->
-  context = new Batman.Object
+test 'it should update the data object if value bindings aren\'t filtered', 3, ->
+  view = new Batman.View(html: '<textarea data-bind="one"></textarea>')
 
-  # Define an accessor on a normal key
-  context.accessor "one",
+  view.accessor 'one',
     get: getSpy = createSpy().whichReturns("abcabcabc")
     set: setSpy = createSpy().whichReturns("defdefdef")
 
-  # Try it without a filter
-  helpers.render '<textarea data-bind="one"></textarea>', context, (node) ->
-    node.val('defdefdef')
-    helpers.triggerChange(node.get(0))
-    equal node.val(), 'defdefdef'
-    ok getSpy.called
-    ok setSpy.called
+  node = view.get('node')
+  node.children[0].innerHTML = 'defdefdef'
 
-    QUnit.start()
+  helpers.triggerChange(node.children[0])
+  equal node.children[0].innerHTML, 'defdefdef'
+
+  ok getSpy.called
+  ok setSpy.called
 
 asyncTest 'it shouldn\'t update the data object if value bindings are filtered', 3, ->
   # Try it with a filter
@@ -378,9 +369,9 @@ asyncTest 'should allow filtered keypaths as arguments to context and filters to
       qux: new Batman.Set({foo: '1'}, {foo: '2'})
     bar: 'baz'
 
-  helpers.render '<div data-context-corge="foo | get bar"><div id="test" data-bind="corge | map \'foo\' | join \', \'"></div></div>', context, (node) ->
+  helpers.render '<div data-context-corge="foo | get bar"><div id="test" data-bind="corge | map \'foo\' | join \', \'"></div></div>', context, (node, view) ->
     helpers.splitAndSortedEquals $("#test", node).html(), 'bar, baz', ', '
-    context.set 'bar', 'qux'
+    view.set('bar', 'qux')
     helpers.splitAndSortedEquals $("#test", node).html(), '1, 2', ', '
     QUnit.start()
 
@@ -400,18 +391,6 @@ asyncTest 'should allow filtered keypaths as arguments to formfor', 1, ->
   source = '<form data-formfor-obj="klass | get \'instance\'"><span id="test" data-bind="obj.someKey"></span></form>'
   helpers.render source, context, (node) ->
     equal $("#test", node).html(), 'foobar'
-
-    QUnit.start()
-
-asyncTest 'should allow filtered keypaths as arguments to mixin', 1, ->
-  context = Batman
-    foo: Batman
-      baz:
-        someKey: "foobar"
-    bar: 'baz'
-
-  helpers.render '<div id="test" data-mixin="foo | get bar"></div>', context, (node) ->
-    equal Batman.data(node[0], 'someKey'), 'foobar'
 
     QUnit.start()
 

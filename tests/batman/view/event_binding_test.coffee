@@ -1,6 +1,7 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
 QUnit.module 'Batman.View event bindings',
+
 asyncTest 'it should allow events to be bound and execute them in the context as specified on a multi key keypath', 4, ->
   spy = createSpy()
   context = Batman
@@ -9,12 +10,13 @@ asyncTest 'it should allow events to be bound and execute them in the context as
         doSomething: spy
 
   source = '<button data-event-click="foo.bar.doSomething"></button>'
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     helpers.triggerClick(node[0])
     ok spy.called
-    equal spy.lastCallContext, context.get('foo.bar')
+
+    equal spy.lastCallContext, view
     equal spy.lastCallArguments[0], node[0]
-    equal spy.lastCallArguments[2].findKey('foo')[0], context.get('foo')
+    equal spy.lastCallArguments[2].get('foo'), view.get('foo')
 
     QUnit.start()
 
@@ -60,9 +62,9 @@ asyncTest 'it should allow events to be bound and execute them in the context as
     doSomething: spy = createSpy()
 
   source = '<button data-event-click="doSomething"></button>'
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     helpers.triggerClick(node[0])
-    equal spy.lastCallContext, context
+    equal spy.lastCallContext, view
     equal spy.lastCallArguments[0], node[0]
     equal spy.lastCallArguments[2].get('foo'), 'bar'
 
@@ -119,8 +121,10 @@ asyncTest 'it should allow un-special-cased events like focus to be bound', 2, -
 
   source = '<input type="text" data-event-focus="doSomething" value="foo"></input>'
   helpers.render source, context, (node) ->
+    console.log 'arguments', arguments
     helpers.triggerFocus(node[0])
     ok spy.called
+    console.log 'spy.lastCallArguments', spy.lastCallArguments
     equal spy.lastCallArguments[0], node[0]
 
     QUnit.start()
@@ -130,11 +134,13 @@ asyncTest 'it should allow event handlers to update', 3, ->
     doSomething: spy = createSpy()
 
   source = '<button data-event-click="doSomething"></button>'
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     helpers.triggerClick(node[0])
     ok spy.called
-    context.set('doSomething', newSpy = createSpy())
+
+    view.set('doSomething', newSpy = createSpy())
     helpers.triggerClick(node[0])
+
     ok newSpy.called
     equal spy.callCount, 1
 
@@ -145,11 +151,11 @@ asyncTest 'it should allow change events on checkboxes to be bound', 2, ->
     one: true
     doSomething: createSpy()
 
-  helpers.render '<input type="checkbox" data-bind="one" data-event-change="doSomething"/>', context, (node) ->
+  helpers.render '<input type="checkbox" data-bind="one" data-event-change="doSomething"/>', context, (node, view) ->
     node[0].checked = false
     helpers.triggerChange(node[0])
     ok context.doSomething.called
-    ok context.doSomething.lastCallArguments[2].findKey
+    equal context.doSomething.lastCallArguments[2], view
 
     QUnit.start()
 
@@ -158,11 +164,11 @@ asyncTest 'it should allow submit events on inputs to be bound', 3, ->
     doSomething: spy = createSpy()
 
   source = '<form><input data-event-submit="doSomething" /></form>'
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     helpers.triggerKey(node[0].childNodes[0], 13)
     ok spy.called
     equal spy.lastCallArguments[0], node[0].childNodes[0]
-    ok spy.lastCallArguments[2].findKey
+    ok spy.lastCallArguments[2], view
 
     QUnit.start()
 
@@ -189,7 +195,7 @@ asyncTest 'it should allow form submit events to be bound', 2, ->
   helpers.render source, context, (node) ->
     helpers.triggerSubmit(node[0])
     ok spy.called
-    ok spy.lastCallArguments[2].findKey
+    ok spy.lastCallArguments[2].lookupKeypath
 
     QUnit.start()
 
@@ -202,7 +208,7 @@ asyncTest 'should pass the context to other events without special handlers', 3,
     helpers.triggerKey(node[0].childNodes[0], 65)
     ok spy.called
     equal spy.lastCallArguments[0], node[0].childNodes[0]
-    ok spy.lastCallArguments[2].findKey
+    ok spy.lastCallArguments[2].lookupKeypath
 
     QUnit.start()
 
