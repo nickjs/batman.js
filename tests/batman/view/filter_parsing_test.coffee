@@ -229,13 +229,6 @@ asyncTest 'should allow a mix of keypaths and simple values as arguments to filt
       equal node.html(), 'a b c'
       QUnit.start()
 
-renderWithoutBatmanizing = (source, context, callback) ->
-  context.html = source
-  view = new Batman.View(context)
-
-  view.on 'ready', callback
-  view.get('node')
-
 asyncTest 'should allow argument values which are simple objects', 2, ->
   context =
     foo: 'foo'
@@ -246,8 +239,7 @@ asyncTest 'should allow argument values which are simple objects', 2, ->
     equal val, 'foo'
     deepEqual arg, {baz: "qux"}
 
-  node = document.createElement('div')
-  renderWithoutBatmanizing '<div data-bind="foo | test bar"></div>', context, ->
+  helpers.render '<div data-bind="foo | test bar"></div>', context, ->
     delete Batman.Filters.test
     QUnit.start()
 
@@ -261,7 +253,7 @@ asyncTest 'should allow argument values which are in the context of simple objec
     equal val, 'foo'
     equal arg, "qux"
 
-  renderWithoutBatmanizing '<div data-bind="foo | test bar.baz"></div>', context, ->
+  helpers.render '<div data-bind="foo | test bar.baz"></div>', context, ->
     delete Batman.Filters.test
     QUnit.start()
 
@@ -303,9 +295,11 @@ test 'should update bindings when argument keypaths change context', ->
   outerView = new Batman.View(context)
   innerView = new Batman.View(closer)
 
-  outerView.subviews.set('innerView', innerView)
+  outerView.initializeBindings()
+  outerView.subviews.add(innerView)
 
   node = innerView.get('node')
+  console.log 'node', node
   equal(node.children[0].innerHTML, '1.2.3')
 
   innerView.set('foo', '-')
@@ -424,8 +418,8 @@ asyncTest 'should allow filtered keypaths as arguments to foreach', 3, ->
 
 asyncTest 'should bind to things under window only when the keypath specifies it', 2, ->
   Batman.container.foo = "bar"
-  helpers.render '<div data-bind="foo"></div>', null, (node) ->
+  helpers.render '<div data-bind="foo"></div>', {}, (node) ->
     equal node.html(), ""
-    helpers.render '<div data-bind="window.foo"></div>', null, (node) ->
+    helpers.render '<div data-bind="window.foo"></div>', {}, (node) ->
       equal node.html(), "bar"
       QUnit.start()

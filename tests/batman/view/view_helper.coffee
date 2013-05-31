@@ -113,6 +113,10 @@ exports.render = (html, jqueryize = true, context = {}, callback = ->) ->
     callback(node, view)
 
   view.get('node')
+  view.propagateToSubviews('viewWillAppear')
+  view.initializeBindings()
+  view.propagateToSubviews('isInDOM', true)
+  view.propagateToSubviews('viewDidAppear')
 
 # Destroy outstanding nodes
 QUnit.testDone ->

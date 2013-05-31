@@ -30,7 +30,7 @@ asyncTest 'it should update objects when form rendering', 1, ->
   node = helpers.render source, context, (node) =>
     $('input', node).val('new name')
     # IE8 inserts explicit text nodes
-    childNode = if node[0].childNodes[1].nodeName != '#text' then node[0].childNodes[1] else node[0].childNodes[0]
+    childNode = if node[0].childNodes[2].nodeName != '#text' then node[0].childNodes[2] else node[0].childNodes[1]
     helpers.triggerChange(childNode)
     equal @User.lastInstance.name, "new name"
 
@@ -44,9 +44,9 @@ asyncTest 'it should update the context for the form if the context changes', 2,
   '''
   context = Batman()
 
-  node = helpers.render source, context, (node) =>
+  node = helpers.render source, context, (node, view) =>
     equal $('input', node).val(), ""
-    context.set 'instanceOfUser', new @User
+    view.set('instanceOfUser', new @User)
     equal $('input', node).val(), "default name"
 
     QUnit.start()
@@ -62,12 +62,12 @@ asyncTest 'it should add the errors class to an input bound to a field on the su
     instanceOfUser: Batman
       name: ''
 
-  node = helpers.render source, context, (node) =>
+  node = helpers.render source, context, (node, view) =>
     ok !$('input', node).hasClass('error')
 
     errors = new Batman.ErrorsSet
     errors.add 'name', "can't be blank"
-    context.get('instanceOfUser').set 'errors', errors
+    view.get('instanceOfUser').set 'errors', errors
     ok $('input', node).hasClass('error')
 
     QUnit.start()
@@ -85,9 +85,9 @@ if !IN_NODE # jsdom doesn't support querySelector on elements, so these tests fa
         name: ''
         errors: new Batman.ErrorsSet
 
-    node = helpers.render source, context, (node) =>
+    node = helpers.render source, context, (node, view) =>
       ok node.find("div.errors ul").length > 0
-      context.get('instanceOfUser.errors').add 'name', "can't be blank"
+      view.get('instanceOfUser.errors').add 'name', "can't be blank"
       delay =>
         equal node.find("div.errors li").length, 1
         equal node.find("div.errors li").html(), "Name can't be blank"
@@ -105,9 +105,9 @@ if !IN_NODE # jsdom doesn't support querySelector on elements, so these tests fa
         name: ''
         errors: new Batman.ErrorsSet
 
-    node = helpers.render source, context, (node) =>
+    node = helpers.render source, context, (node, view) =>
       equal node.find("div.errors").css('display'), 'none'
-      context.get('instanceOfUser.errors').add 'name', "can't be blank"
+      view.get('instanceOfUser.errors').add 'name', "can't be blank"
       delay =>
         equal node.find("div.errors").css('display'), ''
 
@@ -124,9 +124,9 @@ if !IN_NODE # jsdom doesn't support querySelector on elements, so these tests fa
         name: ''
         errors: new Batman.ErrorsSet
 
-    node = helpers.render source, context, (node) =>
+    node = helpers.render source, context, (node, view) =>
       equal node.find("div.errors").css('display'), ''
-      context.get('instanceOfUser.errors').add 'name', "can't be blank"
+      view.get('instanceOfUser.errors').add 'name', "can't be blank"
       delay =>
         equal node.find("div.errors").css('display'), ''
 
@@ -142,9 +142,9 @@ if !IN_NODE # jsdom doesn't support querySelector on elements, so these tests fa
         name: ''
         errors: new Batman.ErrorsSet
 
-    node = helpers.render source, context, (node) =>
+    node = helpers.render source, context, (node, view) =>
       ok node.find("#testy ul").length > 0
-      context.get('instanceOfUser.errors').add 'name', "can't be blank"
+      view.get('instanceOfUser.errors').add 'name', "can't be blank"
       delay =>
         equal node.find("#testy li").length, 1
         equal node.find("#testy li").html(), "Name can't be blank"

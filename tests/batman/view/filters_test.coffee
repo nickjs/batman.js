@@ -1,6 +1,7 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View filter execution',
+QUnit.module 'Batman.View filter execution'
+
 asyncTest 'get', 1, ->
   context = Batman
     foo: new Batman.Hash({bar: "qux"})
@@ -114,9 +115,9 @@ asyncTest 'truncate', 2, ->
 
 asyncTest 'prepend', 2, ->
   context = Batman(foo: 'bar')
-  helpers.render '<div data-bind="foo | prepend \'special-\'"></div>', context, (node) ->
+  helpers.render '<div data-bind="foo | prepend \'special-\'"></div>', context, (node, view) ->
     equal node.html(), "special-bar"
-    context.unset 'foo'
+    view.unset('foo')
     equal node.html(), "special-"
     QUnit.start()
 
@@ -128,9 +129,9 @@ asyncTest 'prepend does not change the value if the suffix is undefined', 1, ->
 
 asyncTest 'append', 2, ->
   context = Batman(foo: 'bar')
-  helpers.render '<div data-bind="foo | append \'-special\'"></div>', context, (node) ->
+  helpers.render '<div data-bind="foo | append \'-special\'"></div>', context, (node, view) ->
     equal node.html(), "bar-special"
-    context.unset 'foo'
+    view.unset('foo')
     equal node.html(), "-special"
     QUnit.start()
 
@@ -195,9 +196,9 @@ asyncTest 'pluralize with a count without including the count', 2, ->
     object: 'foo'
     count: 2
 
-  helpers.render '<div data-bind="object | pluralize count, false"></div>', context, (node) ->
+  helpers.render '<div data-bind="object | pluralize count, false"></div>', context, (node, view) ->
     equal node.html(), "foos"
-    context.set 'count', 1
+    view.set('count', 1)
     equal node.html(), "foo"
     QUnit.start()
 
@@ -373,11 +374,11 @@ asyncTest 'has in a set', 3, ->
     posts: posts
     post: posts.toArray()[0]
 
-  helpers.render '<input type="checkbox" data-bind="posts | has post" />', context, (node) ->
+  helpers.render '<input type="checkbox" data-bind="posts | has post" />', context, (node, view) ->
     ok node[0].checked
-    context.get('posts').remove(context.get('post'))
+    view.get('posts').remove(view.get('post'))
     ok !node[0].checked
-    context.get('posts').add(context.get('post'))
+    view.get('posts').add(view.get('post'))
     ok node[0].checked
 
     QUnit.start()
@@ -398,11 +399,11 @@ asyncTest 'has in an array', 3, ->
     posts: posts
     post: posts[0]
 
-  helpers.render '<input type="checkbox" data-bind="posts | has post" />', context, (node) ->
+  helpers.render '<input type="checkbox" data-bind="posts | has post" />', context, (node, view) ->
     ok node[0].checked
-    context.set 'posts', secondPost
+    view.set('posts', secondPost)
     ok !node[0].checked
-    context.set 'posts', posts
+    view.set('posts', posts)
     ok node[0].checked
 
     QUnit.start()
@@ -422,9 +423,9 @@ asyncTest 'meta binding to a hash', 2, ->
   context = Batman
     foo: new Batman.Hash(bar: "qux")
 
-  helpers.render '<div data-bind="foo | meta \'length\'"></div>', context, (node) ->
+  helpers.render '<div data-bind="foo | meta \'length\'"></div>', context, (node, view) ->
     equal node.html(), "1"
-    context.get('foo').set('corge', 'test')
+    view.get('foo').set('corge', 'test')
     equal node.html(), "2"
 
     QUnit.start()
@@ -433,9 +434,9 @@ asyncTest 'escape', 2, ->
   context = Batman
     foo: "<script></script>"
 
-  helpers.render '<div data-bind="foo | escape | raw"></div>', context, (node) ->
+  helpers.render '<div data-bind="foo | escape | raw"></div>', context, (node, view) ->
     equal node.html(), "&lt;script&gt;&lt;/script&gt;"
-    context.set('foo', '"testing"')
+    view.set('foo', '"testing"')
     equal node.html(), '"testing"'
 
     QUnit.start()
@@ -444,9 +445,9 @@ asyncTest 'raw', 2, ->
   context = Batman
     foo: "<p></p>"
 
-  helpers.render '<div data-bind="foo | raw"></div>', context, (node) ->
+  helpers.render '<div data-bind="foo | raw"></div>', context, (node, view) ->
     lowerEqual node.html(), "<p></p>"
-    context.set('foo', '"testing"')
+    view.set('foo', '"testing"')
     equal node.html(), '"testing"'
 
     QUnit.start()
@@ -485,14 +486,15 @@ asyncTest "it should interpolate strings with counts", ->
       other: "%{count} pamplemouses"
 
   source = '<div data-bind="how_many_grapefruits | interpolate {\'count\': \'number\'}"></div>'
-  helpers.render source, false, context, (node) ->
+  helpers.render source, false, context, (node, view) ->
     equal node.childNodes[0].innerHTML, "1 pamplemouse"
-    context.set 'number', 3
-    helpers.render source, false, context, (node) ->
+    view.set('number', 3)
+    helpers.render source, false, {number: view.get('number'), how_many_grapefruits: view.get('how_many_grapefruits')}, (node) ->
       equal node.childNodes[0].innerHTML, "3 pamplemouses"
       QUnit.start()
 
-QUnit.module "Batman.View user defined filter execution",
+QUnit.module "Batman.View user defined filter execution"
+
 asyncTest 'should render a user defined filter', 4, ->
   Batman.Filters['test'] = spy = createSpy().whichReturns("testValue")
   ctx = Batman
@@ -500,7 +502,7 @@ asyncTest 'should render a user defined filter', 4, ->
     bar: 'baz'
   helpers.render '<div data-bind="foo | test 1, \'baz\'"></div>', ctx, (node) ->
     equal node.html(), "testValue"
-    equal Batman._functionName(spy.lastCallContext.constructor), 'RenderContext'
+    equal Batman._functionName(spy.lastCallContext.constructor), 'View'
     deepEqual spy.lastCallArguments.slice(0,3), ['bar', 1, 'baz']
     ok spy.lastCallArguments[3] instanceof Batman.DOM.AbstractBinding
     delete Batman.Filters.test
