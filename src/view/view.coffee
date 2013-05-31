@@ -42,6 +42,7 @@ class Batman.View extends Batman.Object
     super
 
   _addSubview: (subview) ->
+    @get('node') if not @node
     subview.removeFromSuperview()
 
     subview.set('superview', this)
@@ -58,7 +59,7 @@ class Batman.View extends Batman.Object
 
     else
       parentNode = subview.parentNode
-      parentNode = Batman.DOM.querySelector(@get('node'), parentNode) if typeof parentNode is 'string'
+      parentNode = Batman.DOM.querySelector(@node, parentNode) if typeof parentNode is 'string'
       parentNode = @node if not parentNode
 
       subview.addToParentNode(parentNode)
