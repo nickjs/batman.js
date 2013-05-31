@@ -40,7 +40,7 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
       @bindSingleAttribute(key, "#{@keyPath}.#{key}")
 
   bindSingleAttribute: (attr, keyPath) ->
-    definition = new Batman.DOM.AttrReaderBindingDefinition(@node, attr, keyPath, @renderContext, @renderer)
+    definition = new Batman.DOM.AttrReaderBindingDefinition(@node, attr, keyPath, @view)
     @styleBindings[attr] = new Batman.DOM.StyleBinding.SingleStyleBinding(definition, this)
 
   setStyle: (key, value) =>
