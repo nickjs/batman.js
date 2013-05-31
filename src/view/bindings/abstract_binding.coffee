@@ -127,6 +127,8 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     if @onlyObserve in [onlyAll, onlyData]
       @observeAndFire 'filteredValue', @_fireDataChange
 
+    @view.bindings.push(this)
+
   _fireNodeChange: (event) ->
     @shouldSet = false
     val = @value || @get('keyContext')
@@ -216,7 +218,8 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
     viewOptions ||= {}
     viewOptions.node ?= @node
-
+    viewOptions.parentNode ?= @node
+    console.log 'creating backing view for node', @node
     @backingView = new (viewClass || Batman.BackingView)(viewOptions)
     @superview.subviews.add(@backingView)
     Batman._data(@node, 'view', @backingView) if @node
@@ -225,5 +228,3 @@ class Batman.DOM.AbstractBinding extends Batman.Object
 
 class Batman.BackingView extends Batman.View
   bindImmediately: false
-  addToDOM: null
-  removeFromDOM: null

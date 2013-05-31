@@ -70,7 +70,7 @@ class Batman.Renderer extends Batman.Object
         if binding?.backWithView
           isViewBacked = true
 
-    if isViewBacked and backingView = Batman._data(node, 'backingView')
+    if isViewBacked and backingView = Batman._data(node, 'view')
       backingView.initializeBindings()
 
     return isViewBacked

@@ -16,6 +16,7 @@ class Batman.View extends Batman.Object
       return if not climbTree
       node = node.parentNode
 
+  bindings: []
   subviews: []
   superview: null
   controller: null
@@ -24,12 +25,15 @@ class Batman.View extends Batman.Object
   html: null
   node: null
 
+  bindImmediately: true
   isBound: false
+
   isInDOM: false
   isView: true
 
   constructor: ->
     @subviews = new Batman.Set
+    @bindings = []
 
     @subviews.on 'itemsWereAdded', (newSubviews) =>
       @_addSubview(subview) for subview in newSubviews
@@ -51,7 +55,7 @@ class Batman.View extends Batman.Object
     @prevent('childViewsReady')
     subview.once('ready', @_fireChildViewsReady ||= => @allowAndFire('childViewsReady'))
 
-    subview.initializeBindings()
+    subview.initializeBindings() if subview.bindImmediately
 
     if yieldName = subview.contentFor
       yieldObject = Batman.DOM.Yield.withName(subview.contentFor)
@@ -83,7 +87,8 @@ class Batman.View extends Batman.Object
     isInDOM = document.body.contains(parentNode)
     @propagateToSubviews('viewWillAppear') if isInDOM
 
-    parentNode.appendChild(node) if node = @get('node')
+    node = @get('node')
+    parentNode.appendChild(node) if node and parentNode != node
 
     @propagateToSubviews('isInDOM', isInDOM)
     @propagateToSubviews('viewDidAppear') if isInDOM
@@ -160,7 +165,7 @@ class Batman.View extends Batman.Object
     keypath.split('.')[0].split('|')[0].trim()
 
   targetForKeypathBase: (base) ->
-    proxiedObject = @proxiedObject
+    proxiedObject = @get('proxiedObject')
     lookupNode = proxiedObject || this
 
     while lookupNode
