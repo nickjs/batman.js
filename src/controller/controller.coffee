@@ -153,9 +153,12 @@ class Batman.Controller extends Batman.Object
       view = @renderCache.viewForOptions(options)
 
     if view
+      view.set('contentFor', options.into || @defaultRenderYield) if not (view.contentFor or view.parentNode)
       view.set('controller', this)
+
+      Batman.currentApp.layout.subviews.add(view)
       @set('currentView', view)
-      Batman.currentApp.layout.subviews.set(options.into || @defaultRenderYield, view)
+
       frame?.finishOperation()
 
     view
