@@ -1,20 +1,16 @@
 #= require ./abstract_binding
+#= require ../view
+
+class Batman.DeferredRenderView extends Batman.View
+  bindImmediately: false
 
 class Batman.DOM.DeferredRenderBinding extends Batman.DOM.AbstractBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
-  backWithView: true
-
-  rendered: false
-
-  constructor: (definition) ->
-    @renderNode = definition.node
-    definition.node = null
-    super
+  backWithView: Batman.DeferredRenderView
+  skipChildren: true
 
   dataChange: (value) ->
-    if value and not @rendered
-      @renderNode.removeAttribute('data-renderif')
-
-      @rendered = true
-      @backingView.set('node', @renderNode)
+    if value and not @backingView.isBound
+      @node.removeAttribute('data-renderif')
       @backingView.initializeBindings()
+

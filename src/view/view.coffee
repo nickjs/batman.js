@@ -47,6 +47,8 @@ class Batman.View extends Batman.Object
 
   _addSubview: (subview) ->
     @get('node') if not @node
+    subview.get('node') if not subview.node
+
     subview.removeFromSuperview()
 
     subview.set('superview', this)
@@ -69,6 +71,7 @@ class Batman.View extends Batman.Object
       subview.addToParentNode(parentNode)
 
   _removeFromSuperview: ->
+    return if not @superview
     @fire('viewWillRemoveFromSuperview')
 
     superview = @get('superview')
@@ -76,7 +79,7 @@ class Batman.View extends Batman.Object
 
     destroy = true # FIXME
     @removeFromParentNode(destroy)
-    @destroyBindings() if detroy
+    @destroyBindings() if destroy
 
     @set('superview', null)
 

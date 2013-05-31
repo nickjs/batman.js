@@ -219,7 +219,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     viewOptions ||= {}
     viewOptions.node ?= @node
     viewOptions.parentNode ?= @node
-    console.log 'creating backing view for node', @node
+
     @backingView = new (viewClass || Batman.BackingView)(viewOptions)
     @superview.subviews.add(@backingView)
     Batman._data(@node, 'view', @backingView) if @node
