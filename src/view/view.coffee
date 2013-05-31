@@ -164,7 +164,7 @@ class Batman.View extends Batman.Object
     lookupNode = proxiedObject || this
 
     while lookupNode
-      if Batman.get(lookupNode, base)?
+      if typeof Batman.get(lookupNode, base) isnt 'undefined'
         return lookupNode
 
       controller = lookupNode.controller if lookupNode.isView and lookupNode.controller
