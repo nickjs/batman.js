@@ -8,7 +8,7 @@ Batman.extend Batman.DOM,
   setInnerHTML: (node, html) ->
     jQuery(node).html(html)
 
-  removeNode: (node) ->
+  destroyNode: (node) ->
     jQuery(node).remove()
 
   textContent: (node) ->
