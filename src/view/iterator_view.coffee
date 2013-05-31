@@ -10,6 +10,7 @@ class Batman.IteratorView extends Batman.View
     iterationView.set(@iteratorName, item)
 
     @subviews.add(iterationView)
+    iterationView.parentNode = null
 
   finishAppendItems: ->
     node = @get('node')

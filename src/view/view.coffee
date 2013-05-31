@@ -158,6 +158,7 @@ class Batman.View extends Batman.Object
 
     @set('isBound', true)
     @fire('ready')
+    @ready?()
 
   destroyBindings: ->
 
