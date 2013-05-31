@@ -176,10 +176,13 @@ class Batman.View extends Batman.Object
       else if controller
         lookupNode = controller
         controller = null
-      else if lookupNode != Batman.currentApp
-        lookupNode = Batman.currentApp
+      else if not lookupNode.window
+        if Batman.currentApp and lookupNode != Batman.currentApp
+          lookupNode = Batman.currentApp
+        else
+          lookupNode = {window: Batman.container}
       else
-        lookupNode = null
+        return
 
   lookupKeypath: (keypath) ->
     base = @baseForKeypath(keypath)
