@@ -178,7 +178,7 @@ asyncTest 'it binds multiple select options created by a foreach and remains con
 asyncTest 'should be able to destroy bound select nodes', 2, ->
   context = new Batman.Object selected: "foo"
   helpers.render '<select data-bind="selected"><option value="foo">foo</option></select>', context, (node) ->
-    Batman.DOM.removeNode(node[0])
+    Batman.DOM.destroyNode(node[0])
     deepEqual Batman.data(node[0]), {}
     deepEqual Batman._data(node[0]), {}
     QUnit.start()

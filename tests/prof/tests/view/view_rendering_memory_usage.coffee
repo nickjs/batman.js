@@ -27,7 +27,7 @@ Watson.trackMemory 'view memory usage: simple', 400, {step: 10, async: true}, (i
     node: node
 
   finish = ->
-    Batman.DOM.removeNode(node)
+    Batman.DOM.destroyNode(node)
     next()
 
   if view.on?

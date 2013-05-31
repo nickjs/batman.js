@@ -36,7 +36,7 @@ asyncTest 'it should leave a comment node so bindings are properly destroyed', 1
 
   helpers.render source, false, context, (node) ->
     context.OuterView.instance.on 'destroy', spy = createSpy()
-    Batman.DOM.removeNode(node)
+    Batman.DOM.destroyNode(node)
     ok spy.called
     QUnit.start()
 

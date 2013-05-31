@@ -200,7 +200,7 @@ asyncTest "views should be able to yield more than once", ->
     destination = node.childNodes[0]
     source = node.childNodes[2]
     equal destination.innerHTML, '<div data-contentfor="foo">testing</div>'
-    Batman.DOM.removeNode(source)
+    Batman.DOM.destroyNode(source)
     equal destination.innerHTML, ""
 
     Batman.DOM.appendChild(node, viewInstance.get('node'))

@@ -29,7 +29,7 @@
 #       source: 'a/test/path'
 
 #     finish = ->
-#       Batman.DOM.removeNode(view.get('node'))
+#       Batman.DOM.destroyNode(view.get('node'))
 #       next()
 
 #     if view.on?
