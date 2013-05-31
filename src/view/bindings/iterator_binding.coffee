@@ -5,6 +5,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
   backWithView: Batman.IteratorView
   skipChildren: true
+  bindImmediately: false
 
   constructor: (definition) ->
     @iteratorName = definition.attr
@@ -20,6 +21,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     parentNode = @prototypeNode.parentNode
     parentNode.insertBefore(@backingView.get('node'), @prototypeNode)
     parentNode.removeChild(@prototypeNode)
+    @bind()
 
   dataChange: (collection) ->
     if collection?
