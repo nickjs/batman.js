@@ -212,14 +212,14 @@ Batman.container.$context ?= (node) ->
     node = node.parentNode
 
 Batman.container.$subviews ?= (view = Batman.currentApp.layout) ->
-  subviews = {}
+  subviews = []
 
-  view.subviews.forEach (key, subview) ->
+  view.subviews.forEach (subview) ->
     obj = Batman.mixin({}, subview)
     obj.constructor = subview.constructor
     obj.subviews = if subview.subviews?.length then $subviews(subview) else null
     Batman.unmixin(obj, {'_batman': true})
 
-    subviews[key.toString()] = obj
+    subviews.push(obj)
 
   subviews
