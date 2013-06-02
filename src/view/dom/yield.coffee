@@ -1,6 +1,8 @@
 class Batman.DOM.Yield extends Batman.Object
   @yields: {}
 
+  @reset: -> @yields = {}
+
   @withName: (name) ->
     @yields[name] ||= new this(name)
 
