@@ -1,6 +1,7 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View value bindings',
+QUnit.module 'Batman.View value bindings'
+
 asyncTest 'it should allow arbitrary attributes to be bound', 2, ->
   source = '<div data-bind-foo="one" data-bind-data-bar="two" foo="before"></div>'
   helpers.render source,
@@ -31,19 +32,14 @@ asyncTest 'input value bindings should not escape their value', 1, ->
     QUnit.start()
 
 asyncTest 'it should bind the input value and update the input when it changes', 2, ->
-  context = Batman
-    one: "qux"
-
-  helpers.render '<input data-bind="one" type="text" />', context, (node) ->
+  helpers.render '<input data-bind="one" type="text" />', {one: 'qux'}, (node, view) ->
     equal $(node[0]).val(), 'qux'
-    context.set('one', "bar")
+    view.set('one', "bar")
     equal $(node[0]).val(), 'bar'
     QUnit.start()
 
 asyncTest 'it should bind the input value but not update the window object if the input changes', 2, ->
-  context = Batman({})
-
-  helpers.render '<input data-bind="nonexistantKey" type="text" />', context, (node) ->
+  helpers.render '<input data-bind="nonexistantKey" type="text" />', {}, (node) ->
     equal node[0].value, ''
     node[0].value = 'foo'
     helpers.triggerChange(node[0])
@@ -51,9 +47,7 @@ asyncTest 'it should bind the input value but not update the window object if th
     QUnit.start()
 
 asyncTest 'it should bind the input value but not update the window object if the input changes with a many segment keypath', 2, ->
-  context = Batman({})
-
-  helpers.render '<input data-bind="someKey.path" type="text" />', context, (node) ->
+  helpers.render '<input data-bind="someKey.path" type="text" />', {}, (node) ->
     equal node[0].value, ''
     node[0].value = 'foo'
     helpers.triggerChange(node[0])
@@ -61,67 +55,49 @@ asyncTest 'it should bind the input value but not update the window object if th
       equal typeof window.someKey, 'undefined'
 
 asyncTest 'it should bind the input value of checkboxes and update the value when the object changes', 2, ->
-  context = Batman
-    one: true
-
-  helpers.render '<input type="checkbox" data-bind="one" />', context, (node) ->
+  helpers.render '<input type="checkbox" data-bind="one" />', {one: true}, (node, view) ->
     equal node[0].checked, true
-    context.set('one', false)
+    view.set('one', false)
     equal node[0].checked, false
     QUnit.start()
 
 asyncTest 'it should bind the input value of checkboxes and update the object when the value changes', 1, ->
-  context = Batman
-    one: true
-
-  helpers.render '<input type="checkbox" data-bind="one" />', context, (node) ->
+  helpers.render '<input type="checkbox" data-bind="one" />', {one: true}, (node, view) ->
     node[0].checked = false
     helpers.triggerChange(node[0])
-    equal context.get('one'), false
+    equal view.get('one'), false
     QUnit.start()
 
 asyncTest 'it should bind the input value and update the object when it changes', 1, ->
-  context = new Batman.Object
-    one: "qux"
-
-  helpers.render '<input data-bind="one" type="text" />', context, (node) ->
+  helpers.render '<input data-bind="one" type="text" />', {one: 'qux'}, (node, view) ->
     $(node[0]).val('bar')
     # Use DOM level 2 event dispatch, $().trigger doesn't seem to work
     helpers.triggerChange(node[0])
-    equal context.get('one'), 'bar'
+    equal view.get('one'), 'bar'
     QUnit.start()
 
 asyncTest 'it should bind the input value and update the object when it keyups', 1, ->
-  context = new Batman.Object
-    one: "qux"
-
-  helpers.render '<input data-bind="one" type="text" />', context, (node) ->
+  helpers.render '<input data-bind="one" type="text" />', {one: 'qux'}, (node, view) ->
     $(node[0]).val('bar')
     # Use DOM level 2 event dispatch, $().trigger doesn't seem to work
     helpers.triggerKey(node[0], 82) # 82 is r from "bar"
-    equal context.get('one'), 'bar'
+    equal view.get('one'), 'bar'
     QUnit.start()
 
 for type in ['text', 'search', 'tel', 'url', 'email', 'password']
   do (type) ->
     asyncTest "it should bind the input value on HTML5 input #{type} and update the object when it keyups", 1, ->
-      context = new Batman.Object
-        one: "qux"
-
-      helpers.render "<input data-bind=\"one\" type=\"#{type}\"></input>", context, (node) ->
+      helpers.render "<input data-bind=\"one\" type=\"#{type}\"></input>", {one: 'qux'}, (node, view) ->
         $(node[0]).val('bar')
         # Use DOM level 2 event dispatch, $().trigger doesn't seem to work
         helpers.triggerKey(node[0], 82) # 82 is r from "bar"
-        equal context.get('one'), 'bar'
+        equal view.get('one'), 'bar'
         QUnit.start()
 
 asyncTest 'it should bind the value of textareas', 2, ->
-  context = new Batman.Object
-    one: "qux"
-
-  helpers.render '<textarea data-bind="one"></textarea>', context, (node) ->
+  helpers.render '<textarea data-bind="one"></textarea>', {one: 'qux'}, (node, view) ->
     equal node.val(), 'qux'
-    context.set('one', "bar")
+    view.set('one', "bar")
     equal node.val(), 'bar'
     QUnit.start()
 
@@ -137,10 +113,7 @@ asyncTest 'textarea value bindings should not escape their value', 2, ->
     QUnit.start()
 
 asyncTest 'it should bind the value of textareas and inputs simulatenously', ->
-  context = new Batman.Object
-    one: "qux"
-
-  helpers.render '<textarea data-bind="one"></textarea><input data-bind="one" type="text"/>', context, (node) ->
+  helpers.render '<textarea data-bind="one"></textarea><input data-bind="one" type="text"/>', {one: 'qux'}, (node) ->
     f = (v) =>
       equal $(node[0]).val(), v
       equal $(node[1]).val(), v
@@ -176,18 +149,18 @@ unless IN_NODE # jsdom doesn't seem to like input type="file"
     [context, adapter] = getMockModel()
     ok !adapter.defaultRequestOptions.formData
 
-    helpers.render '<input type="file" data-bind="fileAttributes"></input>', false, context, (node) ->
+    helpers.render '<input type="file" data-bind="fileAttributes"></input>', false, context, (node, view) ->
       helpers.triggerChange(node.childNodes[0])
-      strictEqual context.fileAttributes, undefined
+      strictEqual view.fileAttributes, undefined
       QUnit.start()
 
   asyncTest 'it should bind the value of file type inputs with the "multiple" flag', 2, ->
     [context, adapter] = getMockModel()
     ok !adapter.defaultRequestOptions.formData
 
-    helpers.render '<input type="file" data-bind="fileAttributes" multiple="multiple"></input>', false, context, (node) ->
+    helpers.render '<input type="file" data-bind="fileAttributes" multiple="multiple"></input>', false, context, (node, view) ->
       helpers.triggerChange(node.childNodes[0])
-      deepEqual context.fileAttributes, []
+      deepEqual view.fileAttributes, []
       QUnit.start()
 
   asyncTest 'it should bind the value of file type inputs when they are proxied', 2, ->
@@ -196,27 +169,25 @@ unless IN_NODE # jsdom doesn't seem to like input type="file"
 
     source = '<form data-formfor-foo="proxied"><input type="file" data-bind="foo.fileAttributes"></input></form>'
 
-    helpers.render source, false, {proxied: context}, (node) ->
+    helpers.render source, false, {proxied: context}, (node, view) ->
       helpers.triggerChange(node.childNodes[0].childNodes[0])
-      strictEqual context.fileAttributes, undefined
+      strictEqual view.fileAttributes, undefined
       QUnit.start()
 
 asyncTest 'should bind radio buttons to a value', ->
   source = '<input id="fixed" type="radio" data-bind="ad.sale_type" name="sale_type" value="fixed"/>
     <input id="free" type="radio" data-bind="ad.sale_type" name="sale_type" value="free"/>
     <input id="trade" type="radio" data-bind="ad.sale_type" name="sale_type" value="trade"/>'
-  context = Batman
-    ad: Batman
-      sale_type: 'free'
+  context = ad: Batman(sale_type: 'free')
 
-  helpers.render source, context, (node) ->
+  helpers.render source, context, (node, view) ->
     fixed = node[0]
     free = node[1]
     trade = node[2]
 
     ok (!fixed.checked and free.checked and !trade.checked)
 
-    context.set 'ad.sale_type', 'trade'
+    view.set('ad.sale_type', 'trade')
     ok (!fixed.checked and !free.checked and trade.checked)
     QUnit.start()
 
@@ -227,10 +198,7 @@ asyncTest 'should bind to the value of radio buttons', ->
     <input id="trade" type="radio" data-bind="ad.sale_type" name="sale_type" value="trade" checked/>
   '''
 
-  context = Batman
-    ad: Batman()
-
-  helpers.render source, context, (node) ->
+  helpers.render source, {ad: Batman()}, (node, view) ->
     fixed = node[0]
     free = node[1]
     trade = node[2]
@@ -238,11 +206,11 @@ asyncTest 'should bind to the value of radio buttons', ->
     ok !fixed.checked
     ok !free.checked
     ok trade.checked
-    equal context.get('ad.sale_type'), 'trade', 'checked attribute binds'
+    equal view.get('ad.sale_type'), 'trade', 'checked attribute binds'
 
     fixed.checked = true
     helpers.triggerChange(fixed)
-    equal context.get('ad.sale_type'), 'fixed'
+    equal view.get('ad.sale_type'), 'fixed'
     QUnit.start()
 
 asyncTest 'should bind to true and false values', ->
@@ -251,23 +219,20 @@ asyncTest 'should bind to true and false values', ->
     <input type="radio" data-bind="ad.published" name="published" value="true"/>
   '''
 
-  context = Batman
-    ad: Batman()
-
-  helpers.render source, context, (node) ->
+  helpers.render source, {ad: Batman()}, (node, view) ->
     hidden = node[0]
     published = node[1]
 
     ok !published.checked
     ok hidden.checked
 
-    strictEqual context.get('ad.published'), false
-    context.set 'ad.published', true
+    strictEqual view.get('ad.published'), false
+    view.set 'ad.published', true
     ok published.checked
     ok !hidden.checked
 
     hidden.checked = true
     helpers.triggerChange hidden
-    equal context.get('ad.published'), false
+    equal view.get('ad.published'), false
 
     QUnit.start()
