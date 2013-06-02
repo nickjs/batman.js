@@ -120,5 +120,5 @@ exports.render = (html, jqueryize = true, context = {}, callback = ->) ->
 
 # Destroy outstanding nodes
 QUnit.testDone ->
-  Batman.DOM.removeNode(node) for node in outstandingNodes
+  Batman.DOM.destroyNode(node) for node in outstandingNodes
   outstandingNodes = []
