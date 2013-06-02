@@ -48,10 +48,10 @@ test "unions should emit addition and removal events", ->
   @union.on 'itemsWereRemoved', removedSpy = createSpy()
 
   @right.add "f"
-  deepEqual addedSpy.lastCallArguments, ['f']
+  deepEqual addedSpy.lastCallArguments[0], ['f']
 
   @left.remove "a"
-  deepEqual removedSpy.lastCallArguments, ['a']
+  deepEqual removedSpy.lastCallArguments[0], ['a']
 
 test "merging a union should return a set which no longer updates", ->
   @merged = @union.merge new Batman.Set("e", "f", "g")

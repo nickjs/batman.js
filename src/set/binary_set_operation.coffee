@@ -8,9 +8,9 @@ class Batman.BinarySetOperation extends Batman.Set
     @_setup @right, @left
 
   _setup: (set, opposite) =>
-    set.on 'itemsWereAdded', (items...) =>
+    set.on 'itemsWereAdded', (items) =>
       @_itemsWereAddedToSource(set, opposite, items...)
-    set.on 'itemsWereRemoved', (items...) =>
+    set.on 'itemsWereRemoved', (items) =>
       @_itemsWereRemovedFromSource(set, opposite, items...)
     @_itemsWereAddedToSource set, opposite, set.toArray()...
 

@@ -106,10 +106,10 @@ basicSetTestSuite = ->
   test "add(items...) fires itemsWereAdded handlers", ->
     @set.on 'itemsWereAdded', spy = createSpy()
     @set.add('foo')
-    deepEqual spy.lastCallArguments, ['foo']
+    deepEqual spy.lastCallArguments[0], ['foo']
 
     @set.add('baz', 'bar')
-    deepEqual spy.lastCallArguments, ['baz', 'bar']
+    deepEqual spy.lastCallArguments[0], ['baz', 'bar']
 
     equal spy.callCount, 2
     @set.add('bar')
@@ -129,7 +129,7 @@ basicSetTestSuite = ->
     @set.on 'itemsWereRemoved', spy = createSpy()
     @set.add('foo')
     @set.remove('foo')
-    deepEqual spy.lastCallArguments, ['foo']
+    deepEqual spy.lastCallArguments[0], ['foo']
 
     equal spy.callCount, 1
     @set.remove('foo')
