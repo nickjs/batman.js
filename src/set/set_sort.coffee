@@ -61,5 +61,5 @@ class Batman.SetSort extends Batman.SetProxy
       valueB = valueB.valueOf() if valueB?
       multiple = if @descending then -1 else 1
       @compare.call(@, valueA, valueB) * multiple
-    @_setObserver?.startObservingItems(newOrder...)
+    @_setObserver?.startObservingItems(newOrder)
     @set('_storage', newOrder)
