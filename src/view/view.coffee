@@ -44,8 +44,11 @@ class Batman.View extends Batman.Object
     super
 
   _addSubview: (subview) ->
+    subviewController = subview.controller
     subview.removeFromSuperview()
 
+
+    subview.set('controller', subviewController || @controller)
     subview.set('superview', this)
     subview.fire('viewDidMoveToSuperview')
 
@@ -73,6 +76,7 @@ class Batman.View extends Batman.Object
     @destroyBindings() if destroy
 
     @set('superview', null)
+    @set('controller', null)
 
   removeFromSuperview: ->
     @superview?.subviews.remove(this)
