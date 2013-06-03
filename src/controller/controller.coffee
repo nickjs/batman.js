@@ -156,7 +156,7 @@ class Batman.Controller extends Batman.Object
       view.set('contentFor', options.into || @defaultRenderYield) if not (view.contentFor or view.parentNode)
       view.set('controller', this)
 
-      Batman.currentApp.layout.subviews.add(view)
+      Batman.currentApp?.layout?.subviews?.add(view)
       @set('currentView', view)
 
       frame?.finishOperation()
