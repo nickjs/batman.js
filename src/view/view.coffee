@@ -44,9 +44,6 @@ class Batman.View extends Batman.Object
     super
 
   _addSubview: (subview) ->
-    @get('node') if not @node
-    subview.get('node') if not subview.node
-
     subview.removeFromSuperview()
 
     subview.set('superview', this)
@@ -55,22 +52,18 @@ class Batman.View extends Batman.Object
     @prevent('childViewsReady')
     subview.once('ready', @_fireChildViewsReady ||= => @allowAndFire('childViewsReady'))
 
-    subview.initializeBindings() if subview.bindImmediately
-
-    if yieldName = subview.contentFor
-      yieldObject = Batman.DOM.Yield.withName(subview.contentFor)
-      yieldObject.set('contentView', subview)
-
-    else
-      parentNode = subview.parentNode
-      parentNode = Batman.DOM.querySelector(@node, parentNode) if typeof parentNode is 'string'
-      parentNode = @node if not parentNode
-
-      subview.addToParentNode(parentNode)
+    @observe('node', subview._nodesChanged)
+    subview.observe('node', subview._nodesChanged)
+    subview.observe('parentNode', subview._nodesChanged)
+    subview._nodesChanged()
 
   _removeFromSuperview: ->
     return if not @superview
     @fire('viewWillRemoveFromSuperview')
+
+    @forget('node', @_nodesChanged)
+    @forget('parentNode', @_nodesChanged)
+    @superview.forget('node', @_nodesChanged)
 
     superview = @get('superview')
     @off('ready', superview._fireChildViewsReady)
@@ -84,12 +77,28 @@ class Batman.View extends Batman.Object
   removeFromSuperview: ->
     @superview?.subviews.remove(this)
 
+  _nodesChanged: ->
+    @initializeBindings() if @bindImmediately
+
+    if yieldName = @contentFor
+      yieldObject = Batman.DOM.Yield.withName(yieldName)
+      yieldObject.set('contentView', this)
+
+    else
+      superviewNode = @superview.get('node')
+      parentNode = @parentNode
+      parentNode = Batman.DOM.querySelector(superviewNode, parentNode) if typeof parentNode is 'string'
+      parentNode = superviewNode if not parentNode
+
+      @addToParentNode(parentNode)
+
   addToParentNode: (parentNode) ->
+    return if not @get('node')
+
     isInDOM = document.body.contains(parentNode)
     @propagateToSubviews('viewWillAppear') if isInDOM
 
-    node = @get('node')
-    parentNode.appendChild(node) if node and parentNode != node
+    parentNode.appendChild(@node) if parentNode != @node
 
     @propagateToSubviews('isInDOM', isInDOM)
     @propagateToSubviews('viewDidAppear') if isInDOM
@@ -143,13 +152,20 @@ class Batman.View extends Batman.Object
       return @node
 
     set: (key, node) ->
+      return if node == @node
+
       @node = node
+      @isBound = false
       return if not node
 
       Batman._data(node, 'view', this)
       Batman.developer.do =>
         extraInfo = @get('displayName') || @get('source')
         (if node == document then document.body else node).setAttribute?('data-batman-view', @constructor.name + if extraInfo then ": #{extraInfo}" else '')
+
+      if @superview and @parentNode
+        @initializeBindings() if @bindImmediately
+        @addToParentNode(@parentNode)
 
       return node
 
