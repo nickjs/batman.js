@@ -53,10 +53,10 @@ test "intersections should emit addition and removal events", ->
   @intersection.on 'itemsWereRemoved', removedSpy = createSpy()
 
   @left.add "d"
-  deepEqual addedSpy.lastCallArguments, ['d']
+  deepEqual addedSpy.lastCallArguments[0], ['d']
 
   @right.remove "d"
-  deepEqual removedSpy.lastCallArguments, ['d']
+  deepEqual removedSpy.lastCallArguments[0], ['d']
 
 test "intersections should be chainable", ->
   @middle = new Batman.Set "b", "c"

@@ -61,8 +61,10 @@ test "the result set from get(value) should be updated to remove items which are
   allByFred.on 'itemsWereRemoved', handler = createSpy()
   @base.remove(@anotherByFred)
 
-  equal handler.lastCallArguments?.length, 1
-  ok handler.lastCallArguments?[0] is @anotherByFred
+  itemsRemoved = handler.lastCallArguments[0]
+
+  equal itemsRemoved.length, 1
+  ok itemsRemoved[0] is @anotherByFred
   equal allByFred.has(@anotherByFred), false
 
 test "the result set from get(value) should be updated to add matching items when they are added to the underlying set", ->
@@ -70,8 +72,10 @@ test "the result set from get(value) should be updated to add matching items whe
   allByZeke.on 'itemsWereAdded', handler = createSpy()
   @base.add @anotherByZeke
 
-  equal handler.lastCallArguments.length, 1
-  ok handler.lastCallArguments[0] is @anotherByZeke
+  itemsAdded = handler.lastCallArguments[0]
+
+  equal itemsAdded.length, 1
+  ok itemsAdded[0] is @anotherByZeke
   equal allByZeke.has(@anotherByZeke), true
 
 test "the result set from get(value) should remain the same object once it is initialized, even after it has been emptied", ->

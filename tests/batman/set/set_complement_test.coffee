@@ -40,16 +40,16 @@ test "complements should emit addition and removal events", ->
   @complement.on 'itemsWereRemoved', removedSpy = createSpy()
 
   @left.add "f"
-  deepEqual addedSpy.lastCallArguments, ['f']
+  deepEqual addedSpy.lastCallArguments[0], ['f']
 
   @left.remove "f"
-  deepEqual removedSpy.lastCallArguments, ['f']
+  deepEqual removedSpy.lastCallArguments[0], ['f']
 
   @right.add "b"
-  deepEqual removedSpy.lastCallArguments, ['b']
+  deepEqual removedSpy.lastCallArguments[0], ['b']
 
   @right.remove "b"
-  deepEqual addedSpy.lastCallArguments, ['b']
+  deepEqual addedSpy.lastCallArguments[0], ['b']
 
 test "complements should be chainable", ->
   @middle = new Batman.Set "b", "c"
