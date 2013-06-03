@@ -14,6 +14,9 @@ Batman.extend Batman.DOM,
   textContent: (node) ->
     jQuery(node).text()
 
+Batman.View.accessor '$node', ->
+  $(@node) if @get('node')
+
 Batman.Request::_parseResponseHeaders = (xhr) ->
   headers = xhr.getAllResponseHeaders().split('\n').reduce((acc, header) ->
     if matches = header.match(/([^:]*):\s*(.*)/)
