@@ -21,10 +21,10 @@ class Batman.SetObserver extends Batman.Object
   stopObserving: ->
     @_manageItemObservers("forget")
     @_manageSetObservers("removeHandler")
-  startObservingItems: (items...) ->
+  startObservingItems: (items) ->
     @_manageObserversForItem(item, "observe") for item in items
     return
-  stopObservingItems: (items...) ->
+  stopObservingItems: (items) ->
     @_manageObserversForItem(item, "forget") for item in items
     return
   _manageObserversForItem: (item, method) ->
