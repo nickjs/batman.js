@@ -87,6 +87,10 @@ Batman.DOM.readers =
     {node, keyPath, view} = definition
 
     contentView = new Batman.View(html: node.innerHTML, contentFor: keyPath)
+    contentView.addToParentNode = (parentNode) ->
+      parentNode.innerHTML = ''
+      parentNode.appendChild(@get('node'))
+
     view.subviews.add(contentView)
 
     skipChildren: true
