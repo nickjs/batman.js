@@ -38,4 +38,4 @@ class Batman.HTMLStore extends Batman.Object
     relativePath = path.slice(1)
     if node = Batman.DOM.querySelector(document, "[data-defineview*='#{relativePath}']")
       Batman.setImmediate -> node.parentNode?.removeChild(node)
-      Batman.DOM.defineView(path, node)
+      Batman.View.store.set(Batman.Navigator.normalizePath(path), node.innerHTML)
