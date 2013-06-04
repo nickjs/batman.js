@@ -84,7 +84,7 @@ class Batman.View extends Batman.Object
   _nodesChanged: ->
     @initializeBindings() if @bindImmediately
 
-    if yieldName = @contentFor
+    if (yieldName = @contentFor) and not @parentNode
       yieldObject = Batman.DOM.Yield.withName(yieldName)
       yieldObject.set('contentView', this)
 
