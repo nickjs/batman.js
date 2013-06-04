@@ -148,7 +148,7 @@ class Batman.View extends Batman.Object
 
   @accessor 'node',
     get: ->
-      if not @node
+      if not @node?
         node = @loadView()
         @set('node', node) if node
         @fire('viewDidLoad')
