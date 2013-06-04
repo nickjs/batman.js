@@ -21,7 +21,9 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     parentNode = @prototypeNode.parentNode
     parentNode.insertBefore(@backingView.get('node'), @prototypeNode)
     parentNode.removeChild(@prototypeNode)
-    @bind()
+    setTimeout =>
+      @bind()
+    , 0
 
   dataChange: (collection) ->
     if collection?
