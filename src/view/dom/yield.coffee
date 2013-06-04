@@ -29,5 +29,4 @@ class Batman.DOM.Yield extends Batman.Object
       @containerNode = node
 
       if @contentView
-        @contentView.addToParentNode(node)
-
+        @contentView.set('parentNode', node)
