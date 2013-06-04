@@ -1,75 +1,58 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
+count = 0
 oldRequest = Batman.Request
+
 class MockRequest extends MockClass
   @chainedCallback 'success'
   @chainedCallback 'error'
-count = 0
 
 QUnit.module 'Batman.View',
   setup: ->
-    Batman.View.store = new Batman.HTMLStore
     MockRequest.reset()
-    @options =
-      source: "test_path#{++count}"
-
     Batman.Request = MockRequest
-    @view = new Batman.View(@options) # create a view which uses the MockRequest internally
+
+    @options = source: "test_path#{++count}"
+    @superview = new Batman.View(node: document.createElement('div'))
+    @view = new Batman.View(@options)
 
   teardown: ->
     Batman.Request = oldRequest
 
-test 'should pull in the source for a view from a path', 1, ->
+test 'should pull in the source for a view from a path', ->
+  @superview.subviews.add(@view)
   equal MockRequest.lastConstructorArguments[0].url, "/assets/batman/html/#{@options.source}.html"
 
-test 'should update its node with the contents of its view', 1, ->
+test 'should update its node with the contents of its view', ->
+  @superview.subviews.add(@view)
   MockRequest.lastInstance.fireSuccess('view contents')
   equal @view.get('node').innerHTML, 'view contents'
 
-test 'should not add its node property as a source to an enclosing accessor', 1, ->
-  class TestView extends Batman.View
-    render: spy = createSpy().whichReturns(true)
-
-  accessible = new Batman.Accessible -> new TestView()
+test 'should not add its node property as a source to an enclosing accessor', ->
+  accessible = new Batman.Accessible -> new Batman.View()
   view = accessible.get()
   view.set('node', {})
   newView = accessible.get()
   equal newView, view
 
-test 'should update a new, set node with the contents of its view after the source loads', 1, ->
-  node = document.createElement('div')
-  @view.set('node', node)
+test 'should update a new, set node with the contents of its view after the source loads', ->
+  div = document.createElement('div')
+  @superview.get('node').appendChild(div)
+  @view.parentNode = div
+  @superview.subviews.add(@view)
   MockRequest.lastInstance.fireSuccess('view contents')
-  equal node.innerHTML, 'view contents'
+  equal div.children[0].innerHTML, 'view contents'
 
-test 'should update a new, set node node with the contents of its view if the node is set after the source loads', 1, ->
-  node = document.createElement('div')
-  MockRequest.lastInstance.fireSuccess('view contents')
-  @view.set('node', node)
-  equal node.innerHTML, 'view contents'
-
-test "should not render if the node is set but the html hasn't come back", 1, ->
-  node = document.createElement('div')
-  @view.render = createSpy()
-  @view.set('node', node)
-  ok !@view.render.called
-
-test "should render if the node is set and no html needs to come back", 1, ->
+test "should initializeBindings if the node is set and no html needs to come back", 1, ->
   @view = new Batman.View(source: undefined, html: undefined)
-  @view.render = createSpy()
-  node = document.createElement('div')
-  @view.set('node', node)
-  ok @view.render.called
+  @view.initializeBindings = createSpy()
+
+  @superview.subviews.add(@view)
+  ok @view.initializeBindings.called
 
 asyncTest 'should fire the ready event once its contents have been loaded', 1, ->
   @view.on 'ready', observer = createSpy()
-
-  MockRequest.lastInstance.fireSuccess('view contents')
-  delay =>
-    ok observer.called
-
-asyncTest 'should call the ready function once its contents have been loaded', 1, ->
-  @view.ready = observer = createSpy()
+  @superview.subviews.add(@view)
 
   MockRequest.lastInstance.fireSuccess('view contents')
   delay =>
@@ -87,20 +70,14 @@ test ".store should pull unrendered data-defineview'd views from the DOM", ->
   $('#qunit-fixture').html  """
     <div data-defineview="foo">foo!</div>
   """
-
-  equal MockRequest.instances.length, 1
   equal Batman.View.store.get('foo'), 'foo!'
-  equal MockRequest.instances.length, 1
 
 test ".store should pull absolutely path'd data-defineview'd views from the DOM", ->
   $('#qunit-fixture').html  """
     <div data-defineview="/bar">bar!</div>
   """
-
-  equal MockRequest.instances.length, 1
   equal Batman.View.store.get('bar'), 'bar!'
   equal Batman.View.store.get('/bar'), 'bar!'
-  equal MockRequest.instances.length, 1
 
 test ".store should raise if remote fetching is disabled", ->
   Batman.config.fetchRemoteHTML = false
@@ -115,42 +92,29 @@ test 'should not autogenerate a node if the node property is false', 1, ->
     node: false
 
   @view = new SpecialView(@options)
+  @superview.subviews.add(@view)
   equal MockRequest.lastInstance, false
-
-asyncTest 'should render a given node after not autogenerating one if the node property is false', 4, ->
-  class SpecialView extends Batman.View
-    node: false
-    html: '<span data-bind="foo"></span>'
-
-  renderSpy = spyOn SpecialView.prototype, 'render'
-
-  @view = new SpecialView context: {foo: 'bar'}
-  delay =>
-    equal renderSpy.callCount, 0
-    equal @view.get('node'), false
-    @view.set 'node', document.createElement('div')
-    delay =>
-      equal renderSpy.callCount, 1
-      equal @view.get('node').childNodes[0].innerHTML, 'bar'
 
 QUnit.module 'Batman.View isInDOM',
   setup: ->
-    @options =
-      html: "predetermined contents"
-
+    @options = html: "predetermined contents"
+    @superview = new Batman.View(node: document.createElement('div'))
     @view = new Batman.View(@options)
+    @superview.initializeBindings()
+
   teardown: ->
     Batman.DOM.Yield.reset()
 
 test 'should report isInDOM correctly as false when without node', ->
-  equal @view.isInDOM(), false
+  equal @view.isInDOM, false
 
 asyncTest 'should report isInDOM correctly as false when with node but not in the dom', ->
   node = document.createElement('div')
   @view.set('node', node)
-  equal @view.isInDOM(), false
+  @superview.subviews.add(@view)
+  equal @view.isInDOM, false
   delay =>
-    equal @view.isInDOM(), false
+    equal @view.isInDOM, false
 
 asyncTest 'should report isInDOM correctly as true when it\'s node is in the dom', ->
   node = $('<div/>')
