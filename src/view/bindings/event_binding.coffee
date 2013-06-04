@@ -2,13 +2,15 @@
 
 class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
+  bindImmediately: false
 
   constructor: ->
     super
 
     callback = =>
-      target = @view.targetForKeypathBase(@key)
-      @get('filteredValue')?.apply(target, arguments)
+      func = @get('filteredValue')
+      target = @view.targetForKeypathBase(@functionPath)
+      return func?.apply(target, arguments)
 
     if attacher = Batman.DOM.events[@attributeName]
       attacher(@node, callback, @view)
@@ -19,8 +21,10 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
     if not @functionName and (index = key.lastIndexOf('.')) != -1
       @functionPath = key.substr(0, index)
       @functionName = key.substr(index + 1)
+    else
+      @functionPath = key
 
-    value = super(@functionPath || key)
+    value = super(@functionPath)
     if @functionName
       value?[@functionName]
     else
