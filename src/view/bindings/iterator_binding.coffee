@@ -46,7 +46,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
   handleItemsAdded: (newItems) =>
     @backingView.beginAppendItems()
-    @backingView.appendItem(item) for item in newItems
+    @backingView.appendItem(item) for item in newItems if newItems
     @backingView.finishAppendItems()
 
   handleItemsRemoved: (oldItems) =>
