@@ -51,8 +51,6 @@ class Batman.View extends Batman.Object
     subview.set('superview', this)
     subview.fire('viewDidMoveToSuperview')
 
-    @prevent('childViewsReady')
-    subview.once('ready', @_fireChildViewsReady ||= => @allowAndFire('childViewsReady'))
 
     @observe('node', subview._nodesChanged)
     subview.observe('node', subview._nodesChanged)
@@ -68,7 +66,6 @@ class Batman.View extends Batman.Object
     @superview.forget('node', @_nodesChanged)
 
     superview = @get('superview')
-    @off('ready', superview._fireChildViewsReady)
 
     destroy = true # FIXME
     @removeFromParentNode(destroy)
