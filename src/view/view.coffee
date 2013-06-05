@@ -170,7 +170,7 @@ class Batman.View extends Batman.Object
       Batman._data(node, 'view', this)
       Batman.developer.do =>
         extraInfo = @get('displayName') || @get('source')
-        (if node == document then document.body else node).setAttribute?('data-batman-view', @constructor.name + if extraInfo then ": #{extraInfo}" else '')
+        (if node == document then document.body else node).setAttribute?('batman-view', @constructor.name + if extraInfo then ": #{extraInfo}" else '')
 
       if @superview and @parentNode
         @initializeBindings() if @bindImmediately

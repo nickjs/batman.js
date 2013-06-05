@@ -1,6 +1,6 @@
 class Batman.IteratorView extends Batman.View
   loadView: ->
-    document.createComment("iterator-#{@iteratorName}=#{@iteratorPath}")
+    document.createComment("batman-iterator-#{@iteratorName}=#{@iteratorPath}")
 
   beginAppendItems: ->
     @fragment = document.createDocumentFragment()

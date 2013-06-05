@@ -6,7 +6,7 @@ class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
     {@invert} = definition
     super
 
-    @placeholderNode = document.createComment("insertif=\"#{@keyPath}\"")
+    @placeholderNode = document.createComment("batman-insertif=\"#{@keyPath}\"")
 
   ready: ->
     @bind()
