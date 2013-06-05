@@ -104,28 +104,3 @@ asyncTest 'it should render content even if the yield doesn\'t exist yet', 1, ->
     helpers.render '<div data-yield="foo"></div>', {}, (node) ->
       equal node.children(0).html(), 'immediate'
       QUnit.start()
-
-asyncTest "views should be able to yield more than once", ->
-  viewInstance = false
-  class TestView extends Batman.View
-    cached: true
-    constructor: ->
-      viewInstance = @
-      super
-
-  source = '''
-    <div class="yield" data-yield="foo"></div>
-    <span class="view" data-view="TestView"><div data-contentfor="foo">testing</div></span>
-  '''
-
-  context = {TestView}
-  helpers.render source, false, context, (node) ->
-    destination = node.childNodes[0]
-    source = node.childNodes[2]
-    equal destination.childNodes[0].innerHTML, 'testing'
-    Batman.DOM.destroyNode(source)
-    equal destination.innerHTML, ""
-
-    node.appendChild(viewInstance.get('node'))
-    equal destination.innerHTML, '<div data-contentfor="foo">testing</div>'
-    QUnit.start()
