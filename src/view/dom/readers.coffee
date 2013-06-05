@@ -68,6 +68,7 @@ Batman.DOM.readers =
   partial: (definition) ->
     {node, keyPath, view} = definition
 
+    node.removeAttribute('data-partial')
     partialView = new Batman.View(source: keyPath, parentNode: node, node: node)
 
     skipChildren: true
