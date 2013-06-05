@@ -191,6 +191,14 @@ asyncTest 'model will reload data from storage after clear', ->
       equal p.get('cost'), 20
       QUnit.start()
 
+asyncTest "errors are cleared on load", ->
+  product = new @Product(id: 1)
+  product.get('errors').add "product", "generic error"
+  equal product.get('errors').length, 1
+  product.load =>
+    equal product.get('errors').length, 0
+    QUnit.start()
+
 test "class promise accessors will be recalculated after clear", ->
   i = 0
   @Product.classAccessor 'promise', promise: (deliver) -> deliver(null, i++)

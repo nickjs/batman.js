@@ -370,6 +370,7 @@ class Batman.Model extends Batman.Object
         unless err
           @get('lifecycle').loaded()
           record = @constructor._mapIdentity(record)
+          record.get('errors').clear()
         else
           @get('lifecycle').error()
         if !hasOptions
