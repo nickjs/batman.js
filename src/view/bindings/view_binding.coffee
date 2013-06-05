@@ -46,5 +46,11 @@ class Batman.DOM.ViewArgumentBinding extends Batman.DOM.AbstractBinding
   constructor: (definition, @option, @targetView) ->
     super(definition)
 
+    @targetView.observe @option, (value) =>
+      return if @isDataChanging
+      @view.set(@keyPath, value)
+
   dataChange: (value) ->
+    @isDataChanging = true
     @targetView.set(@option, value)
+    @isDataChanging = false
