@@ -14,12 +14,11 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     return if not viewClassOrInstance
     if viewClassOrInstance.isView
       @viewInstance = viewClassOrInstance
+      @viewInstance.removeFromSuperview()
     else
       @viewInstance = new viewClassOrInstance
 
-    if not @viewInstance.get('node')
-      @node.removeAttribute('data-view')
-      @viewInstance.set('node', @node)
+    @node.removeAttribute('data-view')
 
     if options = @viewInstance.constructor._batman.get('options')
       for option in options
@@ -30,6 +29,9 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
           new Batman.DOM.ViewArgumentBinding(definition, option, @viewInstance)
 
     @viewInstance.set('parentNode', @node)
+    @viewInstance.set('node', @node)
+    @viewInstance.loadView(@node)
+
     @superview.subviews.add(@viewInstance)
 
   die: ->

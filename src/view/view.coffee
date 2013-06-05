@@ -47,7 +47,6 @@ class Batman.View extends Batman.Object
     subviewController = subview.controller
     subview.removeFromSuperview()
 
-
     subview.set('controller', subviewController || @controller)
     subview.set('superview', this)
     subview.fire('viewDidMoveToSuperview')
@@ -109,17 +108,18 @@ class Batman.View extends Batman.Object
 
   removeFromParentNode: (destroy) ->
     node = @get('node')
-    isInDOM = document.body.contains(node)
+    isInDOM = document.body.contains(node) and @node.parentNode == @parentNode
 
     @propagateToSubviews('viewWillDisappear') if isInDOM
 
-    if destroy
-      Batman.DOM.destroyNode(@node)
-    else
-      @node.parentNode?.removeChild(@node)
+    if isInDOM
+      if destroy
+        Batman.DOM.destroyNode(@node)
+      else
+        @node.parentNode.removeChild(@node)
 
     @propagateToSubviews('isInDOM', false)
-    @propagateToSubviews('viewDidDisappear')
+    @propagateToSubviews('viewDidDisappear') if isInDOM
 
   propagateToSubviews: (eventName, value) ->
     if value?
@@ -130,9 +130,13 @@ class Batman.View extends Batman.Object
 
     subview.propagateToSubviews(eventName, value) for subview in @subviews._storage
 
-  loadView: ->
+  # You should never call load view directly. It will be automatically
+  # invoked if a node is needed and does not exist, and cannot be
+  # loaded in any other way. You SHOULD, however, override it in a
+  # subclass, if you want to build a custom node.
+  loadView: (_node) ->
     if (html = @get('html'))?
-      node = document.createElement('div')
+      node = _node || document.createElement('div')
       Batman.DOM.setInnerHTML(node, html)
       return node
 
