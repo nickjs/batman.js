@@ -68,7 +68,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     get: -> @_unfilteredValue(@get('key'))
     set: (_, value) ->
       if k = @get('key')
-        target = @view.targetForKeypathBase(k)
+        target = @get('targetForKeypathPrefix')
         if target and target isnt window
           property = Batman.Property.forBaseAndKey(target, k)
           property.setValue(value)
@@ -82,6 +82,14 @@ class Batman.DOM.AbstractBinding extends Batman.Object
       @view.lookupKeypath(key)
     else
       @get('value')
+
+  @accessor 'targetForKeypathPrefix', ->
+    if not @keyPrefix
+      index = @get('key').lastIndexOf('.')
+      @keyPrefix = if index != -1 then @key.substr(0, index) else @key
+      @keySuffix = if index != -1 then @key.substr(index + 1) else @key
+
+    @view.targetForKeypathBase(@keyPrefix)
 
 
   onlyAll = Batman.BindingDefinitionOnlyObserve.All
