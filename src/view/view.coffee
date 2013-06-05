@@ -53,7 +53,7 @@ class Batman.View extends Batman.Object
 
     if (yieldName = subview.contentFor) and not subview.parentNode
       yieldObject = Batman.DOM.Yield.withName(yieldName)
-      yieldObject.set('contentView', this)
+      yieldObject.set('contentView', subview)
 
     @observe('node', subview._nodesChanged)
     subview.observe('node', subview._nodesChanged)
