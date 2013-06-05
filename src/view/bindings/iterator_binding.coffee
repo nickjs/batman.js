@@ -17,13 +17,14 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
     super
 
-  ready: ->
-    parentNode = @prototypeNode.parentNode
-    parentNode.insertBefore(@backingView.get('node'), @prototypeNode)
-    parentNode.removeChild(@prototypeNode)
-    setTimeout =>
+    @view.prevent('ready')
+    Batman.setImmediate =>
+      parentNode = @prototypeNode.parentNode
+      parentNode.insertBefore(@backingView.get('node'), @prototypeNode)
+      parentNode.removeChild(@prototypeNode)
+
       @bind()
-    , 0
+      @view.allowAndFire('ready')
 
   dataChange: (collection) ->
     if collection?
