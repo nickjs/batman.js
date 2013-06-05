@@ -51,6 +51,9 @@ class Batman.View extends Batman.Object
     subview.set('superview', this)
     subview.fire('viewDidMoveToSuperview')
 
+    if (yieldName = subview.contentFor) and not subview.parentNode
+      yieldObject = Batman.DOM.Yield.withName(yieldName)
+      yieldObject.set('contentView', this)
 
     @observe('node', subview._nodesChanged)
     subview.observe('node', subview._nodesChanged)
@@ -78,19 +81,15 @@ class Batman.View extends Batman.Object
     @superview?.subviews.remove(this)
 
   _nodesChanged: ->
+    return if not @node
     @initializeBindings() if @bindImmediately
 
-    if (yieldName = @contentFor) and not @parentNode
-      yieldObject = Batman.DOM.Yield.withName(yieldName)
-      yieldObject.set('contentView', this)
+    superviewNode = @superview.get('node')
+    parentNode = @parentNode
+    parentNode = Batman.DOM.querySelector(superviewNode, parentNode) if typeof parentNode is 'string'
+    parentNode = superviewNode if not parentNode
 
-    else
-      superviewNode = @superview.get('node')
-      parentNode = @parentNode
-      parentNode = Batman.DOM.querySelector(superviewNode, parentNode) if typeof parentNode is 'string'
-      parentNode = superviewNode if not parentNode
-
-      @addToParentNode(parentNode)
+    @addToParentNode(parentNode)
 
   addToParentNode: (parentNode) ->
     return if not @get('node')
