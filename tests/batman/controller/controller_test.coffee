@@ -44,7 +44,6 @@ test 'it should cache the rendered Batman.View if `view` isn\'t given in the opt
 test 'it should render a Batman.View subclass with the ControllerAction name on the current app if it exists', ->
   @controller.dispatch 'show'
   view = Batman.currentApp.layout.subviews.get('first')
-  console.log 'view', view
   equal view.source, 'test/show'
 
 test 'it should render a Batman.View subclass with the ControllerAction name if the routing key is nested', ->

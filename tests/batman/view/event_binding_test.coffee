@@ -121,10 +121,8 @@ asyncTest 'it should allow un-special-cased events like focus to be bound', 2, -
 
   source = '<input type="text" data-event-focus="doSomething" value="foo"></input>'
   helpers.render source, context, (node) ->
-    console.log 'arguments', arguments
     helpers.triggerFocus(node[0])
     ok spy.called
-    console.log 'spy.lastCallArguments', spy.lastCallArguments
     equal spy.lastCallArguments[0], node[0]
 
     QUnit.start()
