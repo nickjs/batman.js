@@ -52,13 +52,13 @@ asyncTest 'it should not render past its original node', ->
   node2 = $(node).find('#node2')[0]
   node3 = $(node).find('#node3')[0]
 
-  view = new Batman.View
-    context: @context
-    node: node2
+  @context.node = node2
+  view = new Batman.View(@context)
+
   view.on 'ready', ->
     equal node1.className, ''
     equal node2.className, 'bar'
     equal node3.className, ''
     QUnit.start()
 
-  true
+  view.initializeBindings()

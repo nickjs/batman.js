@@ -1,6 +1,5 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require '../view/view_helper'
 
-
 oldApp = Batman.currentApp
 oldHTMLStore = Batman.View.store
 oldNavigator = Batman.navigator
