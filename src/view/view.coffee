@@ -159,7 +159,8 @@ class Batman.View extends Batman.Object
 
       return @node
 
-    set: (key, node) ->
+    set: (key, node, oldNode) ->
+      Batman.removeData(oldNode, 'view', true) if oldNode
       return if node == @node
 
       @node = node
