@@ -68,10 +68,11 @@ Batman.DOM.readers =
   partial: (definition) ->
     {node, keyPath, view} = definition
 
-    partialView = new Batman.View(source: keyPath, parentNode: node)
+    partialView = new Batman.View(source: keyPath, parentNode: node, node: node)
 
     skipChildren: true
     ready: ->
+      partialView.loadView(node)
       view.subviews.add(partialView)
 
   defineview: (definition) ->
