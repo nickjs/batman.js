@@ -108,15 +108,14 @@ class Batman.View extends Batman.Object
 
   removeFromParentNode: (destroy) ->
     node = @get('node')
-    isInDOM = document.body.contains(node) and @node.parentNode == @parentNode
+    isInDOM = document.body.contains(node)
 
     @propagateToSubviews('viewWillDisappear') if isInDOM
 
-    if isInDOM
-      if destroy
-        Batman.DOM.destroyNode(@node)
-      else
-        @node.parentNode.removeChild(@node)
+    if destroy
+      Batman.DOM.destroyNode(@node)
+    else
+      @node.parentNode.removeChild(@node)
 
     @propagateToSubviews('isInDOM', false)
     @propagateToSubviews('viewDidDisappear') if isInDOM
