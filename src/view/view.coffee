@@ -144,7 +144,12 @@ class Batman.View extends Batman.Object
       source = Batman.Navigator.normalizePath(source)
       @html = @constructor.store.get(source)
 
-    set: Batman.Property.defaultAccessor.set
+    set: (key, html) ->
+      @html = html
+      @isBound = false
+
+      @loadView(@node) if @node and html?
+      @initializeBindings() if @bindImmediately
 
   @accessor 'node',
     get: ->
