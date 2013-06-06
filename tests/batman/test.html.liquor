@@ -8,8 +8,6 @@
     <script type="text/javascript" src="../lib/json2.js"></script>
     <script type="text/javascript" src="../lib/jquery.js"></script>
     <script type="text/javascript" src="../lib/qunit.js"></script>
-    <script type="text/javascript" src="../lib/sinon.js"></script>
-    <script type="text/javascript" src="../lib/sinon-qunit.js"></script>
     <script type="text/javascript">QUnit.config.autostart = false</script>
     <script type="text/javascript" src="../../lib/es5-shim.js"></script>
 
@@ -24,6 +22,8 @@
     #{ js('/src/extras/batman.paginator.js') }
 
     #{ js('/tests/batman/tests.js') }
+
+    <script type="text/javascript" src="../lib/sinon.js"></script>
 </head>
 
 <body>
