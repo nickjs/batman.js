@@ -9,10 +9,13 @@ qqunit.Environment.jsdom.jQueryify window, path.join(__dirname, 'lib', 'jquery.j
   # Load test helper
   try
     require './lib/query_selector_polyfill'
+
     Helper = require './batman/test_helper'
     global[k] = v for own k,v of Helper
 
     global.Batman = require '../lib/dist/batman.node'
+    require '../lib/extras/batman.testing'
+
     Batman.Request::getModule = ->
       request: -> throw new Error "Can't send requests during tests!"
 
