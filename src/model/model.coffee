@@ -146,7 +146,7 @@ class Batman.Model extends Batman.Object
   @findOrCreate: (attrs, callback) ->
     record = @_loadIdentity(attrs[@primaryKey])
     if record
-      record.updateAttributes(attrs)
+      record.mixin(attrs)
       callback(undefined, record)
     else
       record = new this(attrs)
