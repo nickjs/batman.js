@@ -67,7 +67,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
           return
 
         id = jsonObject[relatedModel.primaryKey]
-        record = relatedModel.get('loaded.indexedByUnique.id').get(id)
+        record = relatedModel._loadIdentity(id)
 
         if record?
           record._withoutDirtyTracking -> @fromJSON(jsonObject)

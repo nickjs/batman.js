@@ -46,11 +46,9 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       recordsToMap = []
       recordsToAdd = []
 
-      relatedRecords = relatedModel.get('loaded.indexedByUnique.id')
-
       for jsonObject in data
         id = jsonObject[relatedModel.primaryKey]
-        record = relatedRecords.get(id)
+        record = relatedModel._loadIdentity(id)
 
         if record?
           recordsToAdd.push(record)
