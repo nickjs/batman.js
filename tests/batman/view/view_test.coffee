@@ -121,9 +121,9 @@ asyncTest 'should report isInDOM correctly as true when it\'s node is in the dom
   @view.set('node', node[0])
   @view.on 'ready', =>
     node.appendTo($('body'))
-    ok @view.isInDOM()
+    ok @view.isInDOM
     node.remove()
-    equal @view.isInDOM(), false
+    equal @view.isInDOM, false
     QUnit.start()
 
   @view.initializeBindings()

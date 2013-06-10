@@ -2,19 +2,21 @@ helpers = if typeof require is 'undefined' then window.viewHelpers else require 
 {TestStorageAdapter} = if typeof require isnt 'undefined' then require '../model/model_helper' else window
 
 oldRedirect = Batman.redirect
+
 QUnit.module 'Batman.View route rendering',
   setup: ->
     class @App extends Batman.App
       @layout: null
       @route '/test', ->
     Batman.redirect = @redirect = createSpy()
+
   teardown: ->
     Batman.redirect = oldRedirect
     @App.stop()
 
 asyncTest 'should set href for URL fragment', 1, ->
   @App.on 'run', =>
-    helpers.render '<a data-route="\'/test\'">click</a>', {}, (node) =>
+    helpers.render '<a data-route="\'/test\'">click</a>', {}, (node, view) =>
       equal node.attr('href'), Batman.navigator.linkTo("/test")
       QUnit.start()
   @App.run()
@@ -103,22 +105,19 @@ asyncTest 'should bind to models when routing to them', 3, ->
       <a data-route="tweet | routeToAction 'duplicate'">duplicate</a>
     '''
 
-    context = Batman
-      tweet: tweetA
-
-
-    helpers.render source, context, (node, view) ->
+    helpers.render source, {tweet: tweetA}, (node, view) ->
       checkUrls = (expected) ->
         urls = ($(a).attr('href') for a in $('a', view.get('node')))
         expected = expected.map (path) -> Batman.navigator.linkTo(path)
         deepEqual urls, expected
       checkUrls ['/tweets/1', '/tweets/1/duplicate']
-      context.unset 'tweet'
+
+      view.unset('tweet')
 
       urls = ($(a).attr('href') for a in $('a', view.get('node')))
       deepEqual urls, ['#', '#']
 
-      context.set 'tweet', tweetB
+      view.set('tweet', tweetB)
       checkUrls ['/tweets/2', '/tweets/2/duplicate']
       QUnit.start()
 
@@ -156,7 +155,7 @@ asyncTest 'should allow you to bind to objects in the context stack', 2, ->
       <a data-route="whereToRedirect">bar</a>
     '''
 
-    context = Batman
+    context =
       whereToRedirect:
         controller: 'foo'
         action: 'bar'
@@ -164,9 +163,9 @@ asyncTest 'should allow you to bind to objects in the context stack', 2, ->
     helpers.render source, false, context, (node, view) ->
       a = $(node.childNodes[0])
       deepEqual a.attr('href'), Batman.navigator.linkTo('/foo/bar')
-      context.set 'whereToRedirect',
-        controller: 'baz'
-        action: 'qux'
+
+      view.set('whereToRedirect', {controller: 'baz', action: 'qux'})
+      
       delay ->
         deepEqual a.attr('href'), Batman.navigator.linkTo('/baz/qux')
 
@@ -187,7 +186,7 @@ asyncTest 'should allow you to use named route queries', 2, ->
       <a data-route="routes.products[product].images[image].duplicate">image member</a>
     '''
 
-    context = Batman
+    context =
       product: Batman
         toParam: -> 10
       image: Batman
@@ -202,7 +201,7 @@ asyncTest 'should allow you to use named route queries', 2, ->
       expected = ['/products', '/products/new', '/products/10', '/products/10/images', '/products/10/images/20', '/products/10/images/20/duplicate']
       checkUrls(expected)
 
-      context.set 'product', Batman(toParam: -> 30)
+      view.set('product', Batman(toParam: -> 30))
       delay ->
         expected = ['/products', '/products/new', '/products/30', '/products/30/images', '/products/30/images/20', '/products/30/images/20/duplicate']
         checkUrls(expected)

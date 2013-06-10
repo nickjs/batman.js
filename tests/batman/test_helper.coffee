@@ -1,4 +1,4 @@
-if module?.exports
+if module?.exports and require?
   exports = module.exports
   container = global
   exports.IN_NODE = true

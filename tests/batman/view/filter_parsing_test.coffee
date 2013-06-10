@@ -282,40 +282,45 @@ asyncTest 'should update bindings when argument keypaths change in the middle of
 
     QUnit.start()
 
-test 'should update bindings when argument keypaths change context', ->
-  context = Batman
+asyncTest 'should update bindings when argument keypaths change context', 2, ->
+  context =
     foo: '.'
     array: [1,2,3],
     html: ''
 
-  closer = Batman
+  closer =
     closer: true
     html: '<div data-bind="array | join foo"></div>'
 
   outerView = new Batman.View(context)
   innerView = new Batman.View(closer)
 
-  outerView.initializeBindings()
-  outerView.subviews.add(innerView)
+  helpers.render '', context, (node, view) ->
+    view.subviews.add(innerView)
+    innerNode = innerView.get('node')
 
-  node = innerView.get('node')
-  console.log 'node', node
-  equal(node.children[0].innerHTML, '1.2.3')
+    equal(innerNode.children[0].innerHTML, '1.2.3')
+    innerView.set('foo', '-')
+    equal(innerNode.children[0].innerHTML, '1-2-3')
 
-  innerView.set('foo', '-')
-  equal(node.children[0].innerHTML, '1-2-3')
+    QUnit.start()
 
 test 'it should update the data object if value bindings aren\'t filtered', 3, ->
-  view = new Batman.View(html: '<textarea data-bind="one"></textarea>')
+  getSpy = createSpy().whichReturns("abcabcabc")
+  setSpy = createSpy().whichReturns("defdefdef")
 
-  view.accessor 'one',
-    get: getSpy = createSpy().whichReturns("abcabcabc")
-    set: setSpy = createSpy().whichReturns("defdefdef")
+  class TestView extends Batman.View
+    @accessor 'one',
+      set: setSpy
+      get: getSpy
 
+  view = new TestView(html: '<textarea data-bind="one"></textarea>')
+  view.initializeBindings()
   node = view.get('node')
-  node.children[0].innerHTML = 'defdefdef'
 
+  node.children[0].innerHTML = 'defdefdef'
   helpers.triggerChange(node.children[0])
+
   equal node.children[0].innerHTML, 'defdefdef'
 
   ok getSpy.called

@@ -107,7 +107,7 @@ exports.render = (html, jqueryize = true, context = {}, callback = ->) ->
   context.html = html
   view = new Batman.View(context)
 
-  view.on 'ready', ->
+  view.once 'ready', ->
     Batman.setImmediate ->
       outstandingNodes.push(view.get('node'))
       node = if jqueryize then $(view.get('node')).children() else view.get('node')

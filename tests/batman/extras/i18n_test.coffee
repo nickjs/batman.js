@@ -85,6 +85,9 @@ test "the locales obj should be replaceable", ->
 
 QUnit.module "Batman.I18N: translate filter",
   setup: ->
+    class App extends Batman.App
+      @layout: null
+
     Batman.Request = MockRequest
     I18N.set 'locales', Batman
       fr:
@@ -95,6 +98,8 @@ QUnit.module "Batman.I18N: translate filter",
           other: "%{count} pamplemouses"
 
     I18N.set 'locale', 'fr'
+
+    App.run()
 
   teardown: reset
 

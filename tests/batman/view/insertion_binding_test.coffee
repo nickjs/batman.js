@@ -9,59 +9,53 @@ QUnit.module 'Batman.View insertion bindings',
 
 asyncTest 'it should allow elements to be removed when the keypath evaluates to true', 3, ->
   source = '<div class="foo" data-removeif="foo"></div>'
-  context = Batman foo: true
-  helpers.render source, false, context, (node) ->
+
+  helpers.render source, false, {foo: true}, (node, view) ->
     equal $('.foo', node).length, 0
-    context.set 'foo', false
+    view.set('foo', false)
+
     equal $('.foo', node).length, 1
-    context.set 'foo', true
+    view.set('foo', true)
+
     equal $('.foo', node).length, 0
     QUnit.start()
 
 asyncTest 'it should allow elements to be inserted when the keypath evaluates to true', 2, ->
   source = '<div class="foo" data-insertif="foo"></div>'
-  context = Batman foo: true
-  helpers.render source, false, context, (node) ->
+
+  helpers.render source, false, {foo: true}, (node, view) ->
     equal $('.foo', node).length, 1
-    context.set 'foo', false
+    view.set('foo', false)
+
     equal $('.foo', node).length, 0
-    QUnit.start()
-
-asyncTest 'it should leave a comment node so bindings are properly destroyed', 1, ->
-  source = '<div data-removeif="foo"><div data-view="OuterView"></div></div>'
-
-  context = Batman
-    foo: true
-    OuterView: class OuterView extends @TestView
-
-  helpers.render source, false, context, (node) ->
-    context.OuterView.instance.on 'destroy', spy = createSpy()
-    Batman.DOM.destroyNode(node)
-    ok spy.called
     QUnit.start()
 
 asyncTest 'nodes after the binding should be rendered if the keypath starts as true', 1, ->
   source = '<div data-insertif="foo"></div><p class="test" data-bind="bar"></p>'
-  context = Batman foo: true, bar: 'bar'
-  helpers.render source, false, context, (node) ->
+  context = foo: true, bar: 'bar'
+
+  helpers.render source, false, context, (node, view) ->
     equal $('.test', node).html(), 'bar'
     QUnit.start()
 
 asyncTest 'nodes after the binding should be rendered if the keypath starts as false', 1, ->
   source = '<div data-insertif="foo"></div><p class="test" data-bind="bar"></p>'
-  context = Batman foo: false, bar: 'bar'
+  context = foo: false, bar: 'bar'
+
   helpers.render source, false, context, (node) ->
     equal $('.test', node).html(), 'bar'
     QUnit.start()
 
 asyncTest 'it should allow keypaths to transition from falsy values to other falsy values', 3, ->
   source = '<div class="foo" data-insertif="foo"></div>'
-  context = Batman()
-  helpers.render source, false, context, (node) ->
-    equal $('.foo', node).length, 0
-    context.set 'foo', false
-    equal $('.foo', node).length, 0
-    context.set 'foo', true
-    equal $('.foo', node).length, 1
-    QUnit.start()
 
+  helpers.render source, false, {foo: false}, (node, view) ->
+    equal $('.foo', node).length, 0
+
+    view.set('foo', false)
+    equal $('.foo', node).length, 0
+
+    view.set('foo', true)
+    equal $('.foo', node).length, 1
+
+    QUnit.start()

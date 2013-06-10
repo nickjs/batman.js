@@ -58,16 +58,15 @@ asyncTest 'it should add the errors class to an input bound to a field on the su
   </form>
   '''
 
-  context = Batman
-    instanceOfUser: Batman
-      name: ''
+  context = instanceOfUser: Batman(name: '')
 
-  node = helpers.render source, context, (node, view) =>
+  helpers.render source, context, (node, view) =>
     ok !$('input', node).hasClass('error')
 
     errors = new Batman.ErrorsSet
-    errors.add 'name', "can't be blank"
-    view.get('instanceOfUser').set 'errors', errors
+    errors.add('name', "can't be blank")
+    view.lookupKeypath('instanceOfUser').set('errors', errors)
+
     ok $('input', node).hasClass('error')
 
     QUnit.start()
@@ -80,17 +79,19 @@ if !IN_NODE # jsdom doesn't support querySelector on elements, so these tests fa
       <input type="text" data-bind="user.name">
     </form>
     '''
-    context = Batman
+    context =
       instanceOfUser: Batman
         name: ''
         errors: new Batman.ErrorsSet
 
-    node = helpers.render source, context, (node, view) =>
+    helpers.render source, context, (node, view) =>
       ok node.find("div.errors ul").length > 0
-      view.get('instanceOfUser.errors').add 'name', "can't be blank"
-      delay =>
-        equal node.find("div.errors li").length, 1
+      view.lookupKeypath('instanceOfUser.errors').add('name', "can't be blank")
+      equal node.find("div.errors li").length, 1
+
+      delay ->
         equal node.find("div.errors li").html(), "Name can't be blank"
+
 
 
   asyncTest 'it should only show the errors list when there are errors', 2, ->
@@ -100,35 +101,37 @@ if !IN_NODE # jsdom doesn't support querySelector on elements, so these tests fa
       <input type="text" data-bind="user.name">
     </form>
     '''
-    context = Batman
+    context =
       instanceOfUser: Batman
         name: ''
         errors: new Batman.ErrorsSet
 
-    node = helpers.render source, context, (node, view) =>
+    helpers.render source, context, (node, view) =>
       equal node.find("div.errors").css('display'), 'none'
-      view.get('instanceOfUser.errors').add 'name', "can't be blank"
-      delay =>
-        equal node.find("div.errors").css('display'), ''
+      view.lookupKeypath('instanceOfUser.errors').add('name', "can't be blank")
+      equal node.find("div.errors").css('display'), ''
+
+      QUnit.start()
 
   asyncTest 'it shouldn\'t override already existing showif bindings on the errors list', 2, ->
     source = '''
     <form data-formfor-user="instanceOfUser">
-      <div class="errors" data-showif="show?"></div>
+      <div class="errors" data-showif="isVisible"></div>
       <input type="text" data-bind="user.name">
     </form>
     '''
-    context = Batman
-      'show?': true
+    context =
+      isVisible: true
       instanceOfUser: Batman
         name: ''
         errors: new Batman.ErrorsSet
 
-    node = helpers.render source, context, (node, view) =>
+    helpers.render source, context, (node, view) =>
       equal node.find("div.errors").css('display'), ''
-      view.get('instanceOfUser.errors').add 'name', "can't be blank"
-      delay =>
-        equal node.find("div.errors").css('display'), ''
+      view.lookupKeypath('instanceOfUser.errors').add('name', "can't be blank")
+      equal node.find("div.errors").css('display'), ''
+
+      QUnit.start()
 
   asyncTest 'it should add the error list HTML to a specified selected node', 3, ->
     source = '''
@@ -137,14 +140,15 @@ if !IN_NODE # jsdom doesn't support querySelector on elements, so these tests fa
       <input type="text" data-bind="user.name">
     </form>
     '''
-    context = Batman
+    context =
       instanceOfUser: Batman
         name: ''
         errors: new Batman.ErrorsSet
 
-    node = helpers.render source, context, (node, view) =>
+    helpers.render source, context, (node, view) =>
       ok node.find("#testy ul").length > 0
       view.get('instanceOfUser.errors').add 'name', "can't be blank"
-      delay =>
-        equal node.find("#testy li").length, 1
+      equal node.find("#testy li").length, 1
+
+      delay ->
         equal node.find("#testy li").html(), "Name can't be blank"

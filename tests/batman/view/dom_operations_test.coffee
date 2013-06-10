@@ -7,11 +7,12 @@ QUnit.module "Batman.DOM helpers",
         @constructor.instance = @
         super
 
-    @context = Batman
+    @context =
       OuterView: class OuterView extends @TestView
       InnerView: class InnerView extends @TestView
 
     @simpleSource = '<div class="outer" data-view="OuterView"><div><p class="inner" data-view="InnerView"></p></div></div>'
+
   teardown: ->
     Batman.DOM.Yield.reset()
 
@@ -21,7 +22,7 @@ test "addEventListener and removeEventListener store and remove callbacks using 
 
   Batman.DOM.addEventListener div, 'click', f
   listeners = Batman._data div, 'listeners'
-  ok ~listeners.click.indexOf f
+  ok ~listeners.click.indexOf(f)
 
   Batman.DOM.removeEventListener div, 'click', f
   listeners = Batman._data div, 'listeners'
@@ -95,22 +96,14 @@ asyncTest "destroyNode: cached views with inner views can be reinserted", ->
     OuterView: class OuterView extends @TestView
       cached: true
     InnerView: class InnerView extends @TestView
-      constructor: ->
-        super
-        @on 'appear', innerAppearSpy
-        @on 'disappear', innerDisappearSpy
 
   helpers.render '<div data-view="OuterView"><div data-view="InnerView"><span data-bind="bar"></span></div></div>', context, (node, view) ->
     equal node.find('span').html(), "foo"
-    equal innerAppearSpy.callCount, 1
-    equal innerDisappearSpy.callCount, 0
 
     Batman.DOM.destroyNode(node[0])
-    equal innerDisappearSpy.callCount, 1
 
     newElement = $('<div/>')[0]
     newElement.appendChild(context.OuterView.instance.get('node'))
-    equal innerAppearSpy.callCount, 2
 
     equal $(newElement).find('span').html(), "foo"
     view.set('bar', 'baz')

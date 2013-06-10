@@ -9,8 +9,11 @@ QUnit.module 'Batman.Controller',
     class TestController extends Batman.Controller
       show: ->
 
-    Batman.currentApp = new Batman(layout: new Batman.View)
-    Batman.View.store = new Batman
+    Batman.currentApp = Batman(layout: new Batman.View(node: document.createElement('div')))
+    Batman.View.store.set('foo', "<div>show</div>")
+    Batman.View.store.set('test/show', "<div>show</div>")
+    Batman.View.store.set('products/show', "<div>show</div>")
+    Batman.View.store.set('admin/products/show', "<div>show</div>")
 
     @controller = new TestController
     @controller.renderCache.reset()
@@ -32,7 +35,7 @@ test 'it should render a Batman.View if `view` isn\'t given in the options to re
   equal Batman.currentApp.layout.subviews.length, 1
 
   newView = Batman.currentApp.layout.subviews.get('first')
-  ok newView.isBound, true
+  ok newView.isBound
 
 test 'it should cache the rendered Batman.View if `view` isn\'t given in the options to render', ->
   @controller.dispatch('show')
@@ -267,7 +270,7 @@ test 'beforeFilters and afterFilters are inherited when subclassing controllers'
   beforeSpy4 = createSpy()
   afterSpy3 = createSpy()
   afterSpy4 = createSpy()
-  
+
   class TestChildController extends TestParentController
     @beforeFilter beforeSpy3
     @beforeFilter 'show', beforeSpy4
@@ -369,8 +372,8 @@ QUnit.module 'Batman.Controller error handling',
 
     class @TestController extends Batman.Controller
       _customErrorHandler: (err) ->
-      _customErrorHandler2: (err) ->    
-   
+      _customErrorHandler2: (err) ->
+
 test 'When wrapping a call with the errorHandler callback, any exception tracked with catchError will be handled by a single handler', 3, ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
@@ -380,7 +383,7 @@ test 'When wrapping a call with the errorHandler callback, any exception tracked
 
   namespace = @
   controller = new @TestController
-  controller.index = -> 
+  controller.index = ->
     namespace.Model.load @errorHandler callbackSpy
     @render false
   controller.dispatch('index')
@@ -388,7 +391,7 @@ test 'When wrapping a call with the errorHandler callback, any exception tracked
   equal callbackSpy.callCount, 0
   equal handlerSpy.callCount, 1
   deepEqual handlerSpy.lastCallArguments, [@error]
-  
+
 test 'When wrapping a call with the errorHandler callback, any exception tracked with catchError will be handled by multiple handlers', 5, ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
@@ -400,7 +403,7 @@ test 'When wrapping a call with the errorHandler callback, any exception tracked
 
   namespace = @
   controller = new @TestController
-  controller.index = -> 
+  controller.index = ->
     namespace.Model.load @errorHandler callbackSpy
     @render false
   controller.dispatch('index')
@@ -417,7 +420,7 @@ test 'When wrapping a call with the errorHandler callback, any exception that is
 
   @TestController::_customErrorHandler = handlerSpy
   @TestController.catchError @CustomError, with: @TestController::_customErrorHandler
-  
+
   @Model.load = (callback) ->
     callback(new Error, undefined)
   namespace = @
@@ -439,7 +442,7 @@ test 'When wrapping a call with the errorHandler callback, no exception passes r
 
   @TestController::_customErrorHandler = handlerSpy
   @TestController.catchError @CustomError, with: @TestController::_customErrorHandler
-  
+
   @Model.load = (callback) ->
     callback(undefined, [{id: 1}], 'foo')
   namespace = @
@@ -447,7 +450,7 @@ test 'When wrapping a call with the errorHandler callback, no exception passes r
   controller.index = ->
     namespace.Model.load @errorHandler callbackSpy
     @render false
-  
+
   controller.dispatch('index')
 
   equal handlerSpy.callCount, 0
@@ -467,7 +470,7 @@ test 'subclass errors registered with superclass catchError cause the errorHandl
   @Model.load = (callback) ->
     callback(error, undefined)
   namespace = @
-  controller = new @TestController 
+  controller = new @TestController
   controller.index = ->
     namespace.Model.load @errorHandler callbackSpy
     @render false
@@ -492,14 +495,14 @@ test 'When wrapping a call with the errorHandler callback, parent class handlers
   class SubclassController extends @TestController
     _customErrorHandler3: handlerSpy3
     _customErrorHandler2: handlerSpy2
-    @catchError namespace.CustomError, with: @::_customErrorHandler3 
-    
+    @catchError namespace.CustomError, with: @::_customErrorHandler3
+
   namespace = @
   controller = new SubclassController
-  controller.index = -> 
+  controller.index = ->
     namespace.Model.load @errorHandler callbackSpy
     @render false
-  
+
   controller.dispatch('index')
 
   equal callbackSpy.callCount, 0
@@ -575,7 +578,7 @@ test 'When wrapping multiple nested calls with errorHandler callback, nested err
     callback(undefined, [{id: 1}], 'foo')
   @Model.load3 = (callback) ->
     callback(namespace.error, undefined)
-  
+
   controller = new @TestController
   controller.index = ->
     controllerNamespace = @
@@ -598,7 +601,7 @@ test 'Calling handlerError directly with an error should result in the handlers 
 
   @TestController::_customErrorHandler = handlerSpy
   @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler]
-  controller = new @TestController  
+  controller = new @TestController
 
   equal controller.handleError(@error), true
   equal controller.handleError(@error2), false
