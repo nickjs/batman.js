@@ -159,7 +159,8 @@ class Batman.Controller extends Batman.Object
       Batman.currentApp?.layout?.subviews?.add(view)
       @set('currentView', view)
 
-      frame?.finishOperation()
+      view.once 'ready', ->
+        frame?.finishOperation()
 
     view
 
