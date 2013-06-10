@@ -69,8 +69,9 @@ class Batman.App extends Batman.Object
 
     unless @get('navigator')?
       @set('navigator', Batman.Navigator.forApp(@))
+      Batman.navigator = @get('navigator')
+
       @on 'run', =>
-        Batman.navigator = @get('navigator')
         Batman.navigator.start() if Object.keys(@get('dispatcher').routeMap).length > 0
 
     @observe 'layout', (layout) =>
