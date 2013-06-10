@@ -72,6 +72,17 @@ Batman.DOM =
     else
       node.detachEvent 'on'+eventName, callback
 
+  cleanupNode: (node) ->
+    if listeners = Batman._data(node, 'listeners')
+      for eventName, eventListeners of listeners
+        eventListeners.forEach (listener) ->
+          Batman.DOM.removeEventListener(node, eventName, listener)
+
+    Batman.removeData node, null, null, true
+    Batman.DOM.cleanupNode(child) for child in node.childNodes
+
+    return
+
   hasAddEventListener: !!window?.addEventListener
 
   preventDefault: (e) ->
