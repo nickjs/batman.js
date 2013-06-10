@@ -178,6 +178,8 @@ class Batman.View extends Batman.Object
 
       return node
 
+  @::event('ready').oneShot = true
+
   initializeBindings: ->
     return if @isBound
     new Batman.Renderer(@node, this)
