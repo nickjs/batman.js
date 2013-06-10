@@ -52,7 +52,4 @@ class Batman.I18N.LocalesStorage extends Batman.Object
 Batman.I18N.set 'locales', new Batman.I18N.LocalesStorage
 
 Batman.Filters.t = Batman.Filters.translate = Batman.Filters.interpolate
-translationsAlias = Batman()
-translationsAlias.accessor 't', -> Batman.I18N.get('translations')
-
-# Batman.RenderContext.base = Batman.RenderContext.base.descend(translationsAlias)
+Batman.config.translations = true

@@ -91,6 +91,9 @@ class Batman.App extends Batman.Object
       layout.propagateToSubviews('isInDOM', true)
       layout.propagateToSubviews('viewDidAppear')
 
+    if Batman.config.translations
+      @set('t', Batman.I18N.get('translations'))
+
     @hasRun = yes
     @fire('run')
     return this
