@@ -14,6 +14,12 @@ Batman.extend Batman.DOM,
   textContent: (node) ->
     jQuery(node).text()
 
+  addEventListener: (node, eventName, callback) ->
+    $(node).on(eventName, callback)
+
+  removeEventListener: (node, eventName, callback) ->
+    $(node).off(eventName, callback)
+
 Batman.View.accessor '$node', ->
   $(@node) if @get('node')
 
