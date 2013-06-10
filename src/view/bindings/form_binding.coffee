@@ -17,14 +17,17 @@ class Batman.DOM.FormBinding extends Batman.DOM.ContextBinding
     keyPath = @keyPath
     attribute = @attributeName
 
-    selectors = ['input', 'textarea', 'select'].map (nodeName) -> "#{nodeName}[data-bind^=\"#{keyPath}\"]"
+    selectors = ['input', 'textarea', 'select'].map (nodeName) -> "#{nodeName}[data-bind^=\"#{attribute}\"]"
     selectedNodes = Batman.DOM.querySelectorAll(@node, selectors.join(', '))
 
     for selectedNode in selectedNodes
       binding = selectedNode.getAttribute('data-bind')
-      field = binding.substr(binding.indexOf(attribute), attribute.length)
+      field = binding.substr(binding.indexOf(attribute) + attribute.length + 1)
 
       selectedNode.setAttribute("data-addclass-#{@errorClass}", "#{attribute}.errors.#{field}.length")
+
+    errorsNode = Batman.DOM.querySelector(@node, '.errors')
+    errorsNode.setAttribute('data-showif', "#{attribute}.errors.length") if errorsNode and !errorsNode.getAttribute('data-showif')
 
     return
 
@@ -34,7 +37,7 @@ class Batman.DOM.FormBinding extends Batman.DOM.ContextBinding
 
   errorsListHTML: ->
     """
-    <ul data-showif="#{@attributeName}.errors.length">
+    <ul>
       <li data-foreach-error="#{@attributeName}.errors" data-bind="error.fullMessage"></li>
     </ul>
     """
