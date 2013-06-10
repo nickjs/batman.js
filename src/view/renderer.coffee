@@ -34,6 +34,7 @@ class Batman.Renderer extends Batman.Object
     while root
       skipChildren = @parseNode(root)
       root = @nextNode(root, skipChildren)
+    return
 
   parseNode: (node) ->
     isViewBacked = false
