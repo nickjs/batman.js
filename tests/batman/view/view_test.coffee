@@ -131,16 +131,16 @@ asyncTest 'should report isInDOM correctly as true when only one of many yielded
     ok view.isInDOM
     QUnit.start()
 
-asyncTest 'should report isInDOM correctly as false when none of many yielded nodes is in the dom', ->
-  source = '''
+test 'should report isInDOM correctly as false when none of many yielded nodes is in the dom', ->
+  html = '''
   <div data-contentfor="bar">chunky bacon</div>
   <div data-contentfor="baz">chunky bacon</div>
   <div data-contentfor="qux">chunky bacon</div>
   '''
 
-  helpers.render source, {}, (node, view) ->
-    ok !view.isInDOM
-    QUnit.start()
+  view = new Batman.View(html: html)
+  view.initializeBindings()
+  ok !view.isInDOM
 
 # FIXME
 # asyncTest 'die should call die on properties', 1, ->
