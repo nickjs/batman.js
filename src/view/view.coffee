@@ -16,6 +16,7 @@ class Batman.View extends Batman.Object
       return if not climbTree
       node = node.parentNode
 
+  bindings: []
   subviews: []
   superview: null
   controller: null
@@ -31,6 +32,7 @@ class Batman.View extends Batman.Object
   isView: true
 
   constructor: ->
+    @bindings = []
     @subviews = new Batman.Set
 
     @subviews.on 'itemsWereAdded', (newSubviews) =>

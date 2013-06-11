@@ -135,6 +135,8 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     if @onlyObserve in [onlyAll, onlyData]
       @observeAndFire 'filteredValue', @_fireDataChange
 
+    @view.bindings.push(this)
+
   _fireNodeChange: (event) ->
     @shouldSet = false
     val = @value || @get('keyContext')
