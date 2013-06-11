@@ -75,9 +75,7 @@ class Batman.View extends Batman.Object
 
     superview = @get('superview')
 
-    destroy = true # FIXME
-    @removeFromParentNode(destroy)
-    @destroyBindings() if destroy
+    @removeFromParentNode()
 
     @set('superview', null)
     @set('controller', null)
@@ -107,16 +105,13 @@ class Batman.View extends Batman.Object
     @propagateToSubviews('isInDOM', isInDOM)
     @propagateToSubviews('viewDidAppear') if isInDOM
 
-  removeFromParentNode: (destroy) ->
+  removeFromParentNode: ->
     node = @get('node')
     isInDOM = document.body.contains(node)
 
     @propagateToSubviews('viewWillDisappear') if isInDOM
 
-    if destroy
-      Batman.DOM.destroyNode(@node)
-    else
-      @node.parentNode.removeChild(@node)
+    @node?.parentNode?.removeChild(@node)
 
     @propagateToSubviews('isInDOM', false)
     @propagateToSubviews('viewDidDisappear') if isInDOM
@@ -230,11 +225,18 @@ class Batman.View extends Batman.Object
     Batman.get(target, keypath) if target
 
   die: ->
-    @fire('destroy', @node)
+    @fire('destroy')
+
+    Batman.DOM.destroyNode(@node)
+    @removeFromSuperview()
+
     @forget()
     @_batman.properties?.forEach (key, property) -> property.die()
-    @subview.forEach (name, subview) -> subview.die()
-    @_removeFromSuperview() if @superview
+
+    binding.die() for binding in @bindings
+    subview.die() for subview in @subviews.toArray()
+
+    @node = null
 
 Batman.container.$context ?= (node) ->
   while node

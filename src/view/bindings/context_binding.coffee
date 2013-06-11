@@ -19,3 +19,7 @@ class Batman.DOM.ContextBinding extends Batman.DOM.AbstractAttributeBinding
 
   dataChange: (proxiedObject) ->
     @backingView.set(@attributeName || 'proxiedObject', proxiedObject)
+
+  die: ->
+    @backingView.unset(@attributeName || 'proxiedObject')
+    super

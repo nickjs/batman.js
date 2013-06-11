@@ -54,3 +54,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       if subview.get(@attributeName) == item
         subview.removeFromSuperview()
     return
+
+  die: ->
+    @prototypeNode = null
+    super

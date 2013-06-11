@@ -9,7 +9,9 @@ Batman.extend Batman.DOM,
     jQuery(node).html(html)
 
   destroyNode: (node) ->
+    Batman.DOM.cleanupNode(node)
     jQuery(node).remove()
+    return
 
   textContent: (node) ->
     jQuery(node).text()

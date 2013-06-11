@@ -78,7 +78,7 @@ Batman.DOM =
         eventListeners.forEach (listener) ->
           Batman.DOM.removeEventListener(node, eventName, listener)
 
-    Batman.removeData node, null, null, true
+    Batman.removeData(node, null, null, true)
     Batman.DOM.cleanupNode(child) for child in node.childNodes
 
     return
