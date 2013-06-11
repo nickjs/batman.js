@@ -15,6 +15,7 @@ class Batman.IteratorView extends Batman.View
   finishAppendItems: ->
     node = @get('node')
     node.parentNode.insertBefore(@fragment, node)
+    @fire('itemsWereRendered')
 
     @fragment = null
 

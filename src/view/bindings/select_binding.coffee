@@ -1,28 +1,39 @@
 #= require ./abstract_binding
 
+class Batman.SelectView extends Batman.View
+  _addChildBinding: (binding) ->
+    super
+    @parentBinding.childBindingAdded(binding)
+
 class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
+  backWithView: Batman.SelectView
   isInputBinding: true
   canSetImplicitly: true
+  bindImmediately: false
 
-  constructor: ->
+  constructor: (definition) ->
     @selectedBindings = new Batman.SimpleSet
     super
+    definition.node.removeAttribute('data-bind')
+    @backingView.parentBinding = this
+    @bind()
 
   childBindingAdded: (binding) =>
     if binding instanceof Batman.DOM.CheckedBinding
       binding.on 'dataChange', dataChangeHandler = => @nodeChange()
+
       binding.on 'die', =>
         binding.forget 'dataChange', dataChangeHandler
         @selectedBindings.remove(binding)
 
       @selectedBindings.add(binding)
+
     else if binding instanceof Batman.DOM.IteratorBinding
-      binding.on 'nodeAdded', dataChangeHandler = =>
-        @_fireDataChange(@get('filteredValue')) unless @dead
-      binding.on 'nodeRemoved', dataChangeHandler
+      binding.backingView.on 'itemsWereRendered', dataChangeHandler = =>
+        @_fireDataChange(@get('filteredValue'))
+
       binding.on 'die', ->
-        binding.forget 'nodeAdded', dataChangeHandler
-        binding.forget 'nodeRemoved', dataChangeHandler
+        binding.backingView.forget 'itemsWereRendered', dataChangeHandler
     else
       return
 
@@ -101,3 +112,4 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
     previousWidth = @get('node').currentStyle.width
     style.width = '100%'
     style.width = previousWidth ? ''
+
