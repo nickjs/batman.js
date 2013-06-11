@@ -33,7 +33,7 @@ asyncTest 'it should insert content into yields when the content comes before th
   <div data-yield="baz" id="test">erased</div>
   '''
   helpers.render source, {}, (node) ->
-    equal node.children(0).html(), "chunky bacon"
+    equal node.html(), "chunky bacon"
     QUnit.start()
 
 asyncTest 'it should insert content into yields when the content comes after the yield', 1, ->

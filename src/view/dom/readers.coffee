@@ -83,7 +83,8 @@ Batman.DOM.readers =
 
     skipChildren: true
     ready: ->
-      node.parentNode.removeChild(node)
+      if node.parentNode
+        node.parentNode.removeChild(node)
 
   contentfor: (definition) ->
     {node, keyPath, view} = definition
@@ -97,7 +98,8 @@ Batman.DOM.readers =
 
     skipChildren: true
     ready: ->
-      node.parentNode.removeChild(node)
+      if node.parentNode
+        node.parentNode.removeChild(node)
 
   yield: (definition) ->
     yieldObject = Batman.DOM.Yield.withName(definition.keyPath)
