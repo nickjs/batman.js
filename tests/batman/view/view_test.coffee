@@ -43,13 +43,6 @@ test 'should update a new, set node with the contents of its view after the sour
   MockRequest.lastInstance.fireSuccess('view contents')
   equal div.children[0].innerHTML, 'view contents'
 
-test "should initializeBindings if the node is set and no html needs to come back", 1, ->
-  @view = new Batman.View(source: undefined, html: undefined)
-  @view.initializeBindings = createSpy()
-
-  @superview.subviews.add(@view)
-  ok @view.initializeBindings.called
-
 asyncTest 'should fire the ready event once its contents have been loaded', 1, ->
   @view.on 'ready', observer = createSpy()
   @superview.subviews.add(@view)
@@ -116,18 +109,6 @@ asyncTest 'should report isInDOM correctly as false when with node but not in th
   delay =>
     equal @view.isInDOM, false
 
-asyncTest 'should report isInDOM correctly as true when it\'s node is in the dom', ->
-  node = $('<div/>')
-  @view.set('node', node[0])
-  @view.on 'ready', =>
-    node.appendTo($('body'))
-    ok @view.isInDOM
-    node.remove()
-    equal @view.isInDOM, false
-    QUnit.start()
-
-  @view.initializeBindings()
-
 asyncTest 'should report isInDOM correctly as true when a yielded node is in the dom', ->
   source = '''
   <div data-contentfor="baz">chunky bacon</div>
@@ -158,7 +139,7 @@ asyncTest 'should report isInDOM correctly as false when none of many yielded no
   '''
 
   helpers.render source, {}, (node, view) ->
-    equal view.isInDOM, false
+    ok !view.isInDOM
     QUnit.start()
 
 # FIXME

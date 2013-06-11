@@ -17,12 +17,6 @@ test "setting the contentView should add the node to the container node", ->
   @yield.set('contentView', @view)
   equal @containerNode.childNodes.length, 1
 
-test "clear() should remove all nodes", ->
-  @superview.subviews.add(@view)
-  @yield.set('contentView', @view)
-  @yield.clear()
-  equal @containerNode.childNodes.length, 0
-
 QUnit.module 'Batman.View yield, contentFor, and replace rendering',
   teardown: ->
     Batman.DOM.Yield.reset()
