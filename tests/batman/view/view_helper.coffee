@@ -113,11 +113,13 @@ exports.render = (html, jqueryize = true, context = {}, callback = ->) ->
       node = if jqueryize then $(view.get('node')).children() else view.get('node')
       callback(node, view)
 
-  view.get('node')
+  node = view.get('node')
   view.propagateToSubviews('viewWillAppear')
   view.initializeBindings()
   view.propagateToSubviews('isInDOM', true)
   view.propagateToSubviews('viewDidAppear')
+
+  return node
 
 # Destroy outstanding nodes
 QUnit.testDone ->

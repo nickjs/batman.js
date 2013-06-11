@@ -1,13 +1,14 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module 'Batman.View simple rendering',
+QUnit.module 'Batman.View simple rendering'
+
 hte = (actual, expected) ->
   equal actual.innerHTML.toLowerCase().replace(/\n|\r/g, ""),
     expected.toLowerCase().replace(/\n|\r/g, "")
 
 test "Batman.Renderer::_sortBindings should be consistent", ->
   bindings = [["a"], ["foreach"], ["c"], ["bind"], ["b"], ["context"], ["f"], ["view"], ["g"], ["formfor"], ["d"], ["renderif"], ["e"]]
-  expectedSort = [["view"], ["renderif"], ["foreach"], ["formfor"], ["context"], ["bind"], ["a"], ["b"], ["c"], ["d"], ["e"], ["f"], ["g"]]
+  expectedSort = [["foreach"], ["renderif"], ["view"], ["formfor"], ["context"], ["bind"], ["a"], ["b"], ["c"], ["d"], ["e"], ["f"], ["g"]]
   deepEqual bindings.sort(Batman.Renderer::_sortBindings), expectedSort
 
 test 'it should render simple nodes', ->
@@ -30,16 +31,6 @@ asyncTest 'it should allow the inner value to be bound using content containing 
     equal node.html(), "&lt;p&gt;bar&lt;/p&gt;"
     QUnit.start()
 
-asyncTest 'it should track added bindings', 2, ->
-  Batman.DOM.on 'bindingAdded', spy = createSpy()
-  helpers.render '<div data-bind="foo"></div>',
-    foo: 'bar'
-  , (node) =>
-    ok spy.called
-    ok spy.lastCallArguments[0] instanceof Batman.DOM.AbstractBinding
-    Batman.DOM.event('bindingAdded').removeHandler(spy)
-    QUnit.start()
-
 asyncTest 'it should bind undefined values as empty strings', 1, ->
   helpers.render '<div data-bind="foo"></div>',
     foo: undefined
@@ -60,10 +51,9 @@ asyncTest 'it should ignore empty bindings', 1, ->
     QUnit.start()
 
 asyncTest 'it should allow bindings to be defined later', 2, ->
-  context = Batman()
-  helpers.render '<div data-bind="foo.bar"></div>', context, (node) =>
+  helpers.render '<div data-bind="foo.bar"></div>', {}, (node, view) =>
     equal node.html(), ""
-    context.set 'foo', Batman(bar: "baz")
+    view.set('foo', Batman(bar: "baz"))
     equal node.html(), "baz"
     QUnit.start()
 
@@ -79,12 +69,12 @@ asyncTest 'it should correctly bind to a deep keypath when the base segment chan
   batarang = Batman name: 'batarang'
   sharkSpray = Batman name: 'shark spray'
 
-  context = Batman gadget: batarang
+  context = gadget: batarang
 
-  helpers.render source, context, (node) =>
+  helpers.render source, context, (node, view) =>
     equal node[0].innerHTML, "batarang"
 
-    context.set 'gadget', sharkSpray
+    view.set('gadget', sharkSpray)
     equal node[0].innerHTML, "shark spray"
     QUnit.start()
 
