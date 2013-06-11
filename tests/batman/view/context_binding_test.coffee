@@ -1,16 +1,6 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-QUnit.module "Batman.View: mixin and context bindings"
-
-asyncTest 'it should allow mixins to be applied', 1, ->
-  Batman.mixins.set 'test',
-    foo: 'bar'
-
-  source = '<div data-mixin="test"></div>'
-  helpers.render source, false, {}, (node) ->
-    equal Batman.data(node.firstChild, 'foo'), 'bar'
-    delete Batman.mixins.test
-    QUnit.start()
+QUnit.module "Batman.View: context bindings"
 
 asyncTest 'it should allow contexts to be entered', 2, ->
   context =
