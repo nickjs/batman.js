@@ -232,8 +232,10 @@ class Batman.View extends Batman.Object
     @removeFromSuperview()
 
     @forget()
-    @_batman.events?.forEach (key, event) -> event.clearHandlers()
     @_batman.properties?.forEach (key, property) -> property.die()
+
+    if @_batman.events
+      event.clearHandlers() for _, event of @_batman.events
 
     binding.die() for binding in @bindings
     subview.die() for subview in @subviews.toArray()
