@@ -16,18 +16,17 @@ asyncTest "pushState(stateObject, title, path) sets window.location.hash", ->
   delay =>
     equal window.location.hash, "#!/foo/bar"
 
-unless IN_NODE #jsdom doesn't like window.location.replace
-  asyncTest "replaceState(stateObject, title, path) replaces the current history entry", ->
-    window.location.hash = '#!/one'
-    window.location.hash = '#!/two'
-    @nav.replaceState(null, '', '/three')
-    equal window.location.hash, "#!/three"
+asyncTest "replaceState(stateObject, title, path) replaces the current history entry", ->
+  window.location.hash = '#!/one'
+  window.location.hash = '#!/two'
+  @nav.replaceState(null, '', '/three')
+  equal window.location.hash, "#!/three"
 
-    window.history.back()
+  window.history.back()
 
-    doWhen (-> window.location.hash is "#!/one"), ->
-      equal window.location.hash, "#!/one"
-      QUnit.start()
+  doWhen (-> window.location.hash is "#!/one"), ->
+    equal window.location.hash, "#!/one"
+    QUnit.start()
 
 test "handleLocation(window.location) dispatches based on pathFromLocation", ->
   @nav.handleLocation

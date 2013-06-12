@@ -1,9 +1,6 @@
-{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter, generateSorterOnProperty} = if typeof require isnt 'undefined' then require '../model_helper' else window
+{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter, generateSorterOnProperty} = window
 
-if typeof exports is 'undefined'
-  ex = window.PolymorphicAssociationHelpers = {}
-else
-  ex = module.exports
+ex = window.PolymorphicAssociationHelpers = {}
 
 ex.baseSetup = ->
   namespace = @namespace = {}

@@ -1,4 +1,4 @@
-helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
+helpers = window.viewHelpers
 
 QUnit.module "Batman.View: data-render-if bindings"
 

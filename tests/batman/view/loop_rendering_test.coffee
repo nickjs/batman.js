@@ -1,4 +1,4 @@
-helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
+helpers = window.viewHelpers
 getPs = (view) -> $('p', view.get('node')).map(-> @innerHTML).toArray()
 
 QUnit.module "Batman.View loop rendering"

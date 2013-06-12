@@ -1,6 +1,5 @@
 I18N = Batman.I18N
-return if IN_NODE
-viewHelpers = if typeof require is 'undefined' then window.viewHelpers else require './view/view_helper'
+viewHelpers = window.viewHelpers
 
 oldLocales = Batman.I18N.locales
 oldRequest = Batman.Request

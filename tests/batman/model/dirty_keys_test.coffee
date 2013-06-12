@@ -1,4 +1,4 @@
-{createStorageAdapter, AsyncTestStorageAdapter} = if typeof require isnt 'undefined' then require './model_helper' else window
+{createStorageAdapter, AsyncTestStorageAdapter} = window
 
 QUnit.module "Batman.Model dirty key tracking",
   setup: ->

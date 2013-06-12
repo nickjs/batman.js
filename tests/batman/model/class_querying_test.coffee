@@ -1,4 +1,4 @@
-{TestStorageAdapter, AsyncTestStorageAdapter} = if typeof require isnt 'undefined' then require './model_helper' else window
+{TestStorageAdapter, AsyncTestStorageAdapter} = window
 
 QUnit.module "Batman.Model class finding",
   setup: ->

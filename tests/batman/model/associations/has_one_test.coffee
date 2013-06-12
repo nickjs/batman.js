@@ -1,5 +1,5 @@
-{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter} = if typeof require isnt 'undefined' then require '../model_helper' else window
-helpers = if typeof require is 'undefined' then window.viewHelpers else require '../../view/view_helper'
+{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter} = window
+helpers = window.viewHelpers
 
 QUnit.module "Batman.Model hasOne Associations",
   setup: ->

@@ -1,7 +1,5 @@
-if typeof require isnt 'undefined'
-  {sharedStorageTestSuite} = require('./storage_adapter_helper')
-else
-  {sharedStorageTestSuite} = window
+{sharedStorageTestSuite} = window
+exports = window.restStorageHelpers = {}
 
 productJSON =
   product:
@@ -75,16 +73,17 @@ class MockRequest extends MockClass
     throw "Can't get anything other than 'response' and 'status' on the Requests" unless k in ['response', 'status']
     @[k]
 
-restStorageTestSuite = ->
+exports.MockRequest = MockRequest
+exports.run = ->
 
-  sharedStorageTestSuite(restStorageTestSuite.sharedSuiteHooks)
+  sharedStorageTestSuite(exports.sharedSuiteHooks)
 
   test 'default options should be independent', ->
     otherAdapter = new @adapter.constructor(@Product)
     notEqual otherAdapter.defaultRequestOptions, @adapter.defaultRequestOptions
 
   asyncTest 'can readAll from JSON string', 3, ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'GET'
     , JSON.stringify products: [ name: "test", cost: 20 ]
@@ -97,7 +96,7 @@ restStorageTestSuite = ->
       QUnit.start()
 
   asyncTest 'can readAll from JSON string representing just one object', 3, ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'GET'
     , JSON.stringify product: {name: "test", cost: 20}
@@ -110,7 +109,7 @@ restStorageTestSuite = ->
       QUnit.start()
 
   asyncTest 'can readAll when the response returns synchronously', 3, ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'GET'
       respondSynchronously: true
@@ -124,7 +123,7 @@ restStorageTestSuite = ->
       QUnit.start()
 
   asyncTest 'updating in storage: should update the record with the response if it is different', 1, ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'PUT'
     , product:
@@ -141,7 +140,7 @@ restStorageTestSuite = ->
 
   asyncTest 'updating in storage: should not fail if no response comes back', 1, ->
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'PUT'
     , ""
@@ -154,7 +153,7 @@ restStorageTestSuite = ->
 
   asyncTest 'creating in storage: response metadata should be available in the callbacks', ->
     product = new @Product(name: "test")
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     ,
@@ -170,7 +169,7 @@ restStorageTestSuite = ->
       QUnit.start()
 
   asyncTest 'reading from storage: response metadata should be available in the callbacks', ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'GET'
     ,
@@ -187,7 +186,7 @@ restStorageTestSuite = ->
       QUnit.start()
 
   asyncTest 'reading many from storage: response metadata should be available in the callbacks',  ->
-    MockRequest.expect
+    exports.MockRequest.expect
         url: '/products'
         method: 'GET'
       ,
@@ -207,7 +206,7 @@ restStorageTestSuite = ->
       QUnit.start()
 
   asyncTest 'updating in storage: response metadata should be available in the callbacks', ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'PUT'
     ,
@@ -225,7 +224,7 @@ restStorageTestSuite = ->
       QUnit.start()
 
   asyncTest 'destroying in storage: it should not error if there is no content in the response', ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'DELETE'
     , ''
@@ -237,7 +236,7 @@ restStorageTestSuite = ->
       QUnit.start()
 
   asyncTest 'destroying in storage: response metadata should be available in the callbacks', ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'DELETE'
     ,
@@ -255,7 +254,7 @@ restStorageTestSuite = ->
   asyncTest 'creating in storage: it should POST JSON instead of serialized parameters when configured to do so', ->
     @adapter.serializeAsForm = false
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
       data: '{"product":{"name":"test"}}'
@@ -273,7 +272,7 @@ restStorageTestSuite = ->
     product = new @Product(name: "test", id: 10)
     counter = 0
     for method in ['PUT', 'POST']
-      MockRequest.expect
+      exports.MockRequest.expect
         url: '/products/10/extra'
         method: method
         data: '{"foo":"bar"}'
@@ -290,7 +289,7 @@ restStorageTestSuite = ->
     product = new @Product(name: "test", id: 10)
     counter = 0
     for method in ['GET', 'POST', 'PUT', 'DELETE']
-      MockRequest.expect
+      exports.MockRequest.expect
         url: '/products/10/extra'
         method: method
       , foo: 'bar'
@@ -305,7 +304,7 @@ restStorageTestSuite = ->
     product = new @Product(name: "test", id: 10)
     counter = 0
     for method in ['GET', 'POST', 'PUT', 'DELETE']
-      MockRequest.expect
+      exports.MockRequest.expect
         url: '/products/10/extra'
         method: method
       , error: "Foo!"
@@ -318,7 +317,7 @@ restStorageTestSuite = ->
   asyncTest 'custom REST actions on storage: models should callback with the response', 4, ->
     counter = 0
     for method in ['GET', 'POST', 'PUT', 'DELETE']
-      MockRequest.expect
+      exports.MockRequest.expect
         url: '/products/extra'
         method: method
       , foo: 'bar'
@@ -332,7 +331,7 @@ restStorageTestSuite = ->
   asyncTest 'custom REST actions on storage: models should callback with the error if given', 4, ->
     counter = 0
     for method in ['GET', 'POST', 'PUT', 'DELETE']
-      MockRequest.expect
+      exports.MockRequest.expect
         url: '/products/extra'
         method: method
       , error: "Foo!"
@@ -347,10 +346,10 @@ restStorageTestSuite = ->
     namespace = @
     for statusCode, errorClass of Batman.RestStorage._statusCodeErrors
       do (statusCode, errorClass) ->
-        MockRequest.expect 
+        exports.MockRequest.expect
           url: '/products/10'
           method: 'GET'
-        , error: 
+        , error:
           status: statusCode
 
         product = new namespace.Product(name: "test", id: 10)
@@ -369,7 +368,7 @@ restStorageTestSuite = ->
     deepEqual perform.lastCallArguments.slice(0,3), ['get', @product, {method: 'GET', action: 'duplicate'}]
     equal typeof perform.lastCallArguments[3], 'function'
 
-restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
+exports.testOptionsGeneration = (urlSuffix = '') ->
   test 'string record urls should be gotten in the options', 1, ->
     product = new @Product
     product.url = '/some/url'
@@ -501,33 +500,33 @@ restStorageTestSuite.testOptionsGeneration = (urlSuffix = '') ->
     url = @adapter.urlForCollection @Product, {options: {action: 'subset'}}
     equal url, "/some/url/subset#{urlSuffix}"
 
-restStorageTestSuite.sharedSuiteHooks =
+exports.sharedSuiteHooks =
   'creating in storage: should succeed if the record doesn\'t already exist': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , productJSON
 
   'creating in storage: should fail if the record does already exist': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , productJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     ,
       error: "Product already exists!"
 
   "creating in storage: should create a primary key if the record doesn't already have one": ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , productJSON
 
   "creating in storage: should encode data before saving it": ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     ,
@@ -536,23 +535,23 @@ restStorageTestSuite.sharedSuiteHooks =
       id: 10
 
   'reading from storage: should callback with the record if the record has been created': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , productJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'GET'
     , productJSON
 
   'reading from storage: should callback with the record if the record has been created and the record is an instance of a subclass': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products'
       method: 'POST'
     , specialProductJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products/10'
       method: 'GET'
     , specialProductJSON
@@ -568,28 +567,28 @@ restStorageTestSuite.sharedSuiteHooks =
         name: 'test sub'
         id: 10
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products'
       method: 'POST'
     , subJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , superJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'GET'
     , superJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products/10'
       method: 'GET'
     , subJSON
 
   'reading from storage: should callback with decoded data after reading it': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     ,
@@ -597,7 +596,7 @@ restStorageTestSuite.sharedSuiteHooks =
         id: 10
         name: 'test 8'
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'GET'
     ,
@@ -606,27 +605,27 @@ restStorageTestSuite.sharedSuiteHooks =
         name: 'test 8'
 
   'reading from storage: should callback with an error if the record hasn\'t been created': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'GET'
     , error: 'specified record doesn\'t exist'
 
   'reading many from storage: should callback with the records if they exist': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , product:
         name: "testA"
         cost: 20
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , product:
         name: "testB"
         cost: 10
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'GET'
     , products: [
@@ -638,21 +637,21 @@ restStorageTestSuite.sharedSuiteHooks =
       ]
 
   'reading many from storage: should callback with subclass records if they exist': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products'
       method: 'POST'
     , special_product:
         name: "testA"
         cost: 20
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products'
       method: 'POST'
     , special_product:
         name: "testB"
         cost: 10
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products'
       method: 'GET'
     , special_products: [
@@ -664,21 +663,21 @@ restStorageTestSuite.sharedSuiteHooks =
       ]
 
   'reading many from storage: should callback with the decoded records if they exist': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     ,product:
         name: "testA"
         cost: 20
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , product:
         name: "testB"
         cost: 10
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'GET'
     , products: [
@@ -690,21 +689,21 @@ restStorageTestSuite.sharedSuiteHooks =
       ]
 
   'reading many from storage: when given options should callback with the records if they exist': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     ,product:
         name: "testA"
         cost: 10
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , product:
         name: "testB"
         cost: 10
 
-    MockRequest.expect {
+    exports.MockRequest.expect {
       url: '/products'
       method: 'GET'
       data:
@@ -720,18 +719,18 @@ restStorageTestSuite.sharedSuiteHooks =
     }
 
   'reading many from storage: should callback with an empty array if no records exist': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'GET'
     , products: []
 
   'updating in storage: should callback with the record if it exists': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , productJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'PUT'
     , product:
@@ -739,7 +738,7 @@ restStorageTestSuite.sharedSuiteHooks =
         cost: 10
         id: 10
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'GET'
     , product:
@@ -748,12 +747,12 @@ restStorageTestSuite.sharedSuiteHooks =
         id: 10
 
   'updating in storage: should callback with the subclass record if it exists': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products'
       method: 'POST'
     , specialProductJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products/10'
       method: 'PUT'
     , special_product:
@@ -761,7 +760,7 @@ restStorageTestSuite.sharedSuiteHooks =
         cost: 10
         id: 10
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products/10'
       method: 'GET'
     , special_product:
@@ -772,42 +771,35 @@ restStorageTestSuite.sharedSuiteHooks =
   'updating in storage: should callback with an error if the record hasn\'t been created': ->
 
   'destroying in storage: should succeed if the record exists': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products'
       method: 'POST'
     , productJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'DELETE'
     , success: true
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/products/10'
       method: 'GET'
     , error: 'specified product couldn\'t be found!'
 
   'destroying in storage: should succeed if the subclass record exists': ->
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products'
       method: 'POST'
     , specialProductJSON
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products/10'
       method: 'DELETE'
     , success: true
 
-    MockRequest.expect
+    exports.MockRequest.expect
       url: '/special_products/10'
       method: 'GET'
     , error: 'specified product couldn\'t be found!'
 
   'destroying in storage: should callback with an error if the record hasn\'t been created': ->
-
-restStorageTestSuite.MockRequest = MockRequest
-
-if typeof exports is 'undefined'
-  window.restStorageTestSuite = restStorageTestSuite
-else
-  exports.restStorageTestSuite = restStorageTestSuite

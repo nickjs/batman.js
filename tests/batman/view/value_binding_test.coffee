@@ -1,4 +1,4 @@
-helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
+helpers = window.viewHelpers
 
 QUnit.module 'Batman.View value bindings'
 
@@ -132,47 +132,45 @@ asyncTest 'it should bind the value of textareas and inputs simulatenously', ->
         delay =>
           f('foo')
 
-unless IN_NODE # jsdom doesn't seem to like input type="file"
+getMockModel = ->
+  class Model extends Batman.Object
+    storageKey: 'one'
+    hasStorage: -> true
+    fileAttributes: ''
 
-  getMockModel = ->
-    class Model extends Batman.Object
-      storageKey: 'one'
-      hasStorage: -> true
-      fileAttributes: ''
+  adapter = new Batman.RestStorage(Model)
+  Model::_batman.storage = adapter
 
-    adapter = new Batman.RestStorage(Model)
-    Model::_batman.storage = adapter
+  [new Model, adapter]
 
-    [new Model, adapter]
+asyncTest 'it should bind the value of file type inputs', 2, ->
+  [context, adapter] = getMockModel()
+  ok !adapter.defaultRequestOptions.formData
 
-  asyncTest 'it should bind the value of file type inputs', 2, ->
-    [context, adapter] = getMockModel()
-    ok !adapter.defaultRequestOptions.formData
+  helpers.render '<input type="file" data-bind="fileAttributes"></input>', false, context, (node, view) ->
+    helpers.triggerChange(node.childNodes[0])
+    strictEqual view.get('fileAttributes'), null
+    QUnit.start()
 
-    helpers.render '<input type="file" data-bind="fileAttributes"></input>', false, context, (node, view) ->
-      helpers.triggerChange(node.childNodes[0])
-      strictEqual view.get('fileAttributes'), null
-      QUnit.start()
+asyncTest 'it should bind the value of file type inputs with the "multiple" flag', 2, ->
+  [context, adapter] = getMockModel()
+  ok !adapter.defaultRequestOptions.formData
 
-  asyncTest 'it should bind the value of file type inputs with the "multiple" flag', 2, ->
-    [context, adapter] = getMockModel()
-    ok !adapter.defaultRequestOptions.formData
+  helpers.render '<input type="file" data-bind="fileAttributes" multiple="multiple"></input>', false, context, (node, view) ->
+    helpers.triggerChange(node.childNodes[0])
+    deepEqual view.get('fileAttributes'), []
+    QUnit.start()
 
-    helpers.render '<input type="file" data-bind="fileAttributes" multiple="multiple"></input>', false, context, (node, view) ->
-      helpers.triggerChange(node.childNodes[0])
-      deepEqual view.get('fileAttributes'), []
-      QUnit.start()
+asyncTest 'it should bind the value of file type inputs when they are proxied', 2, ->
+  [context, adapter] = getMockModel()
+  ok !adapter.defaultRequestOptions.formData
 
-  asyncTest 'it should bind the value of file type inputs when they are proxied', 2, ->
-    [context, adapter] = getMockModel()
-    ok !adapter.defaultRequestOptions.formData
+  source = '<form data-formfor-foo="proxied"><input type="file" data-bind="foo.fileAttributes"></input></form>'
 
-    source = '<form data-formfor-foo="proxied"><input type="file" data-bind="foo.fileAttributes"></input></form>'
-
-    helpers.render source, false, {proxied: context}, (node, view) ->
-      helpers.triggerChange(node.childNodes[0].childNodes[0])
-      strictEqual view.subviews.get('first').get('fileAttributes'), null
-      QUnit.start()
+  helpers.render source, false, {proxied: context}, (node, view) ->
+    helpers.triggerChange(node.childNodes[0].childNodes[0])
+    strictEqual view.subviews.get('first').get('fileAttributes'), null
+    QUnit.start()
 
 asyncTest 'should bind radio buttons to a value', ->
   source = '<input id="fixed" type="radio" data-bind="ad.sale_type" name="sale_type" value="fixed"/>

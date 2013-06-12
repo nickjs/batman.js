@@ -1,11 +1,5 @@
-if module?.exports and require?
-  exports = module.exports
-  container = global
-  exports.IN_NODE = true
-else
-  exports = window
-  container = window
-  exports.IN_NODE = false
+exports = window
+container = window
 
 originalPathname = window.location.pathname
 

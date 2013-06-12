@@ -1,14 +1,12 @@
-if typeof require isnt 'undefined'
-  {restStorageTestSuite} = require('./rest_storage_helper')
-else
-  {restStorageTestSuite} = window
+helpers = window.restStorageHelpers
 
 oldRequest = Batman.Request
 
 QUnit.module "Batman.RestStorage",
   setup: ->
-    Batman.Request = restStorageTestSuite.MockRequest
-    restStorageTestSuite.MockRequest.reset()
+    Batman.Request = helpers.MockRequest
+    helpers.MockRequest.reset()
+
     class @Product extends Batman.Model
       @encode 'name', 'cost'
     @adapter = new Batman.RestStorage(@Product)
@@ -17,5 +15,5 @@ QUnit.module "Batman.RestStorage",
   teardown: ->
     Batman.Request = oldRequest
 
-restStorageTestSuite.testOptionsGeneration()
-restStorageTestSuite()
+helpers.testOptionsGeneration()
+helpers.run()

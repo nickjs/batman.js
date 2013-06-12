@@ -1,20 +1,15 @@
-if typeof require isnt 'undefined'
-  {restStorageTestSuite} = require('./rest_storage_helper')
-else
-  {restStorageTestSuite} = window
-
-MockRequest = restStorageTestSuite.MockRequest
+helpers = window.restStorageHelpers
 
 oldRequest = Batman.Request
-oldExpectedForUrl = MockRequest.getExpectedForUrl
+oldExpectedForUrl = helpers.MockRequest.getExpectedForUrl
 
 QUnit.module "Batman.RailsStorage",
   setup: ->
-    MockRequest.getExpectedForUrl = (url) ->
+    helpers.MockRequest.getExpectedForUrl = (url) ->
       @expects[url.slice(0,-5)] || [] # cut off the .json so the fixtures from the test suite work fine
 
-    Batman.Request = MockRequest
-    MockRequest.reset()
+    Batman.Request = helpers.MockRequest
+    helpers.MockRequest.reset()
 
     class @Store extends Batman.Model
       @encode 'id', 'name'
@@ -26,17 +21,17 @@ QUnit.module "Batman.RailsStorage",
     @productAdapter = new Batman.RailsStorage(@Product)
     @Product.persist @productAdapter
 
-    @adapter = @productAdapter # for restStorageTestSuite
+    @adapter = @productAdapter # for restStorageHelpers
 
   teardown: ->
     Batman.Request = oldRequest
-    MockRequest.getExpectedForUrl = oldExpectedForUrl
+    helpers.MockRequest.getExpectedForUrl = oldExpectedForUrl
 
-restStorageTestSuite.testOptionsGeneration('.json')
-restStorageTestSuite()
+helpers.testOptionsGeneration('.json')
+helpers.run()
 
 asyncTest 'creating in storage: should callback with the record with errors on it if server side validation fails', ->
-  MockRequest.expect
+  helpers.MockRequest.expect
     url: '/products'
     method: 'POST'
   , error:
@@ -52,7 +47,7 @@ asyncTest 'creating in storage: should callback with the record with errors on i
     QUnit.start()
 
 asyncTest 'creating in storage: should callback with the record with errors on it if server side validation fails in recent versions of Rails', ->
-  MockRequest.expect
+  helpers.MockRequest.expect
     url: '/products'
     method: 'POST'
   , error:

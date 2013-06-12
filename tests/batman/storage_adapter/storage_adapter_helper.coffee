@@ -239,7 +239,4 @@ sharedStorageTestSuite = (hooks = {}) ->
       ok err
       QUnit.start()
 
-if typeof exports is 'undefined'
-  window.sharedStorageTestSuite = sharedStorageTestSuite
-else
-  exports.sharedStorageTestSuite = sharedStorageTestSuite
+window.sharedStorageTestSuite = sharedStorageTestSuite

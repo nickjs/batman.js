@@ -1,4 +1,4 @@
-helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
+helpers = window.viewHelpers
 
 count = 0
 oldRequest = Batman.Request
@@ -60,17 +60,25 @@ asyncTest '.store should allow prefetching of view sources', 2, ->
     equal view.get('html'), 'prefetched contents'
 
 test ".store should pull unrendered data-defineview'd views from the DOM", ->
-  $('#qunit-fixture').html  """
-    <div data-defineview="foo">foo!</div>
-  """
-  equal Batman.View.store.get('foo'), 'foo!'
+  try
+    $(document.body).append """
+      <div data-defineview="foo" id="remove">foo!</div>
+    """
+    equal Batman.View.store.get('foo'), 'foo!'
+
+  finally
+    $('#remove').remove()
 
 test ".store should pull absolutely path'd data-defineview'd views from the DOM", ->
-  $('#qunit-fixture').html  """
-    <div data-defineview="/bar">bar!</div>
-  """
-  equal Batman.View.store.get('bar'), 'bar!'
-  equal Batman.View.store.get('/bar'), 'bar!'
+  try
+    $(document.body).append """
+      <div data-defineview="/bar" id="remove">bar!</div>
+    """
+    equal Batman.View.store.get('bar'), 'bar!'
+    equal Batman.View.store.get('/bar'), 'bar!'
+
+  finally
+    $('#remove').remove()
 
 test ".store should raise if remote fetching is disabled", ->
   Batman.config.fetchRemoteHTML = false

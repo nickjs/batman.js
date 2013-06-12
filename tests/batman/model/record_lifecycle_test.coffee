@@ -1,4 +1,4 @@
-{TestStorageAdapter} = if typeof require isnt 'undefined' then require './model_helper' else window
+{TestStorageAdapter} = window
 
 QUnit.module "Batman.Model record lifecycle",
   setup: ->

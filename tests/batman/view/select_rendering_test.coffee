@@ -1,4 +1,4 @@
-helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
+helpers = window.viewHelpers
 
 oldIteratorDeferEvery = Batman.DOM.IteratorBinding::deferEvery
 oldRendererDeferEvery = Batman.Renderer::deferEvery

@@ -95,13 +95,7 @@ generateSorterOnProperty = (property) ->
       else
         0
 
-if typeof exports is 'undefined'
-  window.TestStorageAdapter = TestStorageAdapter
-  window.AsyncTestStorageAdapter = AsyncTestStorageAdapter
-  window.createStorageAdapter = createStorageAdapter
-  window.generateSorterOnProperty = generateSorterOnProperty
-else
-  exports.TestStorageAdapter = TestStorageAdapter
-  exports.AsyncTestStorageAdapter = AsyncTestStorageAdapter
-  exports.createStorageAdapter = createStorageAdapter
-  exports.generateSorterOnProperty = generateSorterOnProperty
+window.TestStorageAdapter = TestStorageAdapter
+window.AsyncTestStorageAdapter = AsyncTestStorageAdapter
+window.createStorageAdapter = createStorageAdapter
+window.generateSorterOnProperty = generateSorterOnProperty

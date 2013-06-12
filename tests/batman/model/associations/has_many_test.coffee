@@ -1,5 +1,5 @@
-{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter, generateSorterOnProperty} = if typeof require isnt 'undefined' then require '../model_helper' else window
-helpers = if typeof require is 'undefined' then window.viewHelpers else require '../../view/view_helper'
+{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter, generateSorterOnProperty} = window
+helpers = window.viewHelpers
 
 QUnit.module "Batman.Model hasMany Associations",
   setup: ->
@@ -103,7 +103,7 @@ asyncTest "hasMany associations are loaded and custom url is used", 2, ->
 
 asyncTest "hasMany associations are loaded and custom url function has the parent's context", 3, ->
   @Store._batman.get('associations').get('products').options.url = -> "/stores/#{@get('id')}/products"
-  
+
   associationSpy = spyOn(@productAdapter, 'perform')
 
   @Store.find 1, (err, store) =>

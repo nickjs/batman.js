@@ -1,9 +1,5 @@
 $ = window.$ unless $
-if ! IN_NODE
-  exports = window.viewHelpers = {}
-else
-  global.$ = $
-  exports = module.exports
+exports = window.viewHelpers = {}
 
 exports.triggerChange = (domNode) ->
   if document.createEvent

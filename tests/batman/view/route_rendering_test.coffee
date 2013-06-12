@@ -1,5 +1,5 @@
-helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
-{TestStorageAdapter} = if typeof require isnt 'undefined' then require '../model/model_helper' else window
+helpers = window.viewHelpers
+{TestStorageAdapter} = window
 
 oldRedirect = Batman.redirect
 
@@ -165,7 +165,7 @@ asyncTest 'should allow you to bind to objects in the context stack', 2, ->
       deepEqual a.attr('href'), Batman.navigator.linkTo('/foo/bar')
 
       view.set('whereToRedirect', {controller: 'baz', action: 'qux'})
-      
+
       delay ->
         deepEqual a.attr('href'), Batman.navigator.linkTo('/baz/qux')
 
