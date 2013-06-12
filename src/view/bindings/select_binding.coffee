@@ -14,17 +14,16 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
   constructor: (definition) ->
     super
     definition.node.removeAttribute('data-bind')
-
-    @backingView.on 'childBindingAdded', @_boundChildBindingAdded = @childBindingAdded.bind(this)
+    @backingView.on 'childBindingAdded', @childBindingAdded
     @bind()
 
   die: ->
-    @backingView.off 'childBindingAdded', @_boundChildBindingAdded
+    @backingView.off 'childBindingAdded', @childBindingAdded
     super
 
   childBindingAdded: (binding) =>
     if binding instanceof Batman.DOM.CheckedBinding
-      binding.on 'dataChange', => @nodeChange()
+      binding.on 'dataChange', @nodeChange
     else if binding instanceof Batman.DOM.IteratorBinding
       binding.backingView.on 'itemsWereRendered', => @_fireDataChange(@get('filteredValue'))
     else
