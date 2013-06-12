@@ -146,7 +146,8 @@ class Batman.View extends Batman.Object
     set: (key, html) ->
       @html = html
       @isBound = false
-      binding.die() for binding in @bindings
+      @destroyBindings()
+      @destroySubviews()
 
       @loadView(@node) if @node and html?
       @initializeBindings() if @bindImmediately
@@ -190,6 +191,12 @@ class Batman.View extends Batman.Object
     @ready?()
 
   destroyBindings: ->
+    binding.die() for binding in @bindings
+    bindings = []
+
+  destroySubviews: ->
+    subview.die() for subview in @subviews.toArray()
+    @subviews.clear()
 
   baseForKeypath: (keypath) ->
     keypath.split('.')[0].split('|')[0].trim()
@@ -237,8 +244,8 @@ class Batman.View extends Batman.Object
     if @_batman.events
       event.clearHandlers() for _, event of @_batman.events
 
-    binding.die() for binding in @bindings
-    subview.die() for subview in @subviews.toArray()
+    @destroyBindings()
+    @destroySubviews()
 
     @node = null
 
