@@ -455,31 +455,6 @@ asyncTest 'it shouldn\'t become desynchronized if the collection originates from
         delay ->
           deepEqual getPs(view), ['a','d']
 
-asyncTest 'it should propagate notifications of inner binding creation to bindings outside the loop', ->
-  context =
-    children: new Batman.Set("a", "b", "c", "d", "e")
-
-  spy = createSpy()
-  class TestBinding extends Batman.DOM.AbstractBinding
-    childBindingAdded: spy
-
-  Batman.DOM.readers.test = -> new TestBinding(arguments...)
-
-  source = '''
-    <div data-test="true">
-      <div data-foreach-object="children">
-        <p data-bind="object"></p>
-      </div>
-    </div>
-  '''
-
-  helpers.render source, context, (node, view) ->
-    delay ->
-      ok spy.callCount, 5
-      view.children.add 'f'
-      delay ->
-        ok spy.callCount, 6
-
 asyncTest 'it should destroy nodes and their bindings if items have been removed before render is complete', 1, ->
   source = '<div data-foreach-item="items"><span data-bind="item.id"></span></div>'
 
