@@ -151,7 +151,7 @@ unless IN_NODE # jsdom doesn't seem to like input type="file"
 
     helpers.render '<input type="file" data-bind="fileAttributes"></input>', false, context, (node, view) ->
       helpers.triggerChange(node.childNodes[0])
-      strictEqual view.fileAttributes, undefined
+      strictEqual view.get('fileAttributes'), null
       QUnit.start()
 
   asyncTest 'it should bind the value of file type inputs with the "multiple" flag', 2, ->
@@ -160,7 +160,7 @@ unless IN_NODE # jsdom doesn't seem to like input type="file"
 
     helpers.render '<input type="file" data-bind="fileAttributes" multiple="multiple"></input>', false, context, (node, view) ->
       helpers.triggerChange(node.childNodes[0])
-      deepEqual view.fileAttributes, []
+      deepEqual view.get('fileAttributes'), []
       QUnit.start()
 
   asyncTest 'it should bind the value of file type inputs when they are proxied', 2, ->
@@ -171,7 +171,7 @@ unless IN_NODE # jsdom doesn't seem to like input type="file"
 
     helpers.render source, false, {proxied: context}, (node, view) ->
       helpers.triggerChange(node.childNodes[0].childNodes[0])
-      strictEqual view.fileAttributes, undefined
+      strictEqual view.subviews.get('first').get('fileAttributes'), null
       QUnit.start()
 
 asyncTest 'should bind radio buttons to a value', ->
