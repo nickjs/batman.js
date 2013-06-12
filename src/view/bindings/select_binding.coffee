@@ -1,7 +1,12 @@
 #= require ./abstract_binding
 
+class Batman.SelectView extends Batman.View
+  _addChildBinding: (binding) ->
+    super
+    @fire('childBindingAdded', binding)
+
 class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
-  backWithView: Batman.View
+  backWithView: Batman.SelectView
   isInputBinding: true
   canSetImplicitly: true
   bindImmediately: false
@@ -10,7 +15,6 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
     super
     definition.node.removeAttribute('data-bind')
 
-    @selectedBindings = new Batman.SimpleSet
     @backingView.on 'childBindingAdded', @_boundChildBindingAdded = @childBindingAdded.bind(this)
     @bind()
 
@@ -20,20 +24,9 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
 
   childBindingAdded: (binding) =>
     if binding instanceof Batman.DOM.CheckedBinding
-      binding.on 'dataChange', dataChangeHandler = => @nodeChange()
-
-      binding.once 'die', =>
-        binding.forget 'dataChange', dataChangeHandler
-        @selectedBindings.remove(binding)
-
-      @selectedBindings.add(binding)
-
+      binding.on 'dataChange', => @nodeChange()
     else if binding instanceof Batman.DOM.IteratorBinding
-      binding.backingView.on 'itemsWereRendered', dataChangeHandler = =>
-        @_fireDataChange(@get('filteredValue'))
-
-      binding.once 'die', ->
-        binding.backingView.forget 'itemsWereRendered', dataChangeHandler
+      binding.backingView.on 'itemsWereRendered', => @_fireDataChange(@get('filteredValue'))
     else
       return
 
@@ -86,12 +79,13 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
       selections = Batman.DOM.valueForNode(@node)
       selections = selections[0] if typeof selections is Array && selections.length == 1
       @set 'unfilteredValue', selections
-
       @updateOptionBindings()
     return
 
   updateOptionBindings: =>
-    @selectedBindings.forEach (binding) -> binding._fireNodeChange()
+    for binding in @backingView.bindings
+      binding._fireNodeChange() if binding instanceof Batman.DOM.CheckedBinding
+    return
 
   fixSelectElementWidth: ->
     return if window.navigator.userAgent.toLowerCase().indexOf('msie') is -1 # I. Hate. Everything.
