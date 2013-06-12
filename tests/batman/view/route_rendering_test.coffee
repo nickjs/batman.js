@@ -214,7 +214,7 @@ asyncTest 'should redirect to named route queries when clicked', 1, ->
   @App.on 'run', =>
     source = '<a data-route="routes.products.new">products new</a>'
 
-    context = Batman
+    context =
       product: Batman
         toParam: -> 10
 

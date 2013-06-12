@@ -1,4 +1,11 @@
 QUnit.module 'Batman.Controller and Batman.View integration',
+  setup: ->
+    @oldApp = Batman.currentApp
+    Batman.currentApp = Batman(layout: new Batman.View(node: document.createElement('div')))
+
+  teardown: ->
+    Batman.currentApp = @oldApp
+
 asyncTest "yields populated by inner contentfor's should not be cleared after dispatch", ->
   mainContainer = document.createElement('div')
   sidebarContainer = document.createElement('div')
