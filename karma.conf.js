@@ -1,5 +1,15 @@
 // Karma configuration
 
+// Full hacks to get karma to build with coffee --bare=false
+// Will be fixed in upcoming version of karma
+var coffee = require('coffee-script'),
+    old = coffee.compile.bind(coffee);
+
+coffee.compile = function(content, options) {
+  options.bare = false;
+  return old(content, options);
+};
+
 
 // build ordered list of source files
 var Snockets = require('snockets'),
@@ -11,14 +21,14 @@ var sourceFiles = snockets.scan('src/batman.coffee', {async: false}).getChain('s
 
     libFiles = [
       'tests/lib/json2.js',
-      'tests/lib/jquery.js',
-      'tests/lib/es5-shim.js'
+      'tests/lib/jquery.js'
     ],
     extraFiles = [
       'src/extras/batman.rails.coffee',
       'src/extras/batman.paginator.coffee',
       'src/extras/batman.i18n.coffee'
     ];
+
 
 // base path, that will be used to resolve files and exclude
 basePath = '';
