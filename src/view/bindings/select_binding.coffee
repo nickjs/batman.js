@@ -1,28 +1,28 @@
 #= require ./abstract_binding
 
-class Batman.SelectView extends Batman.View
-  _addChildBinding: (binding) ->
-    super
-    @parentBinding.childBindingAdded(binding)
-
 class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
-  backWithView: Batman.SelectView
+  backWithView: Batman.View
   isInputBinding: true
   canSetImplicitly: true
   bindImmediately: false
 
   constructor: (definition) ->
-    @selectedBindings = new Batman.SimpleSet
     super
     definition.node.removeAttribute('data-bind')
-    @backingView.parentBinding = this
+
+    @selectedBindings = new Batman.SimpleSet
+    @backingView.on 'childBindingAdded', @_boundChildBindingAdded = @childBindingAdded.bind(this)
     @bind()
+
+  die: ->
+    @backingView.off 'childBindingAdded', @_boundChildBindingAdded
+    super
 
   childBindingAdded: (binding) =>
     if binding instanceof Batman.DOM.CheckedBinding
       binding.on 'dataChange', dataChangeHandler = => @nodeChange()
 
-      binding.on 'die', =>
+      binding.once 'die', =>
         binding.forget 'dataChange', dataChangeHandler
         @selectedBindings.remove(binding)
 
@@ -32,7 +32,7 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
       binding.backingView.on 'itemsWereRendered', dataChangeHandler = =>
         @_fireDataChange(@get('filteredValue'))
 
-      binding.on 'die', ->
+      binding.once 'die', ->
         binding.backingView.forget 'itemsWereRendered', dataChangeHandler
     else
       return

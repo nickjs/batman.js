@@ -46,7 +46,8 @@ class Batman.View extends Batman.Object
     super
 
   _addChildBinding: (binding) ->
-    @bindings.push binding
+    @bindings.push(binding)
+    @fire('childBindingAdded', binding)
 
   _addSubview: (subview) ->
     subviewController = subview.controller
