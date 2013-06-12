@@ -81,11 +81,11 @@ asyncTest "should recreate argument bindings if the view's node changes", 4, ->
   class TestView extends Batman.View
     @option 'keyA', 'keyB'
 
-  initalHTML = '<div data-view="testView" data-view-keyA="one" data-view-keyB="two"/>'
+  initialHTML = '<div data-view="testView" data-view-keyA="one" data-view-keyB="two"/>'
   newHTML = '<div data-view="testView" data-view-keyA="two" data-view-keyB="one"/>'
   testView = new TestView
 
-  helpers.render initalHTML, {testView, one: 'foo', two: 'bar'}, (node, view) ->
+  helpers.render initialHTML, {testView, one: 'foo', two: 'bar'}, (node, view) ->
     equal testView.get('keyA'), "foo"
     equal testView.get('keyB'), "bar"
 

@@ -146,6 +146,7 @@ class Batman.View extends Batman.Object
     set: (key, html) ->
       @html = html
       @isBound = false
+      binding.die() for binding in @bindings
 
       @loadView(@node) if @node and html?
       @initializeBindings() if @bindImmediately
