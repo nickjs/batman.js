@@ -94,7 +94,7 @@ task 'doc', 'build the Percolate documentation', (options) ->
         process.exit(code) unless options.watch
 
 task 'test', 'compile Batman.js and the tests and run them on the command line', (options) ->
-  pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'PhantomJS', './karma.conf.js', (code) ->
+  pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'Firefox', './karma.conf.js', (code) ->
     process.exit(code)
 
 task 'test:doc', 'run the percolate test suite', (options) ->
