@@ -41,7 +41,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     return
 
   handleArrayChanged: (newItems) =>
-    @backingView.subviews.clear()
+    subview.die() for subview in @backingView.subviews.toArray()
     @handleItemsAdded(newItems)
 
   handleItemsAdded: (newItems) =>
@@ -52,7 +52,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   handleItemsRemoved: (oldItems) =>
     for subview in @backingView.subviews._storage
       if subview.get(@attributeName) == item
-        subview.removeFromSuperview()
+        subview.die()
     return
 
   die: ->
