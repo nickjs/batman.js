@@ -315,8 +315,8 @@ test 'it should update the data object if value bindings aren\'t filtered', 3, -
       get: getSpy
 
   view = new TestView(html: '<textarea data-bind="one"></textarea>')
-  view.initializeBindings()
   node = view.get('node')
+  view.initializeBindings()
 
   node.children[0].innerHTML = 'defdefdef'
   helpers.triggerChange(node.children[0])
