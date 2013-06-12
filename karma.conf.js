@@ -20,6 +20,7 @@ var sourceFiles = snockets.scan('src/batman.coffee', {async: false}).getChain('s
     platformFiles = snockets.scan('src/platform/solo.coffee', {async: false}).getChain('src/platform/solo.coffee'),
 
     libFiles = [
+      'lib/es5-shim.js',
       'tests/lib/json2.js',
       'tests/lib/jquery.js'
     ],
