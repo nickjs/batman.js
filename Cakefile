@@ -94,24 +94,8 @@ task 'doc', 'build the Percolate documentation', (options) ->
         process.exit(code) unless options.watch
 
 task 'test', 'compile Batman.js and the tests and run them on the command line', (options) ->
-  muffin.run
-    files: glob.sync('./src/**/*.coffee').concat(glob.sync('./tests/**/*.coffee')).concat(glob.sync('./docs/**/*.coffee'))
-    options: options
-    map:
-      'src/dist/batman\.node\.coffee'            : (matches) -> muffin.compileTree(matches[0], 'lib/dist/batman.node.js', options)
-      'tests/batman/(.+)_(test|helper).coffee'   : (matches) -> true
-      'docs/percolate\.coffee'                   : (matches) -> muffin.compileScript(matches[0], 'docs/percolate.js', options)
-      'tests/run.coffee'                         : (matches) -> muffin.compileScript(matches[0], 'tests/run.js', options)
-    after: ->
-      failFast = (code) ->
-        if !options.watch
-          process.exit code if code != 0
-
-      pipedExec 'tests/run.js', (code) ->
-        failFast(code)
-        unless process.env['FILTER']?
-          pipedExec 'docs/percolate.js', '--test-only', (code) ->
-            failFast(code)
+  pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'PhantomJS', './karma.conf.js', ->
+    process.exit(code)
 
 task 'test:doc', 'run the percolate test suite', (options) ->
   muffin.run
