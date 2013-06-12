@@ -20,7 +20,6 @@ var sourceFiles = snockets.scan('src/batman.coffee', {async: false}).getChain('s
     platformFiles = snockets.scan('src/platform/solo.coffee', {async: false}).getChain('src/platform/solo.coffee'),
 
     libFiles = [
-      'lib/es5-shim.js',
       'tests/lib/json2.js',
       'tests/lib/jquery.js'
     ],
@@ -36,11 +35,11 @@ basePath = '';
 
 
 // list of files / patterns to load in the browser
-files = [QUNIT, QUNIT_ADAPTER].concat(sourceFiles,
-                                      platformFiles,
-                                      libFiles,
-                                      extraFiles,
-                                      testFiles)
+files = [QUNIT, QUNIT_ADAPTER, 'lib/es5-shim.js'].concat(sourceFiles,
+                                                         platformFiles,
+                                                         libFiles,
+                                                         extraFiles,
+                                                         testFiles)
 exclude = [
   'tests/batman/build/**/*.coffee',
   'tests/batman/node_test.coffee'
