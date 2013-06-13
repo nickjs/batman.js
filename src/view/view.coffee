@@ -144,10 +144,10 @@ class Batman.View extends Batman.Object
       @html = @constructor.store.get(source)
 
     set: (key, html) ->
-      @html = html
-      @isBound = false
       @destroyBindings()
       @destroySubviews()
+
+      @html = html
 
       @loadView(@node) if @node and html?
       @initializeBindings() if @bindImmediately
@@ -165,8 +165,10 @@ class Batman.View extends Batman.Object
       Batman.removeData(oldNode, 'view', true) if oldNode
       return if node == @node
 
+      @destroyBindings()
+      @destroySubviews()
+
       @node = node
-      @isBound = false
       return if not node
 
       Batman._data(node, 'view', this)
@@ -193,6 +195,7 @@ class Batman.View extends Batman.Object
   destroyBindings: ->
     binding.die() for binding in @bindings
     bindings = []
+    @isBound = false
 
   destroySubviews: ->
     subview.die() for subview in @subviews.toArray()
