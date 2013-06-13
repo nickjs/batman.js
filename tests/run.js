@@ -23,6 +23,7 @@
         global[k] = v;
       }
       global.Batman = require('../lib/dist/batman.node');
+      require('../lib/extras/batman.testing');
       Batman.Request.prototype.getModule = function() {
         return {
           request: function() {
