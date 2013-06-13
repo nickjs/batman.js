@@ -246,8 +246,8 @@ class Batman.View extends Batman.Object
     if @_batman.events
       event.clearHandlers() for _, event of @_batman.events
 
-    @destroyBindings()
     @destroySubviews()
+    @destroyBindings()
 
     @node = null
     @parentNode = null
