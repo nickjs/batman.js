@@ -60,6 +60,9 @@ class Batman.View extends Batman.Object
       yieldObject = Batman.DOM.Yield.withName(yieldName)
       yieldObject.set('contentView', subview)
 
+    @get('node')
+    subview.get('node')
+
     @observe('node', subview._nodesChanged)
     subview.observe('node', subview._nodesChanged)
     subview.observe('parentNode', subview._nodesChanged)
@@ -175,10 +178,6 @@ class Batman.View extends Batman.Object
       Batman.developer.do =>
         extraInfo = @get('displayName') || @get('source')
         (if node == document then document.body else node).setAttribute?('batman-view', @constructor.name + if extraInfo then ": #{extraInfo}" else '')
-
-      if @superview and @parentNode
-        @initializeBindings() if @bindImmediately
-        @addToParentNode(@parentNode)
 
       return node
 
