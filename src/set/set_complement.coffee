@@ -19,23 +19,3 @@ class Batman.SetComplement extends Batman.BinarySetOperation
   _addComplement: (items, opposite) ->
     itemsToAdd = (item for item in items when opposite.has(item))
     @add(itemsToAdd...) if itemsToAdd.length > 0
-
-#= require ./binary_set_operation
-
-#class Batman.SetComplement extends Batman.BinarySetOperation
-  #_itemsWereAddedToSource: (source, opposite, items...) ->
-    #if source == @left
-      #@_addComplement(items, opposite)
-    #else
-      #itemsToRemove = (item for item in items when opposite.has(item))
-      #@remove itemsToRemove...
-
-  #_itemsWereRemovedFromSource: (source, opposite, items...) ->
-    #if source == @left
-      #@remove items...
-    #else
-      #@_addComplement(items, opposite)
-
-
-
-
