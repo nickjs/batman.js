@@ -250,6 +250,8 @@ class Batman.View extends Batman.Object
     @destroySubviews()
 
     @node = null
+    @parentNode = null
+    @subviews = null
 
 Batman.container.$context ?= (node) ->
   while node

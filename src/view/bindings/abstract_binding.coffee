@@ -157,6 +157,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     @keyPath = null
     @view = null
     @backingView = null
+    @superview = null
 
   parseFilter: ->
     # Store the function which does the filtering and the arguments (all except the actual value to apply the
