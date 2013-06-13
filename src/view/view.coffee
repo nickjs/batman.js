@@ -92,7 +92,7 @@ class Batman.View extends Batman.Object
     parentNode = Batman.DOM.querySelector(superviewNode, parentNode) if typeof parentNode is 'string'
     parentNode = superviewNode if not parentNode
 
-    @addToParentNode(parentNode)
+    @addToParentNode(parentNode) if parentNode
 
   addToParentNode: (parentNode) ->
     return if not @get('node')
