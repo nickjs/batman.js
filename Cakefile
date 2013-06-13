@@ -91,7 +91,11 @@ task 'doc', 'build the Percolate documentation', (options) ->
       pipedExec 'docs/percolate.js', options, (code) ->
         process.exit(code) unless options.watch
 
-task 'test', 'compile Batman.js and the tests and run them on the command line', (options) ->
+task 'test', ' run the tests continuously on the command line', (options) ->
+  pipedExec './node_modules/.bin/karma', 'start', './karma.conf.js', (code) ->
+    process.exit(code)
+
+task 'test:travis', 'run the tests once using PhantomJS', (options) ->
   pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'PhantomJS', './karma.conf.js', (code) ->
     process.exit(code)
 

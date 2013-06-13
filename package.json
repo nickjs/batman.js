@@ -22,7 +22,7 @@
     "batman": "./tools/batman"
   },
   "scripts": {
-    "test": "./node_modules/.bin/cake test",
+    "test": "./node_modules/.bin/cake test:travis",
     "build": "./node_modules/.bin/cake build"
   },
   "dependencies": {
