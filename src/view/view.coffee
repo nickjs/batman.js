@@ -193,7 +193,7 @@ class Batman.View extends Batman.Object
 
   destroyBindings: ->
     binding.die() for binding in @bindings
-    bindings = []
+    @bindings = []
     @isBound = false
 
   destroySubviews: ->

@@ -57,4 +57,5 @@ class Batman.DOM.ViewArgumentBinding extends Batman.DOM.AbstractBinding
 
   die: ->
     @targetView.forget(@option, @_updateValue)
+    @targetView = null
     super
