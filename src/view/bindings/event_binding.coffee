@@ -20,6 +20,8 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
     else
       Batman.DOM.events.other(@node, @attributeName, callback, @view)
 
+    @view.bindings.push(this)
+
   _unfilteredValue: (key) ->
     @unfilteredKey = key
     if not @functionName and (index = key.lastIndexOf('.')) != -1
