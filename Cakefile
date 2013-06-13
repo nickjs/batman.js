@@ -19,18 +19,16 @@ pipedExec = do ->
   pipedExec = (args..., callback) ->
     if !running
       running = true
-      child = spawn 'node', args
+      child = spawn('node', args, stdio: 'inherit')
       process.on 'exit', exitListener = -> child.kill()
-      child.stdout.on 'data', (data) -> process.stdout.write data
-      child.stderr.on 'data', (data) -> process.stderr.write data
-      child.on 'exit', (code) ->
-        process.removeListener 'exit', exitListener
+      child.on 'close', (code) ->
+        process.removeListener('exit', exitListener)
         running = false
         callback(code)
 
 
 task 'build', 'compile Batman.js and all the tools', (options) ->
-  files = glob.sync('./src/**/*').concat(glob.sync('./tests/run.coffee'))
+  files = glob.sync('./src/**/*')
   muffin.run
     files: files
     options: options
