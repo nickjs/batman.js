@@ -237,8 +237,8 @@ class Batman.View extends Batman.Object
   die: ->
     @fire('destroy')
 
-    Batman.DOM.destroyNode(@node)
     @removeFromSuperview()
+    Batman.DOM.destroyNode(@node)
 
     @forget()
     @_batman.properties?.forEach (key, property) -> property.die()
