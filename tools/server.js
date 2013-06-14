@@ -15,7 +15,6 @@
 
   getServer = function(options) {
     var server;
-
     server = connect.createServer(connect.favicon(), connect.logger(), connect["static"](process.cwd()), connect.directory(process.cwd()));
     if (options.build) {
       server.use(utils.CoffeeCompiler({
@@ -38,7 +37,6 @@
     });
     cli.main(function(args, options) {
       var info, server;
-
       options.buildDir = options['build-dir'];
       options.buildDir || (options.buildDir = './build');
       server = getServer(options);

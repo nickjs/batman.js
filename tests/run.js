@@ -1,18 +1,12 @@
 (function() {
-  var coffee, glob, path, qqunit,
-    __hasProp = {}.hasOwnProperty;
-
+  var coffee, glob, path, qqunit;
+  var __hasProp = Object.prototype.hasOwnProperty;
   glob = require('glob');
-
   path = require('path');
-
   coffee = require('coffee-script-mapped');
-
   qqunit = require('qqunit');
-
   qqunit.Environment.jsdom.jQueryify(window, path.join(__dirname, 'lib', 'jquery.js'), function(window, jQuery) {
-    var Helper, e, k, tests, v;
-
+    var Helper, k, tests, v;
     global.jQuery = jQuery;
     try {
       require('./lib/query_selector_polyfill');
@@ -34,8 +28,7 @@
       tests = glob.sync("" + __dirname + "/batman/**/*_test.coffee").map(function(test) {
         return path.resolve(process.cwd(), test);
       });
-    } catch (_error) {
-      e = _error;
+    } catch (e) {
       console.error(e.stack);
       process.exit(1);
     }
@@ -44,5 +37,4 @@
       return process.exit(stats.failed);
     });
   });
-
 }).call(this);

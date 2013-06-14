@@ -5,7 +5,6 @@
 
   emptyNode = function(node) {
     var newNode;
-
     newNode = new uglify.AST_EmptyStatement;
     newNode.start = node.start;
     newNode.end = node.end;
@@ -14,7 +13,6 @@
 
   isDeveloperNamespace = function(nodeOrString) {
     var node, _ref;
-
     if (nodeOrString instanceof uglify.AST_Node) {
       node = nodeOrString;
       if (node instanceof uglify.AST_Dot && node.expression.name === "Batman" && (node.property = "developer")) {
@@ -46,7 +44,6 @@
 
   exports.removeDevelopment = function(toplevel) {
     var remover;
-
     remover = new uglify.TreeTransformer(function(node, descend) {
       if (node instanceof uglify.AST_Definitions) {
         descend(node, this);

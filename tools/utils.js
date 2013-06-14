@@ -15,7 +15,6 @@
 
   exports.mkdir_p = mkdir_p = function(path, mode, callback, position) {
     var directory, parts;
-
     mode = mode || process.umask();
     position = position || 0;
     parts = require("path").normalize(path).split("/");
@@ -48,13 +47,11 @@
 
   exports.CoffeeCompiler = function(options) {
     var destDir, srcDir;
-
     options = options || {};
     srcDir = options.src || process.cwd();
     destDir = options.dest || srcDir;
     return function(req, res, next) {
       var compile, compiler, dest, pathname, send, src;
-
       if ("GET" !== req.method) {
         return next();
       }
@@ -64,7 +61,6 @@
         ext: ".coffee",
         compile: function(str, fn) {
           var coffee, err;
-
           coffee = cache.coffee || (cache.coffee = require("coffee-script"));
           try {
             return fn(null, coffee.compile(str));
@@ -142,7 +138,6 @@
 
   exports.getConfig = (function() {
     var e, json, jsonOptions;
-
     try {
       json = fs.readFileSync(path.join(process.cwd(), 'package.json')).toString().trim();
       jsonOptions = JSON.parse(json);
