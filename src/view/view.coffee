@@ -207,12 +207,12 @@ class Batman.View extends Batman.Object
     index = keypath.lastIndexOf('.')
     if index != -1 then keypath.substr(0, index) else keypath
 
-  targetForKeypathBase: (base) ->
+  targetForKeypath: (keypath) ->
     proxiedObject = @get('proxiedObject')
     lookupNode = proxiedObject || this
 
     while lookupNode
-      if typeof Batman.get(lookupNode, base) isnt 'undefined'
+      if typeof Batman.get(lookupNode, keypath) isnt 'undefined'
         return lookupNode
 
       controller = lookupNode.controller if lookupNode.isView and lookupNode.controller
@@ -234,13 +234,13 @@ class Batman.View extends Batman.Object
 
   lookupKeypath: (keypath) ->
     base = @baseForKeypath(keypath)
-    target = @targetForKeypathBase(base)
+    target = @targetForKeypath(base)
 
     Batman.get(target, keypath) if target
 
   setKeypath: (keypath, value) ->
     prefix = @prefixForKeypath(keypath)
-    target = @targetForKeypathBase(prefix)
+    target = @targetForKeypath(prefix)
 
     return if not target || target is Batman.container
     Batman.Property.forBaseAndKey(target, keypath)?.setValue(value)
