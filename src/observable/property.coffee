@@ -230,6 +230,7 @@ class Batman.Property extends Batman.PropertyEvent
   die: ->
     @_removeHandlers()
     @base._batman?.properties?.unset(@key)
+    @base = null
     @isDead = true
 
   isolate: ->
