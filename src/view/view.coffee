@@ -203,6 +203,10 @@ class Batman.View extends Batman.Object
   baseForKeypath: (keypath) ->
     keypath.split('.')[0].split('|')[0].trim()
 
+  prefixForKeypath: (keypath) ->
+    index = keypath.lastIndexOf('.')
+    if index != -1 then keypath.substr(0, index) else keypath
+
   targetForKeypathBase: (base) ->
     proxiedObject = @get('proxiedObject')
     lookupNode = proxiedObject || this
@@ -233,6 +237,13 @@ class Batman.View extends Batman.Object
     target = @targetForKeypathBase(base)
 
     Batman.get(target, keypath) if target
+
+  setKeypath: (keypath, value) ->
+    prefix = @prefixForKeypath(keypath)
+    target = @targetForKeypathBase(prefix)
+
+    return if not target || target is Batman.container
+    Batman.Property.forBaseAndKey(target, keypath)?.setValue(value)
 
   die: ->
     @fire('destroy')
