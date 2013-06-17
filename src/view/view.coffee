@@ -30,6 +30,7 @@ class Batman.View extends Batman.Object
 
   isInDOM: false
   isView: true
+  isDead: false
 
   constructor: ->
     @bindings = []
@@ -197,7 +198,7 @@ class Batman.View extends Batman.Object
     @isBound = false
 
   destroySubviews: ->
-    if @dead
+    if @isDead
       Batman.developer.warn "Tried to destroy the subviews of a dead view."
       return
     subview.die() for subview in @subviews.toArray()
@@ -249,7 +250,7 @@ class Batman.View extends Batman.Object
     Batman.Property.forBaseAndKey(target, keypath)?.setValue(value)
 
   die: ->
-    if @dead
+    if @isDead
       Batman.developer.warn "Tried to die() a view more than once."
       return
 
@@ -270,7 +271,7 @@ class Batman.View extends Batman.Object
     @node = null
     @parentNode = null
     @subviews = null
-    @dead = true
+    @isDead = true
 
 Batman.container.$context ?= (node) ->
   while node
