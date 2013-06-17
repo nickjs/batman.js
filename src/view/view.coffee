@@ -254,8 +254,6 @@ class Batman.View extends Batman.Object
       return
 
     @fire('destroy')
-
-    @removeFromSuperview()
     Batman.DOM.destroyNode(@node)
 
     @forget()
@@ -266,6 +264,8 @@ class Batman.View extends Batman.Object
 
     @destroySubviews()
     @destroyBindings()
+
+    @removeFromSuperview()
 
     @node = null
     @parentNode = null
