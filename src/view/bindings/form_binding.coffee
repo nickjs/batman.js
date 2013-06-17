@@ -24,6 +24,11 @@ class Batman.DOM.FormBinding extends Batman.DOM.ContextBinding
       binding = selectedNode.getAttribute('data-bind')
       field = binding.substr(binding.indexOf(attribute) + attribute.length + 1)
 
+      index = field.indexOf('|')
+      field = field.substr(0, index) if index != -1
+
+      field = field.trim()
+
       selectedNode.setAttribute("data-addclass-#{@errorClass}", "#{attribute}.errors.#{field}.length")
 
     errorsNode = Batman.DOM.querySelector(@node, '.errors')
