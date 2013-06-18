@@ -104,10 +104,13 @@ class Batman.View extends Batman.Object
     isInDOM = document.body.contains(parentNode)
     @propagateToSubviews('viewWillAppear') if isInDOM
 
-    parentNode.appendChild(@node) if parentNode != @node
+    @insertIntoDOM(parentNode)
 
     @propagateToSubviews('isInDOM', isInDOM)
     @propagateToSubviews('viewDidAppear') if isInDOM
+
+  insertIntoDOM: (parentNode) ->
+    parentNode.appendChild(@node) if parentNode != @node
 
   removeFromParentNode: ->
     node = @get('node')
