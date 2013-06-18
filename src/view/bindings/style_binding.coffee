@@ -45,6 +45,8 @@ class Batman.DOM.StyleBinding extends Batman.DOM.AbstractCollectionBinding
 
   setStyle: (key, value) =>
     key = Batman.helpers.camelize(key.trim(), true)
+    if key == ""
+      return false
     unless @oldStyles[key]?
       @oldStyles[key] = @node.style[key] || ""
 

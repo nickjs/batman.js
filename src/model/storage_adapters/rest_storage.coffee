@@ -26,7 +26,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         parents[key + '_id'] = Batman.helpers.pluralize(key)
 
       @url = (options) ->
-        childSegment = Batman.helpers.pluralize(@get('resourceName').toLowerCase())
+        childSegment = @storageKey || Batman.helpers.pluralize(@get('resourceName').toLowerCase())
         for key, plural of parents
           parentID = options.data[key]
           if parentID
@@ -35,7 +35,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
         return childSegment
 
       @::url = ->
-        childSegment = Batman.helpers.pluralize(@constructor.get('resourceName').toLowerCase())
+        childSegment = @constructor.storageKey || Batman.helpers.pluralize(@constructor.get('resourceName').toLowerCase())
         for key, plural of parents
           parentID = @get('dirtyKeys').get(key)
           if parentID is undefined
