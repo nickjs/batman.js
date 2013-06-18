@@ -56,6 +56,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
           subview.unset(@attributeName)
           subview.die()
           break
+    return
 
   die: ->
     @prototypeNode = null
