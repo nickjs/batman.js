@@ -50,10 +50,12 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @backingView.finishAppendItems()
 
   handleItemsRemoved: (oldItems) =>
-    for subview in @backingView.subviews._storage
-      if subview.get(@attributeName) == item
-        subview.die()
-    return
+    for item in oldItems
+      for subview in @backingView.subviews._storage
+        if subview.get(@attributeName) == item
+          subview.unset(@attributeName)
+          subview.die()
+          break
 
   die: ->
     @prototypeNode = null
