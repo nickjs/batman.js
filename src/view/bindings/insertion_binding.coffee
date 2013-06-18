@@ -20,14 +20,15 @@ class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
       view?.fire('viewWillShow')
       if not @node.parentNode?
         parentNode.insertBefore(@node, @placeholderNode)
-        Batman.DOM.destroyNode(@placeholderNode)
+        parentNode.removeChild(@placeholderNode)
       view?.fire('viewDidShow')
     else
       # Hide
       view?.fire('viewWillHide')
       if @node.parentNode?
         parentNode.insertBefore(@placeholderNode, @node)
-        Batman.DOM.destroyNode(@node)
+        parentNode.removeChild(@node)
+
       view?.fire('viewDidHide')
 
   die: ->
