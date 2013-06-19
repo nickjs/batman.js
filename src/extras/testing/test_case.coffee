@@ -1,4 +1,4 @@
-class Batman.TestCase
+class Batman.TestCase extends Batman.Object
   @mixin Batman.XhrMocking
 
   class @Test
@@ -76,14 +76,3 @@ class Batman.TestCase
   assertRaises: (expected, callback, message) ->
     QUnit.raises callback, expected, message
 
-  expectCreate: (model, params, err, result) ->
-    @mock(model, 'save').withArgs(params).once()
-
-  expectSave: (model, params, err, result) ->
-    @mock(model, 'save').withArgs(params).once()
-
-  expectLoad: (class, params, err, result) ->
-    @mock(class, 'load').withArgs(params).once()
-
-  expectFind: (class, params, err, result) ->
-    @mock(class, 'find').withArgs(params).once()

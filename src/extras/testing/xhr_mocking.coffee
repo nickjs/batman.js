@@ -24,7 +24,7 @@ Batman.XhrMocking =
     @_xhrExpectations[url] ||= 0
     @_xhrExpectations[url]++
 
-    @fakeServer.respondWith 'GET', url, (request) =>
+    @fakeServer.respondWith method, url, (request) =>
       @_xhrExpectations[url]--
 
     callback?()

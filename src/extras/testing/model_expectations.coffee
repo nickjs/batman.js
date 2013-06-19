@@ -1,12 +1,34 @@
 Batman.ModelExpectations =
-  expectCreate: (model, params, err, result) ->
-    @mock(model, 'save').withArgs(params).once()
+  expectCreate: (instance, params, err, result) ->
+    confirmExpectation = @mock()
+    @assert instance.isNew(), "Expected #{instance.constructor.name} to be new when saving"
 
-  expectSave: (model, params, err, result) ->
-    @mock(model, 'save').withArgs(params).once()
+    @stub instance, 'save', (callback) ->
+      confirmExpectation()
+      callback(err, result)
 
-  expectLoad: (class, params, err, result) ->
-    @mock(class, 'load').withArgs(params).once()
+  expectUpdate: (instance, params, err, result) ->
+    confirmExpectation = @mock()
+    @assert !instance.isNew(), "Expected #{instance.constructor.name} to exist when saving"
 
-  expectFind: (class, params, err, result) ->
-    @mock(class, 'find').withArgs(params).once()
+    @stub instance, 'save', (callback) ->
+      confirmExpectation()
+      callback(err, result)
+
+  expectLoad: (klass, params, err, result) ->
+    confirmExpectation = @mock()
+
+    @stub klass, 'load', (innerParams, callback) =>
+      @assertEqual params, innerParams if params?
+      confirmExpectation()
+
+      callback(err, result)
+
+  expectFind: (klass, params, err, result) ->
+    confirmExpectation = @mock()
+
+    @stub klass, 'find', (innerParams, callback) =>
+      @assertEqual params, innerParams
+      confirmExpectation()
+
+      callback(err, result)    
