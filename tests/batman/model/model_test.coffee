@@ -199,6 +199,28 @@ asyncTest "errors are cleared on load", ->
     equal product.get('errors').length, 0
     QUnit.start()
 
+asyncTest 'model will be in clean state after reload', ->
+  @Product.find 1, (e, p) =>
+    equal p.get('cost'), 10
+    p.set('cost', 20)
+    equal p.get('lifecycle.state'), 'dirty'
+
+    @Product.find 1, (e, p) =>
+      equal p.get('lifecycle.state'), 'clean'
+      QUnit.start()
+
+asyncTest 'model(s) will be in clean state after reload', ->
+  product = new @Product(id: 2)
+  p = @Product
+  p.load =>
+    equal p.get('loaded.first.cost'), 10
+    p.set('loaded.first.cost', 20)
+    equal p.get('loaded.first.lifecycle.state'), 'dirty'
+
+    p.load =>
+      equal p.get('loaded.first.lifecycle.state'), 'clean'
+      QUnit.start()
+
 test "class promise accessors will be recalculated after clear", ->
   i = 0
   @Product.classAccessor 'promise', promise: (deliver) -> deliver(null, i++)

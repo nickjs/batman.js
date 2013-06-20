@@ -181,9 +181,12 @@ class Batman.Model extends Batman.Object
   @_mapIdentity: (record) ->
     if (id = record.get('id'))?
       if existing = @_loadIdentity(id)
+        lifecycle = existing.get('lifecycle')
+        lifecycle.load()
         existing._withoutDirtyTracking ->
           attributes = record.get('attributes')?.toObject()
           @mixin(attributes) if attributes
+        lifecycle.loaded()
         record = existing
       else
         @get('loaded').add(record)
@@ -195,9 +198,12 @@ class Batman.Model extends Batman.Object
       if not (id = record.get('id'))?
         continue
       else if existing = @_loadIdentity(id)
+        lifecycle = existing.get('lifecycle')
+        lifecycle.load()
         existing._withoutDirtyTracking ->
           attributes = record.get('attributes')?.toObject()
           @mixin(attributes) if attributes
+        lifecycle.loaded()
         records[index] = existing
       else
         newRecords.push record
