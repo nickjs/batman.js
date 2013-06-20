@@ -34,6 +34,8 @@ class Batman.Renderer extends Batman.Object
     while root
       skipChildren = @parseNode(root)
       root = @nextNode(root, skipChildren)
+
+    @fire('bindingsInitialized')
     return
 
   parseNode: (node) ->
@@ -62,8 +64,8 @@ class Batman.Renderer extends Batman.Object
             bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @view)
             reader(bindingDefinition)
 
-        if binding?.ready # FIXME when nextNode gets less stupid this can be immediate
-          @view.once('ready', do (binding) -> -> binding.ready.call(binding))
+        if binding?.initialized # FIXME when nextNode gets less stupid this can be immediate
+          @once('bindingsInitialized', do (binding) -> -> binding.initialized.call(binding))
 
         if binding?.skipChildren
           return true

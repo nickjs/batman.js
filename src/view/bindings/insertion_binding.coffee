@@ -8,7 +8,7 @@ class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
 
     @placeholderNode = document.createComment("batman-insertif=\"#{@keyPath}\"")
 
-  ready: ->
+  initialized: ->
     @bind()
 
   dataChange: (value) ->
