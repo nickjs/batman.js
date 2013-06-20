@@ -6,10 +6,10 @@ hte = (actual, expected) ->
   equal actual.innerHTML.toLowerCase().replace(/\n|\r/g, ""),
     expected.toLowerCase().replace(/\n|\r/g, "")
 
-test "Batman.Renderer::_sortBindings should be consistent", ->
+test "Batman.BindingParser::_sortBindings should be consistent", ->
   bindings = [["a"], ["foreach"], ["c"], ["bind"], ["b"], ["context"], ["f"], ["view"], ["g"], ["formfor"], ["d"], ["renderif"], ["e"]]
   expectedSort = [["foreach"], ["renderif"], ["view"], ["formfor"], ["context"], ["bind"], ["a"], ["b"], ["c"], ["d"], ["e"], ["f"], ["g"]]
-  deepEqual bindings.sort(Batman.Renderer::_sortBindings), expectedSort
+  deepEqual bindings.sort(Batman.BindingParser::_sortBindings), expectedSort
 
 test 'it should render simple nodes', ->
   hte helpers.render("<div></div>", false), "<div></div>"

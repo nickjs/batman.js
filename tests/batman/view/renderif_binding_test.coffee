@@ -48,14 +48,14 @@ asyncTest 'it should only render the inner nodes once', 3, ->
   context = proceed: false, deferred: spy = createSpy().whichReturns('inner value')
 
   source = '<div data-renderif="proceed"><span data-bind="deferred">unrendered</span></div>'
-  class InstrumentedRenderer extends Batman.Renderer
+  class InstrumentedRenderer extends Batman.BindingParser
     @instanceCount: 0
     constructor: ->
       InstrumentedRenderer.instanceCount++
       super
 
-  oldRenderer = Batman.Renderer
-  Batman.Renderer = InstrumentedRenderer
+  oldRenderer = Batman.BindingParser
+  Batman.BindingParser = InstrumentedRenderer
 
   helpers.render source, context, (node, view) ->
     equal InstrumentedRenderer.instanceCount, 1
@@ -65,6 +65,6 @@ asyncTest 'it should only render the inner nodes once', 3, ->
     view.set('proceed', false)
     view.set('proceed', true)
     equal InstrumentedRenderer.instanceCount, 2
-    Batman.Renderer = oldRenderer
+    Batman.BindingParser = oldRenderer
 
     QUnit.start()

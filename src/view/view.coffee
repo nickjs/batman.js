@@ -189,7 +189,7 @@ class Batman.View extends Batman.Object
 
   initializeBindings: ->
     return if @isBound or !@node
-    new Batman.Renderer(@node, this)
+    new Batman.BindingParser(this)
 
     @set('isBound', true)
     @fire('ready')

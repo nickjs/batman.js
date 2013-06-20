@@ -1,17 +1,9 @@
 helpers = if typeof require is 'undefined' then window.viewHelpers else require './view_helper'
 
-oldIteratorDeferEvery = Batman.DOM.IteratorBinding::deferEvery
-oldRendererDeferEvery = Batman.Renderer::deferEvery
 getSelections = (node) -> node.find('option').map((i, node) -> !!node.selected).toArray()
 getContents = (node) -> node.find('option').map((i, node) -> node.innerHTML).toArray()
 
-QUnit.module 'Batman.View select bindings',
-  setup: ->
-    Batman.DOM.IteratorBinding::deferEvery = false
-    Batman.Renderer::deferEvery = false
-  teardown: ->
-    Batman.DOM.IteratorBinding::deferEvery = oldIteratorDeferEvery
-    Batman.Renderer::deferEvery = oldRendererDeferEvery
+QUnit.module 'Batman.View select bindings'
 
 asyncTest 'it should bind the value of a select box and update when the javascript land value changes', 2, ->
   context =
