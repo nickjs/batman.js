@@ -5,7 +5,7 @@ Batman.ModelExpectations =
 
     @stub instance, 'save', (callback) ->
       confirmExpectation()
-      callback(options["err"], options["result"])
+      callback(options["err"], options["response"])
 
   expectUpdate: (instance, options) ->
     confirmExpectation = @mock()
@@ -13,22 +13,24 @@ Batman.ModelExpectations =
 
     @stub instance, 'save', (callback) ->
       confirmExpectation()
-      callback(options["err"], options["result"])
+      callback(options["err"], options["response"])
 
   expectLoad: (klass, options) ->
     confirmExpectation = @mock()
 
     @stub klass, 'load', (innerParams, callback) =>
+      callback = innerParams if typeof innerParams in ['function', 'undefined']
+
       @assertEqual options["params"], innerParams if options["params"]?
       confirmExpectation()
+      callback(options["err"], options["response"])
 
-      callback(options["err"], options["result"])
-
-  expectFind: (klass,options) ->
+  expectFind: (klass, options) ->
     confirmExpectation = @mock()
 
     @stub klass, 'find', (innerParams, callback) =>
+      callback = innerParams if typeof innerParams in ['function', 'undefined']
+
       @assertEqual options["params"], innerParams if options["params"]?
       confirmExpectation()
-
-      callback(options["err"], options["result"])
+      callback(options["err"], options["response"])
