@@ -238,6 +238,20 @@ validationsTestSuite = ->
           equal errors.length, 0
           QUnit.start()
 
+  asyncTest "numeric using greaterThanOrEqualTo 0", ->
+    class Product extends Batman.Model
+      @validate 'number', greaterThanOrEqualTo: 0
+
+    p = new Product number: -1
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      p.set 'number', 1
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        QUnit.start()
+
   asyncTest "numeric using equalTo", ->
     class Product extends Batman.Model
       @validate 'number', equalTo: 10
@@ -337,7 +351,7 @@ validationsTestSuite = ->
           equal errors.length, 0
           QUnit.start()
 
-QUnit.module "Batman.Model: Validations",
+QUnit.module "Batman.Model: Validations"
 validationsTestSuite()
 
 QUnit.module "Batman.Model: Validations with I18N",
