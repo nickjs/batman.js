@@ -21,6 +21,7 @@ class Batman.TestCase extends Batman.Object
       QUnit.test(test.name, test.expected, sinon.test(test.testFunction).bind(this))
 
   setup: ->
+    @xhrSetup()
 
   teardown: ->
 

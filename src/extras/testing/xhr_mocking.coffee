@@ -1,35 +1,32 @@
 Batman.XhrMocking =
   initialize: ->
 
-  setup: ->
-    #super
-    @_xhrExpectations = {}
-    # @test = wrappedTest
+  xhrSetup: ->
+    @server = sinon.sandbox.useFakeServer()
 
   teardown: ->
-    #super
 
-  assertGET: (url, callback) ->
-    @_assertXHR('GET', url, callback)
-  assertPOST: (url) ->
-    @_assertXHR('POST', url, callback)
-  assertPUT: (url) ->
-    @_assertXHR('PUT', url, callback)
-  assertDELETE: (url) ->
-    @_assertXHR('DELETE', url, callback)
+  assertGET: (url, params, callback) ->
+    @_assertXHR('GET', url, params, callback)
+  assertPOST: (url, params, callback) ->
+    @_assertXHR('POST', url, params, callback)
+  assertPUT: (url, params, callback) ->
+    @_assertXHR('PUT', url, params, callback)
+  assertDELETE: (url, params, callback) ->
+    @_assertXHR('DELETE', url, params, callback)
 
-  assertXHR: (method, url, callback) ->
-    # if url is regex
-    # else is string regexp escaped
-    @_xhrExpectations[url] ||= 0
-    @_xhrExpectations[url]++
+  _assertXHR: (method, url, params, callback) ->
+    confirmExpectation = sinon.mock()
 
-    @fakeServer.respondWith method, url, (request) =>
-      @_xhrExpectations[url]--
+    _params = [200, { "Content-Type": "application/json" }, "{}"]
+    _params[0] = params["status"]   if params["status"]?
+    _params[1] = params["type"]     if params["type"]?
+    _params[2] = params["response"] if params["response"]?
+
+    @server.respondWith method, url, (request) =>
+      confirmExpectation()
+      request.respond.apply(request, _params)
 
     callback?()
-    @fakeServer.respond()
-    @_assertExpectations()
-
-  _assertExpectations: ->
-    @assertEqual(0, val, "#{key} expected, not satisfied or not expected") for key, val in @_xhrExpectations
+    @server.respond()
+    confirmExpectation.verify()
