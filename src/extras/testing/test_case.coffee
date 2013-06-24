@@ -27,6 +27,8 @@ class Batman.TestCase extends Batman.Object
     @_expectations = {}
 
   runTests: ->
+    @xhrSetup()
+
     QUnit.module @constructor.name,
       setup: @setup.bind(this)
       teardown: @teardown.bind(this)
@@ -35,8 +37,6 @@ class Batman.TestCase extends Batman.Object
       test.run(this)
 
   setup: ->
-    @xhrSetup()
-
   teardown: ->
 
   continue: ->

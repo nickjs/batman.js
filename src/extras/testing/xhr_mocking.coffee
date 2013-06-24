@@ -1,17 +1,16 @@
 Batman.XhrMocking =
-  initialize: ->
-
   xhrSetup: ->
     @server = sinon.sandbox.useFakeServer()
 
-  teardown: ->
-
   assertGET: (url, params, callback) ->
     @_assertXHR('GET', url, params, callback)
+
   assertPOST: (url, params, callback) ->
     @_assertXHR('POST', url, params, callback)
+
   assertPUT: (url, params, callback) ->
     @_assertXHR('PUT', url, params, callback)
+
   assertDELETE: (url, params, callback) ->
     @_assertXHR('DELETE', url, params, callback)
 
