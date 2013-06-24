@@ -13,9 +13,11 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
 
     return if not viewClassOrInstance
     if viewClassOrInstance.isView
+      @fromViewClass = false
       @viewInstance = viewClassOrInstance
       @viewInstance.removeFromSuperview()
     else
+      @fromViewClass = true
       @viewInstance = new viewClassOrInstance
 
     @node.removeAttribute('data-view')
@@ -36,7 +38,7 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
 
   die: ->
     @viewInstance.removeFromSuperview()
-    @viewInstance.die()
+    @viewInstance.die() if @fromViewClass
     @superview = null
     @viewInstance = null
     super
