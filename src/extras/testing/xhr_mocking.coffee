@@ -17,14 +17,15 @@ Batman.XhrMocking =
   _assertXHR: (method, url, params, callback) ->
     confirmExpectation = sinon.mock()
 
-    _params = [200, { "Content-Type": "application/json" }, "{}"]
-    _params[0] = params["status"]   if params["status"]?
-    _params[1] = params["type"]     if params["type"]?
-    _params[2] = params["response"] if params["response"]?
+    paramsArray = [
+      params.status || 200,
+      params.type || {'Content-Type': 'application/json'},
+      params.response || "{}"
+    ]
 
     @server.respondWith method, url, (request) =>
       confirmExpectation()
-      request.respond.apply(request, _params)
+      request.respond.apply(request, paramsArray)
 
     callback?()
     @server.respond()
