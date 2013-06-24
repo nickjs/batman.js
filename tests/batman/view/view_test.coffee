@@ -173,7 +173,7 @@ test 'should report isInDOM correctly as false when none of many yielded nodes i
 
 oldApp = Batman.currentApp
 
-QUnit.module 'Batman.View lookupKeypath',
+QUnit.module 'Batman.View keypath operations',
   setup: ->
     @controller = new Batman.Controller
     @layout = new Batman.View(controller: @controller)
@@ -186,7 +186,7 @@ QUnit.module 'Batman.View lookupKeypath',
   teardown: ->
     Batman.currentApp = oldApp
 
-test 'should work in the basic case', ->
+test 'lookupKeypath should work in the basic case', ->
   @app.set('test', 'appvalue')
   equal @view.lookupKeypath('test'), 'appvalue'
 
@@ -198,6 +198,35 @@ test 'should work in the basic case', ->
 
   @view.unset('test')
   equal @view.lookupKeypath('test'), 'ctrlvalue'
+
+test 'lookupKeypath should work for extremely deep keypaths', ->
+  @view.set('test', true)
+  view = @view
+  for i in [1..8]
+    view.subviews.add(view = new Batman.View)
+
+  equal view.get('superview.superview.superview.superview.superview.superview.superview.superview.test'), true
+  equal view.lookupKeypath('test'), true
+
+test 'lookupKeypath matches through the base keypath', ->
+  @controller.set('user', Batman(name: 'controller'))
+
+  @view.set('user', user = Batman())
+  equal @view.lookupKeypath('user'), user
+  equal @view.lookupKeypath('user.name'), undefined
+
+  @view.set('user', user = Batman(name: 'view'))
+  equal @view.lookupKeypath('user'), user
+  equal @view.lookupKeypath('user.name'), 'view'
+
+test 'targetForKeypath matches through the full keypath only', ->
+  @controller.set('user', Batman(name: 'controller'))
+
+  @view.set('user', Batman())
+  equal @view.targetForKeypath('user.name'), @controller
+
+  @view.set('user', Batman(name: 'view'))
+  equal @view.targetForKeypath('user.name'), @view
 
 test 'targetForKeypath should return undefined if the keypath misses', ->
   @app.set('test', true)
@@ -213,12 +242,20 @@ test 'targetForKeypath with forceTarget should return the closest non-backing vi
   @app.unset('test')
   equal @backingView.targetForKeypath('test', true), @view
 
-test 'should work for extremely deep keypaths', ->
-  @view.set('test', true)
-  view = @view
-  for i in [1..8]
-    view.subviews.add(view = new Batman.View)
+test 'setKeypath should work in the basic case', ->
+  @app.set('test', null)
+  @view.set('test', null)
 
-  equal view.get('superview.superview.superview.superview.superview.superview.superview.superview.test'), true
-  equal view.lookupKeypath('test'), true
+  @view.setKeypath('test', 'foo')
+  equal @view.get('test'), 'foo'
+  equal @app.get('test'), null
+
+  @view.unset('test')
+  @view.setKeypath('test', 'foo')
+  equal @view.get('test'), undefined
+  equal @app.get('test'), 'foo'
+
+test 'setKeypath should set on the nearest non-backing view if the keypath misses', ->
+  @backingView.setKeypath('test', 'foo')
+  equal @view.get('test'), 'foo'
 
