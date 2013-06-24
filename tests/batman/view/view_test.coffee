@@ -88,6 +88,34 @@ test 'should not autogenerate a node if the node property is false', 1, ->
   @superview.subviews.add(@view)
   equal MockRequest.lastInstance, false
 
+asyncTest 'die should call die on properties', 1, ->
+  source = '''
+  <div data-bind="foo.bar"></div>
+  <div data-bind="foo.baz"></div>
+  '''
+
+  helpers.render source, {}, (node, view) ->
+    spy = createSpy()
+    properties = view._batman.properties.toArray()
+    view.property(property).die = spy for property in properties
+    view.die()
+    equal spy.callCount, properties.length
+    QUnit.start()
+
+asyncTest 'die should forget observers and fire destroy', 2, ->
+  source = '''
+  <div data-bind="foo.bar"></div>
+  <div data-bind="foo.baz"></div>
+  '''
+  node = helpers.render source, {}, (node, view) ->
+    view.fire = fireSpy = createSpy()
+    view.forget = forgetSpy = createSpy()
+    view.die()
+    ok fireSpy.called
+    ok forgetSpy.called
+    QUnit.start()
+
+
 QUnit.module 'Batman.View isInDOM',
   setup: ->
     @options = html: "predetermined contents"
@@ -142,30 +170,55 @@ test 'should report isInDOM correctly as false when none of many yielded nodes i
   view.initializeBindings()
   ok !view.isInDOM
 
-# FIXME
-# asyncTest 'die should call die on properties', 1, ->
-#   source = '''
-#   <div data-bind="foo.bar"></div>
-#   <div data-bind="foo.baz"></div>
-#   '''
 
-#   helpers.render source, {}, (node, view) ->
-#     spy = createSpy()
-#     properties = view._batman.properties.toArray()
-#     view.property(property).die = spy for property in properties
-#     view.die()
-#     equal spy.callCount, properties.length
-#     QUnit.start()
+oldApp = Batman.currentApp
 
-# asyncTest 'die should forget observers and fire destroy', 2, ->
-#   source = '''
-#   <div data-bind="foo.bar"></div>
-#   <div data-bind="foo.baz"></div>
-#   '''
-#   node = helpers.render source, {}, (node, view) ->
-#     view.fire = fireSpy = createSpy()
-#     view.forget = forgetSpy = createSpy()
-#     view.die()
-#     ok fireSpy.called
-#     ok forgetSpy.called
-#     QUnit.start()
+QUnit.module 'Batman.View lookupKeypath',
+  setup: ->
+    @controller = new Batman.Controller
+    @layout = new Batman.View(controller: @controller)
+
+    @layout.subviews.add(@view = new Batman.View)
+    @view.subviews.add(@backingView = new Batman.View(isBackingView: true))
+
+    @app = Batman.currentApp = Batman(layout: @layout)
+
+  teardown: ->
+    Batman.currentApp = oldApp
+
+test 'should work in the basic case', ->
+  @app.set('test', 'appvalue')
+  equal @view.lookupKeypath('test'), 'appvalue'
+
+  @controller.set('test', 'ctrlvalue')
+  equal @view.lookupKeypath('test'), 'ctrlvalue'
+
+  @view.set('test', 'viewvalue')
+  equal @view.lookupKeypath('test'), 'viewvalue'
+
+  @view.unset('test')
+  equal @view.lookupKeypath('test'), 'ctrlvalue'
+
+test 'targetForKeypath should return undefined if the keypath misses', ->
+  @app.set('test', true)
+  equal @backingView.targetForKeypath('test'), @app
+
+  @app.unset('test')
+  equal @backingView.targetForKeypath('test'), undefined
+
+test 'targetForKeypath with forceTarget should return the closest non-backing view if the keypath misses', ->
+  @app.set('test', true)
+  equal @backingView.targetForKeypath('test', true), @app
+
+  @app.unset('test')
+  equal @backingView.targetForKeypath('test', true), @view
+
+test 'should work for extremely deep keypaths', ->
+  @view.set('test', true)
+  view = @view
+  for i in [1..8]
+    view.subviews.add(view = new Batman.View)
+
+  equal view.get('superview.superview.superview.superview.superview.superview.superview.superview.test'), true
+  equal view.lookupKeypath('test'), true
+
