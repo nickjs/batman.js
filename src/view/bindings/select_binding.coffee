@@ -1,6 +1,6 @@
 #= require ./abstract_binding
 
-class Batman.SelectView extends Batman.View
+class Batman.SelectView extends Batman.BackingView
   _addChildBinding: (binding) ->
     super
     @fire('childBindingAdded', binding)
@@ -9,15 +9,17 @@ class Batman.DOM.SelectBinding extends Batman.DOM.AbstractBinding
   backWithView: Batman.SelectView
   isInputBinding: true
   canSetImplicitly: true
-  bindImmediately: false
+  skipChildren: true
 
   constructor: (definition) ->
     super
-    definition.node.removeAttribute('data-bind')
-    definition.node.removeAttribute('data-source')
-    definition.node.removeAttribute('data-target')
+
+    @node.removeAttribute('data-bind')
+    @node.removeAttribute('data-source')
+    @node.removeAttribute('data-target')
+
     @backingView.on 'childBindingAdded', @childBindingAdded
-    @bind()
+    @backingView.initializeBindings()
 
   die: ->
     @backingView.off 'childBindingAdded', @childBindingAdded
