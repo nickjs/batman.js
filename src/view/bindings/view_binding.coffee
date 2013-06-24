@@ -3,10 +3,14 @@
 class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
   skipChildren: true
+  bindImmediately: false
 
   constructor: (definition) ->
     @superview = definition.view
     super
+
+  initialized: ->
+    @bind()
 
   dataChange: (viewClassOrInstance) ->
     @viewInstance?.removeFromSuperview()
