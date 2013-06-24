@@ -4,6 +4,17 @@ class Batman.TestCase extends Batman.Object
   class @Test
     constructor: (@name, @expected, @testFunction) ->
 
+    run: (testCase, cb) ->
+      testCase.clearExpectations()
+
+      wrappedTest = =>
+        sinon.test(@testFunction).call(testCase)
+        testCase.verifyExpectations()
+        cb?()
+
+      QUnit.test(@name, @expected, wrappedTest)
+
+
   @test: (name, expected, testFunction) ->
     if typeof expected is 'function'
       testFunction = expected
@@ -12,13 +23,16 @@ class Batman.TestCase extends Batman.Object
     @tests ||= []
     @tests.push new @Test(name, expected, testFunction)
 
-  runTests: (context) ->
-    QUnit.module.call context, @constructor.name,
+  constructor: ->
+    @_expectations = {}
+
+  runTests: ->
+    QUnit.module @constructor.name,
       setup: @setup.bind(this)
       teardown: @teardown.bind(this)
 
     for desc, test of @constructor.tests
-      QUnit.test(test.name, test.expected, sinon.test(test.testFunction).bind(this))
+      test.run(this)
 
   setup: ->
     @xhrSetup()
@@ -77,3 +91,14 @@ class Batman.TestCase extends Batman.Object
   assertRaises: (expected, callback, message) ->
     QUnit.raises callback, expected, message
 
+  addExpectation: (name) ->
+    if @_expectations[name] then @_expectations[name]++ else @_expectations[name] = 1
+
+  completeExpectation: (name) ->
+    if @_expectations[name] is 1 then delete @_expectations[name] else @_expectations[name]--
+
+  verifyExpectations: ->
+    for key, count of @_expectations
+      QUnit.ok(false, "Expectation #{key} did not callback #{count} time(s)")
+
+  clearExpectations: -> @_expectations = {}
