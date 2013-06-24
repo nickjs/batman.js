@@ -30,6 +30,7 @@ class Batman.View extends Batman.Object
   isInDOM: false
   isView: true
   isDead: false
+  isBackingView: false
 
   constructor: ->
     @bindings = []
@@ -239,13 +240,16 @@ class Batman.View extends Batman.Object
     index = keypath.lastIndexOf('.')
     if index != -1 then keypath.substr(0, index) else keypath
 
-  targetForKeypath: (keypath) ->
+  targetForKeypath: (keypath, forceTarget) ->
     proxiedObject = @get('proxiedObject')
     lookupNode = proxiedObject || this
 
     while lookupNode
       if typeof Batman.get(lookupNode, keypath) isnt 'undefined'
         return lookupNode
+
+      if forceTarget and not nearestNonBackingView and not lookupNode.isBackingView
+        nearestNonBackingView = lookupNode
 
       controller = lookupNode.controller if not controller and lookupNode.isView and lookupNode.controller
 
@@ -262,7 +266,9 @@ class Batman.View extends Batman.Object
         else
           lookupNode = {window: Batman.container}
       else
-        return
+        break
+
+    return nearestNonBackingView
 
   lookupKeypath: (keypath) ->
     base = @baseForKeypath(keypath)
@@ -272,7 +278,7 @@ class Batman.View extends Batman.Object
 
   setKeypath: (keypath, value) ->
     prefix = @prefixForKeypath(keypath)
-    target = @targetForKeypath(prefix)
+    target = @targetForKeypath(prefix, true)
 
     return if not target || target is Batman.container
     Batman.Property.forBaseAndKey(target, keypath)?.setValue(value)
