@@ -1,21 +1,22 @@
 Batman.ModelExpectations =
-  expectCreate: (instance, options) ->
+  expectCreate: (instance, options = {}) ->
     confirmExpectation = @mock()
-    @assert instance.isNew(), "Expected #{instance.constructor.name} to be new when saving"
+    # QUnit.ok true
+    QUnit.ok instance.isNew(), "Expected #{instance.constructor.name} to be new when saving"
 
     @stub instance, 'save', (callback) ->
       confirmExpectation()
       callback(options["err"], options["response"])
 
-  expectUpdate: (instance, options) ->
+  expectUpdate: (instance, options = {}) ->
     confirmExpectation = @mock()
-    @assert !instance.isNew(), "Expected #{instance.constructor.name} to exist when saving"
+    QUnit.ok !instance.isNew(), "Expected #{instance.constructor.name} to exist when saving"
 
     @stub instance, 'save', (callback) ->
       confirmExpectation()
       callback(options["err"], options["response"])
 
-  expectLoad: (klass, options) ->
+  expectLoad: (klass, options = {}) ->
     confirmExpectation = @mock()
 
     @stub klass, 'load', (innerParams, callback) =>
@@ -25,7 +26,7 @@ Batman.ModelExpectations =
       confirmExpectation()
       callback(options["err"], options["response"])
 
-  expectFind: (klass, options) ->
+  expectFind: (klass, options = {}) ->
     confirmExpectation = @mock()
 
     @stub klass, 'find', (innerParams, callback) =>
