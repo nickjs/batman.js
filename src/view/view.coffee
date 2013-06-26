@@ -214,8 +214,9 @@ class Batman.View extends Batman.Object
 
     @fire('destroy')
 
-    @wasInDOM = document.body.contains(@node)
-    Batman.DOM.destroyNode(@node)
+    if @node
+      @wasInDOM = document.body.contains(@node)
+      Batman.DOM.destroyNode(@node)
 
     @forget()
     @_batman.properties?.forEach (key, property) -> property.die()

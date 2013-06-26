@@ -157,7 +157,7 @@ class Batman.Controller extends Batman.Object
       yieldName = options.into || @defaultRenderYield
 
       if yieldContentView = Batman.DOM.Yield.withName(yieldName).contentView
-        yieldContentView.die() if yieldContentView isnt view
+        yieldContentView.die() if yieldContentView isnt view and not yieldContentView.isDead
 
       view.set('contentFor', yieldName) if not view.contentFor and not view.parentNode
       view.set('controller', this)

@@ -142,6 +142,7 @@ Batman.extend Batman,
     Batman.data elem, name, data, true
 
   acceptData: (elem) ->
+    return unless elem
     elem.___acceptData ||= if elem.nodeName
       match = Batman.noData[elem.nodeName]
       if match
