@@ -6,6 +6,7 @@ class Batman.View extends Batman.Object
 
   @option: (keys...) ->
     Batman.initializeObject(this)
+    keys = options.concat(keys) if options = @_batman.options
     @_batman.set('options', keys)
 
   @viewForNode: (node, climbTree) ->
