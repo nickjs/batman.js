@@ -1,32 +1,47 @@
 Batman.XhrMocking =
   xhrSetup: ->
-    @server = sinon.sandbox.useFakeServer()
+    self = this
+    @_requests = {}
 
-  assertGET: (url, params, callback) ->
-    @_assertXHR('GET', url, params, callback)
+    Batman.Request::send = (data) ->
+      data ?= @get('data')
+      @fire 'loading'
 
-  assertPOST: (url, params, callback) ->
-    @_assertXHR('POST', url, params, callback)
+      fn = self.getRequestCb(@get('url'), @get('method'))
 
-  assertPUT: (url, params, callback) ->
-    @_assertXHR('PUT', url, params, callback)
+      return if not fn
+      [status, response] = fn(data)
 
-  assertDELETE: (url, params, callback) ->
-    @_assertXHR('DELETE', url, params, callback)
+      if status <= 400
+        @fire 'success', response
+      else
+        @fire 'error', {response: response, status: status}
 
-  _assertXHR: (method, url, params, callback) ->
-    confirmExpectation = sinon.mock()
+      @fire 'loaded'
 
-    paramsArray = [
-      params.status || 200,
-      params.type || {'Content-Type': 'application/json'},
-      params.response || "{}"
-    ]
+  getRequestCb: (url, method) ->
+    return @_requests["#{method}::#{url}"]
 
-    @server.respondWith method, url, (request) =>
-      confirmExpectation()
-      request.respond.apply(request, paramsArray)
+  setRequestCb: (url, method, cb) ->
+    @_requests["#{method}::#{url}"] = cb
 
-    callback?()
-    @server.respond()
-    confirmExpectation.verify()
+  assertGET: (url, params) ->
+    @_assertXHR('GET', url, params)
+
+  assertPOST: (url, params) ->
+    @_assertXHR('POST', url, params)
+
+  assertPUT: (url, params) ->
+    @_assertXHR('PUT', url, params)
+
+  assertDELETE: (url, params) ->
+    @_assertXHR('DELETE', url, params)
+
+  _assertXHR: (method, url, params) ->
+    id = "#{method} to #{url}"
+    @addExpectation(id)
+
+    @setRequestCb url, method, =>
+      @completeExpectation(id)
+      QUnit.ok(true, 'Expected XHR called')
+      return [params.status || 200, params.response || "{}"]

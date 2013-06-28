@@ -1,22 +1,28 @@
+helpers = if typeof require is 'undefined' then window.testCaseHelper else require './test_case_helper'
+
 QUnit.module "Batman.XhrMocking",
   setup: ->
-    @tester = new Batman.TestCase
-    @tester.xhrSetup()
+    @testCase = new Batman.TestCase
+    @testCase.xhrSetup()
 
-test 'assertGET will assert if the request GETs', ->
-  message = "Did not expect exception when using correct URL"
-  try
-    @tester.assertGET '/fake.json', {response: "Hello World"}, =>
-      new Batman.Request url: "/fake.json"
+asyncTest 'assertGET will pass if the if a GET request is made', ->
+  testFn = (validate) =>
+    @testCase.assertGET '/fake.json', {response: "{}"}
+    new Batman.Request(url: '/fake.json')
+    validate()
 
-    ok true, message
-  catch error
-    ok false, message
-    throw error
+  helpers.runTestCase @testCase, testFn, (okCount, okAssertions) ->
+    equal okCount, 1
+    ok okAssertions[0]
+    QUnit.start()
 
-test 'should raise error if hit wrong URL', ->
-  throws ->
-      @tester.assertGET '/fake.json', {response: "Hello World"}, =>
-        new Batman.Request url: "/wrong-url.json"
-    , /once \(never called\)/
-    , "Expected exception when using incorrect URL"
+asyncTest 'assertGET will fail if the if a POST request is made', ->
+  testFn = (validate) =>
+    @testCase.assertGET '/fake.json', {response: "{}"}
+    new Batman.Request(url: '/fake.json', method: 'POST')
+    validate()
+
+  helpers.runTestCase @testCase, testFn, (okCount, okAssertions) ->
+    equal okCount, 1
+    ok !okAssertions[0]
+    QUnit.start()
