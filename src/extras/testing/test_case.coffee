@@ -106,6 +106,9 @@ class Batman.TestCase extends Batman.Object
 # Nicer messages for the command line runner
 do ->
   originalPush = QUnit.push
+  parseExpected = (exp) -> "\x1B[32m#{QUnit.jsDump.parse(exp)}\x1B[39m"
+  parseActual   = (act) -> "\x1B[31m#{QUnit.jsDump.parse(act)}\x1B[39m"
+
   QUnit.push = (result, actual, expected, message) ->
-    message ||= QUnit.jsDump.parse(expected) + " expected but was " + QUnit.jsDump.parse(actual)
+    message ||= "#{parseExpected(expected)} expected but was #{parseActual(actual)}"
     originalPush.call(QUnit, result, actual, expected, message)
