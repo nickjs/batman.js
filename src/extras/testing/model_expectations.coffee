@@ -24,7 +24,6 @@ Batman.ModelExpectations =
       @assertEqual options.params, innerParams if options.params?
       @completeExpectation('expectLoad')
 
-      QUnit.ok true
       callback(options.error, options.response)
 
   expectFind: (klass, options = {}) ->
@@ -36,5 +35,4 @@ Batman.ModelExpectations =
       @assertEqual options.params, innerParams if options.params?
       @completeExpectation('expectFind')
 
-      QUnit.ok true
       callback(options.error, options.response)

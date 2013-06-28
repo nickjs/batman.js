@@ -43,5 +43,4 @@ Batman.XhrMocking =
 
     @setRequestCb url, method, =>
       @completeExpectation(id)
-      QUnit.ok(true, 'Expected XHR called')
       return [params.status || 200, params.response || "{}"]

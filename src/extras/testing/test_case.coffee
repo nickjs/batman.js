@@ -93,6 +93,8 @@ class Batman.TestCase extends Batman.Object
     if @_expectations[name] then @_expectations[name]++ else @_expectations[name] = 1
 
   completeExpectation: (name) ->
+    return if not @_expectations[name]
+    QUnit.ok(true, "Completed #{name}")
     if @_expectations[name] is 1 then delete @_expectations[name] else @_expectations[name]--
 
   verifyExpectations: ->

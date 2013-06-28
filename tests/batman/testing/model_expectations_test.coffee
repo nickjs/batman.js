@@ -13,7 +13,7 @@ asyncTest 'expectCreate passes if the model is created', 2, ->
     @model.save(validate)
 
   helpers.runTestCase @testCase, testFn, (okCount, okAssertions) ->
-    equal okCount, 1
+    equal okCount, 2
     ok okAssertions[0]
     QUnit.start()
 
@@ -25,7 +25,7 @@ asyncTest 'expectCreate fails if the model is updated', 2, ->
     @model.save(validate)
 
   helpers.runTestCase @testCase, testFn, (okCount, okAssertions) ->
-    equal okCount, 1
+    equal okCount, 2
     ok !okAssertions[0]
     QUnit.start()
 
@@ -37,7 +37,7 @@ asyncTest 'expectUpdate passes if the model is updated', 2, ->
     @model.save(validate)
 
   helpers.runTestCase @testCase, testFn, (okCount, okAssertions) ->
-    equal okCount, 1
+    equal okCount, 2
     ok okAssertions[0]
     QUnit.start()
 
@@ -49,7 +49,7 @@ asyncTest 'expectUpdate fails if the model is created', 2, ->
     @model.save(validate)
 
   helpers.runTestCase @testCase, testFn, (okCount, okAssertions) ->
-    equal okCount, 1
+    equal okCount, 2
     ok !okAssertions[0]
     QUnit.start()
 
