@@ -102,3 +102,10 @@ class Batman.TestCase extends Batman.Object
       QUnit.ok(false, "Expectation #{key} did not callback #{count} time(s)")
 
   clearExpectations: -> @_expectations = {}
+
+# Nicer messages for the command line runner
+do ->
+  originalPush = QUnit.push
+  QUnit.push = (result, actual, expected, message) ->
+    message ||= QUnit.jsDump.parse(expected) + " expected but was " + QUnit.jsDump.parse(actual)
+    originalPush.call(QUnit, result, actual, expected, message)
