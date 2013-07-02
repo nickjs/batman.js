@@ -5,12 +5,15 @@ class Batman.TestCase extends Batman.Object
     constructor: (@name, @expected, @testFunction) ->
 
     run: (testCase, cb) ->
-      testCase.xhrSetup()
-      testCase.clearExpectations()
-
       wrappedTest = =>
+        testCase.xhrSetup()
+        testCase.clearExpectations()
+
         sinon.test(@testFunction).call(testCase)
+
         testCase.verifyExpectations()
+        testCase.xhrTeardown()
+
         cb?()
 
       QUnit.test(@name, @expected, wrappedTest)

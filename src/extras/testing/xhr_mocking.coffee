@@ -1,7 +1,9 @@
 Batman.XhrMocking =
   xhrSetup: ->
     self = this
+
     @_requests = {}
+    @_savedSend = Batman.Request::send
 
     Batman.Request::send = (data) ->
       data ?= @get('data')
@@ -18,6 +20,9 @@ Batman.XhrMocking =
         @fire 'error', {response: response, status: status}
 
       @fire 'loaded'
+
+  xhrTeardown: ->
+    Batman.Request::send = @_savedSend
 
   getRequestCb: (url, method) ->
     return @_requests["#{method}::#{url}"]
