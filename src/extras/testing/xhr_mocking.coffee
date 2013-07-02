@@ -12,7 +12,9 @@ Batman.XhrMocking =
       fn = self.getRequestCb(@get('url'), @get('method'))
 
       return if not fn
-      [status, response] = fn(data)
+      {status, response, before} = fn(data)
+
+      before?(this)
 
       if status <= 400
         @fire 'success', response
@@ -48,4 +50,9 @@ Batman.XhrMocking =
 
     @setRequestCb url, method, =>
       @completeExpectation(id)
-      return [params.status || 200, params.response || "{}"]
+
+      params ||= {}
+      params.status ||= 200
+      params.response ||= "{}"
+
+      return params
