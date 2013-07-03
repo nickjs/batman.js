@@ -213,7 +213,7 @@ class Batman.Model extends Batman.Object
   @_doStorageOperation: (operation, options, callback) ->
     Batman.developer.assert @::hasStorage(), "Can't #{operation} model #{Batman.functionName(@constructor)} without any storage adapters!"
     adapter = @::_batman.get('storage')
-    adapter.perform(operation, @, options, callback)
+    adapter.perform(operation, this, options, callback)
 
   for functionName in ['find', 'load', 'create']
     @[functionName] = Batman.Property.wrapTrackingPrevention(@[functionName])
@@ -345,7 +345,7 @@ class Batman.Model extends Batman.Object
     else
       encoders.forEach (key, encoder) =>
         if encoder.decode and typeof data[encoder.as] isnt 'undefined'
-          obj[key] = encoder.decode(data[encoder.as], encoder.as, data, obj, @)
+          obj[key] = encoder.decode(data[encoder.as], encoder.as, data, obj, this)
 
     if @constructor.primaryKey isnt 'id'
       obj.id = data[@constructor.primaryKey]
@@ -418,7 +418,7 @@ class Batman.Model extends Batman.Object
         associations = @constructor._batman.get('associations')
         # Save belongsTo models immediately since we don't need this model's id
         @_withoutDirtyTracking ->
-          associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(@)
+          associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(this)
 
         @_doStorageOperation storageOperation, {data: options}, (err, record, env) =>
           unless err
@@ -426,8 +426,8 @@ class Batman.Model extends Batman.Object
             @get('_dirtiedKeys').clear()
             if associations
               record._withoutDirtyTracking ->
-                associations.getByType('hasOne')?.forEach (association, label) -> association.apply(err, record)
-                associations.getByType('hasMany')?.forEach (association, label) -> association.apply(err, record)
+                associations.getByType('hasOne')?.forEach (association, label) -> association.apply(record)
+                associations.getByType('hasMany')?.forEach (association, label) -> association.apply(record)
             record = @constructor._mapIdentity(record)
             @get('lifecycle').startTransition endState
           else
@@ -499,8 +499,7 @@ class Batman.Model extends Batman.Object
   _doStorageOperation: (operation, options, callback) ->
     Batman.developer.assert @hasStorage(), "Can't #{operation} model #{Batman.functionName(@constructor)} without any storage adapters!"
     adapter = @_batman.get('storage')
-    adapter.perform operation, @, options, =>
-      callback(arguments...)
+    adapter.perform operation, this, options, callback.bind(this)
 
   _withoutDirtyTracking: (block) ->
     @_pauseDirtyTracking = true

@@ -3,25 +3,27 @@
 class Batman.SingularAssociation extends Batman.Association
   isSingular: true
 
-  getAccessor: (self, model, label) ->
+  getAccessor: (association, model, label) ->
     # Check whether the relation has already been set on this model
-    if recordInAttributes = self.getFromAttributes(@)
+    if recordInAttributes = association.getFromAttributes(@)
       return recordInAttributes
 
     # Make sure the related model has been loaded
-    if self.getRelatedModel()
-      proxy = @associationProxy(self)
+    if association.getRelatedModel()
+      proxy = @associationProxy(association)
       record = false
-      parent = @
-      proxy._loadSetter ?= proxy.once 'loaded', (child) ->
-        parent._withoutDirtyTracking -> @set self.label, child
-      if not Batman.Property.withoutTracking(-> proxy.get('loaded'))
-        if self.options.autoload
+
+      proxy._loadSetter ?= proxy.once 'loaded', (child) =>
+        @_withoutDirtyTracking -> @set association.label, child
+
+      unless Batman.Property.withoutTracking(-> proxy.get('loaded'))
+        if association.options.autoload
           Batman.Property.withoutTracking(-> proxy.load())
         else
           record = proxy.loadFromLocal()
+
       record || proxy
 
   setIndex: ->
-    @index ||= new Batman.UniqueAssociationSetIndex(@, @[@indexRelatedModelOn])
+    @index ||= new Batman.UniqueAssociationSetIndex(this, @[@indexRelatedModelOn])
     @index
