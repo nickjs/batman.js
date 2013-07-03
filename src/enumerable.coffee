@@ -1,7 +1,7 @@
 Batman.Enumerable =
   isEnumerable: true
 
-  map:   (f, ctx = Batman.container) ->
+  map: (f, ctx = Batman.container) ->
     result = []
     @forEach -> result.push f.apply(ctx, arguments)
     result
@@ -16,7 +16,7 @@ Batman.Enumerable =
     @forEach -> result = result && f.apply(ctx, arguments)
     result
 
-  some:  (f, ctx = Batman.container) ->
+  some: (f, ctx = Batman.container) ->
     result = false
     @forEach -> result = result || f.apply(ctx, arguments)
     result
