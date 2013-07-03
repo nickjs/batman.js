@@ -41,8 +41,11 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     @superview.subviews.add(@viewInstance)
 
   die: ->
-    @viewInstance.removeFromSuperview()
-    @viewInstance.die() if @fromViewClass
+    if @fromViewClass
+      @viewInstance.die()
+    else
+      @viewInstance.removeFromSuperview()
+
     @superview = null
     @viewInstance = null
     super
