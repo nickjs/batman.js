@@ -5,12 +5,12 @@ class Batman.SetProxy extends Batman.Object
   constructor: (@base) ->
     super()
     @length = @base.length
-    @base.on? 'itemsWereAdded', (items...) =>
+    @base.on? 'itemsWereAdded', (items) =>
       @set 'length', @base.length
-      @fire('itemsWereAdded', items...)
-    @base.on? 'itemsWereRemoved', (items...) =>
+      @fire('itemsWereAdded', items)
+    @base.on? 'itemsWereRemoved', (items) =>
       @set 'length', @base.length
-      @fire('itemsWereRemoved', items...)
+      @fire('itemsWereRemoved', items)
 
   Batman.extend @prototype, Batman.Enumerable
 
@@ -29,7 +29,7 @@ class Batman.SetProxy extends Batman.Object
 
   Batman.Set._applySetAccessors(@)
 
-  for k in ['add', 'remove', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy']
+  for k in ['add', 'remove', 'addAndRemove', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy']
     do (k) =>
       @::[k] = -> @base[k](arguments...)
 

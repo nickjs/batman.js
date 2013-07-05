@@ -60,6 +60,8 @@
 </li>
   <li class="searchable"><a href="#batman-helpers-unmixin" class="class-function">unmixin(subject, objects...)</a>
 </li>
+  <li class="searchable"><a href="#batman-helpers-functionname" class="class-function">functionName(function)</a>
+</li>
   <li class="searchable"><a href="#batman-helpers-ischildof" class="class-function">isChildOf(parent, child)</a>
 </li>
   <li class="searchable"><a href="#batman-helpers-setimmediate" class="class-function">setImmediate(callback)</a>
@@ -73,6 +75,8 @@
   <li class="searchable"><a href="#batman-helpers-contains" class="class-function">contains(object, item)</a>
 </li>
   <li class="searchable"><a href="#batman-helpers-get" class="class-function">get(object, key)</a>
+</li>
+  <li class="searchable"><a href="#batman-helpers-getpath" class="class-function">getPath(base, segments)</a>
 </li>
   <li class="searchable"><a href="#batman-helpers-escapehtml" class="class-function">escapeHTML(string)</a>
 </li>
@@ -91,6 +95,12 @@
   <li class="searchable"><a href="#batman-helpers-underscore" class="class-function">underscore(string)</a>
 </li>
   <li class="searchable"><a href="#batman-helpers-capitalize" class="class-function">capitalize(string)</a>
+</li>
+  <li class="searchable"><a href="#batman-helpers-trim" class="class-function">trim(string)</a>
+</li>
+  <li class="searchable"><a href="#batman-helpers-interpolate" class="class-function">interpolate(stringOrObject, keys)</a>
+</li>
+  <li class="searchable"><a href="#batman-helpers-humanize" class="class-function">humanize(string)</a>
 </li>
 </ul>
 </li>
@@ -732,6 +742,17 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div></code>
   </pre>
 </div>
+<h3 id="batman-helpers-functionname">functionName(function) : string</h3>
+<p><code>functionName</code> returns the name of a given function, if any.
+
+</p>
+<div class="console-session">
+  <h4>functionName returns the name of a given function</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">functionName</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">.</span><span class="nx">toString</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;toString&#39;</span>
+</pre></div></div></code>
+  </pre>
+</div>
 <h3 id="batman-helpers-ischildof">isChildOf(parent : HTMLElement, child : HTMLElement) : boolean</h3>
 <p><code>isChildOf</code> is a simple DOM helper which returns a boolean describing if the passed <code>child</code> node can be found in the descendants of the passed <code>parent</code> node.
 
@@ -907,6 +928,49 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div></code>
   </pre>
 </div>
+<h3 id="batman-helpers-getpath">getPath(base, segments) : string</h3>
+<div class="console-session">
+  <h4>takes a base and an array of keys and returns the corresponding nested value</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">complexObject</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">])</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;nested value&#39;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">complexObject</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">,</span> <span class="s1">&#39;foo.bar&#39;</span><span class="p">])</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;flat value&#39;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">complexObject</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">,</span> <span class="s1">&#39;not-foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">])</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="k">void</span> <span class="mi">0</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>returns just the base if the key array is empty</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">complexObject</span><span class="p">,</span> <span class="p">[])</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="k">this</span><span class="p">.</span><span class="nx">complexObject</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">[])</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">null</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>returns undefined if the base is null-ish</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">])</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="k">void</span> <span class="mi">0</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">getPath</span><span class="p">(</span><span class="k">void</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">])</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="k">void</span> <span class="mi">0</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>returns falsy values</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">getPath</span><span class="p">({</span>
+    <span class="nx">num</span><span class="o">:</span> <span class="mi">0</span>
+  <span class="p">},</span> <span class="p">[</span><span class="s1">&#39;num&#39;</span><span class="p">])</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">0</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">getPath</span><span class="p">({</span>
+    <span class="nx">thing</span><span class="o">:</span> <span class="kc">null</span>
+  <span class="p">},</span> <span class="p">[</span><span class="s1">&#39;thing&#39;</span><span class="p">])</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">null</span>
+</pre></div></div></code>
+  </pre>
+</div>
 <h3 id="batman-helpers-escapehtml">escapeHTML(string) : string</h3>
 <p><code>escapeHTML</code> takes a string of unknown origin and makes it safe for display on a web page by encoding control characters in HTML into their HTML entities.
 
@@ -1023,6 +1087,111 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;Batman Object&quot;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">capitalize</span><span class="p">(</span><span class="s2">&quot;AlreadyCapitalized&quot;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;AlreadyCapitalized&quot;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<h3 id="batman-helpers-trim">trim(string) : string</h3>
+<p><code>trim</code> trims a string getting rid of extra white space around the string or returning an empty string if it is null.
+
+</p>
+<div class="console-session">
+  <h4>trim gets rid of space around a string</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="s2">&quot;TrimRight &quot;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;TrimRight&quot;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="s2">&quot; TrimLeft&quot;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;TrimLeft&quot;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="s2">&quot; TrimBothSides &quot;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;TrimBothSides&quot;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="s2">&quot;AlreadyTrimmed&quot;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;AlreadyTrimmed&quot;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>trim turns a null or undefined string into an empty string</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;&quot;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="k">void</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;&quot;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<h3 id="batman-helpers-interpolate">interpolate(stringOrObject, keys) : string</h3>
+<p><code>interpolate</code> interpolates a string, filling it in with values matching interpolation keys
+
+</p>
+<div class="console-session">
+  <h4>interpolate fills in key values globally in a string</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">interpolate</span><span class="p">(</span><span class="s2">&quot;%{field} must be at least %{count} characters in order for %{field} to be valid&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">count</span><span class="o">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+    <span class="nx">field</span><span class="o">:</span> <span class="s2">&quot;name&quot;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;name must be at least 3 characters in order for name to be valid&quot;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>interpolate fills in key values globally in an object-embedded string</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">interpolate</span><span class="p">({</span>
+    <span class="s1">&#39;other&#39;</span><span class="o">:</span> <span class="s2">&quot;%{field} must be at least %{count} characters in order for %{field} to be valid&quot;</span>
+  <span class="p">},</span> <span class="p">{</span>
+    <span class="nx">count</span><span class="o">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+    <span class="nx">field</span><span class="o">:</span> <span class="s2">&quot;name&quot;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;name must be at least 3 characters in order for name to be valid&quot;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>interpolate fills in key values globally in an object-embedded string, embedded by key count</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">interpolate</span><span class="p">({</span>
+    <span class="mi">3</span><span class="o">:</span> <span class="s2">&quot;%{field} must be at least %{count} characters in order for %{field} to be valid&quot;</span>
+  <span class="p">},</span> <span class="p">{</span>
+    <span class="nx">count</span><span class="o">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+    <span class="nx">field</span><span class="o">:</span> <span class="s2">&quot;name&quot;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s2">&quot;name must be at least 3 characters in order for name to be valid&quot;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<h3 id="batman-helpers-humanize">humanize(string) : string</h3>
+<p><code>humanize</code> formats a string to be readable by humans
+
+</p>
+<div class="console-session">
+  <h4>humanize replaces underscores and dashes with empty space</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">humanize</span><span class="p">(</span><span class="s1">&#39;underscored_string&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;Underscored string&#39;</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">humanize</span><span class="p">(</span><span class="s1">&#39;dash-separated-string&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;Dash separated string&#39;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>humanize splits camel cased words by empty space</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">humanize</span><span class="p">(</span><span class="s1">&#39;CamelCasedString&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;Camel cased string&#39;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>humanize title-cases the first word</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">humanize</span><span class="p">(</span><span class="s1">&#39;lower case sentence&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;Lower case sentence&#39;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>humanize lower-cases all words after the first one</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">humanize</span><span class="p">(</span><span class="s1">&#39;Mixed Case SENTENCE&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;Mixed case sentence&#39;</span>
+</pre></div></div></code>
+  </pre>
+</div>
+<div class="console-session">
+  <h4>humanize gets rid of _id suffix</h4>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">Batman</span><span class="p">.</span><span class="nx">helpers</span><span class="p">.</span><span class="nx">humanize</span><span class="p">(</span><span class="s1">&#39;identifying_string_id&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;Identifying string&#39;</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -1325,7 +1494,8 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">340</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="mi">1000</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1000</span>
+</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">song</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">340</span> <span class="c1">// The song length reported by Batman is unchanged because set wasn&#39;t used to change the value.</span>
 </pre></div></div></code>
   </pre>
@@ -1773,8 +1943,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">example</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cachedCounter&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span>
-</pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">example</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cachedCounter&#39;</span><span class="p">)</span>
-</pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">1</span> <span class="c1">// The second and third calls do not execute the function</span>
+</pre></div></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="mi">1</span> <span class="c1">// The second and third calls do not execute the function</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">example</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;notCachedCounter&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="mi">2</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">example</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;notCachedCounter&#39;</span><span class="p">)</span>
@@ -2623,7 +2792,9 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="nx">items</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">__slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="p">[];</span>
     <span class="k">return</span> <span class="nx">log</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
   <span class="p">})</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">last</span><span class="p">.</span><span class="nx">sort</span><span class="p">()</span>
+</pre></div></div><div class="out"><div class="highlight"><pre><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
 </pre></div></div></code>
   </pre>
 </div>
@@ -2707,7 +2878,29 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </div>
 <div class="console-session">
   <h4>Set::forEach registers the set as a source if called in an accessor body</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Team</span><span class="p">()</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="p">(</span><span class="nx">Team</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">_super</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="nx">__extends</span><span class="p">(</span><span class="nx">Team</span><span class="p">,</span> <span class="nx">_super</span><span class="p">);</span>
+
+    <span class="kd">function</span> <span class="nx">Team</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">players</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="nx">Team</span><span class="p">.</span><span class="nx">accessor</span><span class="p">(</span><span class="s1">&#39;willWinTheCup?&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">sedinCount</span><span class="p">;</span>
+      <span class="nx">sedinCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">players</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">player</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">player</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;Sedin&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">sedinCount</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+      <span class="k">return</span> <span class="nx">sedinCount</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">Team</span><span class="p">;</span>
+
+  <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nb">Object</span><span class="p">))</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Team</span><span class="p">()</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">team</span><span class="p">.</span><span class="nx">observeAndFire</span><span class="p">(</span><span class="s1">&#39;willWinTheCup?&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">log</span><span class="p">(</span><span class="nx">status</span><span class="p">);</span>
   <span class="p">})</span>
@@ -3022,7 +3215,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </div>
 <div class="console-session">
   <h4>Set::indexedByUnique returns a new UniqueSetIndex which observes the items in the set for changes to the observed key</h4>
-  <pre><code class="javascript"><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">itemB</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+  <pre><code class="javascript"><div class="in"><div class="highlight"><pre><span class="nx">itemA</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
+    <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;blue&#39;</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">itemB</span> <span class="o">=</span> <span class="nx">Batman</span><span class="p">({</span>
     <span class="nx">colour</span><span class="o">:</span> <span class="s1">&#39;green&#39;</span>
   <span class="p">})</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">set</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">itemA</span><span class="p">,</span> <span class="nx">itemB</span><span class="p">)</span>
@@ -3325,8 +3521,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;before!&#39;</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</pre></div></div><div class="out"><div class="highlight"><pre><span class="s1">&#39;action!&#39;</span>
-</pre></div></div></code>
+</pre></div></div><div class="out"></div></code>
   </pre>
 </div>
 <div class="console-session">
@@ -3578,8 +3773,7 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
     <span class="k">return</span> <span class="nx">TodoController</span><span class="p">;</span>
 
   <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">Controller</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span> <span class="o">=</span> <span class="nx">TodoController</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;sharedController&#39;</span><span class="p">)</span>
-</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">logged</span><span class="p">.</span><span class="nx">last</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="k">void</span> <span class="mi">0</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">controller</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="s1">&#39;create&#39;</span><span class="p">)</span>
@@ -4025,7 +4219,10 @@ batman server <span class="c"># (or just &quot;batman s&quot;)</span>
 
   <span class="p">})(</span><span class="nx">Batman</span><span class="p">.</span><span class="nx">Model</span><span class="p">)</span>
 </pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">()</span>
-</pre></div></div><div class="out"></div><div class="in"></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;tags&#39;</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">fromJSON</span><span class="p">({</span>
+    <span class="nx">tags</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="s1">&#39;hot&#39;</span><span class="p">,</span> <span class="s1">&#39;cool&#39;</span><span class="p">]</span>
+  <span class="p">})</span>
+</pre></div></div><div class="out"></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;tags&#39;</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">Set</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="kc">true</span>
 </pre></div></div><div class="in"><div class="highlight"><pre><span class="nx">record</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span>
 </pre></div></div><div class="out"><div class="highlight"><pre><span class="p">{</span>

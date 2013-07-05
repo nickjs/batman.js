@@ -2,11 +2,11 @@
 #= require ./html_store
 
 class Batman.View extends Batman.Object
-
   @store: new Batman.HTMLStore
 
   @option: (keys...) ->
     Batman.initializeObject(this)
+    keys = options.concat(keys) if options = @_batman.options
     @_batman.set('options', keys)
 
   @viewForNode: (node, climbTree) ->
@@ -30,6 +30,8 @@ class Batman.View extends Batman.Object
 
   isInDOM: false
   isView: true
+  isDead: false
+  isBackingView: false
 
   constructor: ->
     @bindings = []
@@ -59,6 +61,9 @@ class Batman.View extends Batman.Object
     if (yieldName = subview.contentFor) and not subview.parentNode
       yieldObject = Batman.DOM.Yield.withName(yieldName)
       yieldObject.set('contentView', subview)
+
+    @get('node')
+    subview.get('node')
 
     @observe('node', subview._nodesChanged)
     subview.observe('node', subview._nodesChanged)
@@ -92,7 +97,7 @@ class Batman.View extends Batman.Object
     parentNode = Batman.DOM.querySelector(superviewNode, parentNode) if typeof parentNode is 'string'
     parentNode = superviewNode if not parentNode
 
-    @addToParentNode(parentNode)
+    @addToParentNode(parentNode) if parentNode
 
   addToParentNode: (parentNode) ->
     return if not @get('node')
@@ -100,14 +105,17 @@ class Batman.View extends Batman.Object
     isInDOM = document.body.contains(parentNode)
     @propagateToSubviews('viewWillAppear') if isInDOM
 
-    parentNode.appendChild(@node) if parentNode != @node
+    @insertIntoDOM(parentNode)
 
     @propagateToSubviews('isInDOM', isInDOM)
     @propagateToSubviews('viewDidAppear') if isInDOM
 
+  insertIntoDOM: (parentNode) ->
+    parentNode.appendChild(@node) if parentNode != @node
+
   removeFromParentNode: ->
     node = @get('node')
-    isInDOM = document.body.contains(node)
+    isInDOM = @wasInDOM ? document.body.contains(node)
 
     @propagateToSubviews('viewWillDisappear') if isInDOM
 
@@ -144,17 +152,17 @@ class Batman.View extends Batman.Object
       @html = @constructor.store.get(source)
 
     set: (key, html) ->
-      @html = html
-      @isBound = false
       @destroyBindings()
       @destroySubviews()
+
+      @html = html
 
       @loadView(@node) if @node and html?
       @initializeBindings() if @bindImmediately
 
   @accessor 'node',
     get: ->
-      if not @node?
+      if not @node? and not @isDead
         node = @loadView()
         @set('node', node) if node
         @fire('viewDidLoad')
@@ -165,8 +173,10 @@ class Batman.View extends Batman.Object
       Batman.removeData(oldNode, 'view', true) if oldNode
       return if node == @node
 
+      @destroyBindings()
+      @destroySubviews()
+
       @node = node
-      @isBound = false
       return if not node
 
       Batman._data(node, 'view', this)
@@ -174,17 +184,13 @@ class Batman.View extends Batman.Object
         extraInfo = @get('displayName') || @get('source')
         (if node == document then document.body else node).setAttribute?('batman-view', @constructor.name + if extraInfo then ": #{extraInfo}" else '')
 
-      if @superview and @parentNode
-        @initializeBindings() if @bindImmediately
-        @addToParentNode(@parentNode)
-
       return node
 
   @::event('ready').oneShot = true
 
   initializeBindings: ->
     return if @isBound or !@node
-    new Batman.Renderer(@node, this)
+    new Batman.BindingParser(this)
 
     @set('isBound', true)
     @fire('ready')
@@ -192,24 +198,62 @@ class Batman.View extends Batman.Object
 
   destroyBindings: ->
     binding.die() for binding in @bindings
-    bindings = []
+    @bindings = []
+    @isBound = false
 
   destroySubviews: ->
+    if @isDead
+      Batman.developer.warn "Tried to destroy the subviews of a dead view."
+      return
     subview.die() for subview in @subviews.toArray()
     @subviews.clear()
+
+  die: ->
+    if @isDead
+      Batman.developer.warn "Tried to die() a view more than once."
+      return
+
+    @fire('destroy')
+
+    if @node
+      @wasInDOM = document.body.contains(@node)
+      Batman.DOM.destroyNode(@node)
+
+    @forget()
+    @_batman.properties?.forEach (key, property) -> property.die()
+
+    if @_batman.events
+      event.clearHandlers() for _, event of @_batman.events
+
+    @destroyBindings()
+    @destroySubviews()
+
+    @removeFromSuperview()
+
+    @node = null
+    @parentNode = null
+    @subviews = null
+    @isDead = true
 
   baseForKeypath: (keypath) ->
     keypath.split('.')[0].split('|')[0].trim()
 
-  targetForKeypathBase: (base) ->
+  prefixForKeypath: (keypath) ->
+    index = keypath.lastIndexOf('.')
+    if index != -1 then keypath.substr(0, index) else keypath
+
+  targetForKeypath: (keypath, forceTarget) ->
     proxiedObject = @get('proxiedObject')
     lookupNode = proxiedObject || this
 
     while lookupNode
-      if typeof Batman.get(lookupNode, base) isnt 'undefined'
+      if typeof Batman.get(lookupNode, keypath) isnt 'undefined'
         return lookupNode
 
-      controller = lookupNode.controller if lookupNode.isView and lookupNode.controller
+      if forceTarget and not nearestNonBackingView and not lookupNode.isBackingView
+        nearestNonBackingView = lookupNode
+
+      controller = lookupNode.controller if not controller and lookupNode.isView and lookupNode.controller
 
       if proxiedObject and lookupNode == proxiedObject
         lookupNode = this
@@ -224,30 +268,22 @@ class Batman.View extends Batman.Object
         else
           lookupNode = {window: Batman.container}
       else
-        return
+        break
+
+    return nearestNonBackingView
 
   lookupKeypath: (keypath) ->
     base = @baseForKeypath(keypath)
-    target = @targetForKeypathBase(base)
+    target = @targetForKeypath(base)
 
     Batman.get(target, keypath) if target
 
-  die: ->
-    @fire('destroy')
+  setKeypath: (keypath, value) ->
+    prefix = @prefixForKeypath(keypath)
+    target = @targetForKeypath(prefix, true)
 
-    Batman.DOM.destroyNode(@node)
-    @removeFromSuperview()
-
-    @forget()
-    @_batman.properties?.forEach (key, property) -> property.die()
-
-    if @_batman.events
-      event.clearHandlers() for _, event of @_batman.events
-
-    @destroyBindings()
-    @destroySubviews()
-
-    @node = null
+    return if not target || target is Batman.container
+    Batman.Property.forBaseAndKey(target, keypath)?.setValue(value)
 
 Batman.container.$context ?= (node) ->
   while node

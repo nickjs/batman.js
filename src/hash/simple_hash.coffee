@@ -18,7 +18,7 @@ class Batman.SimpleHash
       @_storage.hasOwnProperty(key)
 
   getObject: (key) ->
-    return undefined unless @_objectStorage
+    return unless @_objectStorage
     if pairs = @_objectStorage[@hashKeyFor(key)]
       for pair in pairs
         return pair[1] if @equality(pair[0], key)
@@ -43,7 +43,7 @@ class Batman.SimpleHash
 
   get: (key) ->
     if @objectKey(key)
-      return undefined unless @_objectStorage
+      return unless @_objectStorage
       if pairs = @_objectStorage[@hashKeyFor(key)]
         for pair in pairs
           return pair[1] if @equality(pair[0], key)
@@ -66,7 +66,7 @@ class Batman.SimpleHash
       @_storage[key] = val
   unset: (key) ->
     if @objectKey(key)
-      return undefined unless @_objectStorage
+      return unless @_objectStorage
       hashKey = @hashKeyFor(key)
       if pairs = @_objectStorage[hashKey]
         for [obj,value], index in pairs

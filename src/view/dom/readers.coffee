@@ -72,7 +72,7 @@ Batman.DOM.readers =
     partialView = new Batman.View(source: keyPath, parentNode: node, node: node)
 
     skipChildren: true
-    ready: ->
+    initialized: ->
       partialView.loadView(node)
       view.subviews.add(partialView)
 
@@ -82,7 +82,7 @@ Batman.DOM.readers =
     Batman.View.store.set(Batman.Navigator.normalizePath(keyPath), node.innerHTML)
 
     skipChildren: true
-    ready: ->
+    initialized: ->
       if node.parentNode
         node.parentNode.removeChild(node)
 
@@ -97,7 +97,7 @@ Batman.DOM.readers =
     view.subviews.add(contentView)
 
     skipChildren: true
-    ready: ->
+    initialized: ->
       if node.parentNode
         node.parentNode.removeChild(node)
 

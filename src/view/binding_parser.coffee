@@ -1,11 +1,12 @@
 #= require ../object
 
-# `Batman.Renderer` will take a node and parse all recognized data attributes out of it and its children.
+# `Batman.BindingParser` will take a node and parse all recognized data attributes out of it and its children.
 # It is a continuation style parser, designed not to block for longer than 50ms at a time if the document
 # fragment is particularly long.
-class Batman.Renderer extends Batman.Object
-  constructor: (@node, @view) ->
+class Batman.BindingParser extends Batman.Object
+  constructor: (@view) ->
     super()
+    @node = @view.node
     @parseTree(@node)
 
   bindingSortOrder = ["defineview", "foreach", "renderif", "view", "formfor", "context", "bind", "source", "target"]
@@ -34,6 +35,8 @@ class Batman.Renderer extends Batman.Object
     while root
       skipChildren = @parseNode(root)
       root = @nextNode(root, skipChildren)
+
+    @fire('bindingsInitialized')
     return
 
   parseNode: (node) ->
@@ -62,8 +65,8 @@ class Batman.Renderer extends Batman.Object
             bindingDefinition = new Batman.DOM.ReaderBindingDefinition(node, value, @view)
             reader(bindingDefinition)
 
-        if binding?.ready # FIXME when nextNode gets less stupid this can be immediate
-          @view.once('ready', do (binding) -> -> binding.ready.call(binding))
+        if binding?.initialized # FIXME when nextNode gets less stupid this can be immediate
+          @once('bindingsInitialized', do (binding) -> -> binding.initialized.call(binding))
 
         if binding?.skipChildren
           return true
@@ -81,17 +84,13 @@ class Batman.Renderer extends Batman.Object
       children = node.childNodes
       return children[0] if children?.length
 
-    sibling = node.nextSibling # Grab the reference before onParseExit may remove the node
-    # Batman.DOM.onParseExit(node)?.forEach (callback) -> callback()
-    # Batman.DOM.forgetParseExit(node)
+    sibling = node.nextSibling
     return if @node == node
     return sibling if sibling
 
     nextParent = node
     while nextParent = nextParent.parentNode
       parentSibling = nextParent.nextSibling
-      # Batman.DOM.onParseExit(nextParent)?.forEach (callback) -> callback()
-      # Batman.DOM.forgetParseExit(nextParent)
       return if @node == nextParent
       return parentSibling if parentSibling
 

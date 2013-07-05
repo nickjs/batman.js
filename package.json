@@ -26,8 +26,8 @@
     "build": "./node_modules/.bin/cake build"
   },
   "dependencies": {
-    "connect": "~>2.7.4",
-    "coffee-script": "~>1.6.2",
+    "connect": "~2.7.4",
+    "coffee-script": "1.6.3",
     "coffee-script-mapped": "0.1.4"
   },
   "devDependencies": {
@@ -44,9 +44,9 @@
     "karma": "~0.8.5"
   },
   "engines": {
-    "node": "~>0.8.0 || ~>0.10.0"
+    "node": "~0.8.0 || ~0.10.0"
   },
   "optionalDependencies": {
-    "watson": "~>1.3.0"
+    "watson": "~1.4.0"
   }
 }

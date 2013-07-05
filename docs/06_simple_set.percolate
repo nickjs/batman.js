@@ -76,6 +76,18 @@ test 'SimpleSet::remove returns only the new items that were previously in the s
   deepEqual set.toArray(), ['a']
 !!!
 
+### addAndRemove(itemsToAdd, itemsToRemove) : Object
+
+`addAndRemove` adds `itemsToAdd` items to the set and removes `itemsToRemove` items from the set. `addAndRemove` returns an object containing the items added and removed (see `add` and `remove`) under the form `{added: [itemsAdded...], removed: [itemsRemoved...]}`. `addAndRemove` only fires events when all items has been added and removed.
+
+!!!
+test 'SimpleSet::addAndRemove adds items to the set', ->
+  show set = new Batman.SimpleSet('b')
+  equal set.has('a'), false
+  deepEqual set.addAndRemove(['a'], ['b']), {added: ['a'], removed: ['b']}
+  equal set.has('a'), true
+!!!
+
 ### find(testFunction : function) : [Object]
 
 `find` returns the first item within the set for which the `testFunction` called with the item returns `true`, or `undefined` if no item passes the test.

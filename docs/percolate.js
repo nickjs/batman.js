@@ -25,7 +25,6 @@
 
   exportHelpers = function(object) {
     var k, v, _results;
-
     _results = [];
     for (k in object) {
       if (!__hasProp.call(object, k)) continue;
@@ -37,7 +36,6 @@
 
   qqunit.Environment.jsdom.jQueryify(window, jqueryPath, function(window, jQuery) {
     var docs, e;
-
     try {
       global.jQuery = jQuery;
       exportHelpers(require(path.join(testDir, 'batman', 'test_helper')));

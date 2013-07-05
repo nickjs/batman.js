@@ -3,7 +3,6 @@
 (function() {
   (function() {
     var Commands, cli, noCommandGiven, oldFatal;
-
     cli = require('./cli');
     global.RUNNING_IN_BATMAN = true;
     Commands = ['server', 'generate', 'new'];

@@ -679,3 +679,10 @@ asyncTest "hasMany sets the foreign key on the inverse relation if the children 
         equal variants.length, 2
         ok variants[0].get('product') == product
         ok variants[1].get('product') == product
+
+asyncTest "hasMany sets the foreign key on the inverse relation of children without dirtying them", 1, ->
+  @Product.find 1, (err, product) =>
+    throw err if err
+    ok not product.get('productVariants.first.isDirty')
+    QUnit.start()
+

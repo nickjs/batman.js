@@ -55,8 +55,10 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
   decoder: ->
     association = @
     (data, key, _, __, parentRecord) ->
-      existingRelations = association.getFromAttributes(parentRecord) || association.setForRecord(parentRecord)
-      newRelations = existingRelations.filter((relation) -> relation.isNew()).toArray()
+      children = association.getFromAttributes(parentRecord) || association.setForRecord(parentRecord)
+      newChildren = children.filter((relation) -> relation.isNew()).toArray()
+
+      recordsToAdd = []
 
       for jsonObject in data
         type = jsonObject[association.options.foreignTypeKey];
@@ -65,23 +67,24 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
           return
 
         id = jsonObject[relatedModel.primaryKey]
-        existingRecord = relatedModel.get('loaded.indexedByUnique.id').get(id)
+        record = relatedModel._loadIdentity(id)
 
-        if existingRecord?
-          existingRecord._withoutDirtyTracking -> @fromJSON jsonObject
-          record = existingRecord
+        if record?
+          record._withoutDirtyTracking -> @fromJSON(jsonObject)
+          recordsToAdd.push(record)
         else
-          if newRelations.length > 0
-            savedRecord = newRelations.shift()
-            savedRecord._withoutDirtyTracking -> @fromJSON jsonObject
+          if newChildren.length > 0
+            savedRecord = newChildren.shift()
+            savedRecord._withoutDirtyTracking -> @fromJSON(jsonObject)
             record = relatedModel._mapIdentity(savedRecord)
           else
             record = relatedModel._makeOrFindRecordFromData(jsonObject)
-
-        existingRelations.add record
+            recordsToAdd.push(record)
 
         if association.options.inverseOf
-          record.set association.options.inverseOf, parentRecord
+          record._withoutDirtyTracking ->
+            record.set(association.options.inverseOf, parentRecord)
 
-      existingRelations.markAsLoaded()
-      existingRelations
+      children.add(recordsToAdd...)
+      children.markAsLoaded()
+      children

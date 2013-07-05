@@ -112,7 +112,7 @@ class Batman.Model extends Batman.Object
 
   @findWithOptions: (id, options = {}, callback) ->
     Batman.developer.assert callback, "Must call find with a callback!"
-    record = new @()
+    record = new this
     record._withoutDirtyTracking -> @set 'id', id
     record.loadWithOptions options, callback
     return record
@@ -133,48 +133,43 @@ class Batman.Model extends Batman.Object
         @fire 'error', err
         callback?(err, [])
       else
-        mappedRecords = @_mapIdentities(records)
-        @fire 'loaded', mappedRecords, env
-        callback?(err, mappedRecords, env)
+        @fire 'loaded', records, env
+        callback?(err, records, env)
 
   @create: (attrs, callback) ->
     if !callback
       [attrs, callback] = [{}, attrs]
-    obj = new this(attrs)
-    obj.save(callback)
-    obj
+    record = new this(attrs)
+    record.save(callback)
+    record
 
   @findOrCreate: (attrs, callback) ->
-    record = new this(attrs)
-    if record.isNew()
-      record.save(callback)
+    record = @_loadIdentity(attrs[@primaryKey])
+    if record
+      record.mixin(attrs)
+      callback(undefined, record)
     else
-      foundRecord = @_mapIdentity(record)
-      callback(undefined, foundRecord)
-
+      record = new this(attrs)
+      record.save(callback)
     record
 
   @createFromJSON: (json) ->
-    record = new this
-    record._withoutDirtyTracking -> @fromJSON(json)
-    @_mapIdentity(record)
+    @_makeOrFindRecordFromData(json)
 
-  @_mapIdentity: (record) -> @_mapIdentities([record])[0]
+  @_loadIdentity: (id) ->
+    @get('loaded.indexedByUnique.id').get(id)
 
   @_loadRecord: (attributes) ->
     if id = attributes[@primaryKey]
-      if existingRecord = @get('loaded.indexedByUnique.id').get(id)
-        existingRecord._withoutDirtyTracking -> @fromJSON(attributes)
-        return existingRecord
+      record = @_loadIdentity(id)
 
-    newRecord = new @
-    newRecord._withoutDirtyTracking -> @fromJSON(attributes)
-    newRecord
+    record ||= new this
+    record._withoutDirtyTracking -> @fromJSON(attributes)
+    record
 
   @_makeOrFindRecordFromData: (attributes) ->
-    newRecord = @_loadRecord(attributes)
-    @_mapIdentity(newRecord)
-    newRecord
+    record = @_loadRecord(attributes)
+    @_mapIdentity(record)
 
   @_makeOrFindRecordsFromData: (attributeSet) ->
     newRecords = for attributes in attributeSet
@@ -183,14 +178,32 @@ class Batman.Model extends Batman.Object
     @_mapIdentities(newRecords)
     newRecords
 
+  @_mapIdentity: (record) ->
+    if (id = record.get('id'))?
+      if existing = @_loadIdentity(id)
+        lifecycle = existing.get('lifecycle')
+        lifecycle.load()
+        existing._withoutDirtyTracking ->
+          attributes = record.get('attributes')?.toObject()
+          @mixin(attributes) if attributes
+        lifecycle.loaded()
+        record = existing
+      else
+        @get('loaded').add(record)
+    record
+
   @_mapIdentities: (records) ->
     newRecords = []
     for record, index in records
       if not (id = record.get('id'))?
         continue
-      else if existing = @get('loaded.indexedBy.id').get(id)?.toArray()[0]
+      else if existing = @_loadIdentity(id)
+        lifecycle = existing.get('lifecycle')
+        lifecycle.load()
         existing._withoutDirtyTracking ->
-          @updateAttributes(record.get('attributes')?.toObject() || {})
+          attributes = record.get('attributes')?.toObject()
+          @mixin(attributes) if attributes
+        lifecycle.loaded()
         records[index] = existing
       else
         newRecords.push record
@@ -370,6 +383,7 @@ class Batman.Model extends Batman.Object
         unless err
           @get('lifecycle').loaded()
           record = @constructor._mapIdentity(record)
+          record.get('errors').clear()
         else
           @get('lifecycle').error()
         if !hasOptions

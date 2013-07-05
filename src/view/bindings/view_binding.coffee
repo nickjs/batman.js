@@ -3,19 +3,25 @@
 class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
   skipChildren: true
+  bindImmediately: false
 
   constructor: (definition) ->
     @superview = definition.view
     super
+
+  initialized: ->
+    @bind()
 
   dataChange: (viewClassOrInstance) ->
     @viewInstance?.removeFromSuperview()
 
     return if not viewClassOrInstance
     if viewClassOrInstance.isView
+      @fromViewClass = false
       @viewInstance = viewClassOrInstance
       @viewInstance.removeFromSuperview()
     else
+      @fromViewClass = true
       @viewInstance = new viewClassOrInstance
 
     @node.removeAttribute('data-view')
@@ -35,7 +41,11 @@ class Batman.DOM.ViewBinding extends Batman.DOM.AbstractBinding
     @superview.subviews.add(@viewInstance)
 
   die: ->
-    @viewInstance.removeFromSuperview()
+    if @fromViewClass
+      @viewInstance.die()
+    else
+      @viewInstance.removeFromSuperview()
+
     @superview = null
     @viewInstance = null
     super
@@ -57,4 +67,5 @@ class Batman.DOM.ViewArgumentBinding extends Batman.DOM.AbstractBinding
 
   die: ->
     @targetView.forget(@option, @_updateValue)
+    @targetView = null
     super

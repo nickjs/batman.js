@@ -121,6 +121,7 @@ class Batman.Controller extends Batman.Object
     if frame
       if frame.operationOccurred
         Batman.developer.warn "Warning! Trying to redirect but an action has already been taken during #{@get('routingKey')}.#{frame.action || @get('action')}"
+        return
 
       frame.startAndFinishOperation()
 
@@ -154,7 +155,9 @@ class Batman.Controller extends Batman.Object
 
     if view
       yieldName = options.into || @defaultRenderYield
-      Batman.DOM.Yield.withName(yieldName).contentView?.die()
+
+      if yieldContentView = Batman.DOM.Yield.withName(yieldName).contentView
+        yieldContentView.die() if yieldContentView isnt view and not yieldContentView.isDead
 
       view.set('contentFor', yieldName) if not view.contentFor and not view.parentNode
       view.set('controller', this)

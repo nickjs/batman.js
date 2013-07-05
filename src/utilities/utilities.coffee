@@ -171,7 +171,7 @@ Batman.getPath = (base, segments) ->
       base = Batman.get(base, segment)
       return base unless base?
     else
-      return undefined
+      return
   base
 
 _entityMap =

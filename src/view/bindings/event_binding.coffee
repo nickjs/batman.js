@@ -9,7 +9,7 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
 
     callback = =>
       func = @get('filteredValue')
-      target = @view.targetForKeypathBase(@functionPath || @unfilteredKey)
+      target = @view.targetForKeypath(@functionPath || @unfilteredKey)
       if target && @functionPath
         target = Batman.get(target, @functionPath)
 
@@ -19,6 +19,8 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
       attacher(@node, callback, @view)
     else
       Batman.DOM.events.other(@node, @attributeName, callback, @view)
+
+    @view.bindings.push(this)
 
   _unfilteredValue: (key) ->
     @unfilteredKey = key

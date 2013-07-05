@@ -22,6 +22,8 @@
     #{ js('/src/extras/batman.paginator.js') }
 
     #{ js('/tests/batman/tests.js') }
+
+    <script type="text/javascript" src="../lib/sinon.js"></script>
 </head>
 
 <body>

@@ -164,6 +164,8 @@ class Batman.Property extends Batman.PropertyEvent
   _handleSourceChange: ->
     if @isIsolated()
       @_needsRefresh = yes
+    else if @isDead
+      @_removeHandlers()
     else if not @isFinal() && not @hasObservers()
       @cached = no
       @_removeHandlers()
@@ -230,6 +232,7 @@ class Batman.Property extends Batman.PropertyEvent
   die: ->
     @_removeHandlers()
     @base._batman?.properties?.unset(@key)
+    @base = null
     @isDead = true
 
   isolate: ->

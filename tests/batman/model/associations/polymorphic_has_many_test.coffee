@@ -289,6 +289,12 @@ asyncTest "hasMany sets the foreign key on the inverse relation if the children 
         ok metafields[0].get('subject') == product
         ok metafields[1].get('subject') == product
 
+asyncTest "hasMany sets the foreign key on the inverse relation without dirtying them", 1, ->
+  @Product.find 6, (err, product) =>
+    throw err if err
+    ok not product.get('metafields.first.isDirty')
+    QUnit.start()
+
 asyncTest "hasMany associations are polymorphic", ->
   class Animal extends Batman.Model
     @encode 'id', 'name'

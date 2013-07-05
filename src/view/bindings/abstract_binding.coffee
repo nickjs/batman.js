@@ -68,10 +68,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     get: -> @_unfilteredValue(@get('key'))
     set: (_, value) ->
       if k = @get('key')
-        target = @get('targetForKeypathPrefix')
-        if target and target isnt window
-          property = Batman.Property.forBaseAndKey(target, k)
-          property.setValue(value)
+        @view.setKeypath(k, value)
       else
         @set('value', value)
 
@@ -82,15 +79,6 @@ class Batman.DOM.AbstractBinding extends Batman.Object
       @view.lookupKeypath(key)
     else
       @get('value')
-
-  @accessor 'targetForKeypathPrefix', ->
-    if not @keyPrefix
-      index = @get('key').lastIndexOf('.')
-      @keyPrefix = if index != -1 then @key.substr(0, index) else @key
-      @keySuffix = if index != -1 then @key.substr(index + 1) else @key
-
-    @view.targetForKeypathBase(@keyPrefix)
-
 
   onlyAll = Batman.BindingDefinitionOnlyObserve.All
   onlyData = Batman.BindingDefinitionOnlyObserve.Data
@@ -157,6 +145,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     @keyPath = null
     @view = null
     @backingView = null
+    @superview = null
 
   parseFilter: ->
     # Store the function which does the filtering and the arguments (all except the actual value to apply the
@@ -225,6 +214,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     viewOptions ||= {}
     viewOptions.node ?= @node
     viewOptions.parentNode ?= @node
+    viewOptions.isBackingView = true
 
     @backingView = new (viewClass || Batman.BackingView)(viewOptions)
     @superview.subviews.add(@backingView)
