@@ -14,10 +14,11 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
     @foreignTypeKey = options.foreignTypeKey || "#{@foreignLabel}_type"
     @model.encode @foreignTypeKey
 
-  apply: (base) ->
-    if relations = @getFromAttributes(base)
-      super
-      relations.forEach (model) => model.set @foreignTypeKey, @modelType()
+  apply: (baseSaveError, base) ->
+    unless baseSaveError
+      if relations = @getFromAttributes(base)
+        super
+        relations.forEach (model) => model.set @foreignTypeKey, @modelType()
     return
 
   proxyClassInstanceForKey: (indexValue) ->

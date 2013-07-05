@@ -426,8 +426,8 @@ class Batman.Model extends Batman.Object
             @get('_dirtiedKeys').clear()
             if associations
               record._withoutDirtyTracking ->
-                associations.getByType('hasOne')?.forEach (association, label) -> association.apply(record)
-                associations.getByType('hasMany')?.forEach (association, label) -> association.apply(record)
+                associations.getByType('hasOne')?.forEach (association, label) -> association.apply(err, record)
+                associations.getByType('hasMany')?.forEach (association, label) -> association.apply(err, record)
             record = @constructor._mapIdentity(record)
             @get('lifecycle').startTransition endState
           else

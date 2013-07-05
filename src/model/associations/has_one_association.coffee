@@ -11,9 +11,10 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
     @primaryKey = @options.primaryKey or "id"
     @foreignKey = @options.foreignKey or "#{Batman.helpers.underscore(@model.get('resourceName'))}_id"
 
-  apply: (base) ->
-    if relation = @getFromAttributes(base)
-      relation.set @foreignKey, base.get(@primaryKey)
+  apply: (baseSaveError, base) ->
+    unless baseSaveError
+      if relation = @getFromAttributes(base)
+        relation.set @foreignKey, base.get(@primaryKey)
 
   encoder: ->
     association = this
