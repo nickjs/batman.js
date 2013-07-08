@@ -5,23 +5,34 @@ class Batman.IteratorView extends Batman.View
   beginAppendItems: ->
     @fragment = document.createDocumentFragment()
     @appendedViews = []
+    @get('node')
 
-  appendItem: (item) ->
+  appendItem: (item) -> @insertItem(item)
+  insertItem: (item, targetIndex) ->
     iterationView = new Batman.IterationView(node: @prototypeNode.cloneNode(true), parentNode: @fragment)
     iterationView.set(@iteratorName, item)
 
-    @subviews.add(iterationView)
+    if targetIndex?
+      iterationView.targetIndex = targetIndex
+      iterationView.nextSiblingNode = @subviews.at(targetIndex)?.get('node') or @node
+      iterationView.parentNode = @node.parentNode
+      iterationView.get('node')
+    else
+      @subviews.add(iterationView)
+      iterationView.parentNode = null
+
     @appendedViews.push(iterationView)
-    iterationView.parentNode = null
 
   finishAppendItems: ->
-    node = @get('node')
-    isInDOM = document.body.contains(node)
+    isInDOM = document.body.contains(@node)
 
     if isInDOM
       subview.propagateToSubviews('viewWillAppear') for subview in @appendedViews
 
-    node.parentNode.insertBefore(@fragment, node)
+    for subview in @appendedViews
+      @subviews.insert([subview], [subview.targetIndex]) if subview.targetIndex?
+
+    @node.parentNode.insertBefore(@fragment, @node)
     @fire('itemsWereRendered')
 
     if isInDOM

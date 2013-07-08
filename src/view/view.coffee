@@ -37,6 +37,10 @@ class Batman.View extends Batman.Object
     @bindings = []
     @subviews = new Batman.Set
 
+    @subviews.on 'itemsWereAddedAtPositions', (newSubviews) =>
+      @_addSubview(subview) for [subview, index] in newSubviews
+      return
+
     @subviews.on 'itemsWereAdded', (newSubviews) =>
       @_addSubview(subview) for subview in newSubviews
       return
@@ -111,7 +115,11 @@ class Batman.View extends Batman.Object
     @propagateToSubviews('viewDidAppear') if isInDOM
 
   insertIntoDOM: (parentNode) ->
-    parentNode.appendChild(@node) if parentNode != @node
+    if parentNode != @node and !parentNode.contains(@node)
+      if @nextSiblingNode
+        parentNode.insertBefore(@node, @nextSiblingNode)
+      else
+        parentNode.appendChild(@node)
 
   removeFromParentNode: ->
     node = @get('node')

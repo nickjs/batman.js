@@ -6,13 +6,24 @@ class Batman.SetProxy extends Batman.Object
     super()
     @length = @base.length
 
-    @base.on? 'itemsWereAdded', (items) =>
-      @set 'length', @base.length
-      @fire('itemsWereAdded', items)
+    if @base.isCollectionEventEmitter
+      @isCollectionEventEmitter = true
 
-    @base.on? 'itemsWereRemoved', (items) =>
-      @set 'length', @base.length
-      @fire('itemsWereRemoved', items)
+      @_setObserver = new Batman.SetObserver(@base)
+      @_setObserver.on 'itemsWereAdded', @handleItemsAdded.bind(this)
+      @_setObserver.on 'itemsWereRemoved', @handleItemsRemoved.bind(this)
+      @startObserving()
+
+  startObserving: -> @_setObserver?.startObserving()
+  stopObserving: -> @_setObserver?.stopObserving()
+
+  handleItemsAdded: (items) ->
+    @set('length', @base.length)
+    @fire('itemsWereAdded', items)
+
+  handleItemsRemoved: (items) ->
+    @set('length', @base.length)
+    @fire('itemsWereRemoved', items)
 
   Batman.extend @prototype, Batman.Enumerable
 
@@ -31,7 +42,7 @@ class Batman.SetProxy extends Batman.Object
 
   Batman.Set._applySetAccessors(@)
 
-  for k in ['add', 'remove', 'addAndRemove', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy']
+  for k in ['add', 'insert', 'remove', 'addAndRemove', 'at', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy']
     do (k) =>
       @::[k] = -> @base[k].apply(@base, arguments)
 

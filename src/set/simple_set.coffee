@@ -10,20 +10,40 @@ class Batman.SimpleSet
 
   Batman.extend @prototype, Batman.Enumerable
 
+  at: (index) -> @_storage[index]
+
   add: (items...) ->
     addedItems = []
     for item in items when !~@_indexOfItem(item)
-      @_storage.push item
-      addedItems.push item
+      @_storage.push(item)
+      addedItems.push(item)
 
     @length = @_storage.length
     addedItems
 
-  remove: (items...) ->
+  insert: (items, indexes, addedIndexes) ->
+    addedItems = []
+    for item, i in items when !~@_indexOfItem(item)
+      index = indexes[i]
+      @_storage.splice(index, 0, item)
+      addedItems.push(item)
+      addedIndexes?.push(index)
+
+    @length = @_storage.length
+    addedItems
+
+  remove: (items...)->
+    if (tmp = arguments[arguments.length - 1]) instanceof Array
+      items = [].slice.call(arguments, 0, arguments.length - 1)
+      removedIndexes = tmp
+    else
+      items = [].slice.call(arguments, 0)
+
     removedItems = []
     for item in items when ~(index = @_indexOfItem(item))
       @_storage.splice(index, 1)
-      removedItems.push item
+      removedItems.push(item)
+      removedIndexes?.push(index)
 
     @length = @_storage.length
     removedItems
@@ -53,7 +73,7 @@ class Batman.SimpleSet
     return
 
   forEach: (iterator, ctx) ->
-    iterator.call(ctx, key, null, this) for key in @_storage
+    iterator.call(ctx, key, null, this) for key in @toArray()
     return
 
   isEmpty: -> @length is 0

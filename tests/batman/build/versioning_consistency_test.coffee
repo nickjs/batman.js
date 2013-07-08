@@ -1,4 +1,4 @@
-return unless IN_NODE
+return unless IN_NODE?
 fs = require 'fs'
 path = require 'path'
 

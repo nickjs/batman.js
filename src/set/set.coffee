@@ -3,6 +3,8 @@
 #= require ../enumerable
 
 class Batman.Set extends Batman.Object
+  isCollectionEventEmitter: true
+
   constructor: -> Batman.SimpleSet.apply @, arguments
 
   Batman.extend @prototype, Batman.Enumerable
@@ -26,7 +28,7 @@ class Batman.Set extends Batman.Object
   for k in ['indexedBy', 'indexedByUnique', 'sortedBy', 'equality', '_indexOfItem']
     @::[k] = Batman.SimpleSet::[k]
 
-  for k in ['find', 'merge', 'forEach', 'toArray', 'isEmpty', 'has']
+  for k in ['at', 'find', 'merge', 'forEach', 'toArray', 'isEmpty', 'has']
     do (k) =>
       @::[k] = ->
         @registerAsMutableSource()
@@ -39,9 +41,15 @@ class Batman.Set extends Batman.Object
     @fire('itemsWereAdded', addedItems) if addedItems.length
     addedItems
 
+  insert: @mutation (items, indexes, addedIndexes = []) ->
+    addedItems = Batman.SimpleSet::insert.apply(this, arguments)
+    @fire('itemsWereAdded', addedItems, addedIndexes) if addedItems.length
+    addedItems
+
   remove: @mutation ->
-    removedItems = Batman.SimpleSet::remove.apply(this, arguments)
-    @fire('itemsWereRemoved', removedItems) if removedItems.length
+    removedIndexes = []
+    removedItems = Batman.SimpleSet::remove.call(this, arguments..., removedIndexes)
+    @fire('itemsWereRemoved', removedItems, removedIndexes) if removedItems.length
     removedItems
 
   addAndRemove: @mutation (itemsToAdd, itemsToRemove) ->

@@ -1,4 +1,4 @@
-return unless IN_NODE
+return unless IN_NODE?
 
 {spawn} = require 'child_process'
 temp    = require 'temp'

@@ -6,6 +6,33 @@ assertSorted = (array, compareFunction) ->
       ok compareFunction(last, item) < 1
     last = item
 
+class Random
+  A:48271
+  M: 2147483647
+  Q: @::M / @::A
+  R: @::M % @::A
+  oneOverM: 1.0 / @::M
+
+  constructor: (@min = 0, @max = 1, @seed) ->
+    unless @seed?
+      d = new Date()
+      @seed = 2345678901 + (d.getSeconds() * 0xFFFFFF) + (d.getMinutes() * 0xFFFF)
+
+    @delta = @max - @min
+
+  next: ->
+    hi = @seed / @Q
+    lo = @seed % @Q
+    test = @A * lo - @R * hi
+    if test > 0
+      @seed = test
+    else
+      @seed = test + @M
+
+    next = @seed * @oneOverM
+    Math.round(@delta * next + @min)
+
+
 setSortSuite = ->
   test "new Batman.SetSort(set, key) constructs a sort on the set for that keypath", ->
     equal @authorNameSort.base, @base
@@ -136,14 +163,102 @@ setSortOnObservableSetSuite = ->
     @authorNameSort.remove @byFred
     equal @authorNameSort.get('length'), 3
 
-  test "toArray() includes newly added items in the correct order", ->
-    @base.add @byJill
-    expected = [@byFred, @anotherByFred, @byJill, @byMary, @byZeke]
-    deepEqual @authorNameSort.toArray(), expected
+  test "binarySearch", ->
+    arr = [1, 1, 3, 5, 6, 6, 7, 8, 8, 10]
+    equal binarySearch(arr, 4, Batman.SetSort::compare), -1
+    equal arr[binarySearch(arr, 1, Batman.SetSort::compare)], 1
+    equal arr[binarySearch(arr, 3, Batman.SetSort::compare)], 3
+    equal arr[binarySearch(arr, 5, Batman.SetSort::compare)], 5
+    equal arr[binarySearch(arr, 6, Batman.SetSort::compare)], 6
+    equal arr[binarySearch(arr, 7, Batman.SetSort::compare)], 7
 
-    @base.add @anotherByZeke
-    expected = [@byFred, @anotherByFred, @byJill, @byMary, @byZeke, @anotherByZeke]
-    deepEqual @authorNameSort.toArray(), expected
+    arr = [1, 2]
+    equal arr[binarySearch(arr, 1, Batman.SetSort::compare)], 1
+    equal arr[binarySearch(arr, 2, Batman.SetSort::compare)], 2
+
+    arr = [1, 2, 3, 5, 6, 7]
+    equal binarySearch(arr, 8, Batman.SetSort::compare, false), 6
+    arr.splice(6, 0, 8)
+    deepEqual arr, [1, 2, 3, 5, 6, 7, 8]
+
+  test "wtf", ->
+    # letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+    # generator = new Random(0, letters.length, 123123)
+
+    # window.current = 0
+    # window.old = 0
+
+    # a = []
+    # for i in [0...1000]
+    #   a.push Batman(foo: (letters[generator.next()] for j in [0..6]).join(''))
+
+    # set = new Batman.SetSort(qq = new Batman.Set(), 'foo')
+    # set.old = true
+
+    # t1 = performance.now()
+    # qq.add a...
+    # current = performance.now() - t1
+
+    # vv = new Batman.SetSort(cc = new Batman.Set(), 'foo')
+    # vv.old = false
+
+    # vv.on 'itemsWereAddedAtPositions', (items) ->
+    #   console.log items
+
+    # t1 = performance.now()
+    # cc.add a...
+    # old = performance.now() - t1
+
+    # ok current < old
+
+    # console.log current, old
+
+    set = new Batman.SetSort(new Batman.Set(b = {foo: 'b'}, c = {foo: 'c'}, a = {foo: 'a'}), 'foo')
+    set.on 'itemsWereAdded', -> 
+      console.log 'itemsWereAdded'
+    set.on 'itemsWereRemoved', -> 
+      console.log 'itemsWereRemoved'
+    set.on 'itemsWereAddedAtPositions', -> 
+      console.log 'itemsWereAddedAtPositions'
+    set.on 'itemsWereRemovedFromPositions', -> 
+      console.log 'itemsWereRemovedFromPositions'
+    deepEqual set.toArray(), [a, b, c]
+    set.remove(a)
+    deepEqual set.toArray(), [b, c]
+    set.remove(c)
+    deepEqual set.toArray(), [b]
+    set.add(a)
+    deepEqual set.toArray(), [a, b]
+
+  test "toArray() includes newly added items in the correct order", ->
+    # @base.add @byJill
+    # expected = [@byFred, @anotherByFred, @byJill, @byMary, @byZeke]
+    # deepEqual @authorNameSort.toArray(), expected
+
+    # @base.add @anotherByZeke
+    # expected = [@byFred, @anotherByFred, @byJill, @byMary, @byZeke, @anotherByZeke]
+    # deepEqual @authorNameSort.toArray(), expected
+    foo = new Batman.SetSort(new Batman.Set, 'key')
+    foo.logging = true
+    foo.add(Batman key: 'c')
+    a = []
+    foo.forEach (e) -> a.push e.key
+    console.log a
+    foo.add(Batman key: 'b')
+    a = []
+    foo.forEach (e) -> a.push e.key
+    console.log a
+    foo.add(Batman key: 'a')
+    a = []
+    foo.forEach (e) -> a.push e.key
+    console.log a
+    foo.add(Batman key: 'zz')
+    a = []
+    foo.forEach (e) -> a.push e.key
+    console.log a
+    expected = ['a', 'b', 'c', 'zz']
+    foo.forEach (a, i) ->
+      equal a.key, expected[i]
 
   test "toArray() does not include items which have been removed", ->
     @base.remove @anotherByFred
@@ -172,15 +287,15 @@ setSortOnObservableSetSuite = ->
     expected = [@byFred, @byMary, @byZeke]
     deepEqual @authorNameSort.toArray(), expected
 
-  test "adding many new values to the set should only reindex the set once", ->
+  test "adding a few new values to the set should never _reIndex()", ->
     @authorNameSort.remove @anotherByFred
     reIndex = spyOn(@authorNameSort, "_reIndex")
 
     @authorNameSort.add(@anotherByFred)
-    equal reIndex.callCount, 1
+    equal reIndex.callCount, 0
 
     @authorNameSort.add(@byJill, @anotherByZeke)
-    equal reIndex.callCount, 2
+    equal reIndex.callCount, 0
 
   test "stopObserving() forgets all observers", ->
     @authorNameSort.stopObserving()

@@ -36,6 +36,7 @@ basicSetTestSuite = ->
 
   test "remove(items...) removes the items from the set, returning the item and not touching any others", ->
     @set.add('foo', o1={}, o2={}, o3={})
+    equal @set.length, 4
 
     deepEqual @set.remove(o2, o3), [o2, o3]
 
@@ -161,6 +162,7 @@ basicSetTestSuite = ->
 
   test "add(items...) fires itemsWereAdded handlers", ->
     @set.on 'itemsWereAdded', spy = createSpy()
+    @set.on 'itemsWereAdded', console.log.bind(console)
     @set.add('foo')
     deepEqual spy.lastCallArguments[0], ['foo']
 
@@ -310,12 +312,15 @@ basicSetTestSuite = ->
     obj = new Batman.Object
     obj.accessor 'firstBiggerThan2', => @set.find (n) -> n > 2
     obj.observe 'firstBiggerThan2', observer = createSpy()
+
     @set.add(3)
     equal observer.callCount, 1
     strictEqual obj.get('firstBiggerThan2'), 3
+
     @set.add(4)
     equal observer.callCount, 1
     strictEqual obj.get('firstBiggerThan2'), 3
+
     @set.remove(3)
     equal observer.callCount, 2
     strictEqual obj.get('firstBiggerThan2'), 4
