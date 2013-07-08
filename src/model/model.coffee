@@ -503,6 +503,7 @@ class Batman.Model extends Batman.Object
       callback(arguments...)
 
   _withoutDirtyTracking: (block) ->
+    return block.call(@) if @_pauseDirtyTracking
     @_pauseDirtyTracking = true
     result = block.call(@)
     @_pauseDirtyTracking = false
