@@ -127,6 +127,14 @@ test 'the instantiated storage adapter should be returned when persisting', ->
 
   ok returned.isTestStorageAdapter
 
+test 'Nested _withoutDirtyTracking does not reset flag', ->
+  p = new @Product()
+  p._withoutDirtyTracking ->
+    equal p._pauseDirtyTracking, true
+    p._withoutDirtyTracking -> return
+    equal p._pauseDirtyTracking, true
+  equal p._pauseDirtyTracking, false
+
 test 'options passed to persist should be mixed in to the storage adapter once instantiated', ->
   returned = false
   class StorageAdapter extends Batman.StorageAdapter
