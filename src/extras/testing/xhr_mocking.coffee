@@ -14,12 +14,16 @@ Batman.XhrMocking =
       return if not fn
       {status, response, before} = fn(data)
 
+      @mixin
+        status: status
+        response: response
+
       before?(this)
 
       if status <= 400
         @fire 'success', response
       else
-        @fire 'error', {response: response, status: status}
+        @fire 'error', {response: response, status: status, request: this}
 
       @fire 'loaded'
 
@@ -53,6 +57,6 @@ Batman.XhrMocking =
 
       params ||= {}
       params.status ||= 200
-      params.response ||= "{}"
+      params.response ||= {}
 
       return params
