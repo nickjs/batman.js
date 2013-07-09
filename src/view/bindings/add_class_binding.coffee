@@ -16,7 +16,7 @@ class Batman.DOM.AddClassBinding extends Batman.DOM.AbstractAttributeBinding
     for {name, pattern} in @classes
       includesClassName = pattern.test(currentName)
       if !!value is !@invert
-        @node.className = "#{currentName} #{name}" if !includesClassName
+        @node.className = currentName = "#{currentName} #{name}" if !includesClassName
       else
-        @node.className = currentName.replace(pattern, ' ') if includesClassName
+        @node.className = currentName = currentName.replace(pattern, ' ') if includesClassName
     true
