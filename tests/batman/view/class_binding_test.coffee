@@ -133,13 +133,10 @@ asyncTest 'it should allow multiple class names to be bound via object', ->
 
 asyncTest 'it should allow multiple class names to be delimited by "|"', ->
   source = '<div data-addclass-foo|bar="val"></div>'
-  view = new Batman.View
-    val: false
 
-  helpers.render source, view, (node, view) ->
-    console.log node[0].className
+  helpers.render source, val: false, (node, view) ->
     equal node[0].className, ''
     view.set('val', true)
-    console.log node[0].className
-    equal node[0].className, 'foo bar'
+    ok node.hasClass('foo')
+    ok node.hasClass('bar')
     QUnit.start()
