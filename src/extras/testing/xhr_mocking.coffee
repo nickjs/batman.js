@@ -16,7 +16,7 @@ Batman.XhrMocking =
 
       @mixin
         status: status
-        response: response
+        response: JSON.stringify(response)
 
       before?(this)
 
