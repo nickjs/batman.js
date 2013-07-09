@@ -140,3 +140,18 @@ asyncTest 'it should allow multiple class names to be delimited by "|"', ->
     ok node.hasClass('foo')
     ok node.hasClass('bar')
     QUnit.start()
+
+asyncTest 'it shouldn\'t create redundant whitespace', ->
+  source = '<div class="" data-addclass-foo="foo" data-addclass-bar="bar"></div>'
+
+  helpers.render source, {foo: false, bar: false}, (node, view) ->
+    equal node[0].className, ''
+    view.set('foo', not view.get('foo')) for i in [1..10]
+    equal node[0].className, ''
+    view.set('foo', true)
+    equal node[0].className, 'foo'
+    view.set('bar', true)
+    equal node[0].className, 'foo bar'
+    view.set('bar', false)
+    equal node[0].className, 'foo'
+    QUnit.start()
