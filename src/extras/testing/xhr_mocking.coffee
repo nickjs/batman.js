@@ -9,7 +9,7 @@ Batman.XhrMocking =
       data ?= @get('data')
       @fire 'loading'
 
-      fn = self.getRequestCb(@get('url'), @get('method'))
+      fn = self.getAndRemoveRequestCb(@get('url'), @get('method'))
 
       return if not fn
       {status, response, before} = fn(data)
@@ -30,8 +30,12 @@ Batman.XhrMocking =
   xhrTeardown: ->
     Batman.Request::send = @_savedSend
 
-  getRequestCb: (url, method) ->
-    return @_requests["#{method}::#{url}"]
+  getAndRemoveRequestCb: (url, method) ->
+    id = "#{method}::#{url}"
+    request = @_requests[id]
+
+    delete @_requests[id]
+    return request
 
   setRequestCb: (url, method, cb) ->
     @_requests["#{method}::#{url}"] = cb
