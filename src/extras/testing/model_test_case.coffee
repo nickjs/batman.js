@@ -1,6 +1,8 @@
 #= require test_case
 
 class Batman.ModelTestCase extends Batman.TestCase
+  @mixin Batman.ModelExpectations
+
   assertValid: (model, message = "#{model} expected to be valid") ->
     model.validate (_, err) =>
       @assert err.length is 0, message

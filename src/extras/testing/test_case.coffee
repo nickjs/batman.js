@@ -1,6 +1,22 @@
-class Batman.TestCase
+class Batman.TestCase extends Batman.Object
+  @mixin Batman.XhrMocking
+
   class @Test
     constructor: (@name, @expected, @testFunction) ->
+
+    run: (testCase, callback) ->
+      wrappedTest = =>
+        testCase.xhrSetup()
+        testCase.clearExpectations()
+
+        sinon.test(@testFunction).call(testCase)
+
+        testCase.verifyExpectations()
+        testCase.xhrTeardown()
+
+        callback?()
+
+      QUnit.test(@name, @expected, wrappedTest)
 
   @test: (name, expected, testFunction) ->
     if typeof expected is 'function'
@@ -10,16 +26,18 @@ class Batman.TestCase
     @tests ||= []
     @tests.push new @Test(name, expected, testFunction)
 
-  runTests: (context) ->
-    QUnit.module.call context, @constructor.name,
+  constructor: ->
+    @_expectations = {}
+
+  runTests: ->
+    QUnit.module @constructor.name,
       setup: @setup.bind(this)
       teardown: @teardown.bind(this)
 
     for desc, test of @constructor.tests
-      QUnit.test(test.name, test.expected, sinon.test(test.testFunction).bind(this))
+      test.run(this)
 
   setup: ->
-
   teardown: ->
 
   continue: ->
@@ -73,3 +91,27 @@ class Batman.TestCase
 
   assertRaises: (expected, callback, message) ->
     QUnit.raises callback, expected, message
+
+  addExpectation: (name) ->
+    if @_expectations[name] then @_expectations[name]++ else @_expectations[name] = 1
+
+  completeExpectation: (name) ->
+    return if not @_expectations[name]
+    QUnit.ok(true, "Completed #{name}")
+    if @_expectations[name] is 1 then delete @_expectations[name] else @_expectations[name]--
+
+  verifyExpectations: ->
+    for key, count of @_expectations
+      QUnit.ok(false, "Expectation #{key} did not callback #{count} time(s)")
+
+  clearExpectations: -> @_expectations = {}
+
+# Nicer messages for the command line runner
+do ->
+  originalPush = QUnit.push
+  parseExpected = (exp) -> "\x1B[32m#{QUnit.jsDump.parse(exp)}\x1B[39m"
+  parseActual   = (act) -> "\x1B[31m#{QUnit.jsDump.parse(act)}\x1B[39m"
+
+  QUnit.push = (result, actual, expected, message) ->
+    message ||= "#{parseExpected(expected)} expected but was #{parseActual(actual)}"
+    originalPush.call(QUnit, result, actual, expected, message)
