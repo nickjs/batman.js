@@ -1,26 +1,26 @@
 Batman.XhrMocking =
   xhrSetup: ->
-    self = this
+    testCase = this
 
     @_requests = {}
     @_savedSend = Batman.Request::send
 
     Batman.Request::send = (data) ->
-      data ?= @get('data')
+      data ||= @get('data')
       @fire 'loading'
 
-      fn = self.getAndRemoveRequestCb(@get('url'), @get('method'))
+      mockedResponse = testCase.fetchMockedResponse(@get('url'), @get('method'))
 
-      return if not fn
-      {status, response, before} = fn(data)
+      return if not mockedResponse
+      {status, response, beforeResponse} = mockedResponse
 
       @mixin
         status: status
         response: JSON.stringify(response)
 
-      before?(this)
+      beforeResponse?(this)
 
-      if status <= 400
+      if status < 400
         @fire 'success', response
       else
         @fire 'error', {response: response, status: status, request: this}
@@ -30,14 +30,16 @@ Batman.XhrMocking =
   xhrTeardown: ->
     Batman.Request::send = @_savedSend
 
-  getAndRemoveRequestCb: (url, method) ->
+  fetchMockedResponse: (url, method) ->
     id = "#{method}::#{url}"
-    request = @_requests[id]
+    expectationCallback = @_requests[id]
+
+    return if not expectationCallback
 
     delete @_requests[id]
-    return request
+    return expectationCallback()
 
-  setRequestCb: (url, method, cb) ->
+  setMockedResponse: (url, method, cb) ->
     @_requests["#{method}::#{url}"] = cb
 
   assertGET: (url, params) ->
@@ -56,7 +58,7 @@ Batman.XhrMocking =
     id = "#{method} to #{url}"
     @addExpectation(id)
 
-    @setRequestCb url, method, =>
+    @setMockedResponse url, method, =>
       @completeExpectation(id)
 
       params ||= {}

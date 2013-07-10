@@ -1,7 +1,7 @@
 Batman.ModelExpectations =
   expectCreate: (instance, options = {}) ->
     @addExpectation('expectCreate')
-    QUnit.ok instance.isNew(), "Expected #{instance.constructor.name} to be new when saving"
+    @assert instance.isNew(), "Expected #{instance.constructor.name} to be new when saving"
 
     @stub instance, 'save', (callback) =>
       @completeExpectation('expectCreate')
@@ -9,7 +9,7 @@ Batman.ModelExpectations =
 
   expectUpdate: (instance, options = {}) ->
     @addExpectation('expectUpdate')
-    QUnit.ok !instance.isNew(), "Expected #{instance.constructor.name} to exist when saving"
+    @assert !instance.isNew(), "Expected #{instance.constructor.name} to exist when saving"
 
     @stub instance, 'save', (callback) =>
       @completeExpectation('expectUpdate')

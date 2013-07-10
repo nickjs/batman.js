@@ -5,6 +5,18 @@ QUnit.module "Batman.XhrMocking",
     @testCase = new Batman.TestCase
     @testCase.xhrSetup()
 
+test 'beforeResponse is called before the success event', ->
+  successCallCount = 0
+
+  @testCase.setMockedResponse '/test', 'GET', ->
+    {status: 200, beforeResponse: -> QUnit.equal(successCallCount, 0)}
+
+  req = new Batman.Request(url: '/test', method: 'GET', success: -> successCallCount++)
+  req.send()
+
+  QUnit.equal(successCallCount, 1)
+
+
 asyncTest 'assertGET will pass if the if a GET request is made', 2, ->
   testFn = (validate) =>
     @testCase.assertGET '/fake.json', {response: "{}"}

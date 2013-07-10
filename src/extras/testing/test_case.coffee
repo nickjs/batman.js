@@ -4,7 +4,7 @@ class Batman.TestCase extends Batman.Object
   class @Test
     constructor: (@name, @expected, @testFunction) ->
 
-    run: (testCase, cb) ->
+    run: (testCase, callback) ->
       wrappedTest = =>
         testCase.xhrSetup()
         testCase.clearExpectations()
@@ -14,7 +14,7 @@ class Batman.TestCase extends Batman.Object
         testCase.verifyExpectations()
         testCase.xhrTeardown()
 
-        cb?()
+        callback?()
 
       QUnit.test(@name, @expected, wrappedTest)
 
