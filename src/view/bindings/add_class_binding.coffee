@@ -1,5 +1,7 @@
 #= require ./abstract_attribute_binding
 
+redundantWhitespaceRegex = /[ \t]{2,}/g
+
 class Batman.DOM.AddClassBinding extends Batman.DOM.AbstractAttributeBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
@@ -13,10 +15,13 @@ class Batman.DOM.AddClassBinding extends Batman.DOM.AbstractAttributeBinding
 
   dataChange: (value) ->
     currentName = @node.className
+
     for {name, pattern} in @classes
       includesClassName = pattern.test(currentName)
       if !!value is !@invert
-        @node.className = "#{currentName} #{name}" if !includesClassName
+        currentName = "#{currentName} #{name}" if !includesClassName
       else
-        @node.className = currentName.replace(pattern, ' ') if includesClassName
+        currentName = currentName.replace(pattern, ' ') if includesClassName
+
+    @node.className = currentName.trim().replace(redundantWhitespaceRegex, ' ')
     true
