@@ -65,8 +65,24 @@ asyncTest 'it should add the errors class to an input bound to a field on the su
 
     errors = new Batman.ErrorsSet
     errors.add('name', "can't be blank")
-    view.lookupKeypath('instanceOfUser').set('errors', errors)
+    view.instanceOfUser.set('errors', errors)
 
+    ok $('input', node).hasClass('error')
+
+    QUnit.start()
+
+asyncTest 'it should not add the errors class to a bound input if the bound input already has an errors class', ->
+  source = '''
+  <form data-formfor-user="instanceOfUser">
+    <input type="text" data-bind="user.name" data-addclass-error="user.hasAnError" />
+  </form>
+  '''
+
+  context = instanceOfUser: Batman(name: '', hasAnError: false)
+
+  helpers.render source, context, (node, view) =>
+    ok !$('input', node).hasClass('error')
+    view.instanceOfUser.set('hasAnError', true)
     ok $('input', node).hasClass('error')
 
     QUnit.start()
