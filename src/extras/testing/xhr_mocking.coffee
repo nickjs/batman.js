@@ -30,6 +30,15 @@ Batman.XhrMocking =
   xhrTeardown: ->
     Batman.Request::send = @_savedSend
 
+  xhrWrapper: (fn) ->
+    testCase = this
+
+    return ->
+      testCase.xhrSetup()
+      result = fn.apply(this, arguments)
+      testCase.xhrTeardown()
+      return result
+
   fetchMockedResponse: (url, method) ->
     id = "#{method}::#{url}"
     expectationCallback = @_requests[id]
