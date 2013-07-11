@@ -19,6 +19,7 @@ class Batman.DOM.FormBinding extends Batman.DOM.ContextBinding
 
     selectors = ['input', 'textarea', 'select'].map (nodeName) -> "#{nodeName}[data-bind^=\"#{attribute}\"]"
     selectedNodes = Batman.DOM.querySelectorAll(@node, selectors.join(', '))
+    attributeName = "data-addclass-#{@errorClass}"
 
     for selectedNode in selectedNodes
       binding = selectedNode.getAttribute('data-bind')
@@ -29,7 +30,8 @@ class Batman.DOM.FormBinding extends Batman.DOM.ContextBinding
 
       field = field.trim()
 
-      selectedNode.setAttribute("data-addclass-#{@errorClass}", "#{attribute}.errors.#{field}.length")
+      if not selectedNode.getAttribute(attributeName)
+        selectedNode.setAttribute(attributeName, "#{attribute}.errors.#{field}.length")
 
     errorsNode = Batman.DOM.querySelector(@node, '.errors')
     errorsNode.setAttribute('data-showif', "#{attribute}.errors.length") if errorsNode and !errorsNode.getAttribute('data-showif')
