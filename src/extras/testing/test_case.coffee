@@ -4,17 +4,10 @@ class Batman.TestCase extends Batman.Object
   class @Test
     constructor: (@name, @expected, @testFunction) ->
 
-    run: (testCase, callback) ->
-      wrappedTest = =>
-        testCase.xhrSetup()
-        testCase.clearExpectations()
-
-        sinon.test(@testFunction).call(testCase)
-
-        testCase.verifyExpectations()
-        testCase.xhrTeardown()
-
-        callback?()
+    run: (testCase) ->
+      wrappedTest = sinon.test(@testFunction).bind(testCase)
+      wrappedTest = testCase.expectationsWrapper(wrappedTest)
+      wrappedTest = testCase.xhrWrapper(wrappedTest)
 
       QUnit.test(@name, @expected, wrappedTest)
 
@@ -31,8 +24,8 @@ class Batman.TestCase extends Batman.Object
 
   runTests: ->
     QUnit.module @constructor.name,
-      setup: @setup.bind(this)
-      teardown: @teardown.bind(this)
+      setup: @xhrWrapper(@setup.bind(this))
+      teardown: @xhrWrapper(@teardown.bind(this))
 
     for desc, test of @constructor.tests
       test.run(this)
@@ -105,6 +98,16 @@ class Batman.TestCase extends Batman.Object
       QUnit.ok(false, "Expectation #{key} did not callback #{count} time(s)")
 
   clearExpectations: -> @_expectations = {}
+
+  expectationsWrapper: (fn) ->
+    testCase = this
+
+    return ->
+      testCase.clearExpectations()
+      results = fn.apply(this, arguments)
+      testCase.verifyExpectations()
+      return results
+
 
 # Nicer messages for the command line runner
 do ->

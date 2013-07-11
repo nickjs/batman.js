@@ -16,7 +16,6 @@ test 'beforeResponse is called before the success event', ->
 
   QUnit.equal(successCallCount, 1)
 
-
 asyncTest 'assertGET will pass if the if a GET request is made', 2, ->
   testFn = (validate) =>
     @testCase.assertGET '/fake.json', {response: "{}"}
