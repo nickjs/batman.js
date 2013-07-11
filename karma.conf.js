@@ -40,7 +40,7 @@ files = [QUNIT, QUNIT_ADAPTER, 'lib/es5-shim.js'].concat(sourceFiles,
                                                          platformFiles,
                                                          libFiles,
                                                          extraFiles,
-                                                         testFiles)
+                                                         testFiles);
 
 
 // preprocessors
