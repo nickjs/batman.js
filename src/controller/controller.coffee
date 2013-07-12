@@ -170,8 +170,6 @@ class Batman.Controller extends Batman.Object
 
     view
 
-  @accessor 'viewContext', -> @viewContext ||= new Batman.View(controller: this)
-
   scrollToHash: (hash = @get('params')['#'])-> Batman.DOM.scrollIntoView(hash)
 
   _resetActionFrames: -> @_actionFrames = []
