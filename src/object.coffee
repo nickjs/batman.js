@@ -85,9 +85,9 @@ class BatmanObject extends Object
 
   # Make every subclass and their instances observable.
   Batman.mixin @prototype, ObjectFunctions, Batman.EventEmitter, Batman.Observable
-  Batman.mixin @,          ObjectFunctions, Batman.EventEmitter, Batman.Observable
+  Batman.mixin this,       ObjectFunctions, Batman.EventEmitter, Batman.Observable
 
-  @classMixin: -> Batman.mixin @, arguments...
+  @classMixin: -> Batman.mixin this, arguments...
   @mixin: -> @classMixin.apply @prototype, arguments
   mixin: @classMixin
 
@@ -103,17 +103,17 @@ class BatmanObject extends Object
 
   @singleton: (singletonMethodName="sharedInstance") ->
     @classAccessor singletonMethodName,
-      get: -> @["_#{singletonMethodName}"] ||= new @
+      get: -> @["_#{singletonMethodName}"] ||= new this
 
   @accessor '_batmanID', -> @_batmanID()
 
   constructor: (mixins...) ->
-    @_batman = new Batman._Batman(@)
+    @_batman = new Batman._Batman(this)
     @mixin mixins...
 
   counter = 0
   _batmanID: ->
-    @_batman.check(@)
+    @_batman.check(this)
     @_batman.id ?= counter++
     @_batman.id
 
