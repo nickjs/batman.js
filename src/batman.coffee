@@ -10,7 +10,6 @@
 #= require ./utilities/string_helpers
 #= require ./developer
 #= require ./object
-#= require ./mixins
 #= require_tree ./utilities
 #= require_tree ./set
 #= require_tree ./hash
