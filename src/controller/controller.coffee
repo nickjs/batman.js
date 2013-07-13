@@ -17,10 +17,10 @@ class Batman.Controller extends Batman.Object
     only = if Batman.typeOf(options.only) is 'String' then [options.only] else options.only
     except = if Batman.typeOf(options.except) is 'String' then [options.except] else options.except
 
-    normalized.if = (params) ->
+    normalized.if = (params, frame) ->
       return false if @_afterFilterRedirect
-      return false if only and params.action not in only
-      return false if except and params.action in except
+      return false if only and frame.action not in only
+      return false if except and frame.action in except
       return true
 
     return normalized
@@ -87,8 +87,8 @@ class Batman.Controller extends Batman.Object
     Batman.developer.assert @[action], "Error! Controller action #{@get('routingKey')}.#{action} couldn't be found!"
 
     parentFrame = @_actionFrames[@_actionFrames.length - 1]
-    frame = new Batman.ControllerActionFrame {parentFrame, action}, =>
-      @fireLifecycleEvent('afterFilter', params) if not @_afterFilterRedirect
+    frame = new Batman.ControllerActionFrame {parentFrame, action, params}, =>
+      @fireLifecycleEvent('afterFilter', frame.params, frame) if not @_afterFilterRedirect
       @_resetActionFrames()
       Batman.navigator?.redirect = oldRedirect
 
@@ -98,7 +98,7 @@ class Batman.Controller extends Batman.Object
     oldRedirect = Batman.navigator?.redirect
     Batman.navigator?.redirect = @redirect
 
-    @fireLifecycleEvent('beforeFilter', params)
+    @fireLifecycleEvent('beforeFilter', frame.params, frame)
     result = @[action](params) if not @_afterFilterRedirect
 
     @render() if not frame.operationOccurred
@@ -124,7 +124,7 @@ class Batman.Controller extends Batman.Object
       if Batman.typeOf(url) is 'Object'
         url.controller = this if not url.controller
 
-      Batman.redirect url
+      Batman.redirect(url)
 
   render: (options = {}) ->
     if frame = @_actionFrames?[@_actionFrames.length - 1]
