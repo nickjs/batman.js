@@ -31,13 +31,10 @@ Batman.LifecycleEvents =
     @[afterName] = addCallback(afterName)
     @::[afterName] = addCallback(afterName)
 
-fire = (eventName, arg) ->
+fire = (eventName, args...) ->
   return unless handlers = @_batman.get(eventName)
-  result = true
 
   for {options, callback} in handlers
-    continue if options?.if and !options.if.call(this, arg)
-    continue if options?.unless and options.unless.call(this, arg)
-    result = false if callback.call(this, arg) == false
-
-  return result
+    continue if options?.if and !options.if.apply(this, args)
+    continue if options?.unless and options.unless.apply(this, args)
+    return false if callback.apply(this, args) == false
