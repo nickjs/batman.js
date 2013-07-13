@@ -238,8 +238,9 @@ test 'actions executed by other actions have their filters run', ->
   afterSpy = createSpy()
 
   class TestController extends Batman.Controller
-    @beforeFilter 'show', beforeSpy
-    @afterFilter 'show', afterSpy
+    @beforeFilter {only: 'show'}, beforeSpy
+    @afterFilter {only: 'show'}, afterSpy
+
     show: ->
       @render(false)
 
@@ -261,9 +262,9 @@ test 'beforeFilters and afterFilters are inherited when subclassing controllers'
 
   class TestParentController extends Batman.Controller
     @beforeFilter beforeSpy1
-    @beforeFilter 'show', beforeSpy2
+    @beforeFilter {only: 'show'}, beforeSpy2
     @afterFilter afterSpy1
-    @afterFilter 'show', afterSpy2
+    @afterFilter {only: 'show'}, afterSpy2
 
     show: -> @render false
 
@@ -274,9 +275,9 @@ test 'beforeFilters and afterFilters are inherited when subclassing controllers'
 
   class TestChildController extends TestParentController
     @beforeFilter beforeSpy3
-    @beforeFilter 'show', beforeSpy4
+    @beforeFilter {only: 'show'}, beforeSpy4
     @afterFilter afterSpy3
-    @afterFilter 'show', afterSpy4
+    @afterFilter {only: 'show'}, afterSpy4
 
   controller = new TestChildController
   controller.dispatch 'show'
@@ -296,7 +297,7 @@ test 'afterFilters should only fire after renders are complete', ->
   view = new Batman.View
 
   class TestController extends Batman.Controller
-    @afterFilter 'show', afterSpy
+    @afterFilter {only: 'show'}, afterSpy
     show: -> @render(view: view)
 
   @controller = new TestController
@@ -310,9 +311,11 @@ test 'afterFilters should only fire after renders are complete', ->
 test 'afterFilters on outer actions should fire after afterFilters on inner actions', ->
   order = []
   class TestController extends Batman.Controller
-    @afterFilter 'show', -> order.push 1
-    @afterFilter 'test', -> order.push 2
-    show: -> @render false
+    @afterFilter {only: 'show'}, -> order.push 1
+    @afterFilter {only: 'test'}, -> order.push 2
+    show: ->
+      @render(false)
+
     test: ->
       @render(false)
       @executeAction('show')
@@ -326,7 +329,7 @@ test 'afterFilters on outer actions should only fire after inner renders are com
   view = new Batman.View
 
   class TestController extends Batman.Controller
-    @afterFilter 'test', afterSpy
+    @afterFilter {only: 'test'}, afterSpy
     show: -> @render(view: view)
     test: ->
       @render false
