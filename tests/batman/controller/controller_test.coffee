@@ -24,7 +24,7 @@ QUnit.module 'Batman.Controller',
     Batman.navigator = oldNavigator
     Batman.View.store = oldHTMLStore
 
-test "get('routingKey') should use the prototype level routingKey property", ->
+test 'get(\'routingKey\') should use the prototype level routingKey property', ->
   class ProductsController extends Batman.Controller
     routingKey: 'products'
 
@@ -100,7 +100,7 @@ test 'it should allow setting the default render destination yield', ->
   equal Batman.currentApp.layout.subviews.get('first'), view
   equal Batman.DOM.Yield.withName('sidebar').get('contentView'), view
 
-test 'dispatching routes without any actions calls render', 1, ->
+test 'dispatching routes without any actions calls render', ->
   @controller.test = ->
   @controller.render = ->
     ok true, 'render called'
@@ -116,14 +116,14 @@ test '@render false disables implicit render', 2, ->
     @controller.dispatch 'test'
     ok ! replace.called
 
-test 'redirecting using @redirect() in an action prevents implicit render', 2, ->
+test 'redirecting using @redirect() in an action prevents implicit render', ->
   Batman.navigator = {redirect: createSpy()}
   @controller.test = -> @redirect '/'
   @controller.dispatch 'test'
   equal Batman.currentApp.layout.subviews.length, 0
   ok Batman.navigator.redirect.called
 
-test 'redirecting using Batman.redirect in an action prevents implicit render', 2, ->
+test 'redirecting using Batman.redirect in an action prevents implicit render', ->
   Batman.navigator = {redirect: createSpy()}
   @controller.test = -> Batman.redirect '/'
   @controller.dispatch 'test'
@@ -137,7 +137,7 @@ test '@redirect-ing after a dispatch fires no warnings', ->
   @controller.redirect '/'
   ok Batman.navigator.redirect.called
 
-test 'filters specifying no restrictions should be called on all actions', 2, ->
+test 'filters specifying no restrictions should be called on all actions', ->
   spy = createSpy()
   class FilterController extends Batman.Controller
     @beforeFilter spy
@@ -152,7 +152,7 @@ test 'filters specifying no restrictions should be called on all actions', 2, ->
   controller.dispatch 'index'
   equal spy.callCount, 2
 
-test 'filters specifying only should only be called on those actions', 2, ->
+test 'filters specifying only should only be called on those actions', ->
   spy = createSpy()
 
   class FilterController extends Batman.Controller
@@ -168,7 +168,7 @@ test 'filters specifying only should only be called on those actions', 2, ->
   controller.dispatch 'all'
   equal spy.callCount, 1
 
-test 'filters specifying except should not be called on those actions', 2, ->
+test 'filters specifying except should not be called on those actions', ->
   spy = createSpy()
   class FilterController extends Batman.Controller
     @beforeFilter {except: 'index'}, spy
@@ -183,7 +183,7 @@ test 'filters specifying except should not be called on those actions', 2, ->
   controller.dispatch 'index'
   equal spy.callCount, 1
 
-test 'filters specifying options in arrays should apply to all/none of those options', 3, ->
+test 'filters specifying options in arrays should apply to all/none of those options', ->
   spy = createSpy()
   class FilterController extends Batman.Controller
     @beforeFilter {except: ['index', 'edit']}, spy
@@ -201,7 +201,7 @@ test 'filters specifying options in arrays should apply to all/none of those opt
   controller.dispatch 'index'
   equal spy.callCount, 1
 
-test 'redirect() in beforeFilter halts chain and does not call action or render', 4, ->
+test 'redirect() in beforeFilter halts chain and does not call action or render', ->
   beforeSpy1 = createSpy()
   beforeSpy2 = createSpy()
   renderSpy = createSpy()
@@ -209,16 +209,15 @@ test 'redirect() in beforeFilter halts chain and does not call action or render'
 
   class FilterController extends Batman.Controller
     @beforeFilter beforeSpy1
-    @beforeFilter ->
-      @redirect '/'
+    @beforeFilter -> @redirect('/')
     @beforeFilter beforeSpy2
     @afterFilter afterSpy
 
     render: renderSpy
-    index: -> @render false
+    index: -> @render(false)
 
   controller = new FilterController
-  controller.dispatch 'index'
+  controller.dispatch('index')
   equal beforeSpy1.callCount, 1
   equal beforeSpy2.callCount, 0
   equal renderSpy.callCount, 0
@@ -241,18 +240,20 @@ test 'actions executed by other actions have their filters run', ->
   class TestController extends Batman.Controller
     @beforeFilter 'show', beforeSpy
     @afterFilter 'show', afterSpy
+    show: ->
+      @render(false)
 
-    show: -> @render false
     test: ->
-      @render false
-      @executeAction 'show'
+      @render(false)
+      @executeAction('show')
 
   @controller = new TestController
-  @controller.dispatch 'test'
+  @controller.dispatch('test')
+
   ok beforeSpy.called
   ok afterSpy.called
 
-test 'beforeFilters and afterFilters are inherited when subclassing controllers', 8, ->
+test 'beforeFilters and afterFilters are inherited when subclassing controllers', ->
   beforeSpy1 = createSpy()
   beforeSpy2 = createSpy()
   afterSpy1 = createSpy()
@@ -290,7 +291,7 @@ test 'beforeFilters and afterFilters are inherited when subclassing controllers'
   equal afterSpy3.callCount, 1
   equal afterSpy4.callCount, 1
 
-test 'afterFilters should only fire after renders are complete', 2, ->
+test 'afterFilters should only fire after renders are complete', ->
   afterSpy = createSpy()
   view = new Batman.View
 
@@ -301,26 +302,26 @@ test 'afterFilters should only fire after renders are complete', 2, ->
   @controller = new TestController
   view.prevent('ready')
 
-  @controller.dispatch 'show'
+  @controller.dispatch('show')
   ok !afterSpy.called
   view.allowAndFire('ready')
   ok afterSpy.called
 
-test 'afterFilters on outer actions should fire after afterFilters on inner actions', 1, ->
+test 'afterFilters on outer actions should fire after afterFilters on inner actions', ->
   order = []
   class TestController extends Batman.Controller
     @afterFilter 'show', -> order.push 1
     @afterFilter 'test', -> order.push 2
     show: -> @render false
     test: ->
-      @render false
-      @executeAction 'show'
+      @render(false)
+      @executeAction('show')
 
   @controller = new TestController
-  @controller.dispatch 'test'
+  @controller.dispatch('test')
   deepEqual order, [1, 2]
 
-test 'afterFilters on outer actions should only fire after inner renders are complete', 2, ->
+test 'afterFilters on outer actions should only fire after inner renders are complete', ->
   afterSpy = createSpy()
   view = new Batman.View
 
@@ -334,7 +335,7 @@ test 'afterFilters on outer actions should only fire after inner renders are com
   @controller = new TestController
   view.prevent('ready')
 
-  @controller.dispatch 'test'
+  @controller.dispatch('test')
   ok !afterSpy.called
   view.allowAndFire('ready')
   ok afterSpy.called
@@ -392,7 +393,7 @@ test 'When wrapping a call with the errorHandler callback, any exception tracked
   equal handlerSpy.callCount, 1
   deepEqual handlerSpy.lastCallArguments, [@error]
 
-test 'When wrapping a call with the errorHandler callback, any exception tracked with catchError will be handled by multiple handlers', 5, ->
+test 'when wrapping a call with the errorHandler callback, any exception tracked with catchError will be handled by multiple handlers', ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
   handlerSpy2 = createSpy()
@@ -414,7 +415,7 @@ test 'When wrapping a call with the errorHandler callback, any exception tracked
   deepEqual handlerSpy.lastCallArguments, [@error]
   deepEqual handlerSpy2.lastCallArguments, [@error]
 
-test 'When wrapping a call with the errorHandler callback, any exception that is not tracked with specific catchError will be re-thrown', 3, ->
+test 'when wrapping a call with the errorHandler callback, any exception that is not tracked with specific catchError will be re-thrown', ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
 
@@ -436,7 +437,7 @@ test 'When wrapping a call with the errorHandler callback, any exception that is
   equal callbackSpy.callCount, 0
   equal handlerSpy.callCount, 0
 
-test 'When wrapping a call with the errorHandler callback, no exception passes result to callback', 3, ->
+test 'when wrapping a call with the errorHandler callback, no exception passes result to callback', ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
 
@@ -457,7 +458,7 @@ test 'When wrapping a call with the errorHandler callback, no exception passes r
   equal callbackSpy.callCount, 1
   deepEqual callbackSpy.lastCallArguments, [[{id: 1}], 'foo']
 
-test 'subclass errors registered with superclass catchError cause the errorHandler callback to fire', 3, ->
+test 'subclass errors registered with superclass catchError cause the errorHandler callback to fire', ->
   class ReallyCustomError extends @CustomError
 
   callbackSpy = createSpy()
@@ -480,7 +481,7 @@ test 'subclass errors registered with superclass catchError cause the errorHandl
   equal handlerSpy.callCount, 1
   deepEqual handlerSpy.lastCallArguments, [error]
 
-test 'When wrapping a call with the errorHandler callback, parent class handlers are also called', 7, ->
+test 'When wrapping a call with the errorHandler callback, parent class handlers are also called', ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
   handlerSpy2 = createSpy()
@@ -513,7 +514,7 @@ test 'When wrapping a call with the errorHandler callback, parent class handlers
   deepEqual handlerSpy2.lastCallArguments, [@error]
   deepEqual handlerSpy3.lastCallArguments, [@error]
 
-test 'When wrapping multiple calls with errorHandler callback, any successive calls to the errorHandler should be ignored if an error occured on the current frame', 4, ->
+test 'When wrapping multiple calls with errorHandler callback, any successive calls to the errorHandler should be ignored if an error occured on the current frame', ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
   handlerSpy2 = createSpy()
@@ -537,7 +538,7 @@ test 'When wrapping multiple calls with errorHandler callback, any successive ca
   equal callbackSpy.callCount, 0
   deepEqual handlerSpy.lastCallArguments, [@error]
 
-test 'When wrapping multiple nested calls with errorHandler callback, nested errors should not be fired if parent errored', 4, ->
+test 'When wrapping multiple nested calls with errorHandler callback, nested errors should not be fired if parent errored', ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
   handlerSpy2 = createSpy()
@@ -562,7 +563,7 @@ test 'When wrapping multiple nested calls with errorHandler callback, nested err
   equal callbackSpy.callCount, 0
   deepEqual handlerSpy.lastCallArguments, [@error]
 
-test 'When wrapping multiple nested calls with errorHandler callback, nested errors not be ignored by higher level errors', 5, ->
+test 'When wrapping multiple nested calls with errorHandler callback, nested errors not be ignored by higher level errors', ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
   handlerSpy2 = createSpy()
