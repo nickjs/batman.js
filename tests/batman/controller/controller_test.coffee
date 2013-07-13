@@ -301,11 +301,11 @@ test 'afterFilters should only fire after renders are complete', ->
     show: -> @render(view: view)
 
   @controller = new TestController
-  view.prevent('ready')
+  view.prevent('viewDidAppear')
 
   @controller.dispatch('show')
   ok !afterSpy.called
-  view.allowAndFire('ready')
+  view.allowAndFire('viewDidAppear')
   ok afterSpy.called
 
 test 'afterFilters on outer actions should fire after afterFilters on inner actions', ->
@@ -336,11 +336,11 @@ test 'afterFilters on outer actions should only fire after inner renders are com
       @executeAction 'show'
 
   @controller = new TestController
-  view.prevent('ready')
+  view.prevent('viewDidAppear')
 
   @controller.dispatch('test')
   ok !afterSpy.called
-  view.allowAndFire('ready')
+  view.allowAndFire('viewDidAppear')
   ok afterSpy.called
 
 test 'dispatching params with a hash scrolls to that hash', ->
