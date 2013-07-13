@@ -12,7 +12,7 @@ class Batman.Controller extends Batman.Object
         Batman.functionName(@constructor).replace(/Controller$/, '')
 
   @classMixin Batman.LifecycleEvents
-  @lifecycleEvent 'filter', (options = {}) ->
+  @lifecycleEvent 'action', (options = {}) ->
     normalized = {}
     only = if Batman.typeOf(options.only) is 'String' then [options.only] else options.only
     except = if Batman.typeOf(options.except) is 'String' then [options.except] else options.except
@@ -25,7 +25,7 @@ class Batman.Controller extends Batman.Object
 
     return normalized
 
-  @afterFilter (params) ->
+  @afterAction (params) ->
     if @autoScrollToHash && params['#']?
       @scrollToHash(params['#'])
 
@@ -88,7 +88,7 @@ class Batman.Controller extends Batman.Object
 
     parentFrame = @_actionFrames[@_actionFrames.length - 1]
     frame = new Batman.ControllerActionFrame {parentFrame, action, params}, =>
-      @fireLifecycleEvent('afterFilter', frame.params, frame) if not @_afterFilterRedirect
+      @fireLifecycleEvent('afterAction', frame.params, frame) if not @_afterFilterRedirect
       @_resetActionFrames()
       Batman.navigator?.redirect = oldRedirect
 
@@ -98,7 +98,7 @@ class Batman.Controller extends Batman.Object
     oldRedirect = Batman.navigator?.redirect
     Batman.navigator?.redirect = @redirect
 
-    @fireLifecycleEvent('beforeFilter', frame.params, frame)
+    @fireLifecycleEvent('beforeAction', frame.params, frame)
     result = @[action](params) if not @_afterFilterRedirect
 
     @render() if not frame.operationOccurred

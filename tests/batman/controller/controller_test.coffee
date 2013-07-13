@@ -140,7 +140,7 @@ test '@redirect-ing after a dispatch fires no warnings', ->
 test 'filters specifying no restrictions should be called on all actions', ->
   spy = createSpy()
   class FilterController extends Batman.Controller
-    @beforeFilter spy
+    @beforeAction spy
 
     show: -> @render false
     index: -> @render false
@@ -156,7 +156,7 @@ test 'filters specifying only should only be called on those actions', ->
   spy = createSpy()
 
   class FilterController extends Batman.Controller
-    @beforeFilter {only: 'withBefore'}, spy
+    @beforeAction {only: 'withBefore'}, spy
 
     withBefore: -> @render false
     all: -> @render false
@@ -171,7 +171,7 @@ test 'filters specifying only should only be called on those actions', ->
 test 'filters specifying except should not be called on those actions', ->
   spy = createSpy()
   class FilterController extends Batman.Controller
-    @beforeFilter {except: 'index'}, spy
+    @beforeAction {except: 'index'}, spy
 
     show: -> @render false
     index: -> @render false
@@ -186,7 +186,7 @@ test 'filters specifying except should not be called on those actions', ->
 test 'filters specifying options in arrays should apply to all/none of those options', ->
   spy = createSpy()
   class FilterController extends Batman.Controller
-    @beforeFilter {except: ['index', 'edit']}, spy
+    @beforeAction {except: ['index', 'edit']}, spy
 
     show: -> @render false
     index: -> @render false
@@ -208,10 +208,10 @@ test 'redirect() in beforeFilter halts chain and does not call action or render'
   afterSpy = createSpy()
 
   class FilterController extends Batman.Controller
-    @beforeFilter beforeSpy1
-    @beforeFilter -> @redirect('/')
-    @beforeFilter beforeSpy2
-    @afterFilter afterSpy
+    @beforeAction beforeSpy1
+    @beforeAction -> @redirect('/')
+    @beforeAction beforeSpy2
+    @afterAction afterSpy
 
     render: renderSpy
     index: -> @render(false)
@@ -238,8 +238,8 @@ test 'actions executed by other actions have their filters run', ->
   afterSpy = createSpy()
 
   class TestController extends Batman.Controller
-    @beforeFilter {only: 'show'}, beforeSpy
-    @afterFilter {only: 'show'}, afterSpy
+    @beforeAction {only: 'show'}, beforeSpy
+    @afterAction {only: 'show'}, afterSpy
 
     show: ->
       @render(false)
@@ -254,17 +254,17 @@ test 'actions executed by other actions have their filters run', ->
   ok beforeSpy.called
   ok afterSpy.called
 
-test 'beforeFilters and afterFilters are inherited when subclassing controllers', ->
+test 'beforeActions and afterActions are inherited when subclassing controllers', ->
   beforeSpy1 = createSpy()
   beforeSpy2 = createSpy()
   afterSpy1 = createSpy()
   afterSpy2 = createSpy()
 
   class TestParentController extends Batman.Controller
-    @beforeFilter beforeSpy1
-    @beforeFilter {only: 'show'}, beforeSpy2
-    @afterFilter afterSpy1
-    @afterFilter {only: 'show'}, afterSpy2
+    @beforeAction beforeSpy1
+    @beforeAction {only: 'show'}, beforeSpy2
+    @afterAction afterSpy1
+    @afterAction {only: 'show'}, afterSpy2
 
     show: -> @render false
 
@@ -274,10 +274,10 @@ test 'beforeFilters and afterFilters are inherited when subclassing controllers'
   afterSpy4 = createSpy()
 
   class TestChildController extends TestParentController
-    @beforeFilter beforeSpy3
-    @beforeFilter {only: 'show'}, beforeSpy4
-    @afterFilter afterSpy3
-    @afterFilter {only: 'show'}, afterSpy4
+    @beforeAction beforeSpy3
+    @beforeAction {only: 'show'}, beforeSpy4
+    @afterAction afterSpy3
+    @afterAction {only: 'show'}, afterSpy4
 
   controller = new TestChildController
   controller.dispatch 'show'
@@ -292,12 +292,12 @@ test 'beforeFilters and afterFilters are inherited when subclassing controllers'
   equal afterSpy3.callCount, 1
   equal afterSpy4.callCount, 1
 
-test 'afterFilters should only fire after renders are complete', ->
+test 'afterActions should only fire after renders are complete', ->
   afterSpy = createSpy()
   view = new Batman.View
 
   class TestController extends Batman.Controller
-    @afterFilter {only: 'show'}, afterSpy
+    @afterAction {only: 'show'}, afterSpy
     show: -> @render(view: view)
 
   @controller = new TestController
@@ -308,11 +308,11 @@ test 'afterFilters should only fire after renders are complete', ->
   view.allowAndFire('viewDidAppear')
   ok afterSpy.called
 
-test 'afterFilters on outer actions should fire after afterFilters on inner actions', ->
+test 'afterActions on outer actions should fire after afterActions on inner actions', ->
   order = []
   class TestController extends Batman.Controller
-    @afterFilter {only: 'show'}, -> order.push 1
-    @afterFilter {only: 'test'}, -> order.push 2
+    @afterAction {only: 'show'}, -> order.push 1
+    @afterAction {only: 'test'}, -> order.push 2
     show: ->
       @render(false)
 
@@ -324,12 +324,12 @@ test 'afterFilters on outer actions should fire after afterFilters on inner acti
   @controller.dispatch('test')
   deepEqual order, [1, 2]
 
-test 'afterFilters on outer actions should only fire after inner renders are complete', ->
+test 'afterActions on outer actions should only fire after inner renders are complete', ->
   afterSpy = createSpy()
   view = new Batman.View
 
   class TestController extends Batman.Controller
-    @afterFilter {only: 'test'}, afterSpy
+    @afterAction {only: 'test'}, afterSpy
     show: -> @render(view: view)
     test: ->
       @render false
