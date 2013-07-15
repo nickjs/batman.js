@@ -152,6 +152,16 @@ test 'filters specifying no restrictions should be called on all actions', ->
   controller.dispatch 'index'
   equal spy.callCount, 2
 
+test 'filters specified on instances should only work on that instance', ->
+  spy = createSpy()
+  class FilterController extends Batman.Controller
+    index: -> @render(false)
+
+  controller = new FilterController
+  controller.beforeAction(spy)
+  controller.dispatch('index')
+  equal(spy.callCount, 1)
+
 test 'filters specifying only should only be called on those actions', ->
   spy = createSpy()
 
