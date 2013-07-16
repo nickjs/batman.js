@@ -1,15 +1,15 @@
 class Batman.ControllerActionFrame extends Batman.Object
   operationOccurred: false
   remainingOperations: 0
+
   @::event('complete').oneShot = true
 
   constructor: (options, onComplete) ->
     super(options)
-    @once 'complete', onComplete
+    @once('complete', onComplete)
 
   startOperation: (options = {}) ->
-    if !options.internal
-      @operationOccurred = true
+    @operationOccurred = true if !options.internal
     @_changeOperationsCounter(1)
     true
 
@@ -25,6 +25,7 @@ class Batman.ControllerActionFrame extends Batman.Object
   _changeOperationsCounter: (delta) ->
     @remainingOperations += delta
     if @remainingOperations == 0
-      @fire 'complete'
+      @fire('complete')
+
     @parentFrame?._changeOperationsCounter(delta)
     return

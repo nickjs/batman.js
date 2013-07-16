@@ -11,32 +11,21 @@ class Batman.Controller extends Batman.Object
         Batman.developer.error("Please define `routingKey` on the prototype of #{Batman.functionName(@constructor)} in order for your controller to be minification safe.") if Batman.config.minificationErrors
         Batman.functionName(@constructor).replace(/Controller$/, '')
 
-  _optionsFromFilterArguments = (options, nameOrFunction) ->
-    if not nameOrFunction
-      nameOrFunction = options
-      options = {}
-    else
-      if typeof options is 'string'
-        options = {only: [options]}
-      else
-        options.only = [options.only] if options.only and Batman.typeOf(options.only) isnt 'Array'
-        options.except = [options.except] if options.except and Batman.typeOf(options.except) isnt 'Array'
-    options.block = nameOrFunction
-    options
+  @classMixin Batman.LifecycleEvents
+  @lifecycleEvent 'action', (options = {}) ->
+    normalized = {}
+    only = if Batman.typeOf(options.only) is 'String' then [options.only] else options.only
+    except = if Batman.typeOf(options.except) is 'String' then [options.except] else options.except
 
-  @beforeFilter: ->
-    Batman.initializeObject this
-    options = _optionsFromFilterArguments(arguments...)
-    filters = @_batman.beforeFilters ||= []
-    filters.push(options)
+    normalized.if = (params, frame) ->
+      return false if @_afterFilterRedirect
+      return false if only and frame.action not in only
+      return false if except and frame.action in except
+      return true
 
-  @afterFilter: ->
-    Batman.initializeObject this
-    options = _optionsFromFilterArguments(arguments...)
-    filters = @_batman.afterFilters ||= []
-    filters.push(options)
+    return normalized
 
-  @afterFilter (params) ->
+  @afterAction (params) ->
     if @autoScrollToHash && params['#']?
       @scrollToHash(params['#'])
 
@@ -89,26 +78,28 @@ class Batman.Controller extends Batman.Object
     @executeAction(action, params)
 
     redirectTo = @_afterFilterRedirect
+    @_afterFilterRedirect = null
     delete @_afterFilterRedirect
 
     Batman.redirect(redirectTo) if redirectTo
 
   executeAction: (action, params = @get('params')) ->
-    Batman.developer.assert @[action], "Error! Controller action #{@get 'routingKey'}.#{action} couldn't be found!"
+    Batman.developer.assert @[action], "Error! Controller action #{@get('routingKey')}.#{action} couldn't be found!"
 
     parentFrame = @_actionFrames[@_actionFrames.length - 1]
-    frame = new Batman.ControllerActionFrame {parentFrame, action}, =>
-      @_runFilters action, params, 'afterFilters' unless @_afterFilterRedirect
+    frame = new Batman.ControllerActionFrame {parentFrame, action, params}, =>
+      @fireLifecycleEvent('afterAction', frame.params, frame) if not @_afterFilterRedirect
       @_resetActionFrames()
       Batman.navigator?.redirect = oldRedirect
 
-    @_actionFrames.push frame
-    frame.startOperation({internal: true})
+    @_actionFrames.push(frame)
+    frame.startOperation(internal: true)
 
     oldRedirect = Batman.navigator?.redirect
     Batman.navigator?.redirect = @redirect
-    @_runFilters action, params, 'beforeFilters'
-    result = @[action](params) unless @_afterFilterRedirect
+
+    @fireLifecycleEvent('beforeAction', frame.params, frame)
+    result = @[action](params) if not @_afterFilterRedirect
 
     @render() if not frame.operationOccurred
     frame.finishOperation()
@@ -131,9 +122,9 @@ class Batman.Controller extends Batman.Object
         @_afterFilterRedirect = url
     else
       if Batman.typeOf(url) is 'Object'
-        url.controller = @ if not url.controller
+        url.controller = this if not url.controller
 
-      Batman.redirect url
+      Batman.redirect(url)
 
   render: (options = {}) ->
     if frame = @_actionFrames?[@_actionFrames.length - 1]
@@ -165,12 +156,10 @@ class Batman.Controller extends Batman.Object
       Batman.currentApp?.layout?.subviews?.add(view)
       @set('currentView', view)
 
-      view.once 'ready', ->
+      view.once 'viewDidAppear', ->
         frame?.finishOperation()
 
     view
-
-  @accessor 'viewContext', -> @viewContext ||= new Batman.View(controller: this)
 
   scrollToHash: (hash = @get('params')['#'])-> Batman.DOM.scrollIntoView(hash)
 
@@ -178,13 +167,3 @@ class Batman.Controller extends Batman.Object
   _viewClassForAction: (action) ->
     classPrefix = @get('routingKey').replace('/', '_')
     Batman.currentApp?[Batman.helpers.camelize("#{classPrefix}_#{action}_view")] || Batman.View
-
-  _runFilters: (action, params, filters) ->
-    if filters = @constructor._batman?.get(filters)
-      for options in filters
-        continue if options.only and action not in options.only
-        continue if options.except and action in options.except
-        return if @_afterFilterRedirect
-
-        block = options.block
-        if typeof block is 'function' then block.call(@, params) else @[block]?(params)
