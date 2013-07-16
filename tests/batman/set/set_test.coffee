@@ -162,7 +162,6 @@ basicSetTestSuite = ->
 
   test "add(items...) fires itemsWereAdded handlers", ->
     @set.on 'itemsWereAdded', spy = createSpy()
-    @set.on 'itemsWereAdded', console.log.bind(console)
     @set.add('foo')
     deepEqual spy.lastCallArguments[0], ['foo']
 

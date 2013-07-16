@@ -9,15 +9,12 @@
 
     <script src="../lib/coffee-script.js"></script>
     <script src="../lib/es5-shim.js"></script>
-    <script src="../lib/batman.js"></script>
-    <script src="../lib/batman.solo.js"></script>
+    <script src="../lib/dist/batman.js"></script>
 </head>
 
 <body>
     <div id="container">
         <h1 data-hideif="person.hasName">Please enter your name</h1>
-
-        <div data-foreach-foo="person.bar"><span data-bind="foo.foo" /></div>
 
         <form class="span-12">
             <fieldset>
@@ -39,14 +36,11 @@
     </div>
 
     <script type="text/coffeescript">
-      class window.Hello extends Batman.App
+      class Hello extends Batman.App
 
       class Person extends Batman.Model
         @accessor 'fullName', -> "#{@get('firstName') or ''} #{@get('lastName') or ''}"
         @accessor 'hasName', -> @get('firstName') or @get('lastName')
-
-        constructor: ->
-          @set 'bar', new Batman.SetSort(new Batman.Set(b = {foo: 'b'}, c = {foo: 'c'}, a = {foo: 'a'}), 'foo')
 
         reset: =>
           @set 'firstName', ''
@@ -55,10 +49,6 @@
 
       Hello.person = (new Person()).reset()
       Hello.run()
-
-      setTimeout ->
-        Hello.get('person.bar.base').add({foo: 'b'})
-      , 1000
     </script>
 </body>
 </html>

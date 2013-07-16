@@ -44,7 +44,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     unless @backingView.isDead
       if newItems?.length
         #if @collection.isSorted and newItems.length == oldItems.length
-        #  subsequence = @longestNondecreasingSubsequence(oldItems, @collection.compareElements)
+        #  subsequence = @longestIncreasingSubsequence(oldItems, @collection.compareElements)
         #else
         @backingView.destroySubviews()
         @handleItemsAdded(newItems)
@@ -78,3 +78,35 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   die: ->
     @prototypeNode = null
     super
+
+  @_longestIncreasingSubsequence: (values, compare) ->
+    subsequenceLength = 0
+    lastIndexForLength = [] # the i'th element is the index of the last element of the monotonically increasing subsequence of length i + 1
+    predecessors = []
+
+    for val, index in values
+      start = 0
+      end = subsequenceLength
+
+      while end >= start
+        lastIndex = ((end - start) >> 1) + start
+
+        if compare(values[lastIndexForLength[lastIndex]], val) is 1
+          end = lastIndex - 1
+        else
+          start = lastIndex + 1
+
+      newIndex = end # at the end of the search, 'end' is the element before the position we want to insert into
+      predecessors[index] = lastIndexForLength[newIndex] # undefined if newIndex is -1
+
+      if newIndex is subsequenceLength or compare(val, values[lastIndexForLength[newIndex + 1]]) is -1
+        lastIndexForLength[newIndex + 1] = index
+        subsequenceLength = Math.max(subsequenceLength, newIndex + 1)
+
+    # build the subsequence from the predecessor array
+    currIndex = lastIndexForLength[subsequenceLength]
+    subsequence = []
+    while currIndex?
+      subsequence.unshift values[currIndex]
+      currIndex = predecessors[currIndex]
+    subsequence
