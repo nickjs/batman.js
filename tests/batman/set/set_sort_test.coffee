@@ -155,47 +155,6 @@ setSortOnObservableSetSuite = ->
     @authorNameSort.remove @byFred
     equal @authorNameSort.get('length'), 3
 
-  test "wtf", ->
-    # letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-    # generator = new Random(0, letters.length, 123123)
-
-    # window.current = 0
-    # window.old = 0
-
-    # a = []
-    # for i in [0...1000]
-    #   a.push Batman(foo: (letters[generator.next()] for j in [0..6]).join(''))
-
-    # set = new Batman.SetSort(qq = new Batman.Set(), 'foo')
-    # set.old = true
-
-    # t1 = performance.now()
-    # qq.add a...
-    # current = performance.now() - t1
-
-    # vv = new Batman.SetSort(cc = new Batman.Set(), 'foo')
-    # vv.old = false
-
-    # vv.on 'itemsWereAddedAtPositions', (items) ->
-    #   console.log items
-
-    # t1 = performance.now()
-    # cc.add a...
-    # old = performance.now() - t1
-
-    # ok current < old
-
-    # console.log current, old
-
-    set = new Batman.SetSort(new Batman.Set(b = {foo: 'b'}, c = {foo: 'c'}, a = {foo: 'a'}), 'foo')
-    deepEqual set.toArray(), [a, b, c]
-    set.remove(a)
-    deepEqual set.toArray(), [b, c]
-    set.remove(c)
-    deepEqual set.toArray(), [b]
-    set.add(a)
-    deepEqual set.toArray(), [a, b]
-
   test "toArray() includes newly added items in the correct order", ->
     @base.add @byJill
     expected = ['Fred', 'Fred', 'Jill', 'Mary', 'Zeke']
