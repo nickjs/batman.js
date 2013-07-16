@@ -63,7 +63,7 @@ class Batman.SetSort extends Batman.SetProxy
 
     @_reIndex()
 
-  handleItemsAdded: (items) ->
+  _handleItemsAdded: (items) ->
     if false and items.length > Math.log(@_storage.length) * 5
       @_reIndex()
     else
@@ -82,7 +82,7 @@ class Batman.SetSort extends Batman.SetProxy
       @fire('itemsWereAdded', addedItems, addedIndexes)
       @property('_storage').fire(@_storage, oldStorage, '_storage')
 
-  handleItemsRemoved: (items) ->
+  _handleItemsRemoved: (items) ->
     if false and items.length > Math.log(@_storage.length) * 5
       @_reIndex()
     else

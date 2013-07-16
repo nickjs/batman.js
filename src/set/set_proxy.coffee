@@ -10,22 +10,22 @@ class Batman.SetProxy extends Batman.Object
       @isCollectionEventEmitter = true
 
       @_setObserver = new Batman.SetObserver(@base)
-      @_setObserver.on 'itemsWereAdded', @handleItemsAdded.bind(this)
-      @_setObserver.on 'itemsWereRemoved', @handleItemsRemoved.bind(this)
+      @_setObserver.on 'itemsWereAdded', @_handleItemsAdded.bind(this)
+      @_setObserver.on 'itemsWereRemoved', @_handleItemsRemoved.bind(this)
       @startObserving()
+
+  Batman.extend @prototype, Batman.Enumerable
 
   startObserving: -> @_setObserver?.startObserving()
   stopObserving: -> @_setObserver?.stopObserving()
 
-  handleItemsAdded: (items) ->
+  _handleItemsAdded: (items) ->
     @set('length', @base.length)
     @fire('itemsWereAdded', items)
 
-  handleItemsRemoved: (items) ->
+  _handleItemsRemoved: (items) ->
     @set('length', @base.length)
     @fire('itemsWereRemoved', items)
-
-  Batman.extend @prototype, Batman.Enumerable
 
   filter: (f) ->
     @reduce (accumulator, element) ->
