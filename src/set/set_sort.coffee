@@ -23,7 +23,7 @@ class Batman.SetSort extends Batman.SetProxy
       addedIndexes = []
 
       for item in items
-        index = @_binarySearch(item, false)
+        index = @constructor._binarySearch(@_storage, item, @compareElements, false)
         if index >= 0
           @_storage.splice(index, 0, item)
           addedItems.push(item)
@@ -95,13 +95,13 @@ class Batman.SetSort extends Batman.SetProxy
     return 0
 
   compareElements: (a, b) =>
-    valueA = if @key then Batman.get(a, @key) else a
+    valueA = if @key and a? then Batman.get(a, @key) else a
     if typeof valueA is 'function'
       valueA = valueA.call(a)
 
     valueA = valueA.valueOf() if valueA?
 
-    valueB = if @key then Batman.get(b, @key) else b
+    valueB = if @key and b? then Batman.get(b, @key) else b
     if typeof valueB is 'function'
       valueB = valueB.call(b)
 
@@ -114,22 +114,23 @@ class Batman.SetSort extends Batman.SetProxy
     @_setObserver?.startObservingItems(newOrder)
     @set('_storage', newOrder)
 
-  _binarySearch: (item, exactMatch = true) ->
+  _indexOfItem: (item) -> @constructor._binarySearch(@_storage, item, @compareElements)
+
+  @_binarySearch: (arr, item, compare, exactMatch = true) ->
     start = 0
-    end = @_storage.length - 1
+    end = arr.length - 1
 
     while end >= start
       index = ((end - start) >> 1) + start
-      direction = @compareElements(item, @_storage[index])
+      direction = compare(item, arr[index])
 
       if direction > 0
         start = index + 1
       else if direction < 0
         end = index - 1
       else
-        return if exactMatch or item != @_storage[index] then index else -1
+        return if exactMatch or item != arr[index] then index else -1
 
     return if exactMatch then -1 else start
 
-  _indexOfItem: (item) -> @_binarySearch(item)
 

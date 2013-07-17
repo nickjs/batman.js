@@ -43,11 +43,40 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   handleArrayChanged: (newItems, oldItems) =>
     unless @backingView.isDead
       if newItems?.length
-        #if @collection.isSorted and newItems.length == oldItems.length
-        #  subsequence = @longestIncreasingSubsequence(oldItems, @collection.compareElements)
-        #else
-        @backingView.destroySubviews()
-        @handleItemsAdded(newItems)
+        if @collection.isSorted and oldItems and newItems.length == oldItems.length
+          {lastIndex: index, predecessors} = @constructor._longestIncreasingSubsequence(oldItems, @collection.compareElements)
+          subsequenceByIndex = []
+
+          sortedSubviews = []
+          unsortedSubviews = []
+          sortedValues = []
+          unsortedValues = []
+
+          while index?
+            subsequenceByIndex[index] = true
+            sortedSubviews.unshift(@backingView.subviews.at(index))
+            sortedValues.unshift(oldItems[index])
+            index = predecessors[index]
+
+          for defined, index in subsequenceByIndex when not defined
+            unsortedSubviews.unshift(@backingView.subviews.at(index))
+            unsortedValues.unshift(oldItems[index])
+
+          for val, index in unsortedValues
+            subview = unsortedSubviews[index]
+            targetIndex = Batman.SetSort._binarySearch(sortedValues, val, @collection.compareElements, false)
+
+            if targetIndex >= 0
+              @backingView.node.parentNode.insertBefore(subview.node, sortedSubviews[targetIndex]?.node || @backingView.node)
+
+              sortedSubviews.splice(targetIndex, 0, subview)
+              sortedValues.splice(targetIndex, 0, val)
+
+          @backingView.subviews._storage = sortedSubviews
+
+        else
+          @backingView.destroySubviews()
+          @handleItemsAdded(newItems)
       else
         @backingView.destroySubviews()
 
@@ -103,10 +132,4 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
         lastIndexForLength[newIndex + 1] = index
         subsequenceLength = Math.max(subsequenceLength, newIndex + 1)
 
-    # build the subsequence from the predecessor array
-    currIndex = lastIndexForLength[subsequenceLength]
-    subsequence = []
-    while currIndex?
-      subsequence.unshift values[currIndex]
-      currIndex = predecessors[currIndex]
-    subsequence
+    {lastIndex: lastIndexForLength[subsequenceLength], predecessors}

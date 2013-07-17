@@ -9,6 +9,7 @@ class Batman.DOM.AbstractCollectionBinding extends Batman.DOM.AbstractAttributeB
       return true
     else
       @unbindCollection()
+      oldCollection = @collection
       @collection = newCollection
 
       return false unless @collection?.isObservable
@@ -17,7 +18,7 @@ class Batman.DOM.AbstractCollectionBinding extends Batman.DOM.AbstractAttributeB
         @collection.on('itemsWereAdded', @handleItemsAdded)
         @collection.on('itemsWereRemoved', @handleItemsRemoved)
 
-        @handleArrayChanged(@collection.toArray()) if @collection.length
+        @handleArrayChanged(@collection.toArray(), oldCollection?.toArray())
 
       else
         @collection.observeAndFire('toArray', @handleArrayChanged)
