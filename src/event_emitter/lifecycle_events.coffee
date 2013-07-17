@@ -6,23 +6,22 @@ Batman.LifecycleEvents =
     beforeName = "before#{Batman.helpers.camelize(eventName)}"
     afterName = "after#{Batman.helpers.camelize(eventName)}"
 
-    addCallback = (eventName) ->
+    addCallback = (lifecycleEventName) ->
       (callbackName, options) ->
-        switch Batman.typeOf(callbackName)
-          when 'String'
-            callback = -> @[callbackName].apply(this, arguments)
-          when 'Function'
-            callback = callbackName
-          when 'Object'
-            callback = options
-            options = callbackName
+        if Batman.typeOf(callbackName) == 'Object'
+          [callbackName, options] = [options, callbackName]
+
+        if Batman.typeOf(callbackName) == 'String'
+          callback = -> @[callbackName].apply(this, arguments)
+        else
+          callback = callbackName
 
         options = normalizeFunction?(options) || options
 
         target = @prototype || this
         Batman.initializeObject(target)
 
-        handlers = target._batman[eventName] ||= []
+        handlers = target._batman[lifecycleEventName] ||= []
         handlers.push(options: options, callback: callback)
 
     @[beforeName] = addCallback(beforeName)
@@ -31,8 +30,8 @@ Batman.LifecycleEvents =
     @[afterName] = addCallback(afterName)
     @::[afterName] = addCallback(afterName)
 
-fire = (eventName, args...) ->
-  return unless handlers = @_batman.get(eventName)
+fire = (lifecycleEventName, args...) ->
+  return unless handlers = @_batman.get(lifecycleEventName)
 
   for {options, callback} in handlers
     continue if options?.if and !options.if.apply(this, args)
