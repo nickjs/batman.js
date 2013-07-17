@@ -5,7 +5,7 @@ QUnit.module 'Batman.View rendering formfor',
     @User = class User extends MockClass
       name: 'default name'
 
-asyncTest 'it should pull in objects for form rendering', 1, ->
+asyncTest 'it should pull in objects for form rendering', ->
   source = '''
   <form data-formfor-user="instanceOfUser">
     <input type="text" data-bind="user.name">
@@ -18,7 +18,7 @@ asyncTest 'it should pull in objects for form rendering', 1, ->
     equal $('input', node).val(), "default name"
     QUnit.start()
 
-asyncTest 'it should update objects when form rendering', 1, ->
+asyncTest 'it should update objects when form rendering', ->
   source = '''
   <form data-formfor-user="instanceOfUser">
     <input type="text" data-bind="user.name">
@@ -36,7 +36,7 @@ asyncTest 'it should update objects when form rendering', 1, ->
 
     QUnit.start()
 
-asyncTest 'it should update the context for the form if the context changes', 2, ->
+asyncTest 'it should update the context for the form if the context changes', ->
   source = '''
   <form data-formfor-user="instanceOfUser">
     <input type="text" data-bind="user.name">
@@ -51,7 +51,7 @@ asyncTest 'it should update the context for the form if the context changes', 2,
 
     QUnit.start()
 
-asyncTest 'it should add the errors class to an input bound to a field on the subject', 2, ->
+asyncTest 'it should add the errors class to an input bound to a field on the subject', ->
   source = '''
   <form data-formfor-user="instanceOfUser">
     <input type="text" data-bind="user.name">
@@ -65,13 +65,29 @@ asyncTest 'it should add the errors class to an input bound to a field on the su
 
     errors = new Batman.ErrorsSet
     errors.add('name', "can't be blank")
-    view.lookupKeypath('instanceOfUser').set('errors', errors)
+    view.instanceOfUser.set('errors', errors)
 
     ok $('input', node).hasClass('error')
 
     QUnit.start()
 
-asyncTest 'it should add the error list HTML to the default selected node', 3, ->
+asyncTest 'it should not add the errors class to a bound input if the bound input already has an errors class', ->
+  source = '''
+  <form data-formfor-user="instanceOfUser">
+    <input type="text" data-bind="user.name" data-addclass-error="user.hasAnError" />
+  </form>
+  '''
+
+  context = instanceOfUser: Batman(name: '', hasAnError: false)
+
+  helpers.render source, context, (node, view) =>
+    ok !$('input', node).hasClass('error')
+    view.instanceOfUser.set('hasAnError', true)
+    ok $('input', node).hasClass('error')
+
+    QUnit.start()
+
+asyncTest 'it should add the error list HTML to the default selected node', ->
   source = '''
   <form data-formfor-user="instanceOfUser">
     <div class="errors"></div>
@@ -93,7 +109,7 @@ asyncTest 'it should add the error list HTML to the default selected node', 3, -
 
 
 
-asyncTest 'it should only show the errors list when there are errors', 2, ->
+asyncTest 'it should only show the errors list when there are errors', ->
   source = '''
   <form data-formfor-user="instanceOfUser">
     <div class="errors"></div>
@@ -112,7 +128,7 @@ asyncTest 'it should only show the errors list when there are errors', 2, ->
 
     QUnit.start()
 
-asyncTest 'it shouldn\'t override already existing showif bindings on the errors list', 2, ->
+asyncTest 'it shouldn\'t override already existing showif bindings on the errors list', ->
   source = '''
   <form data-formfor-user="instanceOfUser">
     <div class="errors" data-showif="isVisible"></div>
@@ -132,7 +148,7 @@ asyncTest 'it shouldn\'t override already existing showif bindings on the errors
 
     QUnit.start()
 
-asyncTest 'it should add the error list HTML to a specified selected node', 3, ->
+asyncTest 'it should add the error list HTML to a specified selected node', ->
   source = '''
   <form data-formfor-user="instanceOfUser" data-errors-list="#testy">
     <div class="errors"><div><span id="testy"></span></div></div>

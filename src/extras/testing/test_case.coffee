@@ -1,6 +1,15 @@
-class Batman.TestCase
+class Batman.TestCase extends Batman.Object
+  @mixin Batman.XhrMocking
+
   class @Test
     constructor: (@name, @expected, @testFunction) ->
+
+    run: (testCase) ->
+      wrappedTest = sinon.test(@testFunction).bind(testCase)
+      wrappedTest = testCase.expectationsWrapper(wrappedTest)
+      wrappedTest = testCase.xhrWrapper(wrappedTest)
+
+      QUnit.test(@name, @expected, wrappedTest)
 
   @test: (name, expected, testFunction) ->
     if typeof expected is 'function'
@@ -10,16 +19,18 @@ class Batman.TestCase
     @tests ||= []
     @tests.push new @Test(name, expected, testFunction)
 
-  runTests: (context) ->
-    QUnit.module.call context, @constructor.name,
-      setup: @setup.bind(this)
-      teardown: @teardown.bind(this)
+  constructor: ->
+    @_expectations = {}
+
+  runTests: ->
+    QUnit.module @constructor.name,
+      setup: @xhrWrapper(@setup.bind(this))
+      teardown: @xhrWrapper(@teardown.bind(this))
 
     for desc, test of @constructor.tests
-      QUnit.test(test.name, test.expected, sinon.test(test.testFunction).bind(this))
+      test.run(this)
 
   setup: ->
-
   teardown: ->
 
   continue: ->
@@ -73,3 +84,67 @@ class Batman.TestCase
 
   assertRaises: (expected, callback, message) ->
     QUnit.raises callback, expected, message
+
+  addExpectation: (name) ->
+    if @_expectations[name] then @_expectations[name]++ else @_expectations[name] = 1
+
+  completeExpectation: (name) ->
+    return if not @_expectations[name]
+    QUnit.ok(true, "Completed #{name}")
+    if @_expectations[name] is 1 then delete @_expectations[name] else @_expectations[name]--
+
+  verifyExpectations: ->
+    for key, count of @_expectations
+      QUnit.ok(false, "Expectation #{key} did not callback #{count} time(s)")
+
+  clearExpectations: -> @_expectations = {}
+
+  expectationsWrapper: (fn) ->
+    testCase = this
+
+    return ->
+      testCase.clearExpectations()
+      results = fn.apply(this, arguments)
+      testCase.verifyExpectations()
+      return results
+
+  xhrWrapper: (fn) ->
+    return ->
+      Batman.Request.setupMockedResponse()
+      return fn.apply(this, arguments)
+
+  assertGET: (url, params) ->
+    @_assertXHR('GET', url, params)
+
+  assertPOST: (url, params) ->
+    @_assertXHR('POST', url, params)
+
+  assertPUT: (url, params) ->
+    @_assertXHR('PUT', url, params)
+
+  assertDELETE: (url, params) ->
+    @_assertXHR('DELETE', url, params)
+
+  _assertXHR: (method, url, params) ->
+    id = "#{method} to #{url}"
+    @addExpectation(id)
+
+    Batman.Request.addMockedResponse method, url, =>
+      @completeExpectation(id)
+
+      params ||= {}
+      params.status ||= 200
+      params.response ||= {}
+
+      return params
+
+
+# Nicer messages for the command line runner
+do ->
+  originalPush = QUnit.push
+  parseExpected = (exp) -> "\x1B[32m#{QUnit.jsDump.parse(exp)}\x1B[39m"
+  parseActual   = (act) -> "\x1B[31m#{QUnit.jsDump.parse(act)}\x1B[39m"
+
+  QUnit.push = (result, actual, expected, message) ->
+    message ||= "#{parseExpected(expected)} expected but was #{parseActual(actual)}"
+    originalPush.call(QUnit, result, actual, expected, message)

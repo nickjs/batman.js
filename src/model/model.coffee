@@ -502,6 +502,7 @@ class Batman.Model extends Batman.Object
     adapter.perform operation, this, options, => callback(arguments...)
 
   _withoutDirtyTracking: (block) ->
+    return block.call(@) if @_pauseDirtyTracking
     @_pauseDirtyTracking = true
     result = block.call(@)
     @_pauseDirtyTracking = false

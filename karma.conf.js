@@ -21,7 +21,8 @@ var sourceFiles = snockets.scan('src/batman.coffee', {async: false}).getChain('s
 
     libFiles = [
       'tests/lib/json2.js',
-      'tests/lib/jquery.js'
+      'tests/lib/jquery.js',
+      'tests/lib/sinon.js'
     ],
     extraFiles = [
       'src/extras/batman.rails.coffee',
@@ -39,11 +40,7 @@ files = [QUNIT, QUNIT_ADAPTER, 'lib/es5-shim.js'].concat(sourceFiles,
                                                          platformFiles,
                                                          libFiles,
                                                          extraFiles,
-                                                         testFiles)
-exclude = [
-  'tests/batman/build/**/*.coffee',
-  'tests/batman/node_test.coffee'
-];
+                                                         testFiles);
 
 
 // preprocessors

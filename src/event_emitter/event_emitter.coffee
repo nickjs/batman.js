@@ -1,5 +1,3 @@
-#= require ./event
-
 Batman.EventEmitter =
   isEventEmitter: true
   hasEvent: (key) ->
