@@ -142,14 +142,34 @@ test 'filters specifying no restrictions should be called on all actions', ->
   class FilterController extends Batman.Controller
     @beforeAction spy
 
-    show: -> @render false
-    index: -> @render false
+    index: -> @render(false)
+    show: -> @render(false)
 
   controller = new FilterController
 
-  controller.dispatch 'show'
+  controller.dispatch('index')
   equal spy.callCount, 1
-  controller.dispatch 'index'
+
+  controller.dispatch('show')
+  equal spy.callCount, 2
+
+test 'filters specified with strings should work the same way', ->
+  spy = createSpy()
+  class FilterController extends Batman.Controller
+    @beforeAction 'callSpy'
+
+    index: -> @render(false)
+    show: -> @render(false)
+
+    callSpy: ->
+      spy()
+
+  controller = new FilterController
+
+  controller.dispatch('index')
+  equal spy.callCount, 1
+
+  controller.dispatch('show')
   equal spy.callCount, 2
 
 test 'filters specified on instances should only work on that instance', ->
@@ -166,17 +186,43 @@ test 'filters specifying only should only be called on those actions', ->
   spy = createSpy()
 
   class FilterController extends Batman.Controller
-    @beforeAction {only: 'withBefore'}, spy
+    @beforeAction only: 'withBefore', spy
 
     withBefore: -> @render false
     all: -> @render false
 
   controller = new FilterController
 
-  controller.dispatch 'withBefore'
+  controller.dispatch('withBefore')
   equal spy.callCount, 1
-  controller.dispatch 'all'
+
+  controller.dispatch('all')
   equal spy.callCount, 1
+
+test 'filters specified with strings and only (in either order) should only be called on those actions', ->
+  firstSpy = createSpy()
+  secondSpy = createSpy()
+
+  class FilterController extends Batman.Controller
+    @beforeAction only: 'first', 'callFirstSpy'
+    @beforeAction 'callSecondSpy', only: 'second'
+
+    first: -> @render(false)
+    second: -> @render(false)
+
+    callFirstSpy: ->
+      firstSpy()
+
+    callSecondSpy: ->
+      secondSpy()
+
+  controller = new FilterController
+
+  controller.dispatch('first')
+  equal firstSpy.callCount, 1
+
+  controller.dispatch('second')
+  equal secondSpy.callCount, 1
 
 test 'filters specifying except should not be called on those actions', ->
   spy = createSpy()
