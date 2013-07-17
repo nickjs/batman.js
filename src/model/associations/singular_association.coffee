@@ -5,7 +5,7 @@ class Batman.SingularAssociation extends Batman.Association
 
   getAccessor: (association, model, label) ->
     # Check whether the relation has already been set on this model
-    if recordInAttributes = association.getFromAttributes(@)
+    if recordInAttributes = association.getFromAttributes(this)
       return recordInAttributes
 
     # Make sure the related model has been loaded
@@ -26,4 +26,4 @@ class Batman.SingularAssociation extends Batman.Association
 
   setIndex: ->
     @index ||= new Batman.UniqueAssociationSetIndex(this, @[@indexRelatedModelOn])
-    @index
+
