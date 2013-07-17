@@ -98,13 +98,12 @@ class Batman.Controller extends Batman.Object
     oldRedirect = Batman.navigator?.redirect
     Batman.navigator?.redirect = @redirect
 
-    @fireLifecycleEvent('beforeAction', frame.params, frame)
-    result = @[action](params) if not @_afterFilterRedirect
+    if @fireLifecycleEvent('beforeAction', frame.params, frame) != false
+      result = @[action](params) if not @_afterFilterRedirect
+      @render() if not frame.operationOccurred
 
-    @render() if not frame.operationOccurred
     frame.finishOperation()
-
-    result
+    return result
 
   redirect: (url) =>
     frame = @_actionFrames[@_actionFrames.length - 1]
