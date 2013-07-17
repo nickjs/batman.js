@@ -25,6 +25,14 @@ class Batman.Controller extends Batman.Object
 
     return normalized
 
+  @beforeFilter: ->
+    Batman.developer.deprecated("Batman.Controller::beforeFilter", "Please use beforeAction instead.")
+    @beforeAction.apply(this, arguments)
+
+  @afterFilter: ->
+    Batman.developer.deprecated("Batman.Controller::afterFilter", "Please use afterAction instead.")
+    @afterAction.apply(this, arguments)
+
   @afterAction (params) ->
     if @autoScrollToHash && params['#']?
       @scrollToHash(params['#'])
