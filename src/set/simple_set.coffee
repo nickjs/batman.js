@@ -65,7 +65,7 @@ class Batman.SimpleSet
     @clear()
     @add(other.toArray()...)
 
-  has: (item) -> !!(~@_indexOfItem(item))
+  has: (item) -> @_indexOfItem(item) != -1
 
   find: (fn) ->
     for item in @_storage
