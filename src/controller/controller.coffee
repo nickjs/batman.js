@@ -145,6 +145,9 @@ class Batman.Controller extends Batman.Object
       view = @renderCache.viewForOptions(options)
 
     if view
+      view.once 'viewDidAppear', ->
+        frame?.finishOperation()
+
       yieldName = options.into || @defaultRenderYield
 
       if yieldContentView = Batman.DOM.Yield.withName(yieldName).contentView
@@ -155,9 +158,6 @@ class Batman.Controller extends Batman.Object
 
       Batman.currentApp?.layout?.subviews?.add(view)
       @set('currentView', view)
-
-      view.once 'viewDidAppear', ->
-        frame?.finishOperation()
 
     view
 
