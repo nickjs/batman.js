@@ -12,11 +12,12 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
     @foreignKey = @options.foreignKey or "#{Batman.helpers.underscore(@model.get('resourceName'))}_id"
 
   apply: (baseSaveError, base) ->
-    if relation = @getFromAttributes(base)
-      relation.set @foreignKey, base.get(@primaryKey)
+    unless baseSaveError
+      if relation = @getFromAttributes(base)
+        relation.set @foreignKey, base.get(@primaryKey)
 
   encoder: ->
-    association = @
+    association = this
     (val, key, object, record) ->
       return unless association.options.saveInline
       if json = val.toJSON()
@@ -24,7 +25,7 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
       json
 
   decoder: ->
-    association = @
+    association = this
     (data, _, __, ___, parentRecord) ->
       return unless data
       relatedModel = association.getRelatedModel()

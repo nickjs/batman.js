@@ -2,6 +2,7 @@ Batman.EventEmitter =
   isEventEmitter: true
   hasEvent: (key) ->
     @_batman?.get?('events')?.hasOwnProperty(key)
+
   event: (key, createEvent = true) ->
     Batman.initializeObject this
     eventClass = @eventClass or Batman.Event
@@ -22,6 +23,7 @@ Batman.EventEmitter =
   on: (keys..., handler) ->
     @event(key).addHandler(handler) for key in keys
     true
+
   off: (keys..., handler) ->
     unless keys.length
       key = handler
@@ -35,22 +37,26 @@ Batman.EventEmitter =
       handler.apply(this, arguments)
       event.removeHandler(handlerWrapper)
     event.addHandler(handlerWrapper)
+
   registerAsMutableSource: ->
     Batman.Property.registerSource(this)
+
   mutation: (wrappedFunction) ->
     ->
       result = wrappedFunction.apply(this, arguments)
       @event('change', false)?.fire(this, this)
       result
+
   prevent: (key) ->
     @event(key).prevent()
     this
   allow: (key) ->
     @event(key).allow()
     this
-  isPrevented: (key) ->
-    @event(key, false)?.isPrevented()
   fire: (key, args...) ->
     @event(key, false)?.fireWithContext(this, args)
   allowAndFire: (key, args...) ->
     @event(key, false)?.allowAndFireWithContext(this, args)
+
+  isPrevented: (key) ->
+    @event(key, false)?.isPrevented()

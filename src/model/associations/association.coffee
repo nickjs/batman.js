@@ -29,8 +29,8 @@ class Batman.Association
 
     # The accessor needs reference to this association object, so curry the association info into
     # the getAccessor, which has the model applied as the context.
-    self = @
-    getAccessor = -> return self.getAccessor.call(@, self, @model, @label)
+    association = this
+    getAccessor = -> return association.getAccessor.call(this, association, @model, @label)
 
     @model.accessor @label,
       get: getAccessor
