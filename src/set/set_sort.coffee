@@ -10,9 +10,28 @@ class Batman.SetSort extends Batman.SetProxy
 
     if @isCollectionEventEmitter
       @_setObserver.observedItemKeys = [@key]
-      @_setObserver.observerForItemAndKey = => => @_reIndex()
+      @_setObserver.observerForItemAndKey = (item) => (newValue, oldValue) => @_handleItemsModified(item, newValue, oldValue)
 
     @_reIndex()
+
+  _handleItemsModified: (item, newValue, oldValue) ->
+    # at this point, item already has the new value set, so we need to use a different object for comparison
+    proxyItem = {}
+    proxyItem[@key] = oldValue
+
+    compareElements = (a, b) =>
+      a = proxyItem if a is item
+      b = proxyItem if b is item
+      @compareElements(a, b)
+
+    oldIndex = @constructor._binarySearch(@_storage, item, compareElements)
+    return if oldIndex < 0
+    @_storage.splice(oldIndex, 1)
+
+    newIndex = @constructor._binarySearch(@_storage, item, @compareElements, false)
+    @_storage.splice(newIndex, 0, item)
+
+    @fire('itemWasMoved', item, newIndex, oldIndex) unless oldIndex == newIndex
 
   _handleItemsAdded: (items) ->
     if false and items.length > Math.log(@_storage.length) * 5
@@ -110,26 +129,39 @@ class Batman.SetSort extends Batman.SetProxy
     @compare(valueA, valueB) * multiple
 
   _reIndex: ->
-    newOrder = @base.toArray().sort @compareElements
+    newOrder = @base.toArray().sort(@compareElements)
     @_setObserver?.startObservingItems(newOrder)
     @set('_storage', newOrder)
 
-  _indexOfItem: (item) -> @constructor._binarySearch(@_storage, item, @compareElements)
+  _indexOfItem: (target) ->
+    @constructor._binarySearch(@_storage, target, @compareElements)
 
-  @_binarySearch: (arr, item, compare, exactMatch = true) ->
+  @_binarySearch: (arr, target, compare, exactMatch = true) ->
     start = 0
     end = arr.length - 1
 
     while end >= start
       index = ((end - start) >> 1) + start
-      direction = compare(item, arr[index])
+      direction = compare(target, arr[index])
 
       if direction > 0
         start = index + 1
       else if direction < 0
         end = index - 1
       else
-        return if exactMatch or item != arr[index] then index else -1
+        index = do ->
+          i = index
+          while i >= 0 and compare(target, arr[i]) is 0
+            return i if target is arr[i]
+            i--
+
+          i = index + 1
+          while i < arr.length and compare(target, arr[i]) is 0
+            return i if target is arr[i]
+            i++
+          return index
+
+        return if exactMatch == (target is arr[index]) then index else -1 # ಠ_ಠ
 
     return if exactMatch then -1 else start
 

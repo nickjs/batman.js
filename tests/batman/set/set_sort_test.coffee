@@ -119,24 +119,39 @@ setSortSuite = ->
     sorted = @base.sortedBy('valueOf')
     deepEqual sorted.toArray(), ['a', 'b', 'c']
 
-  test "_binarySearch returns the correct index", ->
+  test "_indexOfItem returns the correct index", ->
     arr = [1, 3, 5, 6, 7, 8, 10]
     set = new Batman.Set(arr...).sortedBy('')
-    equal set._binarySearch(4), -1
-    equal arr[set._binarySearch(1)], 1
-    equal arr[set._binarySearch(3)], 3
-    equal arr[set._binarySearch(5)], 5
-    equal arr[set._binarySearch(6)], 6
-    equal arr[set._binarySearch(7)], 7
+    equal set._indexOfItem(4), -1
+    equal arr[set._indexOfItem(1)], 1
+    equal arr[set._indexOfItem(3)], 3
+    equal arr[set._indexOfItem(5)], 5
+    equal arr[set._indexOfItem(6)], 6
+    equal arr[set._indexOfItem(7)], 7
 
     arr = [1, 2]
     set = new Batman.Set(arr...).sortedBy('')
-    equal arr[set._binarySearch(1)], 1
-    equal arr[set._binarySearch(2)], 2
+    equal arr[set._indexOfItem(1)], 1
+    equal arr[set._indexOfItem(2)], 2
 
-    arr = [1, 2, 3, 5, 6, 7]
-    set = new Batman.Set(arr...).sortedBy('')
-    equal set._binarySearch(8, false), 6
+  test "_indexOfItem returns the correct item for duplicate keys", ->
+    arr = [a = {key: 1}, b = {key: 1}, c = {key: 1}, d = {key: 1}, e = {key: 1}]
+    set = new Batman.Set(arr...).sortedBy('key')
+
+    equal arr[set._indexOfItem(a)], a
+    equal arr[set._indexOfItem(b)], b
+    equal arr[set._indexOfItem(c)], c
+    equal arr[set._indexOfItem(d)], d
+    equal arr[set._indexOfItem(e)], e
+
+    arr = [a = {key: 0}, b = {key: 1}, c = {key: 1}, d = {key: 4}, e = {key: 5}]
+    set = new Batman.Set(arr...).sortedBy('key')
+
+    equal arr[set._indexOfItem(a)], a
+    equal arr[set._indexOfItem(b)], b
+    equal arr[set._indexOfItem(c)], c
+    equal arr[set._indexOfItem(d)], d
+    equal arr[set._indexOfItem(e)], e
 
 setSortOnObservableSetSuite = ->
   test "get('length') returns the correct length when items are added to the underlying set", ->
@@ -176,9 +191,9 @@ setSortOnObservableSetSuite = ->
     deepEqual @authorNameSort.toArray(), expected
 
   test "setting a new value of the sorted property on one of the items triggers an update", ->
-    switchedAuthorToMary = @anotherByFred
-    switchedAuthorToMary.set('author', @mary)
-    expected = [@byFred, @byMary, switchedAuthorToMary, @byZeke]
+    switchedAuthorToBobs = @anotherByFred
+    switchedAuthorToBobs.set('author', @bobs)
+    expected = [switchedAuthorToBobs, @byFred, @byMary, @byZeke]
     deepEqual @authorNameSort.toArray(), expected
 
   test "setting a new value of the sorted property on an item which has been removed should not trigger an update", ->
@@ -219,6 +234,7 @@ fixtureSetup = ->
   @mary = Batman name: 'Mary'
   @fred = Batman name: 'Fred'
   @jill = Batman name: 'Jill'
+  @bobs = Batman name: 'Bobs'
 
   @byZeke = Batman author: @zeke
   @byMary = Batman author: @mary

@@ -42,43 +42,8 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
   handleArrayChanged: (newItems, oldItems) =>
     unless @backingView.isDead
-      if newItems?.length
-        if @collection.isSorted and oldItems and newItems.length == oldItems.length
-          {lastIndex: index, predecessors} = @constructor._longestIncreasingSubsequence(oldItems, @collection.compareElements)
-          subsequenceByIndex = []
-
-          sortedSubviews = []
-          unsortedSubviews = []
-          sortedValues = []
-          unsortedValues = []
-
-          while index?
-            subsequenceByIndex[index] = true
-            sortedSubviews.unshift(@backingView.subviews.at(index))
-            sortedValues.unshift(oldItems[index])
-            index = predecessors[index]
-
-          for defined, index in subsequenceByIndex when not defined
-            unsortedSubviews.unshift(@backingView.subviews.at(index))
-            unsortedValues.unshift(oldItems[index])
-
-          for val, index in unsortedValues
-            subview = unsortedSubviews[index]
-            targetIndex = Batman.SetSort._binarySearch(sortedValues, val, @collection.compareElements, false)
-
-            if targetIndex >= 0
-              @backingView.node.parentNode.insertBefore(subview.node, sortedSubviews[targetIndex]?.node || @backingView.node)
-
-              sortedSubviews.splice(targetIndex, 0, subview)
-              sortedValues.splice(targetIndex, 0, val)
-
-          @backingView.subviews._storage = sortedSubviews
-
-        else
-          @backingView.destroySubviews()
-          @handleItemsAdded(newItems)
-      else
-        @backingView.destroySubviews()
+      @backingView.destroySubviews()
+      @handleItemsAdded(newItems) if newItems?.length
 
   handleItemsAdded: (addedItems, addedIndexes) =>
     unless @backingView.isDead
@@ -86,7 +51,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       if addedIndexes
         @backingView.insertItem(item, addedIndexes[i]) for item, i in addedItems
       else
-        @backingView.appendItem(item) for item in addedItems if addedItems
+        @backingView.appendItem(item) for item in addedItems
       @backingView.finishAppendItems()
 
   handleItemsRemoved: (removedItems, removedIndexes) =>
@@ -104,32 +69,10 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       else
         @backingView.destroySubviews()
 
+  handleItemMoved: (item, newIndex, oldIndex) =>
+    unless @backingView.isDead
+      @backingView.moveItem(oldIndex, newIndex)
+
   die: ->
     @prototypeNode = null
     super
-
-  @_longestIncreasingSubsequence: (values, compare) ->
-    subsequenceLength = 0
-    lastIndexForLength = [] # the i'th element is the index of the last element of the monotonically increasing subsequence of length i + 1
-    predecessors = []
-
-    for val, index in values
-      start = 0
-      end = subsequenceLength
-
-      while end >= start
-        lastIndex = ((end - start) >> 1) + start
-
-        if compare(values[lastIndexForLength[lastIndex]], val) is 1
-          end = lastIndex - 1
-        else
-          start = lastIndex + 1
-
-      newIndex = end # at the end of the search, 'end' is the element before the position we want to insert into
-      predecessors[index] = lastIndexForLength[newIndex] # undefined if newIndex is -1
-
-      if newIndex is subsequenceLength or compare(val, values[lastIndexForLength[newIndex + 1]]) is -1
-        lastIndexForLength[newIndex + 1] = index
-        subsequenceLength = Math.max(subsequenceLength, newIndex + 1)
-
-    {lastIndex: lastIndexForLength[subsequenceLength], predecessors}

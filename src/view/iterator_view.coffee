@@ -43,4 +43,13 @@ class Batman.IteratorView extends Batman.View
     @appendedViews = null
     @fragment = null
 
+  moveItem: (oldIndex, newIndex) ->
+    source = @subviews.at(oldIndex)
+    @subviews._storage.splice(oldIndex, 1)
+
+    target = @subviews.at(newIndex)
+    @subviews._storage.splice(newIndex, 0, source)
+
+    @node.parentNode.insertBefore(source.node, target?.node || @node)
+
 class Batman.IterationView extends Batman.View

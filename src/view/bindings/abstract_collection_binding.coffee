@@ -14,12 +14,12 @@ class Batman.DOM.AbstractCollectionBinding extends Batman.DOM.AbstractAttributeB
 
       return false unless @collection?.isObservable
 
-      if @collection.isCollectionEventEmitter and @handleItemsAdded and @handleItemsRemoved
+      if @collection.isCollectionEventEmitter and @handleItemsAdded and @handleItemsRemoved and @handleItemMoved
         @collection.on('itemsWereAdded', @handleItemsAdded)
         @collection.on('itemsWereRemoved', @handleItemsRemoved)
+        @collection.on('itemWasMoved', @handleItemMoved)
 
         @handleArrayChanged(@collection.toArray(), oldCollection?.toArray())
-
       else
         @collection.observeAndFire('toArray', @handleArrayChanged)
 
@@ -28,9 +28,10 @@ class Batman.DOM.AbstractCollectionBinding extends Batman.DOM.AbstractAttributeB
   unbindCollection: ->
     return unless @collection?.isObservable
 
-    if @collection.isCollectionEventEmitter and @handleItemsAdded and @handleItemsRemoved
+    if @collection.isCollectionEventEmitter and @handleItemsAdded and @handleItemsRemoved and @handleItemMoved
       @collection.off('itemsWereAdded', @handleItemsAdded)
       @collection.off('itemsWereRemoved', @handleItemsRemoved)
+      @collection.off('itemWasMoved', @handleItemMoved)
     else
       @collection.off('toArray', @handleArrayChanged)
 
