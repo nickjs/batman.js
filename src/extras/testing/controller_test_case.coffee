@@ -27,6 +27,38 @@ class Batman.ControllerTestCase extends Batman.TestCase
       @assert params.params[namedArg], "named argument: #{namedArg} doesn't exist in parameters"
     
     params.preAction?()
-    controller.dispatch actionRoute.action, params.params
+    try
+      controller.dispatch actionRoute.action, params.params
+      currentView = controller.get('currentView')
+      $('body').append('<div id="batman_fixture">')
+      currentView.get('node')
+      currentView.addToParentNode( $('#batman_fixture')[0] )
+      currentView.initializeBindings()
+      @assert currentView.get('html'), "No HTML for view"
+    catch e
+      @assert false, "Caught exception in view bindings: #{e.toString()}"
+    finally
+      $('#batman_fixture').remove()
+
     params.postAction?()
     null
+
+  @fetchHTML: (basePath, path, callback) ->
+    $.ajax( {
+      url: "#{basePath}/#{path}.js.htm"
+      method: 'GET'
+      success: (data) ->
+        callback(data, path)
+      error: =>
+        callback(undefined)
+      } )
+
+  @populateHTML: (basePath, callback) ->
+    routes = Batman.currentApp.get('routes.routeMap.childrenByOrder')
+    numRoutes = routes.length
+    for route in routes
+      @fetchHTML basePath, "#{route.controller}/#{route.action}", (data, path) ->
+        Batman.View.store.set(Batman.Navigator.normalizePath(path), data)
+        numRoutes -= 1
+        if numRoutes == 0 
+          callback()
