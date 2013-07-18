@@ -19,54 +19,58 @@ class Batman.SetSort extends Batman.SetProxy
     proxyItem = {}
     proxyItem[@key] = oldValue
 
-    compareElements = (a, b) =>
+    wrappedCompare = (a, b) =>
       a = proxyItem if a is item
       b = proxyItem if b is item
       @compareElements(a, b)
 
-    oldIndex = @constructor._binarySearch(@_storage, item, compareElements)
+    newStorage = @_storage.slice()
+
+    oldIndex = @constructor._binarySearch(newStorage, item, wrappedCompare)
     return if oldIndex < 0
-    @_storage.splice(oldIndex, 1)
+    newStorage.splice(oldIndex, 1)
 
-    newIndex = @constructor._binarySearch(@_storage, item, @compareElements, false)
-    @_storage.splice(newIndex, 0, item)
+    newIndex = @constructor._binarySearch(newStorage, item, @compareElements, false)
+    newStorage.splice(newIndex, 0, item)
 
-    @fire('itemWasMoved', item, newIndex, oldIndex) unless oldIndex == newIndex
+    unless oldIndex == newIndex
+      @set('_storage', newStorage)
+      @fire('itemWasMoved', item, newIndex, oldIndex)
 
   _handleItemsAdded: (items) ->
     # if items.length > Math.log(@_storage.length) * 5
     #   @_reIndex()
     # else
-    oldStorage = @_storage.slice()
+    newStorage = @_storage.slice()
     addedItems = []
     addedIndexes = []
 
     for item in items
-      index = @constructor._binarySearch(@_storage, item, @compareElements, false)
+      index = @constructor._binarySearch(newStorage, item, @compareElements, false)
       if index >= 0
-        @_storage.splice(index, 0, item)
+        newStorage.splice(index, 0, item)
         addedItems.push(item)
         addedIndexes.push(index)
 
+    @set('_storage', newStorage)
     @set('length', @_storage.length)
     @fire('itemsWereAdded', addedItems, addedIndexes)
-    @property('_storage').fire(@_storage, oldStorage, '_storage')
 
   _handleItemsRemoved: (items) ->
-    oldStorage = @_storage.slice()
+    newStorage = @_storage.slice()
     removedItems = []
     removedIndexes = []
 
     for item in items
-      index = @_indexOfItem(item)
+      index = @constructor._binarySearch(newStorage, item, @compareElements)
       if index >= 0
-        @_storage.splice(index, 1)
+        newStorage.splice(index, 1)
         removedItems.push(item)
         removedIndexes.push(index)
 
+    @set('_storage', newStorage)
     @set('length', @_storage.length)
     @fire('itemsWereRemoved', removedItems, removedIndexes)
-    @property('_storage').fire(@_storage, oldStorage, '_storage')
 
   toArray: -> @get('_storage').slice()
 
