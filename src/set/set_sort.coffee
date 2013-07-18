@@ -34,42 +34,39 @@ class Batman.SetSort extends Batman.SetProxy
     @fire('itemWasMoved', item, newIndex, oldIndex) unless oldIndex == newIndex
 
   _handleItemsAdded: (items) ->
-    if false and items.length > Math.log(@_storage.length) * 5
-      @_reIndex()
-    else
-      oldStorage = @_storage.slice()
-      addedItems = []
-      addedIndexes = []
+    # if items.length > Math.log(@_storage.length) * 5
+    #   @_reIndex()
+    # else
+    oldStorage = @_storage.slice()
+    addedItems = []
+    addedIndexes = []
 
-      for item in items
-        index = @constructor._binarySearch(@_storage, item, @compareElements, false)
-        if index >= 0
-          @_storage.splice(index, 0, item)
-          addedItems.push(item)
-          addedIndexes.push(index)
+    for item in items
+      index = @constructor._binarySearch(@_storage, item, @compareElements, false)
+      if index >= 0
+        @_storage.splice(index, 0, item)
+        addedItems.push(item)
+        addedIndexes.push(index)
 
-      @set('length', @_storage.length)
-      @fire('itemsWereAdded', addedItems, addedIndexes)
-      @property('_storage').fire(@_storage, oldStorage, '_storage')
+    @set('length', @_storage.length)
+    @fire('itemsWereAdded', addedItems, addedIndexes)
+    @property('_storage').fire(@_storage, oldStorage, '_storage')
 
   _handleItemsRemoved: (items) ->
-    if false and items.length > Math.log(@_storage.length) * 5
-      @_reIndex()
-    else
-      oldStorage = @_storage.slice()
-      removedItems = []
-      removedIndexes = []
+    oldStorage = @_storage.slice()
+    removedItems = []
+    removedIndexes = []
 
-      for item in items
-        index = @_indexOfItem(item)
-        if index >= 0
-          @_storage.splice(index, 1)
-          removedItems.push(item)
-          removedIndexes.push(index)
+    for item in items
+      index = @_indexOfItem(item)
+      if index >= 0
+        @_storage.splice(index, 1)
+        removedItems.push(item)
+        removedIndexes.push(index)
 
-      @set('length', @_storage.length)
-      @fire('itemsWereRemoved', removedItems, removedIndexes)
-      @property('_storage').fire(@_storage, oldStorage, '_storage')
+    @set('length', @_storage.length)
+    @fire('itemsWereRemoved', removedItems, removedIndexes)
+    @property('_storage').fire(@_storage, oldStorage, '_storage')
 
   toArray: -> @get('_storage').slice()
 
