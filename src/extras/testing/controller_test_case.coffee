@@ -7,24 +7,30 @@ class Batman.ControllerTestCase extends Batman.TestCase
     
     controller = new @controllerClass
     @assert controller.routingKey, "Routing key isn't set"
-    
+    return if !controller.routingKey?
+
     actionRoutes = Batman.currentApp.get('routes.routeMap').childrenByName[controller.routingKey]
     @assert actionRoutes, "No routes for routing key: #{controller.routingKey}"
+    return if !actionRoutes?
     
-    assertedActions = []
-    for action in actionRoutes.childrenByOrder
+    assertedActions = actionRoutes.childrenByOrder
+    findInArray = (array, item) ->
+      for i in array
+        if item == i.action
+          return true
+      false
+    for action of params
+      if not findInArray(assertedActions, action)
+        assertedActions.push({ action: action, namedArguments: [] })
+
+    for action in assertedActions
       @assertAction(controller, action, params.action)
       assertedActions.push(action.action)
-
-    #unnamed routes, user specified actions to run through dispatch
-    for action of params
-      if not action in assertedActions
-        @assertedAction(controller, { action: action }, params.action )
 
   assertAction: (controller, actionRoute, params = {}) ->
     @assertEqual 'function', typeof controller[actionRoute.action], "Action: #{actionRoute.action} doesn't exist!"
     for namedArg in actionRoute.namedArguments
-      @assert params.params[namedArg], "named argument: #{namedArg} doesn't exist in parameters"
+      @assert namedArg of params.params, "named argument: #{namedArg} doesn't exist in parameters"
     
     params.preAction?()
     try
@@ -32,7 +38,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
       currentView = controller.get('currentView')
       $('body').append('<div id="batman_fixture">')
       currentView.get('node')
-      currentView.addToParentNode( $('#batman_fixture')[0] )
+      currentView.addToParentNode($('#batman_fixture')[0])
       currentView.initializeBindings()
       @assert currentView.get('html'), "No HTML for view"
     catch e
