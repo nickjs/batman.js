@@ -24,7 +24,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
         assertedActions.push({ action: action, namedArguments: [] })
 
     for action in assertedActions
-      @assertAction(controller, action, params.action)
+      @assertAction(controller, action, params[action.action])
       assertedActions.push(action.action)
 
   assertAction: (controller, actionRoute, params = {}) ->
@@ -32,7 +32,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
     for namedArg in actionRoute.namedArguments
       @assert namedArg of params.params, "named argument: #{namedArg} doesn't exist in parameters"
     
-    params.preAction?()
+    params.preAction?(controller)
     try
       controller.dispatch actionRoute.action, params.params
       currentView = controller.get('currentView')
@@ -46,7 +46,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
     finally
       $('#batman_fixture').remove()
 
-    params.postAction?()
+    params.postAction?(controller)
     null
 
   @fetchHTML: (basePath, path, callback) ->
