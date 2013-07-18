@@ -37,10 +37,6 @@ class Batman.View extends Batman.Object
     @bindings = []
     @subviews = new Batman.Set
 
-    @subviews.on 'itemsWereAddedAtPositions', (newSubviews) =>
-      @_addSubview(subview) for [subview, index] in newSubviews
-      return
-
     @subviews.on 'itemsWereAdded', (newSubviews) =>
       @_addSubview(subview) for subview in newSubviews
       return
