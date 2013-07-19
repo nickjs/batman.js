@@ -21,39 +21,32 @@ class Batman.SimpleSet
     @length = @_storage.length
     addedItems
 
-  insert: (items, indexes, addedIndexes) ->
+  insert: -> @insertWithIndexes(arguments...).addedItems
+
+  insertWithIndexes: (items, indexes) -> 
+    addedIndexes = []
     addedItems = []
     for item, i in items when !~@_indexOfItem(item)
       index = indexes[i]
       @_storage.splice(index, 0, item)
       addedItems.push(item)
-      addedIndexes?.push(index)
+      addedIndexes.push(index)
 
     @length = @_storage.length
-    addedItems
+    {addedItems, addedIndexes}
 
-  remove: (items...)->
-    if (tmp = arguments[arguments.length - 1]) instanceof Array
-      items = [].slice.call(arguments, 0, arguments.length - 1)
-      removedIndexes = tmp
-    else
-      items = [].slice.call(arguments, 0)
+  remove: -> @removeWithIndexes(arguments...).removedItems
 
+  removeWithIndexes: (items...) ->
+    removedIndexes = []
     removedItems = []
     for item in items when ~(index = @_indexOfItem(item))
       @_storage.splice(index, 1)
       removedItems.push(item)
-      removedIndexes?.push(index)
+      removedIndexes.push(index)
 
     @length = @_storage.length
-    removedItems
-
-  addAndRemove: (itemsToAdd, itemsToRemove) ->
-    addedItems = @add(itemsToAdd || [])
-    removedItems = @remove(itemsToRemove || [])
-
-    added: addedItems
-    removed: removedItems
+    {removedItems, removedIndexes}
 
   clear: ->
     items = @_storage
