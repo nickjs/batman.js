@@ -29,6 +29,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
       div = document.createElement('div')
       document.body.appendChild(div)
       currentView.get('node')
+      currentView.subviews = new Batman.SimpleSet() 
       currentView.addToParentNode(div)
       currentView.propagateToSubviews('viewWillAppear')
       currentView.initializeBindings()
