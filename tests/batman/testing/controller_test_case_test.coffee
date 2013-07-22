@@ -1,6 +1,8 @@
 class TestController extends Batman.Controller
   routingKey: 'foo'
 
+  foo: ->
+
 class TestControllerNoRoutingKey extends Batman.Controller
 
 QUnit.module "Batman.ControllerTestCaseTest", 
@@ -23,7 +25,7 @@ test 'assertAction checks namedArguments and checks the HTML', ->
   sinon.mock(controller).expects('get').withArgs('currentView').returns(view)
   sinon.mock(controller).expects('dispatch').withArgs('index', params.params)
   sinon.stub(view, 'get').returns('<html></html>')
-
+  view.propagateToSubviews = ->
   sinon.mock(view).expects('addToParentNode')
   sinon.mock(view).expects('initializeBindings')
   sinon.mock(params).expects('preAction').once()
@@ -33,7 +35,6 @@ test 'assertAction checks namedArguments and checks the HTML', ->
   actionRoute.namedArguments = [ 'id']
   actionRoute.action = 'index'
   sinon.mock(@testCase).expects('assert').twice()
-
   @testCase.assertAction controller, actionRoute, params
 
 test 'assertAction fails when the namedArguments is incorrect', ->
@@ -134,8 +135,7 @@ test 'assertAction should assert false when there is no html', ->
   @testCase.assertAction controller, actionRoute, params
   equal numCaught, 1
 
-test 'assertRoutes constructs a controller class', ->
-  @testCase.controllerClass = TestController
+test 'assertRoutes should throw and error if controller routingKey is not set', ->
   route = 
     childrenByOrder: []
   routeParent = 
@@ -144,68 +144,11 @@ test 'assertRoutes constructs a controller class', ->
     get: -> { childrenByName: routeParent }
     stop: ->
 
-  sinon.mock(TestController).expects('constructor').once()
+  func = => @testCase.assertRoutes( new TestControllerNoRoutingKey )
+  throws(func, Error, "Should throw an error")
 
-  @testCase.assertRoutes()
-
-test 'assertRoutes should try to determine controller class based on test class name', ->
-  route = 
-    childrenByOrder: []
-  routeParent = 
-    foo: route 
-  Batman.currentApp = 
-    ControllerCase: TestController
-    get: -> { childrenByName: { foo: route } } 
-    stop: -> 
-
-  sinon.stub(@testCase, 'assertAction')
-  @testCase.assert = (bool, message) ->
-
-  @testCase.assertRoutes()
-  equal @testCase.controllerClass, TestController
-
-test 'assertRoutes should assert false if controller class cannot be found', ->
-  route = 
-    childrenByOrder: []
-  routeParent = 
-    foo: route 
-  Batman.currentApp =
-    ControllerCase: null
-    get: -> { childrenByName: routeParent }
-    stop: ->
-
-  numCaught = 0
-  @testCase.assert = (bool, message) =>
-    if message.indexOf("Couldn't deduce controller") >= 0
-      numCaught++
-      ok !bool
-      @testCase.controllerClass = TestController
-
-  @testCase.assertRoutes()
-  equal @testCase.controllerClass, TestController
-  equal numCaught, 1
-
-test 'assertRoutes should assert false if controller routingKey is not set', ->
-  @testCase.controllerClass = TestControllerNoRoutingKey
-  route = 
-    childrenByOrder: []
-  routeParent = 
-    foo: route 
-  Batman.currentApp =
-    get: -> { childrenByName: routeParent }
-    stop: ->
-
-  numCaught = 0
-  @testCase.assert = (bool, message) =>
-    if message.indexOf("Routing key isn't set") >= 0
-      numCaught++
-      ok !bool
-
-  @testCase.assertRoutes()
-  equal numCaught, 1
 
 test 'assertRoutes should assert false if there are no routes defined for the controller', ->
-  @testCase.controllerClass = TestController
   route = 
     childrenByOrder: []
   routeParent = 
@@ -213,31 +156,8 @@ test 'assertRoutes should assert false if there are no routes defined for the co
   Batman.currentApp =
     get: -> { childrenByName: routeParent }
     stop: ->
-
-  numCaught = 0
-  @testCase.assert = (bool, message) =>
-    if message.indexOf("No routes for routing key") >= 0
-      numCaught++
-      ok !bool
-
-  @testCase.assertRoutes()
-  equal numCaught, 1
-
-test 'assertAction is called on the actionRoute.childrenByOrder', ->
-  @testCase.controllerClass = TestController
-  route = 
-    childrenByOrder: [ { action: 'foo'}, { action: 'bar'}]
-  routeParent = 
-    foo: route 
-  Batman.currentApp =
-    get: -> { childrenByName: routeParent }
-    stop: ->
-
-  params = 
-    foo: 'bar'
-
-  sinon.mock(@testCase).expects('assertAction').thrice()
-  @testCase.assertRoutes(params)
+  func = => @testCase.assertRoutes(new TestController)
+  throws(func, Error, "throws routing error")
 
 test 'ControllerTestCase.populateHTML fetches HTML for all routes in currentApp', ->
   sinon.spy( Batman.ControllerTestCase, 'fetchHTML')

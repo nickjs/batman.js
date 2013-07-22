@@ -1,26 +1,15 @@
 class Batman.ControllerTestCase extends Batman.TestCase
   @mixin Batman.ModelExpectations
 
-  assertRoutes: (params = {}) ->
-    @controllerClass ||= Batman.currentApp[@constructor.name.replace(/Test/, '')]
-    @assert @controllerClass, "Couldn't deduce controller name from test case, please assign it via @controllerClass"
-    
-    controller = new @controllerClass
-    @assert controller.routingKey, "Routing key isn't set"
-    return if !controller.routingKey?
+  assertRoutes: (controller, params = {}) ->
+    throw new Error("Routing key isn't set") if not controller.routingKey
 
     actionRoutes = Batman.currentApp.get('routes.routeMap').childrenByName[controller.routingKey]
-    @assert actionRoutes, "No routes for routing key: #{controller.routingKey}"
-    return if !actionRoutes?
+    throw new Error("No routes for routing key: #{controller.routingKey}") if not actionRoutes
     
     assertedActions = actionRoutes.childrenByOrder
-    findInArray = (array, item) ->
-      for i in array
-        if item == i.action
-          return true
-      false
     for action of params
-      if not findInArray(assertedActions, action)
+      if assertedActions.filter( (a) ->  action == a.action ).length == 0
         assertedActions.push({ action: action, namedArguments: [] })
 
     for action in assertedActions
@@ -32,21 +21,26 @@ class Batman.ControllerTestCase extends Batman.TestCase
     for namedArg in actionRoute.namedArguments
       @assert namedArg of params.params, "named argument: #{namedArg} doesn't exist in parameters"
     
-    params.preAction?(controller)
+    params.beforeAction?(controller)
     try
       controller.dispatch actionRoute.action, params.params
       currentView = controller.get('currentView')
-      $('body').append('<div id="batman_fixture">')
-      currentView.get('node')
-      currentView.addToParentNode($('#batman_fixture')[0])
-      currentView.initializeBindings()
       @assert currentView.get('html'), "No HTML for view"
+      div = document.createElement('div')
+      document.body.appendChild(div)
+      currentView.get('node')
+      currentView.addToParentNode(div)
+      currentView.propagateToSubviews('viewWillAppear')
+      currentView.initializeBindings()
+      currentView.propagateToSubviews('isInDOM', true)
+      currentView.propagateToSubviews('viewDidAppear')
+      Batman.setImmediate ->
     catch e
       @assert false, "Caught exception in view bindings: #{e.toString()}"
     finally
-      $('#batman_fixture').remove()
+      document.body.removeChild(div)
 
-    params.postAction?(controller)
+    params.afterAction?(controller)
     null
 
   @fetchHTML: (basePath, path, callback) ->
@@ -55,7 +49,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
       method: 'GET'
       success: (data) ->
         callback(data, path)
-      error: =>
+      error: ->
         callback(undefined)
       } )
 
