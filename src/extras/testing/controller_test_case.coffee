@@ -1,30 +1,28 @@
 class Batman.ControllerTestCase extends Batman.TestCase
   @mixin Batman.ModelExpectations
 
-  assertRoutes: (controller, params = {}) ->
-    throw new Error("Routing key isn't set") if not controller.routingKey
+  dispatch: (action, params = {}) ->
+    debugger
+    @controllerClass ||= Batman.currentApp[@constructor.name.replace(/Test/,'')]
+    if not @controllerClass
+      throw new Error( "Couldn't deduce controller name" )
 
-    actionRoutes = Batman.currentApp.get('routes.routeMap').childrenByName[controller.routingKey]
-    throw new Error("No routes for routing key: #{controller.routingKey}") if not actionRoutes
+    @controller = new @controllerClass
+
+    routeMap = Batman.currentApp.get('routes.routeMap')
+    actionRoutes = routeMap.childrenByOrder.filter( (route) => route.controller == @controller.routingKey and route.action ==  action)
+
+    if actionRoutes.length == 0
+      throw new Error( "Route doesn't exist for action" )
+
+    for namedRoute in actionRoutes[0].namedArguments
+      @assert namedRoute of params.params, 'named argument mismatch'
     
-    assertedActions = actionRoutes.childrenByOrder
-    for action of params
-      if assertedActions.filter( (a) ->  action == a.action ).length == 0
-        assertedActions.push({ action: action, namedArguments: [] })
-
-    for action in assertedActions
-      @assertAction(controller, action, params[action.action])
-      assertedActions.push(action.action)
-
-  assertAction: (controller, actionRoute, params = {}) ->
-    @assertEqual 'function', typeof controller[actionRoute.action], "Action: #{actionRoute.action} doesn't exist!"
-    for namedArg in actionRoute.namedArguments
-      @assert namedArg of params.params, "named argument: #{namedArg} doesn't exist in parameters"
-    
-    params.beforeAction?(controller)
+    params.beforeAction?()
+    @assertEqual 'function', typeof @controller[action], "Action: #{action} doesn't exist!"
     try
-      controller.dispatch actionRoute.action, params.params
-      currentView = controller.get('currentView')
+      @controller.dispatch action, params.params
+      currentView = @controller.get('currentView')
       @assert currentView.get('html'), "No HTML for view"
       div = document.createElement('div')
       document.body.appendChild(div)
@@ -35,13 +33,12 @@ class Batman.ControllerTestCase extends Batman.TestCase
       currentView.initializeBindings()
       currentView.propagateToSubviews('isInDOM', true)
       currentView.propagateToSubviews('viewDidAppear')
-      Batman.setImmediate ->
     catch e
       @assert false, "Caught exception in view bindings: #{e.toString()}"
     finally
       document.body.removeChild(div)
-
-    params.afterAction?(controller)
+      
+    params.afterAction?()
     null
 
   @fetchHTML: (basePath, path, callback) ->
