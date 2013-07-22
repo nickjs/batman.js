@@ -23,7 +23,7 @@ class Batman.Set extends Batman.Object
 
   @_applySetAccessors(@)
 
-  for k in ['add', '_add', 'remove', '_remove', 'addAndRemove', 'clear', 'replace', 'indexedBy', 'indexedByUnique', 'sortedBy', 'equality', '_indexOfItem']
+  for k in ['indexedBy', 'indexedByUnique', 'sortedBy', 'equality', '_indexOfItem']
     @::[k] = Batman.SimpleSet::[k]
 
   for k in ['find', 'merge', 'forEach', 'toArray', 'isEmpty', 'has']
@@ -34,3 +34,32 @@ class Batman.Set extends Batman.Object
 
   toJSON: @::toArray
 
+  add: @mutation ->
+    addedItems = Batman.SimpleSet::add.apply(this, arguments)
+    @fire('itemsWereAdded', addedItems) if addedItems.length
+    addedItems
+
+  remove: @mutation ->
+    removedItems = Batman.SimpleSet::remove.apply(this, arguments)
+    @fire('itemsWereRemoved', removedItems) if removedItems.length
+    removedItems
+
+  addAndRemove: @mutation (itemsToAdd, itemsToRemove) ->
+    addedItems = Batman.SimpleSet::add.apply(this, itemsToAdd || [])
+    removedItems = Batman.SimpleSet::remove.apply(this, itemsToRemove || [])
+    @fire('itemsWereAdded', addedItems) if addedItems.length
+    @fire('itemsWereRemoved', removedItems) if removedItems.length
+
+    added: addedItems
+    removed: removedItems
+
+  clear: @mutation ->
+    removedItems = Batman.SimpleSet::clear.call(this)
+    @fire('itemsWereRemoved', removedItems) if removedItems.length
+    removedItems
+
+  replace: @mutation (other) ->
+    removedItems = Batman.SimpleSet::clear.call(this)
+    addedItems = Batman.SimpleSet::add.apply(this, other.toArray())
+    @fire('itemsWereRemoved', removedItems) if removedItems.length
+    @fire('itemsWereAdded', addedItems) if addedItems.length

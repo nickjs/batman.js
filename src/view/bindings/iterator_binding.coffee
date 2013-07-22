@@ -33,7 +33,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
           _items = []
           collection.forEach (item) -> _items.push item
           _items
-         else
+        else
           Object.keys(collection)
         @handleArrayChanged(items)
     else

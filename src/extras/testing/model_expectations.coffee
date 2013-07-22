@@ -15,11 +15,11 @@ Batman.ModelExpectations =
       @completeExpectation('expectUpdate')
       callback(options.error, options.response ? instance )
 
-  expectDelete: (instance, options = {}) ->
-    @addExpectation('expectDelete')
+  expectDestroy: (instance, options = {}) ->
+    @addExpectation('expectDestroy')
 
     @stub instance, 'destroy', (callback) =>
-      @completeExpectation('expectDelete')
+      @completeExpectation('expectDestroy')
       callback(options.error, options.response ? instance )
 
   expectLoad: (klass, options = {}) ->

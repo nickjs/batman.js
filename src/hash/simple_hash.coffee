@@ -1,3 +1,5 @@
+#= require ../enumerable
+
 _objectToString = Object::toString
 
 class Batman.SimpleHash
@@ -5,7 +7,9 @@ class Batman.SimpleHash
     @_storage = {}
     @length = 0
     @update(obj) if obj?
+
   Batman.extend @prototype, Batman.Enumerable
+
   hasKey: (key) ->
     if @objectKey(key)
       return false unless @_objectStorage
@@ -64,6 +68,7 @@ class Batman.SimpleHash
       key = @prefixedKey(key)
       @length++ unless @_storage[key]?
       @_storage[key] = val
+
   unset: (key) ->
     if @objectKey(key)
       return unless @_objectStorage
@@ -82,12 +87,14 @@ class Batman.SimpleHash
         @length--
         delete @_storage[key]
       val
+
   getOrSet: (key, valueFunction) ->
     currentValue = @get(key)
     unless currentValue
       currentValue = valueFunction()
       @set(key, currentValue)
     currentValue
+
   prefixedKey: (key) -> "_"+key
   unprefixedKey: (key) -> key.slice(1)
   hashKeyFor: (obj) ->
@@ -96,12 +103,15 @@ class Batman.SimpleHash
     else
       typeString = _objectToString.call(obj)
       if typeString is "[object Array]" then typeString else obj
+
   equality: (lhs, rhs) ->
     return true if lhs is rhs
     return true if lhs isnt lhs and rhs isnt rhs # when both are NaN
     return true if lhs?.isEqual?(rhs) and rhs?.isEqual?(lhs)
     return false
+
   objectKey: (key) -> typeof key isnt 'string'
+
   forEach: (iterator, ctx) ->
     results = []
     if @_objectStorage
@@ -111,11 +121,13 @@ class Batman.SimpleHash
     for key, value of @_storage
       results.push iterator.call(ctx, @unprefixedKey(key), value, this)
     results
+
   keys: ->
     result = []
     # Explicitly reference this foreach so that if it's overridden in subclasses the new implementation isn't used.
     Batman.SimpleHash::forEach.call @, (key) -> result.push key
     result
+
   toArray: @::keys
 
   clear: ->
@@ -125,6 +137,7 @@ class Batman.SimpleHash
 
   isEmpty: ->
     @length is 0
+
   merge: (others...) ->
     merged = new @constructor
     others.unshift(@)
@@ -132,13 +145,16 @@ class Batman.SimpleHash
       hash.forEach (obj, value) ->
         merged.set obj, value
     merged
+
   update: (object) ->
     @set(k,v) for k,v of object
     return
+
   replace: (object) ->
     @forEach (key, value) =>
       @unset(key) unless key of object
     @update(object)
+
   toObject: ->
     obj = {}
     for key, value of @_storage
@@ -147,4 +163,5 @@ class Batman.SimpleHash
       for key, pair of @_objectStorage
         obj[key] = pair[0][1] # the first value for this key
     obj
+
   toJSON: @::toObject

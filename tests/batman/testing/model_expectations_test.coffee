@@ -72,3 +72,13 @@ asyncTest 'expectFind passes if the model is searched for', 2, ->
     equal okCount, 1
     ok okAssertions[0]
     QUnit.start()
+
+asyncTest 'expectDestroy passes if the model is destroyed', 2, ->
+  testFn = (validate) =>
+    @testCase.expectDestroy(@model)
+    @model.destroy(validate)
+
+  helpers.runTestCase @testCase, testFn, (okCount, okAssertions) ->
+    equal okCount, 1
+    ok okAssertions[0]
+    QUnit.start()

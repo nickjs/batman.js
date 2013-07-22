@@ -213,15 +213,12 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
   @::after 'get', 'put', 'post', 'delete', @skipIfError (env, next) ->
     if env.json?
-      json = env.json
       namespace = if env.subject.prototype
         @collectionJsonNamespace(env.subject)
       else
         @recordJsonNamespace(env.subject)
-      env.result = if namespace && env.json[namespace]?
-        env.json[namespace]
-      else
-        env.json
+
+      env.result = @extractFromNamespace(env.json, namespace)
     next()
 
   @HTTPMethods =

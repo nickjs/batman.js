@@ -3,19 +3,18 @@ helpers = if typeof require is 'undefined' then window.testCaseHelper else requi
 QUnit.module "Batman.XhrMocking",
   setup: ->
     @testCase = new Batman.TestCase
-    @testCase.xhrSetup()
+    Batman.Request.setupMockedResponse()
 
 test 'beforeResponse is called before the success event', ->
   successCallCount = 0
 
-  @testCase.setMockedResponse '/test', 'GET', ->
+  Batman.Request.addMockedResponse 'GET', '/test', ->
     {status: 200, beforeResponse: -> QUnit.equal(successCallCount, 0)}
 
   req = new Batman.Request(url: '/test', method: 'GET', success: -> successCallCount++)
   req.send()
 
   QUnit.equal(successCallCount, 1)
-
 
 asyncTest 'assertGET will pass if the if a GET request is made', 2, ->
   testFn = (validate) =>

@@ -15,13 +15,14 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
     unless baseSaveError
       if relations = @getFromAttributes(base)
         relations.forEach (model) =>
-          model.set @foreignKey, base.get(@primaryKey)
+          model.set(@foreignKey, base.get(@primaryKey))
+
       base.set @label, set = @setForRecord(base)
       if base.lifecycle.get('state') == 'creating'
         set.markAsLoaded()
 
   encoder: ->
-    association = @
+    association = this
     (relationSet, _, __, record) ->
       if relationSet?
         jsonArray = []
@@ -34,7 +35,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       jsonArray
 
   decoder: ->
-    association = @
+    association = this
     (data, key, _, __, parentRecord) ->
       unless relatedModel = association.getRelatedModel()
         Batman.developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"

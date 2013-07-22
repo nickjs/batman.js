@@ -5,9 +5,11 @@ class Batman.SetProxy extends Batman.Object
   constructor: (@base) ->
     super()
     @length = @base.length
+
     @base.on? 'itemsWereAdded', (items) =>
       @set 'length', @base.length
       @fire('itemsWereAdded', items)
+
     @base.on? 'itemsWereRemoved', (items) =>
       @set 'length', @base.length
       @fire('itemsWereRemoved', items)
@@ -23,7 +25,7 @@ class Batman.SetProxy extends Batman.Object
   replace: ->
     length = @property('length')
     length.isolate()
-    result = @base.replace.apply(@, arguments)
+    result = @base.replace.apply(@base, arguments)
     length.expose()
     result
 
@@ -31,7 +33,7 @@ class Batman.SetProxy extends Batman.Object
 
   for k in ['add', 'remove', 'addAndRemove', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy']
     do (k) =>
-      @::[k] = -> @base[k](arguments...)
+      @::[k] = -> @base[k].apply(@base, arguments)
 
   @accessor 'length',
     get: ->
