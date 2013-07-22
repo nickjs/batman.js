@@ -2,7 +2,6 @@ class Batman.ControllerTestCase extends Batman.TestCase
   @mixin Batman.ModelExpectations
 
   dispatch: (action, params = {}) ->
-    debugger
     @controllerClass ||= Batman.currentApp[@constructor.name.replace(/Test/,'')]
     if not @controllerClass
       throw new Error( "Couldn't deduce controller name" )
