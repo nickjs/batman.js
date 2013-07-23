@@ -1,7 +1,12 @@
 class TestController extends Batman.Controller
+  @view: new Batman.View
   routingKey: 'foo'
   index: ->
   foo: ->
+  get: (key) ->
+    return TestController.view if key == 'currentView'
+    return '<html>'
+  dispatch: ->
 
 class TestControllerNoRoutingKey extends Batman.Controller
 
@@ -18,71 +23,38 @@ QUnit.module "Batman.ControllerTestCaseTest",
 
 
 test 'dispatch checks namedArguments and checks the HTML', ->
-  view = new Batman.View()
-  setup = =>
-    sinon.mock(@testCase.controller).expects('get').withArgs('currentView').returns(view)
-    sinon.mock(@testCase.controller).expects('dispatch').withArgs('index', params.params)
-
-  params = 
-    beforeAction: -> setup()
-    afterAction: ->
+  params = {}
   params.params = { id: 0 }
 
-  sinon.stub(view, 'get').returns('<html></html>')
-  view.propagateToSubviews = ->
-  sinon.mock(view).expects('addToParentNode')
-  sinon.mock(view).expects('initializeBindings')
+  TestController.view.propagateToSubviews = ->
+  sinon.mock(TestController.view).expects('addToParentNode')
+  sinon.mock(TestController.view).expects('initializeBindings')
   
   sinon.mock(@testCase).expects('assert').twice()
   @testCase.dispatch 'index', params
 
 test 'assertAction fails when the namedArguments is incorrect', ->
   view = new Batman.View()
-  setup = =>
-    sinon.mock(@testCase.controller).expects('get').withArgs('currentView').returns(view)
-    sinon.mock(@testCase.controller).expects('dispatch').withArgs('index', params.params)
-
-  params = 
-    beforeAction: -> setup()
-    afterAction: ->
+  params = {}
   params.params = {}
-  
-  sinon.stub(view, 'get').returns('<html></html>')
-
-  sinon.mock(view).expects('addToParentNode')
-  sinon.mock(view).expects('initializeBindings')
-  
   numCaught = 0
   @testCase.assert = (bool, message) ->
     if message.indexOf( 'named argument') >= 0
       numCaught++
       ok !bool, 'named argument assertion should fire'
-    else 
-      ok bool
 
   @testCase.dispatch 'index', params
   equal numCaught, 1
 
 test 'assertAction should assert false when initializeBindings throws an error', ->
-  view = new Batman.View()
-  setup = =>
-    sinon.mock(@testCase.controller).expects('get').withArgs('currentView').returns(view)
-    sinon.mock(@testCase.controller).expects('dispatch').withArgs('index', params.params)
-
-  params = 
-    beforeAction: -> setup()
-    afterAction: ->
-
+  params = {}
   params.params = { id: 0 }
 
-  sinon.stub(view, 'get').returns('<html></html>')
-
-  sinon.mock(view).expects('addToParentNode')
-  view.initializeBindings = ->
+  TestController.view.initializeBindings = ->
     throw new Error()
   numCaught = 0
   @testCase.assert = (bool, message) ->
-    if message.indexOf('Caught exception') >= 0
+    if message.indexOf('exception was raised') >= 0
       numCaught++
       ok !bool
 
@@ -90,25 +62,9 @@ test 'assertAction should assert false when initializeBindings throws an error',
   equal numCaught, 1
 
 test 'assertAction should assert false when there is no html', ->
-  view = new Batman.View()
-
-  view.get = (key) ->
-    if key == 'node'
-      return '<div/>' 
-    else 
-      return null
-  setup = =>
-    sinon.mock(@testCase.controller).expects('get').withArgs('currentView').returns(view)
-    sinon.mock(@testCase.controller).expects('dispatch')
-
   params = 
-    beforeAction: -> setup()
-    afterAction: ->
     params: { id: 1 }
 
-  sinon.stub(view, 'addToParentNode')
-  sinon.stub(view, 'initializeBindings')
-  
   numCaught = 0
   @testCase.assert = (bool, message) ->
     if message.indexOf('No HTML for view') >= 0
@@ -117,13 +73,3 @@ test 'assertAction should assert false when there is no html', ->
 
   @testCase.dispatch 'index', params
   equal numCaught, 1
-
-test 'ControllerTestCase.populateHTML fetches HTML for all routes in currentApp', ->
-  sinon.spy( Batman.ControllerTestCase, 'fetchHTML')
-
-  Batman.currentApp =
-    get: -> [{ controller: 'TestController', action: 'index' }, { controller: 'TestController', action: 'show' }]
-    stop: ->
-
-  Batman.ControllerTestCase.populateHTML('basePath', ->)
-  equal Batman.ControllerTestCase.fetchHTML.callCount, 2
