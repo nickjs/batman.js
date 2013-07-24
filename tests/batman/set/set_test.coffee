@@ -21,6 +21,18 @@ basicSetTestSuite = ->
     @set.add(itemA)
     equal @set.has(itemB), false
 
+  test "at(index) returns the item at that index", ->
+    @set.add(0, 1, 2, 3, 4)
+    equal @set.at(0), 0
+    equal @set.at(2), 2
+    equal @set.at(4), 4
+
+  test "at(index) returns undefined when there is no item at that index", ->
+    @set.add(true)
+    equal @set.at(0), true
+    equal @set.at(32), undefined
+    equal @set.at(-7), undefined
+
   test "add(items...) adds the items to the set, such that has(item) returns true for each item, and increments the set's length accordingly", ->
     deepEqual @set.add('foo', 'bar'), ['foo', 'bar']
     equal @set.length, 2
