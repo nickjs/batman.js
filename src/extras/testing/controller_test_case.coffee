@@ -15,6 +15,9 @@ class Batman.ControllerTestCase extends Batman.TestCase
       @assert false, "Route doesn't exist for action"
       return
     
+    if actionRoutes[0].namedArguments.length > 0
+      @assert params.params, 'params are required for #{action}'
+
     for namedRoute in actionRoutes[0].namedArguments
       @assert namedRoute of params.params, 'named argument mismatch'
     
