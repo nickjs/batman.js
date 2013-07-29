@@ -13,8 +13,8 @@ class Batman.IteratorView extends Batman.View
     iterationView.set(@iteratorName, item)
 
     if targetIndex?
-      @subviews.insert([iterationView], targetIndex)
-      iterationView.flag = true
+      iterationView._targeted = true
+      @subviews.insert([iterationView], [targetIndex])
     else
       @subviews.add(iterationView)
 
@@ -27,10 +27,9 @@ class Batman.IteratorView extends Batman.View
     if isInDOM
       subview.propagateToSubviews('viewWillAppear') for subview in @appendedViews
 
-    for subview, index in @appendedViews when subview.flag
-      nextSiblingNode = @subviews.at(index + 1)?.get('node') or @node
-      @node.parentNode.insertBefore(subview.get('node'), nextSiblingNode)
-      delete subview.flag
+    for subview, index in @subviews.toArray() when subview._targeted
+      @node.parentNode.insertBefore(subview.get('node'), @subviews.at(index + 1)?.get('node') or @node)
+      delete subview._targeted
 
     @node.parentNode.insertBefore(@fragment, @node)
     @fire('itemsWereRendered')
