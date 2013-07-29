@@ -6,7 +6,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
     if not @controllerClass
       throw new Error( "Unable to deduce controller class name from test class. Please set @controllerClass if not conventional" )
 
-    @controller = new @controllerClass
+    @controller = params.controller || new @controllerClass
 
     routeMap = Batman.currentApp.get('routes.routeMap')
     actionRoutes = routeMap.childrenByOrder.filter( (route) => route.controller == @controller.routingKey and route.action ==  action)
