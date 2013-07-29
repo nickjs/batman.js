@@ -19,13 +19,13 @@ class Batman.SetProxy extends Batman.Object
   startObserving: -> @_setObserver?.startObserving()
   stopObserving: -> @_setObserver?.stopObserving()
 
-  _handleItemsAdded: (items) ->
+  _handleItemsAdded: (items, indexes) ->
     @set('length', @base.length)
-    @fire('itemsWereAdded', items)
+    @fire('itemsWereAdded', items, indexes)
 
-  _handleItemsRemoved: (items) ->
+  _handleItemsRemoved: (items, indexes) ->
     @set('length', @base.length)
-    @fire('itemsWereRemoved', items)
+    @fire('itemsWereRemoved', items, indexes)
 
   filter: (f) ->
     @reduce (accumulator, element) ->

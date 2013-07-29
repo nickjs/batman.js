@@ -46,28 +46,27 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       @handleItemsAdded(newItems) if newItems?.length
 
   handleItemsAdded: (addedItems, addedIndexes) =>
-    unless @backingView.isDead
-      @backingView.beginAppendItems()
-      if addedIndexes
-        @backingView.insertItem(item, addedIndexes[i]) for item, i in addedItems
-      else
-        @backingView.appendItem(item) for item in addedItems
-      @backingView.finishAppendItems()
+    return if @backingView.isDead
+
+    @backingView.beginAppendItems()
+    if addedIndexes
+      @backingView.insertItem(item, addedIndexes[i]) for item, i in addedItems
+    else
+      @backingView.appendItem(item) for item in addedItems
+    @backingView.finishAppendItems()
 
   handleItemsRemoved: (removedItems, removedIndexes) =>
-    unless @backingView.isDead
-      if @collection.length
-        if removedIndexes
-          @backingView.subviews.at(removedIndexes[i]).die() for item, i in removedItems
-        else
-          for item in removedItems
-            for subview in @backingView.subviews._storage
-              if subview.get(@attributeName) == item
-                subview.unset(@attributeName)
-                subview.die()
-                break
-      else
-        @backingView.destroySubviews()
+    return if @backingView.isDead
+    return @backingView.destroySubviews() if !@collection.length
+
+    if removedIndexes
+      @backingView.subviews.at(removedIndexes[i]).die() for item, i in removedItems
+    else
+      for item in removedItems
+        for subview in @backingView.subviews._storage when subview.get(@attributeName) == item
+          subview.unset(@attributeName)
+          subview.die()
+          break
 
   handleItemMoved: (item, newIndex, oldIndex) =>
     unless @backingView.isDead
