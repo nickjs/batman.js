@@ -11,7 +11,6 @@
 #= require ./developer
 #= require_tree ./event_emitter
 #= require ./object
-#= require ./mixins
 #= require_tree ./utilities
 #= require_tree ./set
 #= require_tree ./hash
