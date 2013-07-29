@@ -266,8 +266,16 @@ test "_indexOfItem returns the correct item for duplicate keys", ->
   equal arr[set._indexOfItem(d)], d
   equal arr[set._indexOfItem(e)], e
 
+test "_indexOfItem calls _binarySearch", ->
+  set = new Batman.Set([1, 2, 3]).sortedBy('')
+  sinon.spy(Batman.SetSort, '_binarySearch')
+
+  set._indexOfItem(1)
+  ok Batman.SetSort._binarySearch.calledOnce
+  Batman.SetSort._binarySearch.restore()
+
 test "SetSort._binarySearch returns the correct indexes for inexact searches", ->
   arr = [1, 2, 3, 6, 7, 8, 10]
-  equal arr[Batman.SetSort._binarySearch(arr, 5, Batman.SetSort::compare, false)], 6
-  equal arr[Batman.SetSort._binarySearch(arr, 9, Batman.SetSort::compare, false)], 10
-  equal Batman.SetSort._binarySearch(arr, 11, Batman.SetSort::compare, false), arr.length
+  equal arr[Batman.SetSort._binarySearch(arr, 5, Batman.SetSort::compare).index], 6
+  equal arr[Batman.SetSort._binarySearch(arr, 9, Batman.SetSort::compare).index], 10
+  equal Batman.SetSort._binarySearch(arr, 11, Batman.SetSort::compare).index, arr.length

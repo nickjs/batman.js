@@ -26,11 +26,11 @@ class Batman.SetSort extends Batman.SetProxy
 
     newStorage = @_storage.slice()
 
-    oldIndex = @constructor._binarySearch(newStorage, item, wrappedCompare)
-    return if oldIndex < 0
+    {match, index: oldIndex} = @constructor._binarySearch(newStorage, item, wrappedCompare)
+    return unless match
     newStorage.splice(oldIndex, 1)
 
-    newIndex = @constructor._binarySearch(newStorage, item, @compareElements, false)
+    {match, index: newIndex} = @constructor._binarySearch(newStorage, item, @compareElements)
     newStorage.splice(newIndex, 0, item)
 
     unless oldIndex == newIndex
@@ -46,8 +46,8 @@ class Batman.SetSort extends Batman.SetProxy
     addedIndexes = []
 
     for item in items
-      index = @constructor._binarySearch(newStorage, item, @compareElements, false)
-      if index >= 0
+      {match, index} = @constructor._binarySearch(newStorage, item, @compareElements)
+      if not match # deduplicate insertion
         newStorage.splice(index, 0, item)
         addedItems.push(item)
         addedIndexes.push(index)
@@ -62,8 +62,8 @@ class Batman.SetSort extends Batman.SetProxy
     removedIndexes = []
 
     for item in items
-      index = @constructor._binarySearch(newStorage, item, @compareElements)
-      if index >= 0
+      {match, index} = @constructor._binarySearch(newStorage, item, @compareElements)
+      if match
         newStorage.splice(index, 1)
         removedItems.push(item)
         removedIndexes.push(index)
@@ -135,11 +135,14 @@ class Batman.SetSort extends Batman.SetProxy
     @set('_storage', newOrder)
 
   _indexOfItem: (target) ->
-    @constructor._binarySearch(@_storage, target, @compareElements)
+    {match, index} = @constructor._binarySearch(@_storage, target, @compareElements)
+    if match then index else -1
 
-  @_binarySearch: (arr, target, compare, exactMatch = true) ->
+  @_binarySearch: (arr, target, compare) ->
     start = 0
     end = arr.length - 1
+
+    result = {}
 
     while end >= start
       index = ((end - start) >> 1) + start
@@ -151,6 +154,8 @@ class Batman.SetSort extends Batman.SetProxy
         end = index - 1
       else
         index = do ->
+          # This bit performs a linear search within elements of the same key as the target.
+
           i = index
           while i >= 0 and compare(target, arr[i]) is 0
             return i if target is arr[i]
@@ -160,10 +165,11 @@ class Batman.SetSort extends Batman.SetProxy
           while i < arr.length and compare(target, arr[i]) is 0
             return i if target is arr[i]
             i++
+
+          # If there was no match, we still want to return the index for consumers that need it
           return index
 
-        return if exactMatch == (target is arr[index]) then index else -1 # ಠ_ಠ
+        return match: (target is arr[index]), index: index
 
-    return if exactMatch then -1 else start
-
+    return match: false, index: start
 
