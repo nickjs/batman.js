@@ -28,7 +28,8 @@ class Batman.IteratorView extends Batman.View
       subview.propagateToSubviews('viewWillAppear') for subview in @appendedViews
 
     for subview, index in @subviews.toArray() when subview._targeted
-      @node.parentNode.insertBefore(subview.get('node'), @subviews.at(index + 1)?.get('node') or @node)
+      sibling = @subviews.at(index + 1)?.get('node') or @node
+      sibling.parentNode.insertBefore(subview.get('node'), sibling)
       delete subview._targeted
 
     @node.parentNode.insertBefore(@fragment, @node)
