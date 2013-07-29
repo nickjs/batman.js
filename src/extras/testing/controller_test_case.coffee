@@ -16,7 +16,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
       return
     
     if actionRoutes[0].namedArguments.length > 0
-      @assert params.params, 'params are required for #{action}'
+      @assert params.params, 'params are required for action'
 
     for namedRoute in actionRoutes[0].namedArguments
       @assert namedRoute of params.params, 'named argument mismatch'
@@ -37,7 +37,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
     catch e
       @assert false, "exception was raised in view bindings: #{e.toString()}"
     finally
-      document.body.removeChild(div)
+      document.body.removeChild(div) if div?
       
     null
 
