@@ -30,7 +30,7 @@ test 'dispatch checks namedArguments and checks the HTML', ->
   sinon.mock(TestController.view).expects('addToParentNode')
   sinon.mock(TestController.view).expects('initializeBindings')
   
-  sinon.mock(@testCase).expects('assert').twice()
+  sinon.mock(@testCase).expects('assert').exactly(4)
   @testCase.dispatch 'index', params
 
 test 'assertAction fails when the namedArguments is incorrect', ->
