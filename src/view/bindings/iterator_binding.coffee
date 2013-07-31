@@ -40,7 +40,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       @handleArrayChanged([])
     return
 
-  handleArrayChanged: (newItems, oldItems) =>
+  handleArrayChanged: (newItems) =>
     unless @backingView.isDead
       @backingView.destroySubviews()
       @handleItemsAdded(newItems) if newItems?.length

@@ -31,11 +31,12 @@ class Batman.SetSort extends Batman.SetProxy
     newStorage.splice(oldIndex, 1)
 
     {match, index: newIndex} = @constructor._binarySearch(newStorage, item, @compareElements)
-    newStorage.splice(newIndex, 0, item)
 
-    unless oldIndex == newIndex
-      @set('_storage', newStorage)
-      @fire('itemWasMoved', item, newIndex, oldIndex)
+    return if oldIndex == newIndex
+
+    newStorage.splice(newIndex, 0, item)
+    @set('_storage', newStorage)
+    @fire('itemWasMoved', item, newIndex, oldIndex)
 
   _handleItemsAdded: (items) ->
     # if items.length > Math.log(@_storage.length) * 5
