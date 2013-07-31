@@ -76,7 +76,7 @@ class Batman.SetSort extends Batman.SetProxy
   toArray: -> @get('_storage').slice()
 
   toArrayOfKeys: ->
-    for item in @toArray()
+    for item in @get('_storage')
       item.get(@key)
 
   forEach: (iterator, ctx) ->
@@ -154,23 +154,27 @@ class Batman.SetSort extends Batman.SetProxy
       else if direction < 0
         end = index - 1
       else
-        index = do ->
-          # This bit performs a linear search within elements of the same key as the target.
+        # This bit performs a linear search within elements of the same key as the target.
 
-          i = index
-          while i >= 0 and compare(target, arr[i]) is 0
-            return i if target is arr[i]
-            i--
+        matched = false
+        i = index
+        while i >= 0 and compare(target, arr[i]) is 0
+          if target is arr[i]
+            index = i
+            matched = true
+            break
+          i--
 
+        unless matched
           i = index + 1
           while i < arr.length and compare(target, arr[i]) is 0
-            return i if target is arr[i]
+            if target is arr[i]
+              index = i
+              matched = true
+              break
             i++
 
-          # If there was no match, we still want to return the index for consumers that need it
-          return index
-
-        return match: (target is arr[index]), index: index
+        return match: matched, index: index
 
     return match: false, index: start
 
