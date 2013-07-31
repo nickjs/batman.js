@@ -73,19 +73,19 @@ class Batman.SetSort extends Batman.SetProxy
     @set('length', @_storage.length)
     @fire('itemsWereRemoved', removedItems, removedIndexes)
 
-  toArray: -> @get('_storage').slice()
+  toArray: -> @_storage.slice()
 
   toArrayOfKeys: ->
-    for item in @get('_storage')
+    for item in @_storage
       item.get(@key)
 
   forEach: (iterator, ctx) ->
-    iterator.call(ctx, e, i, this) for e, i in @toArray()
+    iterator.call(ctx, e, i, this) for e, i in @_storage.slice()
     return
 
   find: (block) ->
     @base.registerAsMutableSource()
-    for item in @get('_storage')
+    for item in @_storage
       return item if block(item)
 
   merge: (other) ->
@@ -165,7 +165,7 @@ class Batman.SetSort extends Batman.SetProxy
             break
           i--
 
-        unless matched
+        if not matched
           i = index + 1
           while i < arr.length and compare(target, arr[i]) is 0
             if target is arr[i]
