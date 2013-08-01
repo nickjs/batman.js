@@ -14,7 +14,7 @@ class Batman.SimpleSet
 
   add: (items...) ->
     addedItems = []
-    for item in items when !@has(item)
+    for item in items when @_indexOfItem(item) == -1
       @_storage.push(item)
       addedItems.push(item)
 
@@ -26,7 +26,7 @@ class Batman.SimpleSet
   insertWithIndexes: (items, indexes) -> 
     addedIndexes = []
     addedItems = []
-    for item, i in items when !@has(item)
+    for item, i in items when @_indexOfItem(item) == -1
       index = indexes[i]
       @_storage.splice(index, 0, item)
       addedItems.push(item)
