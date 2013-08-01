@@ -6,7 +6,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
     if not @controllerClass
       throw new Error( "Unable to deduce controller class name from test class. Please set @controllerClass if not conventional" )
 
-    @controller = new @controllerClass
+    @controller = params.controller || new @controllerClass
 
     routeMap = Batman.currentApp.get('routes.routeMap')
     actionRoutes = routeMap.childrenByOrder.filter( (route) => route.controller == @controller.routingKey and route.action ==  action)
@@ -15,6 +15,9 @@ class Batman.ControllerTestCase extends Batman.TestCase
       @assert false, "Route doesn't exist for action"
       return
     
+    if actionRoutes[0].namedArguments.length > 0
+      @assert params.params, 'params are required for action'
+
     for namedRoute in actionRoutes[0].namedArguments
       @assert namedRoute of params.params, 'named argument mismatch'
     
@@ -34,7 +37,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
     catch e
       @assert false, "exception was raised in view bindings: #{e.toString()}"
     finally
-      document.body.removeChild(div)
+      document.body.removeChild(div) if div?
       
     null
 
