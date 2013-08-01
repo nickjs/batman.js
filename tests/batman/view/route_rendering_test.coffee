@@ -8,6 +8,7 @@ QUnit.module 'Batman.View route rendering',
     class @App extends Batman.App
       @layout: null
       @route '/test', ->
+      @route '/', ->
     Batman.redirect = @redirect = createSpy()
 
   teardown: ->
@@ -22,28 +23,20 @@ asyncTest 'should set href for URL fragment', 1, ->
   @App.run()
 
 asyncTest 'should redirect when clicked', 2, ->
-  sinon.spy(Batman.DOM.RouteBinding.prototype, 'routeClick')
-
   @App.on 'run', =>
     helpers.render '<a data-route="\'/test\'">click</a>', {}, (node) =>
       helpers.triggerClick(node[0])
-      ok Batman.DOM.RouteBinding.prototype.routeClick.called
-      Batman.DOM.RouteBinding.prototype.routeClick.restore()
-
       delay =>
-        deepEqual @redirect.lastCallArguments['/test']
+        ok @redirect.called
+        deepEqual @redirect.lastCallArguments, ['/test']
   @App.run()
 
 asyncTest 'should not redirect when clicked if target attribute is set', 1, ->
-  sinon.spy(Batman.DOM.RouteBinding.prototype, 'routeClick')
-
   @App.on 'run', =>
     helpers.render '<a data-route="\'/test\'" target="_blank">click</a>', {}, (node) =>
       helpers.triggerClick(node[0])
-      ok not Batman.DOM.RouteBinding::routeClick.called
-      Batman.DOM.RouteBinding::routeClick.restore()
-
-      QUnit.start()
+      delay =>
+        ok not @redirect.called
   @App.run()
 
 asyncTest 'should set "#" href for undefined keypath', 1, ->
@@ -247,7 +240,6 @@ asyncTest 'should redirect to named route queries when clicked', 1, ->
 asyncTest 'should allow you to nested elements with route declarations', 6, ->
   @App.resources 'products', ->
     @collection 'search'
-  @App.root ->
 
   @App.on 'run', =>
     source = '''
@@ -280,7 +272,6 @@ asyncTest 'should allow you to nested elements with route declarations', 6, ->
 
 asyncTest 'should not stop events from bubbling', 2, ->
   @App.resources 'products'
-  @App.root ->
 
   @App.on 'run', =>
     source = '''
