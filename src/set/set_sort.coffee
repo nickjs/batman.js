@@ -75,12 +75,8 @@ class Batman.SetSort extends Batman.SetProxy
 
   toArray: -> @get('_storage').slice()
 
-  toArrayOfKeys: ->
-    for item in @get('_storage')
-      item.get(@key)
-
   forEach: (iterator, ctx) ->
-    iterator.call(ctx, e, i, this) for e, i in @get('_storage').slice()
+    iterator.call(ctx, e, i, this) for e, i in @get('_storage')
     return
 
   find: (block) ->

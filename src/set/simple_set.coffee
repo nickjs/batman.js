@@ -14,7 +14,7 @@ class Batman.SimpleSet
 
   add: (items...) ->
     addedItems = []
-    for item in items when !~@_indexOfItem(item)
+    for item in items when !@has(item)
       @_storage.push(item)
       addedItems.push(item)
 
@@ -26,7 +26,7 @@ class Batman.SimpleSet
   insertWithIndexes: (items, indexes) -> 
     addedIndexes = []
     addedItems = []
-    for item, i in items when !~@_indexOfItem(item)
+    for item, i in items when !@has(item)
       index = indexes[i]
       @_storage.splice(index, 0, item)
       addedItems.push(item)
@@ -40,7 +40,7 @@ class Batman.SimpleSet
   removeWithIndexes: (items...) ->
     removedIndexes = []
     removedItems = []
-    for item in items when ~(index = @_indexOfItem(item))
+    for item in items when (index = @_indexOfItem(item)) != -1
       @_storage.splice(index, 1)
       removedItems.push(item)
       removedIndexes.push(index)
@@ -66,7 +66,7 @@ class Batman.SimpleSet
     return
 
   forEach: (iterator, ctx) ->
-    iterator.call(ctx, key, null, this) for key in @toArray()
+    iterator.call(ctx, key, null, this) for key in @_storage
     return
 
   isEmpty: -> @length is 0

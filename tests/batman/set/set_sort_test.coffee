@@ -121,11 +121,11 @@ setSortOnObservableSetSuite = ->
   test "toArray() includes newly added items in the correct order", ->
     @base.add @byJill
     expected = ['Fred', 'Fred', 'Jill', 'Mary', 'Zeke']
-    deepEqual @authorNameSort.toArrayOfKeys(), expected
+    deepEqual @authorNameSort.mapToProperty('author.name'), expected
 
     @base.add @anotherByZeke
     expected = ['Fred', 'Fred', 'Jill', 'Mary', 'Zeke', 'Zeke']
-    deepEqual @authorNameSort.toArrayOfKeys(), expected
+    deepEqual @authorNameSort.mapToProperty('author.name'), expected
 
   test "toArray() does not include items which have been removed", ->
     @base.remove @anotherByFred
