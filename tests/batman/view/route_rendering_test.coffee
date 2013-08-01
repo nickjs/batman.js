@@ -21,12 +21,29 @@ asyncTest 'should set href for URL fragment', 1, ->
       QUnit.start()
   @App.run()
 
-asyncTest 'should redirect when clicked', 1, ->
+asyncTest 'should redirect when clicked', 2, ->
+  sinon.spy(Batman.DOM.RouteBinding.prototype, 'routeClick')
+
   @App.on 'run', =>
     helpers.render '<a data-route="\'/test\'">click</a>', {}, (node) =>
       helpers.triggerClick(node[0])
+      ok Batman.DOM.RouteBinding.prototype.routeClick.called
+      Batman.DOM.RouteBinding.prototype.routeClick.restore()
+
       delay =>
         deepEqual @redirect.lastCallArguments['/test']
+  @App.run()
+
+asyncTest 'should not redirect when clicked if target attribute is set', 1, ->
+  sinon.spy(Batman.DOM.RouteBinding.prototype, 'routeClick')
+
+  @App.on 'run', =>
+    helpers.render '<a data-route="\'/test\'" target="_blank">click</a>', {}, (node) =>
+      helpers.triggerClick(node[0])
+      ok not Batman.DOM.RouteBinding::routeClick.called
+      Batman.DOM.RouteBinding::routeClick.restore()
+
+      QUnit.start()
   @App.run()
 
 asyncTest 'should set "#" href for undefined keypath', 1, ->
