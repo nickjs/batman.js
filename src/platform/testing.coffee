@@ -33,3 +33,7 @@ Batman.Request::send = (data) ->
     @fire 'error', {response: response, status: status, request: this}
 
   @fire 'loaded'
+
+Batman.setImmediate = (fn) -> setTimeout(fn, 0)
+Batman.clearImmediate = (handle) -> clearTimeout(handle)
+
