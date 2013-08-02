@@ -12,7 +12,7 @@ Batman.Enumerable =
     result
 
   every: (f, ctx = Batman.container) ->
-    result = true;
+    result = true
     @forEach -> result = result && f.apply(ctx, arguments)
     result
 
