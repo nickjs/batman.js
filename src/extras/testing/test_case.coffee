@@ -1,6 +1,4 @@
 class Batman.TestCase extends Batman.Object
-  @mixin Batman.XhrMocking
-
   class @Test
     constructor: (@name, @expected, @testFunction) ->
 
@@ -87,6 +85,9 @@ class Batman.TestCase extends Batman.Object
 
   addExpectation: (name) ->
     if @_expectations[name] then @_expectations[name]++ else @_expectations[name] = 1
+
+  stubAccessor: (object, keypath, fn) ->
+    sinon.sandbox.stub(object.property(keypath), 'getValue').returns(fn())
 
   completeExpectation: (name) ->
     return if not @_expectations[name]
