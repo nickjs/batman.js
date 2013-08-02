@@ -87,7 +87,7 @@ class Batman.TestCase extends Batman.Object
     if @_expectations[name] then @_expectations[name]++ else @_expectations[name] = 1
 
   stubAccessor: (object, keypath, fn) ->
-    sinon.sandbox.stub(object.property(keypath), 'getValue').returns(fn())
+    sinon.sandbox.stub(object.property(keypath), 'getValue', fn)
 
   completeExpectation: (name) ->
     return if not @_expectations[name]
