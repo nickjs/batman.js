@@ -13,29 +13,31 @@ class Batman.DOM.AbstractCollectionBinding extends Batman.DOM.AbstractAttributeB
 
       return false unless @collection?.isObservable
 
-      # if @handleItemsAdded && @handleItemsRemoved
-      #   @collection.on('itemsWereAdded', @handleItemsAdded)
-      #   @collection.on('itemsWereRemoved', @handleItemsRemoved)
+      if @collection.isCollectionEventEmitter and @handleItemsAdded and @handleItemsRemoved and @handleItemMoved
+        @collection.on('itemsWereAdded', @handleItemsAdded)
+        @collection.on('itemsWereRemoved', @handleItemsRemoved)
+        @collection.on('itemWasMoved', @handleItemMoved)
 
-      #   @handleItemsAdded(@collection.toArray()) if @collection.length
-
-      # else
-      @collection.observeAndFire('toArray', @handleArrayChanged)
+        @handleArrayChanged(@collection.toArray())
+      else
+        @collection.observeAndFire('toArray', @handleArrayChanged)
 
       return true
 
   unbindCollection: ->
     return unless @collection?.isObservable
 
-    # if @handleItemsAdded && @handleItemsRemoved
-    #   @collection.forget('itemsWereAdded', @handleItemsAdded)
-    #   @collection.forget('itemsWereRemoved', @handleItemsRemoved)
-    # else
-    @collection.forget('toArray', @handleArrayChanged)
+    if @collection.isCollectionEventEmitter and @handleItemsAdded and @handleItemsRemoved and @handleItemMoved
+      @collection.off('itemsWereAdded', @handleItemsAdded)
+      @collection.off('itemsWereRemoved', @handleItemsRemoved)
+      @collection.off('itemWasMoved', @handleItemMoved)
+    else
+      @collection.forget('toArray', @handleArrayChanged)
 
   handleArrayChanged: ->
 
   die: ->
     @unbindCollection()
+    @collection = null
     super
 

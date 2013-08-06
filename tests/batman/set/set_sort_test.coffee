@@ -101,24 +101,6 @@ setSortSuite = ->
     expected = [@byFred, @anotherByFred, @byMary, @byZeke]
     deepEqual @authorNameSort.toArray(), expected
 
-  test "toArray() returns the correct order when sorting on key which returns a function by calling the function", ->
-    class Test
-      constructor: (@name) ->
-      getName: -> @name
-
-    a = new Test('a')
-    b = new Test('b')
-    c = new Test('c')
-
-    base = new Batman.Set(b, a, c)
-    sorted = base.sortedBy('getName')
-    deepEqual sorted.toArray(), [a, b, c]
-
-  test "toArray() returns the correct order when sorting on the 'valueOf' key to sort primitives", ->
-    @base = new Batman.Set('b', 'c', 'a')
-    sorted = @base.sortedBy('valueOf')
-    deepEqual sorted.toArray(), ['a', 'b', 'c']
-
 setSortOnObservableSetSuite = ->
   test "get('length') returns the correct length when items are added to the underlying set", ->
     @base.add @byJill
@@ -138,12 +120,12 @@ setSortOnObservableSetSuite = ->
 
   test "toArray() includes newly added items in the correct order", ->
     @base.add @byJill
-    expected = [@byFred, @anotherByFred, @byJill, @byMary, @byZeke]
-    deepEqual @authorNameSort.toArray(), expected
+    expected = ['Fred', 'Fred', 'Jill', 'Mary', 'Zeke']
+    deepEqual @authorNameSort.mapToProperty('author.name'), expected
 
     @base.add @anotherByZeke
-    expected = [@byFred, @anotherByFred, @byJill, @byMary, @byZeke, @anotherByZeke]
-    deepEqual @authorNameSort.toArray(), expected
+    expected = ['Fred', 'Fred', 'Jill', 'Mary', 'Zeke', 'Zeke']
+    deepEqual @authorNameSort.mapToProperty('author.name'), expected
 
   test "toArray() does not include items which have been removed", ->
     @base.remove @anotherByFred
@@ -157,9 +139,9 @@ setSortOnObservableSetSuite = ->
     deepEqual @authorNameSort.toArray(), expected
 
   test "setting a new value of the sorted property on one of the items triggers an update", ->
-    switchedAuthorToMary = @anotherByFred
-    switchedAuthorToMary.set('author', @mary)
-    expected = [@byFred, @byMary, switchedAuthorToMary, @byZeke]
+    switchedAuthorToBobs = @anotherByFred
+    switchedAuthorToBobs.set('author', @bobs)
+    expected = [switchedAuthorToBobs, @byFred, @byMary, @byZeke]
     deepEqual @authorNameSort.toArray(), expected
 
   test "setting a new value of the sorted property on an item which has been removed should not trigger an update", ->
@@ -172,15 +154,15 @@ setSortOnObservableSetSuite = ->
     expected = [@byFred, @byMary, @byZeke]
     deepEqual @authorNameSort.toArray(), expected
 
-  test "adding many new values to the set should only reindex the set once", ->
+  test "adding a few new values to the set should never _reIndex()", ->
     @authorNameSort.remove @anotherByFred
     reIndex = spyOn(@authorNameSort, "_reIndex")
 
     @authorNameSort.add(@anotherByFred)
-    equal reIndex.callCount, 1
+    equal reIndex.callCount, 0
 
     @authorNameSort.add(@byJill, @anotherByZeke)
-    equal reIndex.callCount, 2
+    equal reIndex.callCount, 0
 
   test "stopObserving() forgets all observers", ->
     @authorNameSort.stopObserving()
@@ -200,6 +182,7 @@ fixtureSetup = ->
   @mary = Batman name: 'Mary'
   @fred = Batman name: 'Fred'
   @jill = Batman name: 'Jill'
+  @bobs = Batman name: 'Bobs'
 
   @byZeke = Batman author: @zeke
   @byMary = Batman author: @mary
@@ -228,3 +211,71 @@ QUnit.module 'Batman.SetSort on a Batman.SimpleSet',
     @authorNameSort = new Batman.SetSort(@base, 'author.name')
 
 setSortSuite()
+
+QUnit.module 'Batman.SetSort specific methods'
+
+test "toArray() returns the correct order when sorting on key which returns a function by calling the function", ->
+  class Test
+    constructor: (@name) ->
+    getName: -> @name
+
+  a = new Test('a')
+  b = new Test('b')
+  c = new Test('c')
+
+  base = new Batman.Set(b, a, c)
+  sorted = base.sortedBy('getName')
+  deepEqual sorted.toArray(), [a, b, c]
+
+test "toArray() returns the correct order when sorting on the 'valueOf' key to sort primitives", ->
+  @base = new Batman.Set('b', 'c', 'a')
+  sorted = @base.sortedBy('valueOf')
+  deepEqual sorted.toArray(), ['a', 'b', 'c']
+
+test "_indexOfItem returns the correct index", ->
+  arr = [1, 3, 5, 6, 7, 8, 10]
+  set = new Batman.Set(arr...).sortedBy('')
+  equal set._indexOfItem(4), -1
+  equal arr[set._indexOfItem(1)], 1
+  equal arr[set._indexOfItem(3)], 3
+  equal arr[set._indexOfItem(5)], 5
+  equal arr[set._indexOfItem(6)], 6
+  equal arr[set._indexOfItem(7)], 7
+
+  arr = [1, 2]
+  set = new Batman.Set(arr...).sortedBy('')
+  equal arr[set._indexOfItem(1)], 1
+  equal arr[set._indexOfItem(2)], 2
+
+test "_indexOfItem returns the correct item for duplicate keys", ->
+  arr = [a = {key: 1}, b = {key: 1}, c = {key: 1}, d = {key: 1}, e = {key: 1}]
+  set = new Batman.Set(arr...).sortedBy('key')
+
+  equal arr[set._indexOfItem(a)], a
+  equal arr[set._indexOfItem(b)], b
+  equal arr[set._indexOfItem(c)], c
+  equal arr[set._indexOfItem(d)], d
+  equal arr[set._indexOfItem(e)], e
+
+  arr = [a = {key: 0}, b = {key: 1}, c = {key: 1}, d = {key: 4}, e = {key: 5}]
+  set = new Batman.Set(arr...).sortedBy('key')
+
+  equal arr[set._indexOfItem(a)], a
+  equal arr[set._indexOfItem(b)], b
+  equal arr[set._indexOfItem(c)], c
+  equal arr[set._indexOfItem(d)], d
+  equal arr[set._indexOfItem(e)], e
+
+test "_indexOfItem calls _binarySearch", ->
+  set = new Batman.Set([1, 2, 3]).sortedBy('')
+  sinon.spy(Batman.SetSort, '_binarySearch')
+
+  set._indexOfItem(1)
+  ok Batman.SetSort._binarySearch.calledOnce
+  Batman.SetSort._binarySearch.restore()
+
+test "SetSort._binarySearch returns the correct indexes for inexact searches", ->
+  arr = [1, 2, 3, 6, 7, 8, 10]
+  equal arr[Batman.SetSort._binarySearch(arr, 5, Batman.SetSort::compare).index], 6
+  equal arr[Batman.SetSort._binarySearch(arr, 9, Batman.SetSort::compare).index], 10
+  equal Batman.SetSort._binarySearch(arr, 11, Batman.SetSort::compare).index, arr.length

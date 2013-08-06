@@ -3,6 +3,8 @@
 #= require ../enumerable
 
 class Batman.Set extends Batman.Object
+  isCollectionEventEmitter: true
+
   constructor: -> Batman.SimpleSet.apply @, arguments
 
   Batman.extend @prototype, Batman.Enumerable
@@ -26,11 +28,11 @@ class Batman.Set extends Batman.Object
   for k in ['indexedBy', 'indexedByUnique', 'sortedBy', 'equality', '_indexOfItem']
     @::[k] = Batman.SimpleSet::[k]
 
-  for k in ['find', 'merge', 'forEach', 'toArray', 'isEmpty', 'has']
+  for k in ['at', 'find', 'merge', 'forEach', 'toArray', 'isEmpty', 'has']
     do (k) =>
       @::[k] = ->
         @registerAsMutableSource()
-        Batman.SimpleSet::[k].apply(@, arguments)
+        Batman.SimpleSet::[k].apply(this, arguments)
 
   toJSON: @::toArray
 
@@ -39,19 +41,21 @@ class Batman.Set extends Batman.Object
     @fire('itemsWereAdded', addedItems) if addedItems.length
     addedItems
 
-  remove: @mutation ->
-    removedItems = Batman.SimpleSet::remove.apply(this, arguments)
-    @fire('itemsWereRemoved', removedItems) if removedItems.length
-    removedItems
+  insert: ->
+    @insertWithIndexes(arguments...).addedItems
 
-  addAndRemove: @mutation (itemsToAdd, itemsToRemove) ->
-    addedItems = Batman.SimpleSet::add.apply(this, itemsToAdd || [])
-    removedItems = Batman.SimpleSet::remove.apply(this, itemsToRemove || [])
-    @fire('itemsWereAdded', addedItems) if addedItems.length
-    @fire('itemsWereRemoved', removedItems) if removedItems.length
+  insertWithIndexes: @mutation ->
+    {addedItems, addedIndexes} = Batman.SimpleSet::insertWithIndexes.apply(this, arguments)
+    @fire('itemsWereAdded', addedItems, addedIndexes) if addedItems.length
+    {addedItems, addedIndexes}
 
-    added: addedItems
-    removed: removedItems
+  remove: ->
+    @removeWithIndexes(arguments...).removedItems
+
+  removeWithIndexes: @mutation ->
+    {removedItems, removedIndexes} = Batman.SimpleSet::removeWithIndexes.apply(this, arguments)
+    @fire('itemsWereRemoved', removedItems, removedIndexes) if removedItems.length
+    {removedItems, removedIndexes}
 
   clear: @mutation ->
     removedItems = Batman.SimpleSet::clear.call(this)

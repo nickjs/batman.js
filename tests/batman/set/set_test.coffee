@@ -21,6 +21,18 @@ basicSetTestSuite = ->
     @set.add(itemA)
     equal @set.has(itemB), false
 
+  test "at(index) returns the item at that index", ->
+    @set.add(0, 1, 2, 3, 4)
+    equal @set.at(0), 0
+    equal @set.at(2), 2
+    equal @set.at(4), 4
+
+  test "at(index) returns undefined when there is no item at that index", ->
+    @set.add(true)
+    equal @set.at(0), true
+    equal @set.at(32), undefined
+    equal @set.at(-7), undefined
+
   test "add(items...) adds the items to the set, such that has(item) returns true for each item, and increments the set's length accordingly", ->
     deepEqual @set.add('foo', 'bar'), ['foo', 'bar']
     equal @set.length, 2
@@ -36,6 +48,7 @@ basicSetTestSuite = ->
 
   test "remove(items...) removes the items from the set, returning the item and not touching any others", ->
     @set.add('foo', o1={}, o2={}, o3={})
+    equal @set.length, 4
 
     deepEqual @set.remove(o2, o3), [o2, o3]
 
@@ -58,62 +71,6 @@ basicSetTestSuite = ->
     @set.remove('bar', 'bar')
 
     equal @set.length, 1
-
-  test "addAndRemove only adds item to the set if no items to remove are passed", ->
-    @set.on 'itemsWereAdded', listen = createSpy()
-    @set.on 'itemsWereRemoved', removeSpy = createSpy()
-
-    itemsToAdd = [o1 = {}, o2 = {}, o3 = {}]
-    change = @set.addAndRemove(itemsToAdd)
-
-    deepEqual(change, {added: itemsToAdd, removed: []})
-
-    equal @set.length, 3
-    ok @set.has(o1)
-    ok @set.has(o2)
-    ok @set.has(o3)
-    equal listen.callCount, 1
-    ok !removeSpy.called
-
-  test "addAndRemove only removes item to the set if no items to add are passed", ->
-    itemsToAdd = [o1 = {}, o2 = {}, o3 = {}]
-    @set.add(itemsToAdd...)
-
-    @set.on 'itemsWereAdded', addSpy = createSpy()
-    @set.on 'itemsWereRemoved', listen = createSpy()
-
-    change = @set.addAndRemove([], [o1, o2])
-
-    deepEqual(change, {added: [], removed: [o1, o2]})
-
-    equal @set.length, 1
-    ok !@set.has(o1)
-    ok !@set.has(o2)
-    ok @set.has(o3)
-    equal listen.callCount, 1
-    ok !addSpy.called
-
-  test "addAndRemove adds and removes elements from the set", ->
-    itemsToAdd = [o1 = {}, o2 = {}, o3 = {}]
-    @set.add(itemsToAdd...)
-
-    @set.on 'itemsWereAdded', addSpy = createSpy()
-    @set.on 'itemsWereAdded', changeSpy = createSpy()
-    @set.on 'itemsWereRemoved', removeSpy = createSpy()
-
-    change = @set.addAndRemove([o4 = {}], [o1, o2])
-
-    deepEqual(change, {added: [o4], removed: [o1, o2]})
-
-    equal @set.length, 2
-    ok !@set.has(o1)
-    ok !@set.has(o2)
-    ok @set.has(o3)
-    ok @set.has(o4)
-    equal addSpy.callCount, 1
-    equal changeSpy.callCount, 1
-    equal removeSpy.callCount, 1
-
 
   test "find(f) returns the first item for which f is true", 1, ->
     @set.add(1, 2, 3, 5)
@@ -310,12 +267,15 @@ basicSetTestSuite = ->
     obj = new Batman.Object
     obj.accessor 'firstBiggerThan2', => @set.find (n) -> n > 2
     obj.observe 'firstBiggerThan2', observer = createSpy()
+
     @set.add(3)
     equal observer.callCount, 1
     strictEqual obj.get('firstBiggerThan2'), 3
+
     @set.add(4)
     equal observer.callCount, 1
     strictEqual obj.get('firstBiggerThan2'), 3
+
     @set.remove(3)
     equal observer.callCount, 2
     strictEqual obj.get('firstBiggerThan2'), 4

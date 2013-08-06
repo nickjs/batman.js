@@ -17,6 +17,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
     super
 
+    @backingView.set('attributeName', @attributeName)
     @view.prevent('ready')
     Batman.setImmediate =>
       parentNode = @prototypeNode.parentNode
@@ -43,23 +44,23 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
   handleArrayChanged: (newItems) =>
     unless @backingView.isDead
       @backingView.destroySubviews()
-      @handleItemsAdded(newItems)
+      @handleItemsAdded(newItems) if newItems?.length
 
-  handleItemsAdded: (newItems) =>
+  handleItemsAdded: (addedItems, addedIndexes) =>
     unless @backingView.isDead
-      @backingView.beginAppendItems()
-      @backingView.appendItem(item) for item in newItems if newItems
-      @backingView.finishAppendItems()
+      @backingView.addItems(addedItems, addedIndexes)
 
-  handleItemsRemoved: (oldItems) =>
+  handleItemsRemoved: (removedItems, removedIndexes) =>
+    return if @backingView.isDead
+
+    if @collection.length
+      @backingView.removeItems(removedItems, removedIndexes)
+    else
+      @backingView.destroySubviews()
+
+  handleItemMoved: (item, newIndex, oldIndex) =>
     unless @backingView.isDead
-      for item in oldItems
-        for subview in @backingView.subviews._storage
-          if subview.get(@attributeName) == item
-            subview.unset(@attributeName)
-            subview.die()
-            break
-    return
+      @backingView.moveItem(oldIndex, newIndex)
 
   die: ->
     @prototypeNode = null

@@ -41,6 +41,12 @@ Batman.EventEmitter =
   registerAsMutableSource: ->
     Batman.Property.registerSource(this)
 
+  mutate: (wrappedFunction) ->
+    @prevent('change')
+    result = wrappedFunction.call(this)
+    @allowAndFire('change', this, this)
+    result
+
   mutation: (wrappedFunction) ->
     ->
       result = wrappedFunction.apply(this, arguments)

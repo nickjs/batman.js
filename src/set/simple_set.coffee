@@ -10,30 +10,43 @@ class Batman.SimpleSet
 
   Batman.extend @prototype, Batman.Enumerable
 
+  at: (index) -> @_storage[index]
+
   add: (items...) ->
     addedItems = []
-    for item in items when !~@_indexOfItem(item)
-      @_storage.push item
-      addedItems.push item
+    for item in items when @_indexOfItem(item) == -1
+      @_storage.push(item)
+      addedItems.push(item)
 
     @length = @_storage.length
     addedItems
 
-  remove: (items...) ->
-    removedItems = []
-    for item in items when ~(index = @_indexOfItem(item))
-      @_storage.splice(index, 1)
-      removedItems.push item
+  insert: -> @insertWithIndexes(arguments...).addedItems
+
+  insertWithIndexes: (items, indexes) -> 
+    addedIndexes = []
+    addedItems = []
+    for item, i in items when @_indexOfItem(item) == -1
+      index = indexes[i]
+      @_storage.splice(index, 0, item)
+      addedItems.push(item)
+      addedIndexes.push(index)
 
     @length = @_storage.length
-    removedItems
+    {addedItems, addedIndexes}
 
-  addAndRemove: (itemsToAdd, itemsToRemove) ->
-    addedItems = @add(itemsToAdd || [])
-    removedItems = @remove(itemsToRemove || [])
+  remove: -> @removeWithIndexes(arguments...).removedItems
 
-    added: addedItems
-    removed: removedItems
+  removeWithIndexes: (items...) ->
+    removedIndexes = []
+    removedItems = []
+    for item in items when (index = @_indexOfItem(item)) != -1
+      @_storage.splice(index, 1)
+      removedItems.push(item)
+      removedIndexes.push(index)
+
+    @length = @_storage.length
+    {removedItems, removedIndexes}
 
   clear: ->
     items = @_storage

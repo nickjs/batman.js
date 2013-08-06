@@ -80,9 +80,9 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
           recordsToAdd.push(record)
         else
           if newChildren.length > 0
-            savedRecord = newChildren.shift()
-            savedRecord._withoutDirtyTracking -> @fromJSON(jsonObject)
-            record = relatedModel._mapIdentity(savedRecord)
+            record = newChildren.shift()
+            record._withoutDirtyTracking -> @fromJSON(jsonObject)
+            record = relatedModel._mapIdentity(record)
           else
             record = relatedModel._makeOrFindRecordFromData(jsonObject)
             recordsToAdd.push(record)

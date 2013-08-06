@@ -6,15 +6,26 @@ class Batman.SetProxy extends Batman.Object
     super()
     @length = @base.length
 
-    @base.on? 'itemsWereAdded', (items) =>
-      @set 'length', @base.length
-      @fire('itemsWereAdded', items)
+    if @base.isCollectionEventEmitter
+      @isCollectionEventEmitter = true
 
-    @base.on? 'itemsWereRemoved', (items) =>
-      @set 'length', @base.length
-      @fire('itemsWereRemoved', items)
+      @_setObserver = new Batman.SetObserver(@base)
+      @_setObserver.on 'itemsWereAdded', @_handleItemsAdded.bind(this)
+      @_setObserver.on 'itemsWereRemoved', @_handleItemsRemoved.bind(this)
+      @startObserving()
 
   Batman.extend @prototype, Batman.Enumerable
+
+  startObserving: -> @_setObserver?.startObserving()
+  stopObserving: -> @_setObserver?.stopObserving()
+
+  _handleItemsAdded: (items, indexes) ->
+    @set('length', @base.length)
+    @fire('itemsWereAdded', items, indexes)
+
+  _handleItemsRemoved: (items, indexes) ->
+    @set('length', @base.length)
+    @fire('itemsWereRemoved', items, indexes)
 
   filter: (f) ->
     @reduce (accumulator, element) ->
@@ -31,7 +42,7 @@ class Batman.SetProxy extends Batman.Object
 
   Batman.Set._applySetAccessors(@)
 
-  for k in ['add', 'remove', 'addAndRemove', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy']
+  for k in ['add', 'insert', 'insertWithIndexes', 'remove', 'removeWithIndexes', 'at', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy']
     do (k) =>
       @::[k] = -> @base[k].apply(@base, arguments)
 

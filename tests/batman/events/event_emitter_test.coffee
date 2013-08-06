@@ -92,3 +92,16 @@ test "events inherited from ancestors retain oneshot status", ->
 
   ok TestWeatherSystem::event('snow').oneShot
   ok (new TestWeatherSystem).event('snow').oneShot
+
+test "mutate prevents change events and fires one after", ->
+  item = Batman()
+  item.on('change', spy = createSpy())
+
+  item.mutate ->
+    @fire('change')
+    equal spy.callCount, 0
+    @fire('change')
+    equal spy.callCount, 0
+
+  equal spy.callCount, 1
+
