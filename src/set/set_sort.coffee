@@ -39,9 +39,6 @@ class Batman.SetSort extends Batman.SetProxy
     @fire('itemWasMoved', item, newIndex, oldIndex)
 
   _handleItemsAdded: (items) ->
-    # if items.length > Math.log(@_storage.length) * 5
-    #   @_reIndex()
-    # else
     newStorage = @_storage.slice()
     addedItems = []
     addedIndexes = []
