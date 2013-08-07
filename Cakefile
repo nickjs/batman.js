@@ -92,11 +92,11 @@ task 'doc', 'build the Percolate documentation', (options) ->
         process.exit(code) unless options.watch
 
 task 'test', ' run the tests continuously on the command line', (options) ->
-  pipedExec './node_modules/.bin/karma', 'start', './karma.conf.js', (code) ->
+  pipedExec './node_modules/.bin/karma', 'start', './karma.conf.coffee', (code) ->
     process.exit(code)
 
 task 'test:travis', 'run the tests once using PhantomJS', (options) ->
-  pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'PhantomJS', './karma.conf.js', (code) ->
+  pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'PhantomJS', './karma.conf.coffee', (code) ->
     process.exit(code)
 
 task 'test:doc', 'run the percolate test suite', (options) ->

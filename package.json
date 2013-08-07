@@ -41,7 +41,8 @@
     "connect-assets": "~2.4.1",
     "liquor": "~0.0.0",
     "snockets": "~1.3.8",
-    "karma": "~0.8.5"
+    "karma": "~0.10.1",
+    "karma-qunit": "~0.1.0"
   },
   "engines": {
     "node": "~0.8.0 || ~0.10.0"
