@@ -53,7 +53,7 @@ class Batman.IteratorView extends Batman.View
     if isInDOM
       subview.propagateToSubviews('viewWillAppear') for subview in @appendedViews
 
-    for subview, index in @subviews.toArray() when subview._targeted
+    for subview, index in @subviews.toArray() by -1 when subview._targeted
       if sibling = @subviews.at(index + 1)?.get('node')
         sibling.parentNode.insertBefore(subview.get('node'), sibling)
       else
