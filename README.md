@@ -499,7 +499,7 @@ Associations can be rendered via keypaths, using the same labels you use to crea
 
 # Contributing
 
-[![Build Status](https://secure.travis-ci.org/batmanjs/batman.png)](http://travis-ci.org/batmajs/batman)
+[![Build Status](https://secure.travis-ci.org/batmanjs/batman.png)](http://travis-ci.org/batmanjs/batman)
 
 Well-tested contributions are always welcome! Here's what you should do:
 
