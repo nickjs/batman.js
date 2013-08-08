@@ -76,7 +76,7 @@ class Batman.RailsStorage extends Batman.RestStorage
 
     if token = @constructor.CSRF_TOKEN
       headers = env.options.headers ||= {}
-      headers['X-CSRF-Token'] = token
+      headers['X-CSRF-Token'] ?= token
 
     next()
 
