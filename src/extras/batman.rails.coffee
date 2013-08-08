@@ -1,4 +1,6 @@
 Batman.config.pathToHTML = '/assets/batman/html'
+Batman.config.protectFromCSRF = true
+Batman.config.metaNameForCSRFToken = 'csrf-token'
 
 numericKeys = [1, 2, 3, 4, 5, 6, 7, 10, 11]
 date_re = ///
@@ -64,6 +66,19 @@ class Batman.RailsStorage extends Batman.RestStorage
       parsedResponse.errors
     else
       parsedResponse
+
+  @::before 'all', (env, next) ->
+    return next() if not Batman.config.protectFromCSRF
+
+    if not @constructor.CSRF_TOKEN
+      tag = Batman.DOM.querySelector(null, "meta[name=\"#{Batman.config.metaNameForCSRFToken}\"]")
+      @constructor.CSRF_TOKEN = tag.getAttribute('content')
+
+    if token = @constructor.CSRF_TOKEN
+      headers = env.options.headers ||= {}
+      headers['X-CSRF-Token'] = token
+
+    next()
 
   @::after 'update', 'create', (env, next) ->
     record = env.subject

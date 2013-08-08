@@ -11,6 +11,7 @@ Batman.config =
   fetchRemoteHTML: true
   usePushState: true
   minificationErrors: true
+  protectFromCSRF: false
 
 (Batman.container = do -> this).Batman = Batman  # I am so, so sorry.
 
