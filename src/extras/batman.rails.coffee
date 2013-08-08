@@ -70,9 +70,11 @@ class Batman.RailsStorage extends Batman.RestStorage
   @::before 'all', (env, next) ->
     return next() if not Batman.config.protectFromCSRF
 
-    if not @constructor.CSRF_TOKEN
-      tag = Batman.DOM.querySelector(null, "meta[name=\"#{Batman.config.metaNameForCSRFToken}\"]")
-      @constructor.CSRF_TOKEN = tag.getAttribute('content')
+    if not @constructor.CSRF_TOKEN?
+      if tag = Batman.DOM.querySelector(document.head, "meta[name=\"#{Batman.config.metaNameForCSRFToken}\"]")
+        @constructor.CSRF_TOKEN = tag.getAttribute('content')
+      else
+        @constructor.CSRF_TOKEN = null
 
     if token = @constructor.CSRF_TOKEN
       headers = env.options.headers ||= {}
