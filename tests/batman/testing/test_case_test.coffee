@@ -69,3 +69,11 @@ test 'wait should perform an async test and wait for continue', 1, ->
     @testCase.continue()
 
   @testCase.wait()
+
+test 'stubAccessor should stub the return value', ->
+  class Order extends Batman.Object
+    @accessor 'twenty', -> 20
+
+  order = new Order
+  @testCase.stubAccessor(order, 'twenty', -> 35)
+  @testCase.assertEqual 35, order.get('twenty')
