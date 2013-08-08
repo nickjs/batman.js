@@ -499,14 +499,14 @@ Associations can be rendered via keypaths, using the same labels you use to crea
 
 # Contributing
 
-[![Build Status](https://secure.travis-ci.org/Shopify/batman.png)](http://travis-ci.org/Shopify/batman)
+[![Build Status](https://secure.travis-ci.org/batmanjs/batman.png)](http://travis-ci.org/batmajs/batman)
 
 Well-tested contributions are always welcome! Here's what you should do:
 
 #### 1. Clone the repo
 
 ```bash
-git clone https://github.com/Shopify/batman.git
+git clone https://github.com/batmanjs/batman.git
 ```
 
 #### 2. Install dependencies using NPM
