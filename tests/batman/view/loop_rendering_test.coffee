@@ -468,7 +468,7 @@ asyncTest 'it should destroy nodes and their bindings if items have been removed
     delay ->
       deepEqual dieVals, [['item.id', '4'], ['item.id', '5'], ['item.id', '6']]
 
-asyncTest 'it shouldn\'t break state if bound to undefined', 1, ->
+asyncTest 'it shouldn\'t break state if bound to undefined', 3, ->
   source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
   objects = new Batman.Set('a')
 
