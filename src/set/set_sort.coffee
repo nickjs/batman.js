@@ -72,10 +72,11 @@ class Batman.SetSort extends Batman.SetProxy
 
   toArray: ->
     @base.registerAsMutableSource?()
-    @get('_storage').slice()
+    @_storage.slice()
 
   forEach: (iterator, ctx) ->
-    iterator.call(ctx, e, i, this) for e, i in @get('_storage')
+    @base.registerAsMutableSource?()
+    iterator.call(ctx, e, i, this) for e, i in @_storage
     return
 
   find: (block) ->
