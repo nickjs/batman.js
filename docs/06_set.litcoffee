@@ -1,12 +1,12 @@
-## Batman.Set
+# Batman.Set
 
 `Set` is an observable, `Batman.Object` wrapper around `SimpleSet`.
 
-#### SimpleSet vs Set
+### SimpleSet vs Set
 
 `SimpleSet` and `Set` are two distinct classes in Batman. `SimpleSet` implements the basic set semantics, but it is *not* a `Batman.Object`, so properties on it (like its `length` or `toArray`) cannot be bound. `Set` is a `Batman.Object`, so it can be observed, and thus plays nicely with the accessor system. Use a `SimpleSet` only when you know nothing will need to be observed on the set you are creating, which usually isn't a valid assumption. If it is in fact valid, consider using a native array as well, as iteration and membership checks will be faster.
 
-### constructor(items...)
+## constructor(items...)
 
 When creating a `Set`, items forming the initial set can be passed as separate arguments to the constructor
 
@@ -18,15 +18,15 @@ When creating a `Set`, items forming the initial set can be passed as separate a
       set = new Batman.Set('a', 'b', 'c')
       deepEqual set.toArray().sort(), ['a', 'b', 'c']
 
-### length : number
+## length : number
 
 A count of the items in a `Set` can be found at its `length` property.
 
-### isEmpty : boolean
+## isEmpty : boolean
 
 Observable property for `isEmpty()`
 
-### toArray : Array
+## toArray : Array
 
 Observable property for `toArray()`. Whenever items are added or removed on the set, the `toArray` property will change. This is the mechanism by which Batman's view bindings get notified of collection updates.
 
@@ -39,7 +39,7 @@ Observable property for `toArray()`. Whenever items are added or removed on the 
       deepEqual set.remove('b'), ['b']
       deepEqual results, ['a', 'c', 'd']
 
-### has(item) : Boolean
+## has(item) : Boolean
 
 `has` returns a boolean describing if the given `item` is a member of the set.
 
@@ -65,7 +65,7 @@ _Note_: Using `has(item)` in an accessor body will register the set `has` is cal
       team.get('awards').add 'Stanley Cup'
       equal result, true
 
-### add(items...)
+## add(items...)
 
 `add` adds 0 or more new items to the set. `add` returns an array of the items which have been newly added to the set, which is to say the intersection of the argument items and the set's complement before addition.
 
@@ -96,7 +96,7 @@ _Note_: Using `has(item)` in an accessor body will register the set `has` is cal
       set.add('a', 'b')
       equal typeof results, 'undefined'
 
-### remove(items...)
+## remove(items...)
 
 `remove` removes 0 or more items from the set. `remove` returns an array of the items which were successfully removed from the set, which is to say the intersection of the argument items and the set itself before removal.
 
@@ -127,7 +127,7 @@ _Note_: Using `has(item)` in an accessor body will register the set `has` is cal
       set.remove('c', 'd')
       equal typeof results, 'undefined'
 
-### find(testFunction : function) : [Object]
+## find(testFunction : function) : [Object]
 
 `find` returns the first item within the set for which the `testFunction` called with the item returns `true`, or `undefined` if no item passes the test.
 
@@ -142,7 +142,7 @@ _Note_: `find` returns the first item the test passes for, but since set iterati
       set = new Batman.Set(1, 2, 3)
       equal typeof set.find((x) -> x > 5), 'undefined'
 
-### forEach(iteratorFunction : function[, context: Object])
+## forEach(iteratorFunction : function[, context: Object])
 
 `forEach` calls the `iteratorFunction` with each item in the set, optionally executing the `iteratorFunction` in the passed context. Returns `undefined`.
 
@@ -183,7 +183,7 @@ _Note_: Using `forEach()` in an accessor body will register the set iterated ove
       team.get('players').add 'Daniel Sedin'
       equal result, true
 
-### isEmpty() : boolean
+## isEmpty() : boolean
 
 `isEmpty` returns a boolean: `true` if the set has no items, and `false` if it has any items.
 
@@ -206,7 +206,7 @@ _Note_: Using `isEmpty()` in an accessor body will register the set `isEmpty` is
       team.get('games').add({win: true})
       equal team.get('seasonStarted?'), true
 
-### clear() : Array
+## clear() : Array
 
 `clear` removes all items from a set. Returns an array of all the items in the set.
 
@@ -227,7 +227,7 @@ _Note_: Set iteration order is not defined, so the order of the array of items r
       set.clear()
       deepEqual result.sort(), ['a', 'b', 'c']
 
-### replace(collection : Enumerable) : Array
+## replace(collection : Enumerable) : Array
 
 `replace` removes all the items in a set and then adds all the items found in another `collection`. The other collection must have a `toArray` function which returns an array representation of the collection. Returns the array of items added.
 
@@ -253,7 +253,7 @@ _Note_: Set iteration order is not defined, so the order of the array of items r
       set.replace(new Batman.SimpleSet('a', 'b', 'c'))
       deepEqual result.sort(), ['a', 'b', 'c']
 
-### toArray() : Array
+## toArray() : Array
 
 `toArray` returns an array representation of the set.
 
@@ -269,7 +269,7 @@ _Note_: Using `toArray()` in an accessor body will register the set `toArray` is
       set.add('a', 'b', 'c')
       deepEqual set.toArray().sort(), ['a', 'b', 'c']
 
-### merge(collections... : Enumerable) : Set
+## merge(collections... : Enumerable) : Set
 
 `merge` adds all the items in a set and all the items in the passed `collections` to a new set and returns it. A `collection` is an object which has a `forEach` function. `merge` is a non-destructive collection union, so the set `merge` is called on and each `collection` passed to `merge` are unaffected by the call.
 
@@ -281,7 +281,7 @@ _Note_: Be careful about using `merge` within accessors. Calling `merge` in an a
       equal Batman.typeOf(set = abc.merge(def)), 'Object'
       deepEqual set.toArray().sort(), ['a', 'b', 'c', 'd', 'e', 'f']
 
-### indexedBy(key : String) : SetIndex
+## indexedBy(key : String) : SetIndex
 
 `indexedBy` returns a hash of sets which buckets all the items in the callee set by the value of a particular `key`. The value of the passed `key` is `get`ted from each object in the set, and then a hash of each value to a set of the items with that value at the `key` is built. This hash of sets is a smart object called a `SetIndex` which will continue to observe the set and the value of the `key` on each item in the set to ensure the set index remains up to date. `SetIndex` also has a friend named `UniqueSetIndex` which will give you a hash of items instead of a hash of sets with items for easy access if you know each item's value at the `key` is unique.
 
@@ -321,7 +321,7 @@ _Note_: Be careful about using `merge` within accessors. Calling `merge` in an a
       index = set.get('indexedBy.colour')
       equal index.get('blue').get('length'), 1
 
-### indexedByUnique(key : String) : UniqueSetIndex
+## indexedByUnique(key : String) : UniqueSetIndex
 
 `indexedByUnique` returns a hash of items keyed by the value of the given `key` on each item from the callee set. The value of the passed `key` is `get`ted from each object in the set, and then a hash of each value to an item with that value at the `key` is built. This hash of items is a smart object called a `UniqueSetIndex` which will continue to observe the set and the value of the `key` on each item in the set to ensure the index remains up to date. Note that the semantics for which item ends up in the hash if two items have the same value for the `key` are undefined, so it is wise to only use `UniqueSetIndex`es on keys who's values are going to be unique in the set. If the values are not going to be unique, you may be interested in `SetIndex` and `Set::indexedBy`.
 
@@ -363,7 +363,7 @@ _Note_: Be careful about using `merge` within accessors. Calling `merge` in an a
       index = set.get('indexedByUnique.colour')
       equal 'blue', index.get('blue').get('colour')
 
-### sortedBy(key: String [, order: String]) : SetSort
+## sortedBy(key: String [, order: String]) : SetSort
 
 `sortedBy` returns a `Set` like object containing all the items of the callee set but with a defined iteration order (unlike `Set`). The iteration order is defined as the alpha numeric sorting of the values of the passed `key` gotten from each item. The direction of the sort can be controlled with the `order` argument, which defaults to `asc` (short for ascending) or can be passed as `desc` (short for descending). This `Set` like object is a `SetSort` which encapsulates the logic to get the values from each item at the passed `key` and traverse the `Set` in the values sorted order.
 
