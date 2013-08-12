@@ -38,6 +38,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
           Object.keys(collection)
         @handleArrayChanged(items)
     else
+      @collection = []
       @handleArrayChanged([])
     return
 
