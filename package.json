@@ -38,7 +38,7 @@
     "temp": "~0.5.0",
     "connect-assets": "~2.4.1",
     "liquor": "~0.0.0",
-    "snockets": "git://github.com/SoapyIllusions/snockets.git#master",
+    "snockets": "git://github.com/batmanjs/snockets.git#master",
     "karma": "~0.10.1",
     "karma-qunit": "~0.1.0",
     "karma-script-launcher": "~0.1.0",
