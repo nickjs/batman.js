@@ -54,14 +54,14 @@ backing view.
     test 'setKeypath sets the value if defined on the view', ->
       view = new Batman.View(animal: 'dog')
 
-      view.setKeypath('animal', cat)
+      view.setKeypath('animal', 'cat')
       equal 'cat', view.get('animal')
 
     test 'setKeypath sets the value if defined on an ancestor', ->
       superview = new Batman.View(animal: 'dog')
       subview = new Batman.View(superview: superview)
 
-      subview.setKeypath('animal', cat)
+      subview.setKeypath('animal', 'cat')
       equal 'cat', superview.get('animal')
 
     test 'setKeypath sets the value on the nearest non-backing view when not defined anywhere', ->
@@ -69,7 +69,7 @@ backing view.
       view = new Batman.View(superview: superview)
       backingView = new Batman.BackingView(superview: view)
 
-      backingView.setKeypath('animal', cat)
+      backingView.setKeypath('animal', 'cat')
       equal 'cat', view.get('animal')
 
 
