@@ -24,6 +24,7 @@ Batman.Request::send = (data) ->
   @mixin
     status: status
     response: JSON.stringify(response)
+    responseHeaders: responseHeaders
 
   beforeResponse?(this)
 
