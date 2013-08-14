@@ -9,9 +9,9 @@ guide](/docs/views.html).
 A `View` is a `Batman.Object`, so any options you pass are mixed in. Use this
 to set `html`, `node`, `superview`, `parentNode` and/or your custom data.
 
-    test 'constructor can be called without arguments', ->
-      set = new Batman.Set
-      deepEqual set.toArray(), []
+    test 'constructor mixes in options', ->
+      view = new Batman.View(animal: 'cat')
+      equal 'cat', view.get('animal')
 
 
 ## ::lookupKeypath(keypath) : Object
@@ -33,13 +33,13 @@ the chain, the data will be correctly bound.
 binding.
 
     test 'lookupKeypath returns the value if defined on the view', ->
-      view = new Batman.View(animal: 'cats')
-      equal 'cats', view.lookupKeypath('animal')
+      view = new Batman.View(animal: 'cat')
+      equal 'cat', view.lookupKeypath('animal')
 
     test 'lookupKeypath returns the value if defined on an ancestor', ->
-      superview = new Batman.View(animal: 'cats')
+      superview = new Batman.View(animal: 'cat')
       subview = new Batman.View(superview: superview)
-      equal 'cats', subview.lookupKeypath('animal')
+      equal 'cat', subview.lookupKeypath('animal')
 
 
 ## ::setKeypath(keypath, value) : Object
@@ -52,25 +52,25 @@ backing view.
 `setKeypath` is the function invoked to set data when using an input binding.
 
     test 'setKeypath sets the value if defined on the view', ->
-      view = new Batman.View(animal: 'dogs')
+      view = new Batman.View(animal: 'dog')
 
-      view.setKeypath('animal', cats)
-      equal 'cats', view.get('animal')
+      view.setKeypath('animal', cat)
+      equal 'cat', view.get('animal')
 
     test 'setKeypath sets the value if defined on an ancestor', ->
-      superview = new Batman.View(animal: 'dogs')
+      superview = new Batman.View(animal: 'dog')
       subview = new Batman.View(superview: superview)
 
-      subview.setKeypath('animal', cats)
-      equal 'cats', superview.get('animal')
+      subview.setKeypath('animal', cat)
+      equal 'cat', superview.get('animal')
 
     test 'setKeypath sets the value on the nearest non-backing view when not defined anywhere', ->
       superview = new Batman.View()
       view = new Batman.View(superview: superview)
       backingView = new Batman.BackingView(superview: view)
 
-      backingView.setKeypath('animal', cats)
-      equal 'cats', view.get('animal')
+      backingView.setKeypath('animal', cat)
+      equal 'cat', view.get('animal')
 
 
 ## ::%node : Node
