@@ -1,7 +1,7 @@
 # Batman Request
  Request is an abstraction around XHR requests.  It can be used with a variety of platforms, and is implemented the platform layer files.
 
-## Platform Request Implmentation Libraries:
+### Platform Request Implmentation Libraries:
   Depending on the platform library the underlying request implementation will change:
 
  - `batman.jquery.js`: jQuery XHR
@@ -10,7 +10,7 @@
 
  _note_ For the tests there are some mocked responses, in a normal non testing situation you would not use these
 
-## How to use Batman Request
+### How to use Batman Request
 
   Batman.Request can be used a variety of ways.  This is the underlying library that the `rest_storage_adapater` uses to communicate.
 
@@ -25,7 +25,7 @@
         success: (result) ->
           ok true
 
-## Lifecycle events
+### Lifecycle events
  There are a variety of lifecycle events that get fired in a `Request`.  Each of these are passed in as parameters in the options object in the `Request` constructor.
 
  1. `loading()`: fired before `send()` has been called.
@@ -66,7 +66,7 @@
         success: (response) ->
           equal "foo", response
 
-## Request::status
+## .status
   The response status, only set after `error` or `success`
 
     test "Demo the error event", 1, ->
@@ -77,7 +77,7 @@
        error: (xhr) ->
          equal 400, @status
 
-## Request::response
+## .response
   The response object
 
     test "Demonstrate the response object", 1, ->
@@ -89,7 +89,7 @@
         success: (response) ->
           equal "foo", JSON.parse(@response)
 
-## Request::responseHeaders : PlainObject
+## .responseHeaders : PlainObject
   An key/value object with the response headers
 
     test "responseHeaders", 1, ->
@@ -101,7 +101,7 @@
         success: (response) ->
           deepEqual @responseHeaders,{ FOO: "bar" }
 
-## Request( options : PlainObject )
+## @Request( options : PlainObject )
 
   Constructs a new `Batman.Request` with the supplied options
 
@@ -144,7 +144,7 @@
   8. `type`: The type of data you're expecting from the server, defaults to `json`
 
 
-## Request::send( [data] )
+## ::send( [data] )
   If `autosend` is `false`, this will initiate the request.  The data object passed in will take priority over the one specified in the `options` object
 
     test "request.send()", ->
