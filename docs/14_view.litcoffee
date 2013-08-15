@@ -87,12 +87,6 @@ loaded.
       node = view.get('node')
       equal 'cat', node.firstChild.innerHTML
 
-    test 'node parses bindings too', ->
-      view = new Batman.View(html: '<div data-bind="animal"></div>', animal: 'cat')
-
-      node = view.get('node')
-      equal 'cat', node.firstChild.innerHTML
-
 
 ## ::%html : String
 
@@ -123,6 +117,13 @@ sync with the logical tree.
 Adding to a view's subview set will automatically update the tree, and parse
 the template and bindings. If the superview is already in the DOM, this will
 insert the current view's node into the DOM.
+
+    test 'adding to a superview parses bindings', ->
+      superview = new Batman.View()
+      view = new Batman.View(html: '<div data-bind="animal"></div>', animal: 'cat')
+
+      superview.subviews.add(view)
+      equal 'cat', view.get('node').firstChild.innerHTML
 
 
 ## ::subviews.remove(view)
