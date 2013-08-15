@@ -41,3 +41,36 @@ test "should properly decode a Rails date", ->
 
   ok instance.get('tested_at') instanceof Date
   dateEqual instance.get('tested_at'), new Date(1325615706000)
+
+QUnit.module "Batman.Rails: CSRF protection",
+  setup: ->
+    theTest = this
+
+    class MockRailsStorage extends Batman.RailsStorage
+      request: (env) ->
+        theTest.lastRequest = env
+
+    class @Model extends Batman.Model
+      @persist MockRailsStorage
+
+test "if protectFromCSRF is false, the request does not include a CSRF header", ->
+  Batman.config.protectFromCSRF = false
+  @Model.get('all')
+  ok !@lastRequest.options.headers?['X-CSRF-Token']
+
+test "if protectFromCSRF is true and the appropriate meta tag exists, the request should include a CSRF header", ->
+  Batman.config.protectFromCSRF = true
+  meta = document.createElement('meta')
+  meta.setAttribute('name', 'csrf-token')
+  meta.setAttribute('content', 'metaTag!')
+  document.head.appendChild(meta)
+
+  @Model.get('all')
+  equal @lastRequest.options.headers['X-CSRF-Token'], 'metaTag!'
+
+test "if protectFromCSRF is true and the appropriate config option exists, the request should include a CSRF header", ->
+  Batman.config.protectFromCSRF = true
+  Batman.config.CSRF_TOKEN = 'configOption!'
+
+  @Model.get('all')
+  equal @lastRequest.options.headers['X-CSRF-Token'], 'configOption!'
