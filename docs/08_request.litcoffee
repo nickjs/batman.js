@@ -19,7 +19,7 @@
     test "Send a simple Batman.Request", ->
       Batman.Request.setupMockedResponse()
       Batman.Request.addMockedResponse( "GET", "http://batmanjs.org", ->{})
-      req = new Batman.Request
+      new Batman.Request
         url: "http://batmanjs.org"
         method: "GET"
         success: (result) ->
@@ -28,40 +28,40 @@
 ## Lifecycle events
  There are a variety of lifecycle events that get fired in a `Request`.  Each of these are passed in as parameters in the options object in the `Request` constructor.
 
- 1. `loading()`: fired before `send()` has been called.  Anaglous to the jQuery `beforeSend`
+ 1. `loading()`: fired before `send()` has been called.
 
     test "Demonstrate the loading event", 1, ->
-       req = new Batman.Request
+       new Batman.Request
          url: "http:://batmanjs.org"
          loading: ->
            ok true, "After send but before the request is made"
 
- 2. `loaded()`: fired after the request is complete, Anaglous to the jQuery `complete`
+ 2. `loaded()`: fired after the request is complete
 
      test "Demo the loaded event", 1, ->
        Batman.Request.setupMockedResponse()
        Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> {})
-       req = new Batman.Request
+       new Batman.Request
          url: "http://batmanjs.org"
          loaded: ->
            ok true, "Loaded"
 
- 3. `error( xhr )`: fired when an error is detected,  `xhr` is the `XMLHttpRequest` object with `request` being the `Batman.Request` object.
+ 3. `error( xhr )`: fired when an error is detected,  `xhr` is the platform defined xhr object with a property named `request` being the `Batman.Request` object.
 
     test "Demo the error event", 1, ->
       Batman.Request.setupMockedResponse()
       Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> status: 400)
-      req = new Batman.Request
+      new Batman.Request
         url: "http://batmanjs.org"
         error: (xhr) ->
           ok true, "Error"
 
  4. `success ( response )`: fired when a successful request has been made, `response` is the body of the request response.
 
-    test "Demonstrate the loading event", 1, ->
+    test "Demonstrate the success event", 1,  ->
       Batman.Request.setupMockedResponse()
       Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> response: "foo")
-      req = new Batman.Request
+      new Batman.Request
         url: "http://batmanjs.org"
         success: (response) ->
           equal "foo", response
@@ -72,7 +72,7 @@
     test "Demo the error event", 1, ->
      Batman.Request.setupMockedResponse()
      Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> status: 400)
-     req = new Batman.Request
+     new Batman.Request
        url: "http://batmanjs.org"
        error: (xhr) ->
          equal 400, @status
@@ -84,7 +84,7 @@
       Batman.Request.setupMockedResponse()
       Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> response: "foo" )
 
-      req = new Batman.Request
+      new Batman.Request
         url: "http://batmanjs.org"
         success: (response) ->
           equal "foo", JSON.parse(@response)
@@ -96,7 +96,7 @@
       Batman.Request.setupMockedResponse()
       Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> responseHeaders: { FOO: "bar" } )
 
-      req = new Batman.Request
+      new Batman.Request
         url: "http://batmanjs.org"
         success: (response) ->
           deepEqual @responseHeaders,{ FOO: "bar" }
@@ -111,7 +111,7 @@
 
     test "method test", ->
       Batman.Request.addMockedResponse("POST", "http://batmanjs.org", -> response : { FOO: "BAR" })
-      req = new Batman.Request
+      new Batman.Request
         url: "http://batmanjs.org"
         method: "POST"
         data: { some: "data" }
