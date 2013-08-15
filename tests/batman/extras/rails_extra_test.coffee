@@ -66,5 +66,4 @@ test "if protectFromCSRF is true and the appropriate meta tag exists, the reques
   document.head.appendChild(meta)
 
   @Model.get('all')
-  # debugger
   equal @lastRequest.options.headers['X-CSRF-Token'], 'batman'
