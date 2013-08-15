@@ -31,7 +31,7 @@ Batman.ModelExpectations =
       @assertEqual options.params, innerParams if options.params?
       @completeExpectation('expectLoad')
 
-      callback(options.error, options.response)
+      callback?(options.error, options.response)
 
   expectFind: (klass, options = {}) ->
     @addExpectation('expectFind')
@@ -42,4 +42,4 @@ Batman.ModelExpectations =
       @assertEqual options.params, innerParams if options.params?
       @completeExpectation('expectFind')
 
-      callback(options.error, options.response)
+      callback?(options.error, options.response)

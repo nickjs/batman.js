@@ -1,26 +1,26 @@
-## Batman.Model
+# Batman.Model
 
 `Batman.Model` is responsible for representing data in your application and providing a fluid interface for moving in to and out of your backend.
 
 _Note_: This documentation uses the term _model_ to refer to the class `Model` or a `Model` subclass, and the term _record_ to refer to one instance of `Model` or of a `Model` subclass.
 
-### The Asynchronous Nature of the World
+## The Asynchronous Nature of the World
 
 `Batman.Model`'s operations on both the class and instance level are asynchronous and always will be. This means that the operation functions all accept node style callback functions as the last argument, and only call these callbacks when the operation is complete. Completion occurs, for example with `RestStorage`, only when the entire HTTP response has been received from the server, which can be many seconds after the original call to the operation function.
 
 These callbacks follow the nodejs convention for their signatures. They should regard the first argument as an error: if it is present, an error has occurred, and if it is null or undefined, the operation was successful. Successive arguments represent the result of the operation, such as the return value from the operation function if the operation were synchronous, records returned, a boolean representing status, or response JSON.
 
-### The Identity Map
+## The Identity Map
 
 Batman uses an identity map when fetching and storing records to do its best to only ever represent a backend record with exactly one client side record. This means that if you use `Model.find` twice to fetch a record with the same ID, you will get back the same (`===`) instance in each callback. This is useful as any state the instance might be in is available and preserved no matter which piece of code asked for it, and bindings to the instance update no matter which piece of code actually updates the model.
 
 Practically, the identity map is an implementation detail on Batman's end which developers shouldn't have to interact with , but knowing that you have the "one true instance" is helpful when reasoning about code and bindings.
 
-### Subclassing
+## Subclassing
 
 Models in your applications should be subclasses of `Batman.Model`, or subclasses of subclasses, and so on. Extending `Batman.Model` will give your domain-modeling class all the functionality described here. Things like encoders, validations, and storage adapters will be inherited by sub-subclasses.
 
-### Storage Adapters
+## Storage Adapters
 
 `Batman.Model` alone only defines the logic surrounding loading and saving, but not the actual mechanism for doing so. This is left to a `Batman.StorageAdapter` subclass, 4 of which are included with Batman or in extras:
 
@@ -29,62 +29,57 @@ Models in your applications should be subclasses of `Batman.Model`, or subclasse
  3. `Batman.RestStorage` for using HTTP GET, POST, PUT, and DELETE to store data in a backend.
  4. `Batman.RailsStorage` which extends `Batman.RestStorage` with some handy Rails specific functionality like parsing out validation errors.
 
-### @primaryKey : string
+## @primaryKey : string
 
 `primaryKey` is a class level configuration option to change which key Batman uses as the primary key. Change the option using `set`, like so:
 
-!!!
-test 'primary key can be set using @set', ->
-  show(class Shop extends Batman.Model
-    @set 'primaryKey', 'shop_id'
-  )
-  equal Shop.get('primaryKey'), 'shop_id'
-!!!
+    test 'primary key can be set using @set', ->
+      class Shop extends Batman.Model
+        @set 'primaryKey', 'shop_id'
+
+      equal Shop.get('primaryKey'), 'shop_id'
 
 The `primaryKey` is what Batman uses to compare instances to see if they represent the same domain-level object: if two records have the same value at the key specified by `primaryKey`, only one will be in the identity map. The key specified by `primaryKey` is also used by the associations system when determining if a record is related to another record, and by the remote storage adapters to generate URLs for records.
 
 _Note_: The default primaryKey is 'id'.
 
-### @storageKey : string
+## @storageKey : string
 
 `storageKey` is a class level option which gives the storage adapters something to interpolate into their specific key generation schemes. In the case of `LocalStorage` or `SessionStorage` adapters, the `storageKey` defines what namespace to store this record under in the `localStorage` or `sessionStorage` host objects, and with the case of the `RestStorage` family of adapters, the `storageKey` assists in URL generation. See the documentation for the storage adapter of your choice for more information.
 
 The default `storageKey` is `null`.
 
-### @persist(mechanism : StorageAdapter) : StorageAdapter
+## @persist(mechanism : StorageAdapter) : StorageAdapter
 
 `@persist` is how a `Model` subclass is told to persist itself by means of a `StorageAdapter`. `@persist` accepts either a `StorageAdapter` class or instance and will return either the instantiated class or the instance passed to it for further modification.
 
-!!!
-test 'models can be told to persist via a storage adapter', ->
-  show(class Shop extends Batman.Model
-    @persist TestStorageAdapter
-  )
-  show record = new Shop
-  ok record.hasStorage()
-!!!
+    test 'models can be told to persist via a storage adapter', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @persist TestStorageAdapter
 
-!!!
-test '@persist returns the instantiated storage adapter', ->
-  show adapter = false
-  show(class Shop extends Batman.Model
-    adapter = @persist TestStorageAdapter
-  )
-  ok adapter instanceof Batman.StorageAdapter
-!!!
+      record = new Shop
+      ok record.hasStorage()
 
-!!!
-test '@persist accepts already instantiated storage adapters', ->
-  show adapter = new Batman.StorageAdapter
-  show adapter.someHandyConfigurationOption = true
-  show(class Shop extends Batman.Model
-    @persist adapter
-  )
-  show record = new Shop
-  ok record.hasStorage()
-!!!
+    test '@persist returns the instantiated storage adapter', ->
+      adapter = false
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        adapter = @persist TestStorageAdapter
 
-### @encode(keys...[, encoderObject : [Object|Function]])
+      ok adapter instanceof Batman.StorageAdapter
+
+    test '@persist accepts already instantiated storage adapters', ->
+      adapter = new Batman.StorageAdapter
+      adapter.someHandyConfigurationOption = true
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @persist adapter
+
+      record = new Shop
+      ok record.hasStorage()
+
+## @encode(keys...[, encoderObject : [Object|Function]])
 
 `@encode` specifies a list of `keys` a model should expect from and send back to a storage adapter, and any transforms to apply to those attributes as they enter and exit the world of Batman in the optional `encoderObject`.
 
@@ -115,89 +110,82 @@ The `encode` and `decode` keys can also be false to avoid using the default iden
 
 _Note_: `Batman.Model` subclasses have no encoders by default, except for one which automatically decodes the `primaryKey` of the model, which is usually `id`. To get any data into or out of your model, you must white-list the keys you expect from the server or storage attribute.
 
-!!!
-test '@encode accepts a list of keys which are used during decoding', ->
-  show(class Shop extends Batman.Model
-    @encode 'name', 'url', 'email', 'country'
-  )
-  show json = {name: "Snowdevil", url: "snowdevil.ca"}
-  show record = new Shop()
-  show record.fromJSON(json)
-  equal record.get('name'), "Snowdevil"
-!!!
+    test '@encode accepts a list of keys which are used during decoding', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @encode 'name', 'url', 'email', 'country'
 
-!!!
-test '@encode accepts a list of keys which are used during encoding', ->
-  show(class Shop extends Batman.Model
-    @encode 'name', 'url', 'email', 'country'
-  )
-  show record = new Shop(name: "Snowdevil", url: "snowdevil.ca")
-  deepEqual record.toJSON(), {name: "Snowdevil", url: "snowdevil.ca"}
-!!!
+      json = {name: "Snowdevil", url: "snowdevil.ca"}
+      record = new Shop()
+      record.fromJSON(json)
+      equal record.get('name'), "Snowdevil"
 
-!!!
-test '@encode accepts custom encoders', ->
-  show(class Shop extends Batman.Model
-    @encode 'name'
-      encode: (name) -> name.toUpperCase()
-  )
-  show record = new Shop(name: "Snowdevil")
-  deepEqual record.toJSON(), {name: "SNOWDEVIL"}
-!!!
+    test '@encode accepts a list of keys which are used during encoding', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @encode 'name', 'url', 'email', 'country'
 
-!!!
-test '@encode accepts custom decoders', ->
-  show(class Shop extends Batman.Model
-    @encode 'name'
-      decode: (name) -> name.replace('_', ' ')
-  )
-  show record = new Shop()
-  show record.fromJSON {name: "Snow_devil"}
-  equal record.get('name'), "Snow devil"
-!!!
+      record = new Shop(name: "Snowdevil", url: "snowdevil.ca")
+      deepEqual record.toJSON(), {name: "Snowdevil", url: "snowdevil.ca"}
 
-!!!
-test '@encode can be passed an encoderObject with false to prevent the default encoder or decoder', ->
-  show(class Shop extends Batman.Model
-    @encode 'name', {encode: false, decode: (x) -> x}
-    @encode 'url'
-  )
-  show record = new Shop()
-  show record.fromJSON {name: "Snowdevil", url: "snowdevil.ca"}
-  equal record.get('name'), 'Snowdevil'
-  equal record.get('url'), "snowdevil.ca"
-  deepEqual record.toJSON(), {url: "snowdevil.ca"}, 'The name key is absent because of encode: false'
-!!!
+    test '@encode accepts custom encoders', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @encode 'name',
+          encode: (name) -> name.toUpperCase()
+
+      record = new Shop(name: "Snowdevil")
+      deepEqual record.toJSON(), {name: "SNOWDEVIL"}
+
+    test '@encode accepts custom decoders', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @encode 'name',
+          decode: (name) -> name.replace('_', ' ')
+
+      record = new Shop()
+      record.fromJSON {name: "Snow_devil"}
+      equal record.get('name'), "Snow devil"
+
+    test '@encode can be passed an encoderObject with false to prevent the default encoder or decoder', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @encode 'name', {encode: false, decode: (x) -> x}
+        @encode 'url'
+
+      record = new Shop()
+      record.fromJSON {name: "Snowdevil", url: "snowdevil.ca"}
+      equal record.get('name'), 'Snowdevil'
+      equal record.get('url'), "snowdevil.ca"
+      deepEqual record.toJSON(), {url: "snowdevil.ca"}, 'The name key is absent because of encode: false'
 
 Some more handy examples:
 
-!!!
-test '@encode can be used to turn comma separated values into arrays', ->
-  show(class Post extends Batman.Model
-    @encode 'tags',
-      decode: (string) -> string.split(', ')
-      encode: (array) -> array.join(', ')
-  )
-  show record = new Post()
-  show record.fromJSON({tags: 'new, hot, cool'})
-  deepEqual record.get('tags'), ['new', 'hot', 'cool']
-  deepEqual record.toJSON(), {tags: 'new, hot, cool'}
-!!!
+    test '@encode can be used to turn comma separated values into arrays', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'tags',
+          decode: (string) -> string.split(', ')
+          encode: (array) -> array.join(', ')
 
-!!!
-test '@encode can be used to turn arrays into sets', ->
-  show(class Post extends Batman.Model
-    @encode 'tags',
-      decode: (array) -> new Batman.Set(array...)
-      encode: (set) -> set.toArray()
-  )
-  show record = new Post()
-  show record.fromJSON({tags: ['new', 'hot', 'cool']})
-  ok record.get('tags') instanceof Batman.Set
-  deepEqual record.toJSON(), {tags: ['new', 'hot', 'cool']}
-!!!
+      record = new Post()
+      record.fromJSON({tags: 'new, hot, cool'})
+      deepEqual record.get('tags'), ['new', 'hot', 'cool']
+      deepEqual record.toJSON(), {tags: 'new, hot, cool'}
 
-### @validate(keys...[, options : [Object|Function]])
+    test '@encode can be used to turn arrays into sets', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'tags',
+          decode: (array) -> new Batman.Set(array...)
+          encode: (set) -> set.toArray()
+
+      record = new Post()
+      record.fromJSON({tags: ['new', 'hot', 'cool']})
+      ok record.get('tags') instanceof Batman.Set
+      deepEqual record.toJSON(), {tags: ['new', 'hot', 'cool']}
+
+## @validate(keys...[, options : [Object|Function]])
 
 Validations allow a model to be marked as `valid` or `invalid` based on a set of programmatic rules. By validating a model's data before it gets to the server we can provide immediate feedback to the user about what they have entered and forgo waiting on a round trip to the server. `validate` allows the attachment of validations to the model on particular keys, where the validation is either a built in one (invoked by use of options to pass to them) or a custom one (invoked by use of a custom function as the second argument).
 
@@ -205,13 +193,11 @@ _Note_: Validation in Batman is always asynchronous, despite the fact that none 
 
 Built in validators are attached by calling `@validate` with options designating how to calculate the validity of the key:
 
-!!!
-test '@validate accepts options to check for validity', ->
-  QUnit.expect(0)
-  show(class Post extends Batman.Model
-    @validate 'title', 'body', {presence: true}
-  )
-!!!
+    test '@validate accepts options to check for validity', ->
+      QUnit.expect(0)
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @validate 'title', 'body', {presence: true}
 
 The built in validation options are listed below:
 
@@ -238,43 +224,41 @@ Custom validators should have the signature `(errors, record, key, callback)`. T
 
 See `Model::validate` for information on how to get a particular record's validity.
 
-### @loaded : Set
+## @loaded : Set
 
 The `loaded` set is available on every model class and holds every model instance seen by the system in order to function as an identity map. Successfully loading or saving individual records or batches of records will result in those records being added to the `loaded` set. Destroying instances will remove records from the identity set.
 
-!!!
-test 'the loaded set stores all records seen', ->
-  show(class Post extends Batman.Model
-    @persist TestStorageAdapter
-    @encode 'name'
-  )
-  ok Post.get('loaded') instanceof Batman.Set
-  equal Post.get('loaded.length'), 0
-  show post = new Post()
-  show post.save()
-  equal Post.get('loaded.length'), 1
-!!!
+    test 'the loaded set stores all records seen', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @persist TestStorageAdapter
+        @encode 'name'
 
-!!!
-test 'the loaded adds new records caused by loads and removes records caused by destroys', ->
-  show(class Post extends Batman.Model
-    @encode 'name'
-  )
-  show(adapter = new TestStorageAdapter(Post))
-  show(adapter.storage =
-      'posts1': {name: "One", id:1}
-      'posts2': {name: "Two", id:2}
-  )
-  show(Post.persist(adapter))
-  show Post.load()
-  equal Post.get('loaded.length'), 2
-  show post = false
-  show Post.find(1, (err, result) -> post = result)
-  show post.destroy()
-  equal Post.get('loaded.length'), 1
-!!!
+      ok Post.get('loaded') instanceof Batman.Set
+      equal Post.get('loaded.length'), 0
+      post = new Post()
+      post.save()
+      equal Post.get('loaded.length'), 1
 
-### @all : Set
+    test 'the loaded adds new records caused by loads and removes records caused by destroys', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'name'
+
+      adapter = new TestStorageAdapter(Post)
+      adapter.storage =
+          'posts1': {name: "One", id:1}
+          'posts2': {name: "Two", id:2}
+
+      Post.persist(adapter)
+      Post.load()
+      equal Post.get('loaded.length'), 2
+      post = false
+      Post.find(1, (err, result) -> post = result)
+      post.destroy()
+      equal Post.get('loaded.length'), 1
+
+## @all : Set
 
 The `all` set is an alias to the `loaded` set but with an added implicit `load` on the model. `Model.get('all')` will synchronously return the `loaded` set and asynchronously call `Model.load()` without options to load a batch of records and populate the set originally returned (the `loaded` set) with the records returned by the server.
 
@@ -282,81 +266,76 @@ _Note_: The notion of "all the records" is relative only to the client. It compl
 
 `all` is useful for listing every instance of a model in a view, and since the `loaded` set will change when the `load` returns, it can be safely bound to.
 
-!!!
-asyncTest 'the all set asynchronously fetches records when gotten', ->
-  show(class Post extends Batman.Model
-    @encode 'name'
-  )
-  show(adapter = new AsyncTestStorageAdapter(Post))
-  show(adapter.storage =
-      'posts1': {name: "One", id:1}
-      'posts2': {name: "Two", id:2}
-  )
-  show(Post.persist(adapter))
-  equal Post.get('all.length'), 0, "The synchronously returned set is empty"
-  delay ->
-    equal Post.get('all.length'), 2, "After the async load the set is populated"
-!!!
+    asyncTest 'the all set asynchronously fetches records when gotten', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'name'
 
-### @clear() : Set
+      adapter = new AsyncTestStorageAdapter(Post)
+      adapter.storage =
+          'posts1': {name: "One", id:1}
+          'posts2': {name: "Two", id:2}
+
+      Post.persist(adapter)
+      equal Post.get('all.length'), 0, "The synchronously returned set is empty"
+      delay ->
+        equal Post.get('all.length'), 2, "After the async load the set is populated"
+
+## @clear() : Set
 
 `Model.clear()` empties that `Model`'s identity map. This is useful for tests and other unnatural situations where records new to the system are guaranteed to be as such.
 
-!!!
-test 'clearing a model removes all records from the identity map', ->
-  show(class Post extends Batman.Model
-    @encode 'name'
-  )
-  adapter = new TestStorageAdapter(Post)
-  adapter.storage =
-      'posts1': {name: "One", id:1}
-      'posts2': {name: "Two", id:2}
-  Post.persist(adapter)
-  Post.load()
-  equal Post.get('loaded.length'), 2
-  show Post.clear()
-  equal Post.get('loaded.length'), 0, "After clear() the loaded set is empty"
-!!!
+    test 'clearing a model removes all records from the identity map', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'name'
 
-### @find(id, callback : Function) : Model
+      adapter = new TestStorageAdapter(Post)
+      adapter.storage =
+          'posts1': {name: "One", id:1}
+          'posts2': {name: "Two", id:2}
+      Post.persist(adapter)
+      Post.load()
+      equal Post.get('loaded.length'), 2
+      Post.clear()
+      equal Post.get('loaded.length'), 0, "After clear() the loaded set is empty"
+
+## @find(id, callback : Function) : Model
 
 `Model.find()` retrieves a record with the specified `id` from the storage adapter and calls back with an error if one occurred and the record if the operation was successful. `find` delegates to the storage adapter the `Model` has been `@persist`ed with, so it is up to the storage adapter's semantics to determine what type of errors may return and the timeline on which the callback may be called. The `callback` is a required function which should adopt the node style callback signature which accepts two arguments: an error, and the record asked for. `find` returns an "unloaded" record which, following the load completion, will be populated with the data from the storage adapter.
 
 _Note_: `find` gives two results to calling code: one immediately, and one later. `find` returns a record synchronously as it is called and calls back with a record, and importantly these two records are __not__ guaranteed to be the same instance. This is because Batman maps the identities of incoming and outgoing records such that there is only ever one canonical instance representing a record, which is useful so bindings are always bound to the same thing. In practice, this means that calling code should use the record `find` calls back with if anything is going to bind to that object, which is most of the time. The returned record however remains useful for state inspection and bookkeeping.
 
-!!!
-asyncTest '@find calls back the requested model if no error occurs', ->
-  show(class Post extends Batman.Model
-    @encode 'name'
-    @persist AsyncTestStorageAdapter,
-      storage:
-        'posts2': {name: "Two", id:2}
+    asyncTest '@find calls back the requested model if no error occurs', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'name'
+        @persist AsyncTestStorageAdapter,
+          storage:
+            'posts2': {name: "Two", id:2}
 
-  )
-  show post = Post.find 2, (err, result) ->
-    throw err if err
-    post = result
-  equal post.get('name'), undefined
-  delay ->
-    equal post.get('name'), "Two"
-!!!
+      post = Post.find 2, (err, result) ->
+        throw err if err
+        post = result
+      equal post.get('name'), undefined
+      delay ->
+        equal post.get('name'), "Two"
 
 _Note_: `find` must be passed a callback function. This is for two reasons: calling code must be aware that `find`'s return value is not necessarily the canonical instance, and calling code must be able to handle errors.
 
-!!!
-asyncTest '@find calls back with the error if an error occurs', ->
-  show(class Post extends Batman.Model
-    @encode 'name'
-    @persist AsyncTestStorageAdapter
-  )
-  show error = false
-  show post = Post.find 3, (err, result) ->
-    error = err
-  delay ->
-    ok error instanceof Error
-!!!
+    asyncTest '@find calls back with the error if an error occurs', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'name'
+        @persist AsyncTestStorageAdapter
 
-### @load(options = {}, callback : Function)
+      error = false
+      post = Post.find 3, (err, result) ->
+        error = err
+      delay ->
+        ok error instanceof Error
+
+## @load(options = {}, callback : Function)
 
 `Model.load()` retrieves an array of records according to the given `options` from the storage adapter and calls back with an error if one occurred and the set of records if the operation was successful. `load` delegates to the storage adapter the `Model` has been `@persist`ed with, so it is up to the storage adapter's semantics to determine what the options do, what kind of errors may arise, and the timeline on which the callback may be called. The `callback` is a required function which should adopt the node style callback signature which accepts two arguments, an error, and the array of records. `load` returns undefined.
 
@@ -365,75 +344,74 @@ For the two main `StorageAdapter`s Batman provides, the `options` do different t
   + For `Batman.LocalStorage`, `options` act as a filter. The adapter will scan all the records in `localStorage` and return only those records which match all the key/value pairs given in the options.
   + For `Batman.RestStorage`, `options` are serialized into query parameters on the `GET` request.
 
-!!!
-asyncTest '@load calls back an array of records retrieved from the storage adapter', ->
-  show(class Post extends Batman.Model
-    @encode 'name'
-    @persist TestStorageAdapter,
-      storage:
-        'posts1': {name: "One", id:1}
-        'posts2': {name: "Two", id:2}
+    asyncTest '@load calls back an array of records retrieved from the storage adapter', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'name'
+        @persist TestStorageAdapter,
+          storage:
+            'posts1': {name: "One", id:1}
+            'posts2': {name: "Two", id:2}
 
-  )
-  show(posts = false)
-  show Post.load (err, result) ->
-    throw err if err
-    posts = result
-  delay ->
-    equal posts.length, 2
-    equal posts[0].get('name'), "One"
-!!!
+      posts = false
+      Post.load (err, result) ->
+        throw err if err
+        posts = result
 
-!!!
-asyncTest '@load calls back with an empty array if no records are found', ->
-  show(class Post extends Batman.Model
-    @encode 'name'
-    @persist TestStorageAdapter
-  )
-  show(posts = false)
-  show Post.load (err, result) ->
-    throw err if err
-    posts = result
-  delay ->
-    equal posts.length, 0
-!!!
+      delay ->
+        equal posts.length, 2
+        equal posts[0].get('name'), "One"
 
-### @create(attributes = {}, callback) : Model
+    asyncTest '@load calls back with an empty array if no records are found', ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'name'
+        @persist TestStorageAdapter, storage: []
 
-### @findOrCreate(attributes = {}, callback) : Model
+      posts = false
+      Post.load (err, result) ->
+        throw err if err
+        posts = result
 
-### id : value
+      delay ->
+        equal posts.length, 0
 
-### dirtyKeys : Set
+## @create(attributes = {}, callback) : Model
 
-### errors : ErrorsSet
+## @findOrCreate(attributes = {}, callback) : Model
 
-### constructor(idOrAttributes = {}) : Model
+## id : value
 
-### isNew() : boolean
+## dirtyKeys : Set
 
-### updateAttributes(attributes) : Model
+## errors : ErrorsSet
 
-### toString() : string
+## constructor(idOrAttributes = {}) : Model
 
-### toJSON() : Object
+## isNew() : boolean
 
-### fromJSON() : Model
+## updateAttributes(attributes) : Model
 
-### toParam() : value
+## toString() : string
 
-### state() : string
+## toJSON() : Object
 
-### hasStorage() : boolean
+## fromJSON() : Model
 
-### load(options = {}, callback)
+## toParam() : value
 
-### save(options = {}, callback)
+## state() : string
 
-### destroy(options = {}, callback)
+## hasStorage() : boolean
 
-### validate(callback)
+## load(options = {}, callback)
 
-## Batman.ValidationError
+## save(options = {}, callback)
 
-## Batman.ErrorsSet
+## destroy(options = {}, callback)
+
+## validate(callback)
+
+# Batman.ValidationError
+
+# Batman.ErrorsSet

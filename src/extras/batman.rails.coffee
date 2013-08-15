@@ -22,33 +22,38 @@ date_re = ///
   $
 ///
 
-Batman.mixin Batman.Encoders,
-  railsDate:
-    defaultTimezoneOffset: (new Date()).getTimezoneOffset()
-    encode: (value) -> value
-    decode: (value) ->
-      # Thanks to https://github.com/csnover/js-iso8601 for the majority of this algorithm.
-      # MIT Licensed
-      if value?
-        if (obj = date_re.exec(value))
-          # avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
-          for key in numericKeys
-            obj[key] = +obj[key] or 0
+Batman.Encoders.railsDate =
+  defaultTimezoneOffset: (new Date()).getTimezoneOffset()
+  encode: (value) -> value
+  decode: (value) ->
+    # Thanks to https://github.com/csnover/js-iso8601 for the majority of this algorithm.
+    # MIT Licensed
+    if value?
+      if (obj = date_re.exec(value))
+        # avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
+        for key in numericKeys
+          obj[key] = +obj[key] or 0
 
-          # allow undefined days and months
-          obj[2] = (+obj[2] || 1) - 1;
-          obj[3] = +obj[3] || 1;
+        # allow undefined days and months
+        obj[2] = (+obj[2] || 1) - 1;
+        obj[3] = +obj[3] || 1;
 
-          # process timezone by adjusting minutes
-          if obj[8] != "Z" and obj[9] != undefined
-            minutesOffset = obj[10] * 60 + obj[11]
-            minutesOffset = 0 - minutesOffset  if obj[9] == "+"
-          else
-            minutesOffset = Batman.Encoders.railsDate.defaultTimezoneOffset
-          return new Date(Date.UTC(obj[1], obj[2], obj[3], obj[4], obj[5] + minutesOffset, obj[6], obj[7]))
+        # process timezone by adjusting minutes
+        if obj[8] != "Z" and obj[9] != undefined
+          minutesOffset = obj[10] * 60 + obj[11]
+          minutesOffset = 0 - minutesOffset  if obj[9] == "+"
         else
-          Batman.developer.warn "Unrecognized rails date #{value}!"
-          return Date.parse(value)
+          minutesOffset = Batman.Encoders.railsDate.defaultTimezoneOffset
+        return new Date(Date.UTC(obj[1], obj[2], obj[3], obj[4], obj[5] + minutesOffset, obj[6], obj[7]))
+      else
+        Batman.developer.warn "Unrecognized rails date #{value}!"
+        return Date.parse(value)
+
+Batman.Model.encodeTimestamps = (attrs...) ->
+  if attrs.length == 0
+    attrs = ['created_at', 'updated_at']
+
+  @encode(attrs..., encode: false, decode: Batman.Encoders.railsDate.decode)
 
 class Batman.RailsStorage extends Batman.RestStorage
 

@@ -1,8 +1,8 @@
-= batman.js
+# batman.js
 
 [batman.js](http://batmanjs.org/) is a framework for building rich single-page browser applications. It is written in [CoffeeScript](http://jashkenas.github.com/coffee-script/) and its API is developed with CoffeeScript in mind, but of course you can use plain old JavaScript too.
 
-=== It's got:
+### It's got:
 
 * a stateful MVC architecture
 * a powerful binding system
@@ -12,19 +12,19 @@
 
 Batman's API is heavily inspired by [Rails](http://rubyonrails.org/) and designed to make Rails devs feel right at home.
 
-==== Platforms
+### Platforms
 
 Batman runs in node and the browser. Batman supports node v0.8.x. We're targeting Chrome, Safari 4+, Firefox 3+, and IE 7+ for compatibility. Batman expects ES5 features like `Function::bind` and `Array::map`, so we recommend poly-filling these for older browsers with something like [es5shim](https://github.com/kriskowal/es5-shim) or [augmentjs](http://augmentjs.com/). Batman also expects `JSON.parse`, which can be implemented in browsers without it using [json2.js](https://github.com/douglascrockford/JSON-js).
 
-== Installation
+## Installation
 
 Batman is available as a standalone download or as an `npm` package.
 
-=== Standalone Browser Version
+### Standalone Browser Version
 
 Versions of batman suitable for use in a web application are available at GitHub.
 
-=== node.js
+### node.js
 
 If you haven't already, you'll need to install [node.js](http://nodejs.org). Then:
 
@@ -48,7 +48,7 @@ batman server # (or just "batman s")
 
 Now visit [http://localhost:1047](http://localhost:1047) and start playing around!
 
-== Architecture
+## Architecture
 
 Batman prescribes an MVC architecture for client side applications which fits together like this:
 

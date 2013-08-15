@@ -467,3 +467,17 @@ asyncTest 'it should destroy nodes and their bindings if items have been removed
     view.set 'items', new Batman.Set({id: 7}, {id: 8}, {id: 9})
     delay ->
       deepEqual dieVals, [['item.id', '4'], ['item.id', '5'], ['item.id', '6']]
+
+asyncTest 'it shouldn\'t break state if bound to undefined', 3, ->
+  source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
+  objects = new Batman.Set('a')
+
+  helpers.render source, {objects}, (node, view) ->
+    deepEqual getPs(view), ['a']
+    view.set('objects', undefined)
+    delay ->
+      deepEqual getPs(view), []
+      view.set('objects', objects)
+      delay ->
+        deepEqual getPs(view), ['a']
+

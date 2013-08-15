@@ -1,12 +1,12 @@
-## Batman.App
+# Batman.App
 
 `Batman.App` is the central object in any Batman application. It manages the routing table and the current URL parameters, as well as the initial start of the application. It should also be used as a namespace for models and views so that other objects can find them. Batman assumes that there will only ever be one `Batman.App` in use at once.
 
-### Batman.currentApp
+## Batman.currentApp
 
 A Batman-wide reference to the currently running `Batman.App`.
 
-### @run() : App
+## @run() : App
 
 `App.run` is the central entry point for a Batman application. `@run` takes these steps to initialize a Batman application:
 
@@ -20,60 +20,58 @@ _Note_: `@run` emits the `run` class event on the `App`, but not necessarily as 
 
 `@run` can be called before or on the `load` DOMEvent of the window. `@run` will return the App if the commencement was successful and complete, or `false` if the App must wait for the `layout` to render or if the `App` has already run.
 
-==== starting an application with DOMEvents
+#### starting an application with DOMEvents
 ```coffeescript
 window.addEventListener 'load', ->
   MyApp.run()
 ```
 
-==== starting an application with jQuery
+#### starting an application with jQuery
 ```coffeescript
 $ ->
   MyApp.run()
 ```
 
-### @stop() : App
+## @stop() : App
 
 `@stop` stops the `App` it's called upon. The URL will stop being monitored and no more actions will be dispatched. In usual Batman development you shouldn't have to call this.
 
-### @routes
+## @routes
 
 `@routes` is a class level property referencing the root level `NamedRouteQuery` which allows for binding to routes on objects. See `data-route` bindings for more information.
 
-### @controllers
+## @controllers
 
 `@controllers` is a class level property containing the singleton `Batman.Controller` instances for each subclass in the application. This `controllers` directory puts these instances at the lowercase name of the controller. For example, the `TodosController` would be found at `controllers.todos`. `@controllers` ideally should never be bound to, but it is very useful for debugging in the console and other such workarounds.
 
-!!!
-test "App.controllers references a directory of controller instances", ->
-  show class Alfred extends Batman.App
-  show class Alfred.TodosController extends Batman.Controller
-  show controller = Alfred.get('controllers.todos')
-  equal Batman._functionName(controller.constructor), "TodosController"
-!!!
+    test "App.controllers references a directory of controller instances", ->
+      class Alfred extends Batman.App
+      class Alfred.TodosController extends Batman.Controller
+      controller = Alfred.get('controllers.todos')
+      equal Batman._functionName(controller.constructor), "TodosController"
 
-### @layout
+## @layout
 
-### @currentParams
-### @paramsManager
-### @paramsPusher
+## @currentParams
+## @paramsManager
+## @paramsPusher
 
-### 'run' class event
+## 'run' class event
 
 The `run` class event is fired once the app has run. This indeterminately but often happens before the app's layout has finished rendering.
 
-### 'ready' class event
+## 'ready' class event
 
 The `ready` class event is fired once the app's layout is rendered.
 
-## Batman.App Routing
+# Batman.App Routing
 
 The `Batman` routing DSL is similar to Rails 3's routing DSL. It is oriented around the notion of a resource:
 
-### @resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])
+## @resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])
 
 
-### @member
-### @collection
-### @route
-### @root
+## @member
+## @collection
+## @route
+## @root
