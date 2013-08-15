@@ -62,8 +62,15 @@ test "if protectFromCSRF is true and the appropriate meta tag exists, the reques
   Batman.config.protectFromCSRF = true
   meta = document.createElement('meta')
   meta.setAttribute('name', 'csrf-token')
-  meta.setAttribute('content', 'batman')
+  meta.setAttribute('content', 'metaTag!')
   document.head.appendChild(meta)
 
   @Model.get('all')
-  equal @lastRequest.options.headers['X-CSRF-Token'], 'batman'
+  equal @lastRequest.options.headers['X-CSRF-Token'], 'metaTag!'
+
+test "if protectFromCSRF is true and the appropriate config option exists, the request should include a CSRF header", ->
+  Batman.config.protectFromCSRF = true
+  Batman.config.CSRF_TOKEN = 'configOption!'
+
+  @Model.get('all')
+  equal @lastRequest.options.headers['X-CSRF-Token'], 'configOption!'
