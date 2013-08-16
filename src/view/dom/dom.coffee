@@ -5,7 +5,6 @@
 #
 # querySelector
 # querySelectorAll
-# appendChild
 # destroyNode
 # setInnerHTML
 # textContent
