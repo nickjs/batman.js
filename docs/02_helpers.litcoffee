@@ -205,7 +205,7 @@ _Note_: When passed an object without a `has` function, `contains` will return `
       strictEqual Batman.getPath(num: 0, ['num']), 0
       strictEqual Batman.getPath(thing: null, ['thing']), null
 
-## @escapeHTML(string) : string
+## @escapeHTML(input) : string
 
 `escapeHTML` takes a string of unknown origin and makes it safe for display on a web page by encoding control characters in HTML into their HTML entities.
 
@@ -254,9 +254,9 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
       equal Batman.helpers.pluralize("words"), "words"
       equal Batman.helpers.pluralize("CamelOctopus"), "CamelOctopi"
 
-## @camelize(string [, lowercaseFirstLetter = false]) : string
+## @camelize(name [, lowercaseFirstLetter = false]) : string
 
-`camelize` converts the passed `string` to UpperCamelCase. If the second argument is passed as `true`, then lowerCamelCase is returned.
+`camelize` converts the passed `name` to UpperCamelCase. If the second argument is passed as `true`, then lowerCamelCase is returned.
 
     test 'camelize returns the CamelCase version of an under_scored word', ->
       equal Batman.helpers.camelize("batman_object"), "BatmanObject"
