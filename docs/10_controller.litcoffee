@@ -10,12 +10,14 @@
 
 Each `Batman.Controller` should have a number of instance level functions which can fetch the data needed and often render a view (or views) to display that data. These functions can be declared in typical CoffeeScript fashion like so:
 
-    class Alfred extends Batman.App
-      @root "todos#index"
+```example
+  class Alfred extends Batman.App
+    @root "todos#index"
 
-    class Alfred.TodosController extends Batman.Controller
-      index: (params) ->
-      show: (params) ->
+  class Alfred.TodosController extends Batman.Controller
+    index: (params) ->
+    show: (params) ->
+```
 
 Each action function receives the parameters from the dispatcher which are pulled out of the navigated-to URL. This includes both named route parameters (`/:foo` style) as well as arbitrary query parameters (`?foo=bar` style).
 
