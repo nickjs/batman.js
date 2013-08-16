@@ -13,6 +13,11 @@ to set `html`, `node`, `superview`, `parentNode` and/or your custom data.
       view = new Batman.View(animal: 'cat')
       equal 'cat', view.get('animal')
 
+    test 'constructor automatically adds to the superview if supplied', ->
+      superview = new Batman.View()
+      view = new Batman.View(superview: superview)
+      equal 1, superview.subviews.length
+
 
 ## ::lookupKeypath(keypath) : Object
 
@@ -97,6 +102,12 @@ until the view is added to a superview.
 If you don't explicitly set `html` but you do set `source`, then getting `html`
 will automatically fetch the template source from the local template store.
 
+    test 'setting a source loads the correct template', ->
+      Batman.View.store.set('/animals', '<div>cat</div>')
+      view = new Batman.View(source: '/animals')
+
+      node = view.get('node')
+      equal 'cat', node.firstChild.innerHTML
 
 ## ::.superview : Batman.View
 
@@ -131,11 +142,26 @@ insert the current view's node into the DOM.
 Removing from a view's subview set will automatically remove the subview from
 the DOM.
 
+    test 'removing from the current superview removes the node from the DOM', ->
+      superview = new Batman.View(html: '', parentNode: document.body)
+      superview.get('node')
+      view = new Batman.View(html: '', superview: superview)
+
+      ok superview.get('node').contains(view.get('node'))
+
+      superview.subviews.remove(view)
+      ok not superview.get('node').contains(view.get('node'))
 
 ## ::removeFromSuperview()
 
 Removes this view from its parent, without killing it.
 
+    test 'removing from the current superview removes the node from the DOM', ->
+      superview = new Batman.View()
+      view = new Batman.View(superview: superview)
+
+      view.removeFromSuperview()
+      ok not superview.subviews.has(view)
 
 ## ::die()
 
@@ -165,11 +191,46 @@ True if the view has been killed, false otherwise.
 
 Kills every subview of this view.
 
+    test 'destroySubviews kills all subviews', ->
+      superview = new Batman.View()
+      one = new Batman.View(superview: superview)
+      two = new Batman.View(superview: superview)
 
-## ::propagateToSubviews(eventOrKey : string, value)
+      superview.destroySubviews()
+      ok one.isDead
+      ok two.isDead
 
-If value is defined, set `eventOrKey` to `value` on the entire subtree.
+
+## ::propagateToSubviews(eventOrKey : string, value : Object)
+
+If `value` is defined, set `eventOrKey` to `value` on the entire subtree.
 Otherwise, fire `eventOrKey` on the entire subtree.
+
+    test 'propagateToSubviews propagates events', ->
+      superview = new Batman.View()
+      one = new Batman.View(superview: superview)
+      two = new Batman.View(superview: one)
+
+      superview.on 'eventName', superSpy = createSpy()
+      one.on 'eventName', oneSpy = createSpy()
+      two.on 'eventName', twoSpy = createSpy()
+
+      superview.propagateToSubviews('eventName')
+
+      equal 1, superSpy.callCount
+      equal 1, oneSpy.callCount
+      equal 1, twoSpy.callCount
+
+    test 'propagateToSubviews propagates keys', ->
+      superview = new Batman.View()
+      one = new Batman.View(superview: superview)
+      two = new Batman.View(superview: one)
+
+      superview.propagateToSubviews('key', 'value')
+
+      equal superview.get('key'), 'value'
+      equal one.get('key'), 'value'
+      equal two.get('key'), 'value'
 
 
 ## @viewForNode(node, climbTree = true) : Batman.View
