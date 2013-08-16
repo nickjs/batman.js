@@ -46,11 +46,6 @@ Returns whether a node is editable or not.
 Adds the event listener, uses the platform `addEventListener` if available otherwise use `attachEvent on{eventName}`
 Batman stores the listeners internally.
 
-	test 'addEventListener', 1, ->
-	  node = document.createElement('div')
-	  Batman.DOM.addEventListener( node, 'click', -> ok true )
-	  node.dispatchEvent(new Event('click'))
-
 ## @removeEventListener(node : Node, eventName : string, callback : function)
 Removes the event listener from the node and removes any internal references to it.
 
