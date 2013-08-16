@@ -6,7 +6,7 @@ Batman includes a number of useful, general purpose helper functions and referen
 
 `Batman.container` points to either the `window` object if running in the browser, or the `global` object if running in node. This is useful if you want to add something to the global scope in all environments.
 
-## typeOf(object) : string
+## @typeOf(object) : string
 
 `typeOf` determines a more specific type of an `object` than the native `typeof` operator in JavaScript. This is useful for a number of situations like dealing with `Object` promoted strings and numbers, or arrays which look like `object`s to `typeof`. Use `typeOf` when you need more than `"object"` from `typeof`.
 
@@ -25,7 +25,7 @@ _Note_: `typeOf` is substantially slower than `typeof`. `typeOf` works in a some
       equal typeof array, "object"
       equal Batman.typeOf(array), "Array"
 
-## mixin(subject, objects...) : subject
+## @mixin(subject, objects...) : subject
 
 `mixin`, occasionally known elsewhere as `extend` or `merge`, flattens a series of objects onto the subject. Key/value pairs on objects passed as later arguments (arguments with a higher index) take precedence over earlier arguments. Returns the `subject` passed in with the new values.
 
@@ -51,7 +51,7 @@ _Note_: `mixin` is destructive to (only) the first argument. If you need a non-d
       subject = {}
       deepEqual Batman.mixin(subject, {x: 1, y: 1}, {x: 2}), {x: 2, y: 1}
 
-## unmixin(subject, objects...) : subject
+## @unmixin(subject, objects...) : subject
 
 `unmixin` "unmerges" the passed objects from the `subject`. If a key exists on any of the `objects` it will be `delete`d from the `subject`. Returns the `subject`.
 
@@ -62,28 +62,28 @@ _Note_: `mixin` is destructive to (only) the first argument. If you need a non-d
       deepEqual Batman.unmixin(subject, {fit: true}, {fly: true}), {funky: true}, "unmixin returns the subject"
       deepEqual subject, {funky: true}, "the subject is destructively modified."
 
-## functionName(function) : string
+## @functionName(function) : string
 
 `functionName` returns the name of a given function, if any. Works with Internet Explorer 7/8/9, FireFox, Chrome, and Safari.
 
     test 'functionName returns the name of a given function', ->
       equal Batman.functionName("".toString), 'toString'
 
-## isChildOf(parent : HTMLElement, child : HTMLElement) : boolean
+## @isChildOf(parent : HTMLElement, child : HTMLElement) : boolean
 
 `isChildOf` is a simple DOM helper which returns a boolean describing if the passed `child` node can be found in the descendants of the passed `parent` node.
 
-## setImmediate(callback : Function) : object
+## @setImmediate(callback : Function) : object
 
 `setImmediate` (and its sister `clearImmediate`) are a more efficient version of `setTimeout(callback, 0)`. Due to timer resolution issues, setTimeout passed a timeout of 0 doesn't actually execute the function as soon as the JS execution stack has been emptied, but at minimum 4ms and maxmium 25ms after. For this reason Batman provides a cross browser implementation of `setImmediate` which does its best to call the callback immediately after the stack empties. Batman's `setImmediate` polyfill uses the native version if available, `window.postmessage` trickery if supported, and falls back on `setTimeout(->, 0)`.
 
 `setImmediate` returns a handle which can be passed to `clearImmediate` to cancel the future calling of the callback.
 
-## clearImmediate(handle)
+## @clearImmediate(handle)
 
 `clearImmediate` stops the calling of a callback in the future when passed its `handle` (which is returned from the `setImmediate` call used to enqueue it).
 
-## forEach(iterable : object, iterator : Function[, context : Object])
+## @forEach(iterable : object, iterator : Function[, context : Object])
 
 The `forEach` Batman helper is a universal iteration helper. When passed an `iterable` object, the helper will call the `iterator` (optionally in the `context`) for each item in the `iterable`. The `iterable` can be:
 
@@ -115,7 +115,7 @@ The `forEach` helper is useful for iterating over objects when the type of those
       Batman.forEach(object, (key, val) -> result[key] = val)
       deepEqual result, object
 
-## objectHasKey(object, key) : boolean
+## @objectHasKey(object, key) : boolean
 
 `objectHasKey` returns a boolean describing the presence of the `key` in the passed `object`. `objectHasKey` delegates to the `object`'s `hasKey` function if present, and otherwise just does a check using the JavaScript `in` operator.
 
@@ -129,7 +129,7 @@ The `forEach` helper is useful for iterating over objects when the type of those
       ok Batman.objectHasKey(subject, 'fit')
       equal Batman.objectHasKey(subject, 'flirty'), false
 
-## contains(object, item) : boolean
+## @contains(object, item) : boolean
 
 `contains` returns a boolean describing if the given `object` has member `item`. Membership in this context is defined as:
 
@@ -141,7 +141,7 @@ _Note_: When passed an object without a `has` function, `contains` will return `
 
 `contains` is useful for checking item membership when the type of the object can't be relied on.
 
-## get(object, key) : value
+## @get(object, key) : value
 
 `get` is a general purpose function for retrieving the value from a `key` on an `object` of an indeterminate type. This is useful if code needs to work with both `Batman.Object`s and Plain Old JavaScript Objects. `get` has the following semantics:
 
@@ -168,7 +168,7 @@ _Note_: When passed an object without a `has` function, `contains` will return `
       equal Batman.get(subject, 'customer.name'), "Joe"
       equal Batman.get(subject, 'customer.age'), undefined
 
-## getPath(base, segments) : string
+## @getPath(base, segments) : string
 
 `getPath` returns the hash value denoted by the specified path, which consists of an array of nested hash keys. See examples below for more detail.
 
@@ -205,7 +205,7 @@ _Note_: When passed an object without a `has` function, `contains` will return `
       strictEqual Batman.getPath(num: 0, ['num']), 0
       strictEqual Batman.getPath(thing: null, ['thing']), null
 
-## escapeHTML(string) : string
+## @escapeHTML(input) : string
 
 `escapeHTML` takes a string of unknown origin and makes it safe for display on a web page by encoding control characters in HTML into their HTML entities.
 
@@ -220,19 +220,19 @@ _Note_: When passed an object without a `has` function, `contains` will return `
 
 _Note_: Batman's pluralization functions mirror those of Rails' exactly.
 
-## ordinalize(value : [number|string]) : string
+## @ordinalize(value : [number|string]) : string
 
 `ordinalize` converts a given integer into an ordinal string for describing position in a list, like 1st, 2nd, or 20th.
 
     test 'ordinalize converts numbers to their ordinal form', ->
-      equal Batman.helpers.ordinalize(1)     , "1st"
-      equal Batman.helpers.ordinalize("2")     , "2nd"
-      equal Batman.helpers.ordinalize(1002)  , "1002nd"
-      equal Batman.helpers.ordinalize("1003")  , "1003rd"
-      equal Batman.helpers.ordinalize(-11)   , "-11th"
-      equal Batman.helpers.ordinalize(-1021) , "-1021st"
+      equal Batman.helpers.ordinalize(1), "1st"
+      equal Batman.helpers.ordinalize("2"), "2nd"
+      equal Batman.helpers.ordinalize(1002), "1002nd"
+      equal Batman.helpers.ordinalize("1003"), "1003rd"
+      equal Batman.helpers.ordinalize(-11), "-11th"
+      equal Batman.helpers.ordinalize(-1021), "-1021st"
 
-## singularize(pluralString : string) : string
+## @singularize(pluralString : string) : string
 
 `singularize` converts the plural form of a word to a singular form.
 
@@ -243,7 +243,7 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
       equal Batman.helpers.singularize("word"), "word"
       equal Batman.helpers.singularize("CamelOctopi"), "CamelOctopus"
 
-## pluralize(singularString : string) : string
+## @pluralize(singularString : string) : string
 
 `pluralize` converts the singular form of a word to the plural form.
 
@@ -254,22 +254,22 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
       equal Batman.helpers.pluralize("words"), "words"
       equal Batman.helpers.pluralize("CamelOctopus"), "CamelOctopi"
 
-## camelize(string, [lowercaseFirstLetter = false]) : string
+## @camelize(name [, lowercaseFirstLetter = false]) : string
 
-`camelize` converts the passed `string` to UpperCamelCase. If the second argument is passed as `true`, then lowerCamelCase is returned.
+`camelize` converts the passed `name` to UpperCamelCase. If the second argument is passed as `true`, then lowerCamelCase is returned.
 
     test 'camelize returns the CamelCase version of an under_scored word', ->
       equal Batman.helpers.camelize("batman_object"), "BatmanObject"
       equal Batman.helpers.camelize("batman_object", true), "batmanObject"
 
-## underscore(string) : string
+## @underscore(string) : string
 
 `underscore` returns the underscored version of a CamelCase word.
 
     test 'underscore converts CamelCase to under_scores', ->
       equal Batman.helpers.underscore("BatmanObject"), "batman_object"
 
-## capitalize(string) : string
+## @capitalize(string) : string
 
 `capitalize` does a word-wise capitalization of a phrase or word.
 
@@ -278,7 +278,7 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
       equal Batman.helpers.capitalize("batman object"), "Batman Object"
       equal Batman.helpers.capitalize("AlreadyCapitalized"), "AlreadyCapitalized"
 
-## trim(string) : string
+## @trim(string) : string
 
 `trim` trims a string getting rid of extra white space around the string or returning an empty string if it is null.
 
@@ -292,7 +292,7 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
       equal Batman.helpers.trim(null), ""
       equal Batman.helpers.trim(undefined), ""
 
-## interpolate(stringOrObject, keys) : string
+## @interpolate(stringOrObject, keys) : string
 
 `interpolate` interpolates a string, filling it in with values matching interpolation keys, similar to printf variants.
 
@@ -305,7 +305,7 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
     test 'interpolate fills in key values globally in an object-embedded string, embedded by key count', ->
       equal Batman.helpers.interpolate({3: "%{field} must be at least %{count} characters in order for %{field} to be valid"}, count: "3", field: "name"), "name must be at least 3 characters in order for name to be valid"
 
-## humanize(string) : string
+## @humanize(string) : string
 
 `humanize` reformats a string that has a programmatic meaning (camelcased, underscored, "_id" suffixed) to make human-readable by separating concatenated words and/or getting rid of the "_id" suffix.
 
