@@ -109,6 +109,7 @@
   2. `method : String`: The type of request to make eg. `GET`, `POST`.  Default is `GET`
 
     test "method test", ->
+      Batman.Request.setupMockedResponse()
       Batman.Request.addMockedResponse("POST", "http://batmanjs.org", -> response : { FOO: "BAR" })
       new Batman.Request
         url: "http://batmanjs.org"
@@ -128,6 +129,7 @@
 
     test "autosend test", ->
       response_sent = false
+      Batman.Request.setupMockedResponse()
       Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> {} )
       req = new Batman.Request
         url: "http://batmanjs.org"
