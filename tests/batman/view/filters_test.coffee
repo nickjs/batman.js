@@ -537,3 +537,14 @@ asyncTest 'should render a user defined filter', 4, ->
     ok spy.lastCallArguments[3] instanceof Batman.DOM.AbstractBinding
     delete Batman.Filters.test
     QUnit.start()
+
+asyncTest 'should render view-level defined filters', ->
+  class @TestView extends Batman.View
+    @filter 'test', (input) -> "test:#{input}"
+
+  context = Batman
+    view: new @TestView
+
+  helpers.render '<div data-bind="\'input\' | test"></div>', context, (node) ->
+    equal node.html(), "test:input"
+    QUnit.start()
