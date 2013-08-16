@@ -225,12 +225,12 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
 `ordinalize` converts a given integer into an ordinal string for describing position in a list, like 1st, 2nd, or 20th.
 
     test 'ordinalize converts numbers to their ordinal form', ->
-      equal Batman.helpers.ordinalize(1)     , "1st"
-      equal Batman.helpers.ordinalize("2")     , "2nd"
-      equal Batman.helpers.ordinalize(1002)  , "1002nd"
-      equal Batman.helpers.ordinalize("1003")  , "1003rd"
-      equal Batman.helpers.ordinalize(-11)   , "-11th"
-      equal Batman.helpers.ordinalize(-1021) , "-1021st"
+      equal Batman.helpers.ordinalize(1), "1st"
+      equal Batman.helpers.ordinalize("2"), "2nd"
+      equal Batman.helpers.ordinalize(1002), "1002nd"
+      equal Batman.helpers.ordinalize("1003"), "1003rd"
+      equal Batman.helpers.ordinalize(-11), "-11th"
+      equal Batman.helpers.ordinalize(-1021), "-1021st"
 
 ## @singularize(pluralString : string) : string
 
@@ -254,7 +254,7 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
       equal Batman.helpers.pluralize("words"), "words"
       equal Batman.helpers.pluralize("CamelOctopus"), "CamelOctopi"
 
-## @camelize(string, [lowercaseFirstLetter = false]) : string
+## @camelize(string [, lowercaseFirstLetter = false]) : string
 
 `camelize` converts the passed `string` to UpperCamelCase. If the second argument is passed as `true`, then lowerCamelCase is returned.
 
