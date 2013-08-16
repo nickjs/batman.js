@@ -1,11 +1,10 @@
 # Batman Request
- Request is an abstraction around XHR requests.  It can be used with a variety of platforms, and is implemented the platform layer files.
+ Request is an abstraction around XHR requests.  It can be used with a variety of platforms, and is implemented in the platform layer files.
 
 ### Platform Request Implmentation Libraries:
   Depending on the platform library the underlying request implementation will change:
 
  - `batman.jquery.js`: jQuery XHR
- - `batman.node.js`: "querystring" and "url"
  - `batman.solo.js`: Reqwest.js
 
  _note_ For the tests there are some mocked responses, in a normal non testing situation you would not use these
@@ -150,6 +149,7 @@
     test "request.send()", ->
       beforeResponse = (req, data) ->
         deepEqual data, { other: "thing" }
+      Batman.Request.setupMockedResponse()
       Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> {beforeResponse: beforeResponse} )
       req = new Batman.Request
         url: "http://batmanjs.org"
