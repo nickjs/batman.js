@@ -19,7 +19,7 @@ Whether we should save the child objects as part of the parent object's JSON
  Whether we should load the child objects when loading the parent object.
 
 ##### `nestUrl[= false] : boolean`
-Whether the child models are persisted beneath the parent models url structure.
+Whether the child models are persisted beneath the parent model's url structure.
 
 ##### `name : string`
 The name of the child model for the association. (eg. App.Product)
@@ -57,7 +57,7 @@ Whether the association is polymorphic.
     - the parent association name on child objects in a polymorphic association
 
 ## @belongsTo(label[, options])
-`belongsTo` associatons are used fro expressing one-to-one child relationships on a `Batman.Model`.
+`belongsTo` associatons are used for expressing one-to-one child relationships on a `Batman.Model`.
 
 - `label : string`
 - `options : Object`
