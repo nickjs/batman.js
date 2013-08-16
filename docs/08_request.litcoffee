@@ -89,7 +89,7 @@
         success: (response) ->
           equal "foo", JSON.parse(@response)
 
-## .responseHeaders : PlainObject
+## .responseHeaders : object
   An key/value object with the response headers
 
     test "responseHeaders", 1, ->
@@ -101,7 +101,7 @@
         success: (response) ->
           deepEqual @responseHeaders,{ FOO: "bar" }
 
-## @Request( options : PlainObject )
+## @Request(options : object)
 
   Constructs a new `Batman.Request` with the supplied options
 
@@ -144,7 +144,7 @@
   8. `type`: The type of data you're expecting from the server, defaults to `json`
 
 
-## ::send( [data] )
+## ::send([data])
   If `autosend` is `false`, this will initiate the request.  The data object passed in will take priority over the one specified in the `options` object
 
     test "request.send()", ->
