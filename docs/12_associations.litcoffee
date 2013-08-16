@@ -21,16 +21,16 @@ Whether we should save the child objects as part of the parent object's JSON
 ##### `nestUrl[= false] : boolean`
 Whether the child models are persisted beneath the parent models url structure.
 
-##### `name : String`
+##### `name : string`
 The name of the child model for the association. (eg. App.Product)
 
-##### `inverseOf : String`
+##### `inverseOf : string`
 The foreign association to set on load.
 
-##### `encoderKey : String`
+##### `encoderKey : string`
 The key to encode and decode the assocation into/from JSON.
 
-##### `namespace[= Batman.currentApp] : String`
+##### `namespace[= Batman.currentApp] : string`
 The location of the model definition for the association.
 
 ##### `polymorphic[= false] : boolean`
@@ -39,29 +39,29 @@ Whether the association is polymorphic.
 ## @hasMany(label[, options])
 `hasMany` assocations are used for expressing one-to-many relationships on a `Batman.Model`.
 
-- `label : String`
+- `label : string`
 - `options : Object`
-  - `primaryKey : String`
-  - `foreignKey : String`
-  - `as : String`
+  - `primaryKey : string`
+  - `foreignKey : string`
+  - `as : string`
     - the parent association name on child objects in a polymorphic association
 
 ## @hasOne(label[, options])
 `hasOne` associations are used for expressing one-to-one relationships on a `Batman.Model`.
 
-- `label : String`
+- `label : string`
 - `options : Object`
-  - `primaryKey : String`
-  - `foreignKey : String`
-  - `as : String`
+  - `primaryKey : string`
+  - `foreignKey : string`
+  - `as : string`
     - the parent association name on child objects in a polymorphic association
 
 ## @belongsTo(label[, options])
 `belongsTo` associatons are used fro expressing one-to-one child relationships on a `Batman.Model`.
 
-- `label : String`
+- `label : string`
 - `options : Object`
-  - `primaryKey : String`
-  - `foreignKey : String`
+  - `primaryKey : string`
+  - `foreignKey : string`
   - `encodeForeignKey[= true] boolean`
     - whether to encode the foreignKey value when persisting the model
