@@ -47,6 +47,10 @@ class Batman.View extends Batman.Object
 
     super
 
+    if superview = @superview
+      @superview = null
+      superview.subviews.add(this)
+
   _addChildBinding: (binding) ->
     @bindings.push(binding)
 

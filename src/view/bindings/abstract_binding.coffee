@@ -222,4 +222,5 @@ class Batman.DOM.AbstractBinding extends Batman.Object
     return @backingView
 
 class Batman.BackingView extends Batman.View
+  isBackingView: true
   bindImmediately: false
