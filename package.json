@@ -1,25 +1,22 @@
 {
-  "name": "batman",
-  "description": "A client-side framework that makes JavaScript apps as fun as Rails.",
+  "name": "batman.js",
+  "description": "The best client side framework for Rails developers.",
   "author": "Nick Small <nick@shopify.com> (http://github.com/nickjs)",
   "contributors": [
     "Matt Helm <matt.helm@shopify.com> (http://github.com/matthelm)",
     "Kristian PD <kristian@shopify.com> (http://github.com/kristianpd)",
     "Harry Brundage <harry.brundage@shopify.com> (http://github.com/hornairs)"
   ],
-  "version": "0.14.1",
+  "version": "0.15.0-pre",
   "homepage": "http://batmanjs.org",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Shopify/batman.git"
+    "url": "git://github.com/batmanjs/batman.git"
   },
   "main": "./lib/dist/batman.node.js",
   "browser": {
     "batman": "./lib/dist/batman.min.js",
     "jsdom": false
-  },
-  "bin": {
-    "batman": "./tools/batman"
   },
   "scripts": {
     "test": "./node_modules/.bin/cake test:travis",
