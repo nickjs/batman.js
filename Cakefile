@@ -63,7 +63,7 @@ task 'build:dist', 'compile Batman.js files for distribution', (options) ->
   temp    = require 'temp'
   tmpdir = temp.mkdirSync()
   distDir = "lib/dist"
-  developmentTransform = require('./tools/build/remove_development_transform').removeDevelopment
+  developmentTransform = require('./tools/remove_development_transform').removeDevelopment
 
   # Run a task which concats the coffeescript, compiles it, and then minifies it
   first = true
