@@ -1,11 +1,11 @@
 Batman.extend Batman.DOM,
   querySelectorAll: if window?.document?.querySelectorAll?
-      (node, selector) -> node.querySelectorAll(selector)
+      (node = document, selector) -> node.querySelectorAll(selector)
     else
       -> Batman.developer.error("Please include either jQuery or a querySelectorAll polyfill, or set Batman.DOM.querySelectorAll to return an empty array.")
 
   querySelector: if window?.document?.querySelector?
-      (node, selector) -> node.querySelector(selector)
+      (node = document, selector) -> node.querySelector(selector)
     else
       -> Batman.developer.error("Please include either jQuery or a querySelector polyfill, or set Batman.DOM.querySelector to an empty function.")
 
