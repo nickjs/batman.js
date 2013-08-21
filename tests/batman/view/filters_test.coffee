@@ -22,6 +22,30 @@ asyncTest 'keypaths with pluses', ->
     equal node.html(), 'baz'
     QUnit.start()
 
+asyncTest 'keypaths which begin with numbers followed by a letter', ->
+  context = Batman "123test": "test"
+  helpers.render '<div data-bind="123test"></div>', context, (node) ->
+    equal node.html(), 'test'
+    QUnit.start()
+
+asyncTest 'keypaths which begin with numbers followed by a dash', ->
+  context = Batman "123-test": "test"
+  helpers.render '<div data-bind="123-test"></div>', context, (node) ->
+    equal node.html(), 'test'
+    QUnit.start()
+
+asyncTest 'keypaths which begin with a dash followed by a letter', ->
+  context = Batman "-test": "test"
+  helpers.render '<div data-bind="-test"></div>', context, (node) ->
+    equal node.html(), 'test'
+    QUnit.start()
+
+asyncTest 'keypaths which begin with an underscore followed by a letter', ->
+  context = Batman "_test": "test"
+  helpers.render '<div data-bind="_test"></div>', context, (node) ->
+    equal node.html(), 'test'
+    QUnit.start()
+
 asyncTest 'get dotted syntax', 1, ->
   context = Batman
     foo: new Batman.Hash({bar: "qux"})
