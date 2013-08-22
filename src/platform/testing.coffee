@@ -1,3 +1,6 @@
+#= require ../dist/undefine_module
+#= require ./solo
+
 Batman.Request.setupMockedResponse = ->
   Batman.Request.mockedResponses = {}
 

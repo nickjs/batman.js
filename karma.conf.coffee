@@ -5,13 +5,13 @@ snockets = new Snockets()
 files = {}
 
 files.source   = snockets.scan('src/batman.coffee', async: false).getChain('src/batman.coffee')
-files.platform = snockets.scan('src/platform/solo.coffee', async: false).getChain('src/platform/solo.coffee')
+files.platform = snockets.scan('src/platform/testing.coffee', async: false).getChain('src/platform/testing.coffee')
 files.helpers  = snockets.scan('tests/batman/test_requires.coffee', async: false).getChain('tests/batman/test_requires.coffee')
 files.tests    = snockets.scan('tests/batman/tests.coffee', async: false).getChain('tests/batman/tests.coffee')
 files.docs     = snockets.scan('docs/docs.coffee', async: false).getChain('docs/docs.coffee')
 
 files.lib = [
-  'lib/es5-shim.js'
+  'lib/polyfills/es5-shim.js'
   'tests/lib/json2.js',
   'tests/lib/jquery.js',
   'tests/lib/sinon.js'
