@@ -136,6 +136,16 @@ test "reduce should not return the function if the reduction function returns un
   @enumerable = getEnumerable(@array)
   deepEqual @enumerable.reduce(f), @array.reduce(f)
 
+test "count should return the right number", ->
+  @array = [false, false, false]
+  @enumerable = getEnumerable(@array)
+  f = (x) -> x
+  equal @enumerable.count(f), 0
+
+  @array = [true, false, true]
+  @enumerable = getEnumerable(@array)
+  equal @enumerable.count(f), 2
+
 test "inGroupsOf(1) should return an array with each item in an array", ->
   @enumerable = getEnumerable([1,2,3])
   deepEqual @enumerable.inGroupsOf(1), [[1],[2],[3]]

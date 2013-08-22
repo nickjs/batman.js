@@ -13,7 +13,7 @@ Batman.Enumerable =
 
   every: (f, ctx = Batman.container) ->
     result = true
-    @forEach -> result = result && f.apply(ctx, arguments)
+    @foreach -> result = result && f.apply(ctx, arguments)
     result
 
   some: (f, ctx = Batman.container) ->
@@ -49,6 +49,11 @@ Batman.Enumerable =
       result = [] unless result.push
       wrap = (result, element) -> result.push(element) if f(element); result
     @reduce wrap, result
+
+  count: (f, ctx = Batman.container) ->
+    count = 0
+    @forEach -> count++ if f.apply(ctx, arguments)
+    count
 
   inGroupsOf: (groupSize) ->
     result = []
