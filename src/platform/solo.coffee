@@ -1,5 +1,6 @@
 #= require ../../lib/polyfills/zest
 #= require ../../lib/polyfills/reqwest
+#= require ../../lib/polyfills/contains
 
 Batman.extend Batman.DOM,
   querySelectorAll: (node, selector) ->
