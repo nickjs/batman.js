@@ -51,8 +51,9 @@ Batman.Enumerable =
     @reduce wrap, result
 
   count: (f, ctx = Batman.container) ->
+    return @length unless f
     count = 0
-    @forEach -> count++ if f.apply(ctx, arguments)
+    @forEach (keyOrValue, value) -> count++ if f.apply(ctx, keyOrValue, value, this)
     count
 
   inGroupsOf: (groupSize) ->

@@ -146,6 +146,11 @@ test "count should return the right number", ->
   @enumerable = getEnumerable(@array)
   equal @enumerable.count(f), 2
 
+test "count should return the total length if passes no arguments", ->
+  @array = [false, false, false]
+  @enumerable = getEnumerable(@array)
+  equal @enumerable.count(), 3
+
 test "inGroupsOf(1) should return an array with each item in an array", ->
   @enumerable = getEnumerable([1,2,3])
   deepEqual @enumerable.inGroupsOf(1), [[1],[2],[3]]
