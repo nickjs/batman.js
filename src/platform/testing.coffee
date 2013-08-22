@@ -1,3 +1,5 @@
+#= require ./solo
+
 Batman.Request.setupMockedResponse = ->
   Batman.Request.mockedResponses = {}
 
