@@ -3,7 +3,10 @@ class TestEnumerator
   constructor: (args...) ->
     @a = []
     @a.push arg for arg in args
-  add: (e) -> @a.push e
+    @length = @a.length
+  add: (e) ->
+    @a.push e
+    @length = @a.length
   forEach: (f) ->
     @a.forEach(f)
 
@@ -146,7 +149,7 @@ test "count should return the right number", ->
   @enumerable = getEnumerable(@array)
   equal @enumerable.count(f), 2
 
-test "count should return the total length if passes no arguments", ->
+test "count should return the total length if passed no arguments", ->
   @array = [false, false, false]
   @enumerable = getEnumerable(@array)
   equal @enumerable.count(), 3
