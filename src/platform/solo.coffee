@@ -11,6 +11,13 @@ Batman.extend Batman.DOM,
   setInnerHTML: (node, html) ->
     node?.innerHTML = html
 
+  containsNode: (parent, child) ->
+    if !child
+      child = parent
+      parent = document.body
+
+    window.containsNode(parent, child)
+
   textContent: (node) ->
     node.textContent ? node.innerText
 
