@@ -106,7 +106,7 @@ class Batman.View extends Batman.Object
   addToParentNode: (parentNode) ->
     return if not @get('node')
 
-    isInDOM = document.body.contains(parentNode)
+    isInDOM = Batman.DOM.containsNode(parentNode)
     @propagateToSubviews('viewWillAppear') if isInDOM
 
     @insertIntoDOM(parentNode)
@@ -119,7 +119,7 @@ class Batman.View extends Batman.Object
 
   removeFromParentNode: ->
     node = @get('node')
-    isInDOM = @wasInDOM ? document.body.contains(node)
+    isInDOM = @wasInDOM ? Batman.DOM.containsNode(node)
 
     @propagateToSubviews('viewWillDisappear') if isInDOM
 
@@ -220,7 +220,7 @@ class Batman.View extends Batman.Object
     @fire('destroy')
 
     if @node
-      @wasInDOM = document.body.contains(@node)
+      @wasInDOM = Batman.DOM.containsNode(@node)
       Batman.DOM.destroyNode(@node)
 
     @forget()
