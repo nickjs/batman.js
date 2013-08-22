@@ -1,8 +1,22 @@
+#= require ../../lib/polyfills/zest
 #= require ../../lib/polyfills/reqwest
 
+Batman.extend Batman.DOM,
+  querySelectorAll: (node, selector) ->
+    zest(selector, node)
 
-  else
-    options.data = data
+  querySelector: (node, selector) ->
+    zest(selector, node)[0]
+
+  setInnerHTML: (node, html) ->
+    node?.innerHTML = html
+
+  textContent: (node) ->
+    node.textContent ? node.innerText
+
+  destroyNode: (node) ->
+    Batman.DOM.cleanupNode(node)
+    node?.parentNode?.removeChild(node)
 
 Batman.extend Batman.Request.prototype,
   _parseResponseHeaders: (xhr) ->
