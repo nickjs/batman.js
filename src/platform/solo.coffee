@@ -1,4 +1,4 @@
-#= require ./lib/reqwest
+#= require ../../lib/polyfills/reqwest
 
 
   else
