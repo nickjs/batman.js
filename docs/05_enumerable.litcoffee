@@ -3,6 +3,11 @@
 `Batman.Enumerable` is a mixin that defines methods available for every
 enumerable type (`Batman.Set` and `Batman.Hash` being the main two).
 
+Note that where the signature of the callback functions is defined, `element`
+is the value of the current element being iterated over, and `value` is
+`null`—except in the case of `Batman.Hash` where `element` is the key and
+`value` is the value.
+
 ## ::.length : number
 
 The number of elements.
