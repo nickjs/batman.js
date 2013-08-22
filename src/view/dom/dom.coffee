@@ -89,3 +89,8 @@ Batman.DOM =
 
   stopPropagation: (e) ->
     if e.stopPropagation then e.stopPropagation() else e.cancelBubble = true
+
+platformMethods = ['querySelector', 'querySelectorAll', 'setInnerHTML', 'destroyNode', 'textContent']
+for methodName in platformMethods
+  Batman.DOM[methodName] = ->
+    Batman.developer.error("Please include a platform adapter to define #{methodName}.")
