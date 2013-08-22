@@ -13,6 +13,13 @@ Batman.extend Batman.DOM,
     jQuery(node).remove()
     return
 
+  containsNode: (parent, child) ->
+    if !child
+      child = parent
+      parent = document.body
+
+    $.contains(parent, child)
+
   textContent: (node) ->
     jQuery(node).text()
 

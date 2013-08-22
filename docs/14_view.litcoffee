@@ -147,10 +147,10 @@ the DOM.
       superview.get('node')
       view = new Batman.View(html: '', superview: superview)
 
-      ok superview.get('node').contains(view.get('node'))
+      ok Batman.DOM.containsNode(superview.get('node'), view.get('node'))
 
       superview.subviews.remove(view)
-      ok not superview.get('node').contains(view.get('node'))
+      ok not Batman.DOM.containsNode(superview.get('node'), view.get('node'))
 
 ## ::removeFromSuperview()
 

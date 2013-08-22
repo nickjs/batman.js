@@ -11,7 +11,7 @@ class Batman.IteratorView extends Batman.View
     @_finishAppendItems()
 
   removeItems: (items, indexes) ->
-    if indexes 
+    if indexes
       @subviews.at(indexes[i]).die() for item, i in items
     else
       for item in items
@@ -48,7 +48,7 @@ class Batman.IteratorView extends Batman.View
     @appendedViews.push(iterationView)
 
   _finishAppendItems: ->
-    isInDOM = document.body.contains(@node)
+    isInDOM = Batman.DOM.containsNode(@node)
 
     if isInDOM
       subview.propagateToSubviews('viewWillAppear') for subview in @appendedViews
