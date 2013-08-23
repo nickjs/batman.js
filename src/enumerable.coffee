@@ -8,7 +8,7 @@ Batman.Enumerable =
 
   mapToProperty: (key) ->
     result = []
-    @forEach (item) -> result.push item.get(key)
+    @forEach (item) -> result.push Batman.get(item, key)
     result
 
   every: (f, ctx = Batman.container) ->
@@ -22,33 +22,43 @@ Batman.Enumerable =
     result
 
   reduce: (f, accumulator) ->
-    count = 0
-    self = @
-    if accumulator?
-      initialValuePassed = true
-    else
-      initialValuePassed = false
+    index = 0
+    initialValuePassed = accumulator?
 
-    @forEach ->
+    @forEach (element, value) =>
       if !initialValuePassed
-        accumulator = arguments[0]
+        accumulator = element
         initialValuePassed = true
         return
 
-      accumulator = f(accumulator, arguments..., count, self)
+      accumulator = f(accumulator, element, value, index, self)
+      index++
 
     accumulator
 
   filter: (f) ->
     result = new @constructor
     if result.add
-      wrap = (result, element) -> result.add(element) if f(element); result
+      wrap = (result, element, value) =>
+        result.add(element) if f(element, value, this)
+        result
     else if result.set
-      wrap = (result, key, value) -> result.set(key, value) if f(key, value); result
+      wrap = (result, element, value) =>
+        result.set(element, value) if f(element, value, this)
+        result
     else
       result = [] unless result.push
-      wrap = (result, element) -> result.push(element) if f(element); result
+      wrap = (result, element, value) =>
+        result.push(element) if f(element, value, this)
+        result
+
     @reduce wrap, result
+
+  count: (f, ctx = Batman.container) ->
+    return @length unless f
+    count = 0
+    @forEach (element, value) => count++ if f.call(ctx, element, value, this)
+    count
 
   inGroupsOf: (groupSize) ->
     result = []

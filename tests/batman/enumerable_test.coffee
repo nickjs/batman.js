@@ -3,7 +3,10 @@ class TestEnumerator
   constructor: (args...) ->
     @a = []
     @a.push arg for arg in args
-  add: (e) -> @a.push e
+    @length = @a.length
+  add: (e) ->
+    @a.push e
+    @length = @a.length
   forEach: (f) ->
     @a.forEach(f)
 
@@ -135,6 +138,21 @@ test "reduce should not return the function if the reduction function returns un
   @array = [1, 2, 3]
   @enumerable = getEnumerable(@array)
   deepEqual @enumerable.reduce(f), @array.reduce(f)
+
+test "count should return the right number", ->
+  @array = [false, false, false]
+  @enumerable = getEnumerable(@array)
+  f = (x) -> x
+  equal @enumerable.count(f), 0
+
+  @array = [true, false, true]
+  @enumerable = getEnumerable(@array)
+  equal @enumerable.count(f), 2
+
+test "count should return the total length if passed no arguments", ->
+  @array = [false, false, false]
+  @enumerable = getEnumerable(@array)
+  equal @enumerable.count(), 3
 
 test "inGroupsOf(1) should return an array with each item in an array", ->
   @enumerable = getEnumerable([1,2,3])
