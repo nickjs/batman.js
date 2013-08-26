@@ -49,3 +49,6 @@ Batman.DOM.attrReaders =
 
   formfor: (definition) ->
     new Batman.DOM.FormBinding(definition)
+
+  css: (definition) ->
+    new Batman.DOM.CssBinding(definition)
