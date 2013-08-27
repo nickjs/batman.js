@@ -1,8 +1,9 @@
 helpers = window.viewHelpers
 
-QUnit.module 'Batman.View style bindings',
+QUnit.module 'Batman.View style attribute bindings'
+
 asyncTest 'it should allow multiple properties to be bound', 4, ->
-  source = '<div data-css-background-color="foo" data-css-margin-top="bar"></div>'
+  source = '<div data-style-background-color="foo" data-style-margin-top="bar"></div>'
   helpers.render source,
     foo: 'red'
     bar: '4px'
