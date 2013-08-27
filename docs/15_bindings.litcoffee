@@ -200,6 +200,23 @@ Batman will execute the `data-foreach` binding before the `data-bind` on the `<o
 
 `data-foreach` can be used to iterate over `Batman.Set`s, and most often should be, because it observes any Sets and will update the DOM with new nodes if items are added to the set, or remove nodes from the DOM if their corresponding nodes are removed from the set. `data-foreach`, like every other binding, is keypath aware, such that if the `Set` instance at the keypath changes, or any previous segment of the keypath changes, `data-foreach` will remove all the nodes currently in the DOM, and add new nodes for each new item in the incoming `Set`.
 
+Sometimes you'll need to add some custom logic to the iteration nodes. For example, a custom `viewDidAppear` handler so you can know whenever a new iteration node appears in the DOM. You can do this by specifying a custom subclass of `Batman.IterationView`.
+
+```html
+<ul>
+  <li data-foreach-product="products" data-view="ProductIterationView">
+    <span data-bind="product.name"></span>
+  </li>
+</ul>
+```
+
+```coffeescript
+class MyApp.ProductIterationView extends Batman.IterationView
+  viewDidAppear: ->
+    $(@get('node')).draggable()
+```
+
+
 _Note_: `data-foreach` expects to find an iterable object at the keypath given to it, and will emit a warning if it finds `undefined`.
 
 _Note_: `data-foreach` expects the passed enumerable to be unique. It creates a map of nodes to items, so every node needs to be able to reference exactly one object. If you simply have a set of values that you're iterating over, you should wrap your values in objects, e.g. `[{value: true}, {value: true}]`.
