@@ -481,3 +481,13 @@ asyncTest 'it shouldn\'t break state if bound to undefined', 3, ->
       delay ->
         deepEqual getPs(view), ['a']
 
+asyncTest 'using data-view on the prototype node should use that class for the iteration views', ->
+  context = objects: new Batman.Set('a', 'b')
+  class context.SpecialIterationView extends Batman.View
+    @accessor 'specialAccessor', ->
+      "SPECIAL-#{@get('object')}"
+
+  source = '<p data-foreach-object="objects" data-view="SpecialIterationView" data-bind="specialAccessor"></p>'
+  helpers.render source, context, (node, view) ->
+    deepEqual getPs(view), ['SPECIAL-a', 'SPECIAL-b']
+    QUnit.start()

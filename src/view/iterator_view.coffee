@@ -30,12 +30,18 @@ class Batman.IteratorView extends Batman.View
     @node.parentNode.insertBefore(source.node, target?.node || @node)
 
   _beginAppendItems: ->
+    if !@iterationViewClass and viewClassName = @prototypeNode.getAttribute('data-view')
+      @iterationViewClass = @lookupKeypath(viewClassName)
+      @prototypeNode.removeAttribute('data-view')
+
+    @iterationViewClass ||= Batman.IterationView
+
     @fragment = document.createDocumentFragment()
     @appendedViews = []
     @get('node')
 
   _insertItem: (item, targetIndex) ->
-    iterationView = new Batman.IterationView(node: @prototypeNode.cloneNode(true), parentNode: @fragment)
+    iterationView = new @iterationViewClass(node: @prototypeNode.cloneNode(true), parentNode: @fragment)
     iterationView.set(@iteratorName, item)
 
     if targetIndex?
