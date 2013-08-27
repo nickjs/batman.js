@@ -7,14 +7,14 @@ asyncTest 'it should allow multiple properties to be bound', 4, ->
   helpers.render source,
     foo: 'red'
     bar: '4px'
-  , (node) ->
+  , (node, view) ->
     equal node[0].style.backgroundColor, 'red'
     equal node[0].style.marginTop, '4px'
 
-    helpers.render source,
-      foo: 'blue'
-      bar: '21em'
-    , (node) ->
-      equal node[0].style.backgroundColor, 'blue'
-      equal node[0].style.marginTop, '21em'
-      QUnit.start()
+    view.set('foo', 'blue')
+    view.set('bar', '21em')
+    equal node[0].style.backgroundColor, 'blue'
+    equal node[0].style.marginTop, '21em'
+
+    QUnit.start()
+
