@@ -16,6 +16,7 @@ QUnit.module "Batman.RenderCache",
       get: ->
       set: ->
       isInDOM: -> false
+      cache: true
     @context = {}
     @exampleOptions = {source: "products/show", viewClass: @MockView, context: @context}
 
@@ -49,7 +50,8 @@ test "cache won't return items with the same cache key but with different length
 
 test "cache won't cache options with cache: false", ->
   equalCacheLength(@cache, 0)
-  viewInstance = @cache.viewForOptions Batman.extend {cache: false}, @exampleOptions
+  @MockView::cache = false
+  viewInstance = @cache.viewForOptions @exampleOptions
   equalCacheLength(@cache, 0)
 
 test "cache won't cache view classes with cache: false on their prototype", ->

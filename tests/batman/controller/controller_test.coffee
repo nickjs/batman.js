@@ -15,11 +15,13 @@ QUnit.module 'Batman.Controller',
     Batman.View.store.set('products/show', "<div>show</div>")
     Batman.View.store.set('admin/products/show', "<div>show</div>")
 
+    Batman.config.cacheViews = true
     @controller = new TestController
     @controller.renderCache.reset()
     Batman.DOM.Yield.reset()
 
   teardown: ->
+    Batman.config.cacheViews = false
     Batman.currentApp = oldApp
     Batman.navigator = oldNavigator
     Batman.View.store = oldHTMLStore
