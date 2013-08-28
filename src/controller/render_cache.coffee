@@ -7,11 +7,11 @@ class Batman.RenderCache extends Batman.Hash
     @keyQueue = []
 
   viewForOptions: (options) ->
-    if options.cache == false || options.viewClass::cache == false
-      return @_newViewFromOptions(options)
-
-    @getOrSet options, =>
-      @_newViewFromOptions(Batman.extend {}, options)
+    if Batman.config.cacheViews || options.cache || options.viewClass::cache
+      @getOrSet options, =>
+        @_newViewFromOptions(Batman.extend {}, options)
+    else
+      @_newViewFromOptions(options)
 
   _newViewFromOptions: (options) -> new options.viewClass(options)
 
