@@ -3,11 +3,11 @@
 # `Batman.DOM.events` contains the Batman.helpers used for binding to events. These aren't called by
 # DOM directives, but are used to handle specific events by the `data-event-#{name}` helper.
 Batman.DOM.events =
-  click: (node, callback, view, eventName = 'click') ->
+  click: (node, callback, view, eventName = 'click', preventDefault = true) ->
     Batman.DOM.addEventListener node, eventName, (event, args...) ->
       return if event.metaKey || event.ctrlKey || event.button == 1
 
-      Batman.DOM.preventDefault event
+      Batman.DOM.preventDefault event if preventDefault
       return if not Batman.DOM.eventIsAllowed(eventName, event)
 
       callback node, event, args..., view
