@@ -178,7 +178,7 @@ class Batman.DOM.AbstractBinding extends Batman.Object
         args = filterString.substr(split)
 
         # If the filter exists, grab it; otherwise, bail.
-        unless filter = (Batman.Filters[filterName] || @view?.constructor.filters[filterName])
+        unless filter = (Batman.Filters[filterName] || @view?._batman.get('filters')?[filterName])
           return Batman.developer.error "Unrecognized filter '#{filterName}' in key \"#{@keyPath}\"!"
 
         @filterFunctions.push filter

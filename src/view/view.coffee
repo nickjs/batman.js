@@ -9,6 +9,13 @@ class Batman.View extends Batman.Object
     keys = options.concat(keys) if options = @_batman.options
     @_batman.set('options', keys)
 
+  @filter: (key, filter) ->
+    Batman.initializeObject(@prototype)
+
+    filters = @::_batman.filters || {}
+    filters[key] = filter
+    @::_batman.set('filters', filters)
+
   @viewForNode: (node, climbTree) ->
     climbTree = true if not climbTree?
     while node
@@ -32,8 +39,6 @@ class Batman.View extends Batman.Object
   isView: true
   isDead: false
   isBackingView: false
-
-  @filters: {}
 
   constructor: ->
     @bindings = []
@@ -304,9 +309,6 @@ class Batman.View extends Batman.Object
 
     return if not target || target is Batman.container
     Batman.Property.forBaseAndKey(target, keypath)?.setValue(value)
-
-  @filter: (key, filter) ->
-    @filters[key] = filter
 
 Batman.container.$context ?= (node) ->
   while node
