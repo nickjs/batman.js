@@ -155,6 +155,17 @@ class Batman.View extends Batman.Object
       source = Batman.Navigator.normalizePath(source)
       @html = @constructor.store.get(source)
 
+      if not @html?
+        property = @property('html')
+
+        handler = (html) =>
+          @set('html', html) if html?
+          property.removeHandler(handler)
+
+        property.addHandler(handler)
+
+      return @html
+
     set: (key, html) ->
       @destroyBindings()
       @destroySubviews()
