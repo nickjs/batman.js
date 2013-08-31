@@ -8,7 +8,7 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
     @view.lookupKeypath('dispatcher') || Batman.App.get('current.dispatcher')
 
   bind: ->
-    if @node.nodeName.toUpperCase() is 'A'
+    if (@node.nodeName is 'A' || @node.nodeName is 'a')
       @onAnchorTag = true
 
     super
