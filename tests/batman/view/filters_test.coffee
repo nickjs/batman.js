@@ -542,8 +542,8 @@ asyncTest 'should render view-level defined filters', ->
   class @TestView extends Batman.View
     @filter 'test', (input) -> "test:#{input}"
 
-  context = Batman()
-    view: new @TestView
+  context = Batman
+    view: @TestView
 
   helpers.render '<div data-bind="\'input\' | test"></div>', context, (node) ->
     equal node.html(), "test:input"
