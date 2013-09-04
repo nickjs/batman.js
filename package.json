@@ -7,13 +7,12 @@
     "Kristian PD <kristian@shopify.com> (http://github.com/kristianpd)",
     "Harry Brundage <harry.brundage@shopify.com> (http://github.com/hornairs)"
   ],
-  "version": "0.15.0-pre",
+  "version": "0.15.0",
   "homepage": "http://batmanjs.org",
   "repository": {
     "type": "git",
     "url": "git://github.com/batmanjs/batman.git"
   },
-  "main": "./lib/dist/batman.node.js",
   "browser": {
     "batman": "./lib/dist/batman.min.js",
     "jsdom": false
