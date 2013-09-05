@@ -42,9 +42,36 @@ asyncTest "association load passes env", 1, ->
     id: 1
 
   deck.get('cards').load (err, records, env) ->
-    console.log env, {}
-    equal env, {}
+    deepEqual env, {}
     QUnit.start()
+
+asyncTest "load can have options", 2, ->
+  namespace = {}
+
+  class namespace.Store extends Batman.Model
+    @encode 'name', 'id'
+    @hasMany 'products', {namespace: namespace, autoload: false}
+
+  @storeAdapter = createStorageAdapter namespace.Store, AsyncTestStorageAdapter,
+    stores1: {id: 1, name: "Store One"}
+  
+  class namespace.Product extends Batman.Model
+    @encode 'name', 'id'
+    @belongsTo 'store', {namespace: namespace}
+
+  @productAdapter = createStorageAdapter namespace.Product, AsyncTestStorageAdapter,
+    products1: {id: 1, name: 'Product One', store_id: 1}
+
+  associationSpy = spyOn(@productAdapter, 'perform')
+
+  namespace.Store.find 1, (err, store) =>
+    products = store.get('products')
+    delay -> 
+      products.load {key1: 'value1'}, (err, comments) ->
+        throw err if err
+        equal associationSpy.lastCallArguments[2].data['store_id'], 1
+        equal associationSpy.lastCallArguments[2].data['key1'], 'value1'
+        QUnit.start()
 
 asyncTest "support custom model namespaces and class names", 2, ->
   namespace = {}

@@ -11,7 +11,7 @@ class Batman.AssociationSet extends Batman.SetSort
   load: (options, callback) ->
     loadOptions = @_getLoadOptions()
     if !callback
-      [options, callback] = [{}, options]
+      callback = options
     else
       loadOptions.data = Batman.extend(loadOptions.data, options)
 
