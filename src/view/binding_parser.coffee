@@ -1,8 +1,6 @@
 #= require ../object
 
 # `Batman.BindingParser` will take a node and parse all recognized data attributes out of it and its children.
-# It is a continuation style parser, designed not to block for longer than 50ms at a time if the document
-# fragment is particularly long.
 class Batman.BindingParser extends Batman.Object
   constructor: (@view) ->
     super()
