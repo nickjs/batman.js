@@ -26,3 +26,10 @@ test 'delegate property to a multi segment keypath', ->
 
   obj = new @MyObject
   equal obj.get('country_code'), 'CA'
+
+test 'chained delegates should resolve', ->
+  @MyObject.delegate 'country', to: 'address'
+  @MyObject.delegate 'country_code', to: 'country'
+
+  obj = new @MyObject
+  equal obj.get('country_code'), 'CA'
