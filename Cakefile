@@ -64,7 +64,7 @@ task 'build:dist', 'compile Batman.js files for distribution', (options) ->
     options: options
     map:
       'src/dist/(.+)\.coffee' : (matches) ->
-        return if matches[1] == 'batman.node'
+        return if matches[1] in ['batman.testing', 'undefine_module']
         destination = "lib/dist/#{matches[1]}.js"
         muffin.compileTree(matches[0], destination).then ->
           options.transform = developmentTransform
