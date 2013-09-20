@@ -66,12 +66,11 @@ asyncTest "load can have options", 2, ->
 
   namespace.Store.find 1, (err, store) =>
     products = store.get('products')
-    delay -> 
-      products.load {key1: 'value1'}, (err, comments) ->
-        throw err if err
-        equal associationSpy.lastCallArguments[2].data['store_id'], 1
-        equal associationSpy.lastCallArguments[2].data['key1'], 'value1'
-        QUnit.start()
+    products.load {key1: 'value1'}, (err, comments) ->
+      throw err if err
+      equal associationSpy.lastCallArguments[2].data['store_id'], 1
+      equal associationSpy.lastCallArguments[2].data['key1'], 'value1'
+      QUnit.start()
 
 asyncTest "support custom model namespaces and class names", 2, ->
   namespace = {}

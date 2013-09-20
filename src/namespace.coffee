@@ -1,4 +1,4 @@
-# The global namespace, the `Batman` function will also create also create a new
+# The global namespace, the `Batman` function will also create a new
 # instance of Batman.Object and mixin all arguments to it.
 Batman = (mixins...) ->
   new Batman.Object(mixins...)
