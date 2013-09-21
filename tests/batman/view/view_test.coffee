@@ -250,6 +250,10 @@ test 'targetForKeypath with forceTarget should return the closest non-backing vi
   @app.unset('test')
   equal @backingView.targetForKeypath('test', true), @view
 
+test 'targetForKeypath will look for a proxiedObject all the way up the chain', ->
+  @view.set('proxiedObject', new Batman.Object({foo: 'bar'}))
+  equal @backingView.targetForKeypath('foo'), @view.get('proxiedObject')
+
 test 'setKeypath should work in the basic case', ->
   @app.set('test', null)
   @view.set('test', null)
