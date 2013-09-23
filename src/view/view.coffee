@@ -9,6 +9,13 @@ class Batman.View extends Batman.Object
     keys = options.concat(keys) if options = @_batman.options
     @_batman.set('options', keys)
 
+  @filter: (key, filter) ->
+    Batman.initializeObject(@prototype)
+
+    filters = @::_batman.filters || {}
+    filters[key] = filter
+    @::_batman.set('filters', filters)
+
   @viewForNode: (node, climbTree) ->
     climbTree = true if not climbTree?
     while node

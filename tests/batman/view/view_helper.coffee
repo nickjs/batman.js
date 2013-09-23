@@ -101,7 +101,8 @@ exports.render = (html, jqueryize = true, context = {}, callback = ->) ->
       callback = context
 
   context.html = html
-  view = new Batman.View(context)
+  viewClass = context.viewClass || Batman.View
+  view = new viewClass(context)
 
   node = view.get('node')
   view.propagateToSubviews('viewWillAppear')

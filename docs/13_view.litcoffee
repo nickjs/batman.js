@@ -240,3 +240,7 @@ reverse mapping of the view tree to the DOM. If you pass `false` for
 `climbTree`, it won't traverse up the DOM, and will return `undefined` unless
 the node is the view's root.
 
+
+## ::filter(label : string, filter : function)
+
+Defines a filter on the `View` class for use within the `View` during rendering.
