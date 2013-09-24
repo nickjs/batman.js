@@ -284,14 +284,14 @@ Controllers are also a fine place to put event handlers used by your views. Here
 class MyApp.BigRedButtonController extends Batman.Controller
   index: ->
 
-  buttonWasClicked: (node, event) ->
+  buttonWasClicked: (node, event, view) ->
     $(node).toggleClass('activated')
 ```
 
 If you want to redirect to some route, you can use `@redirect`:
 
 ```coffeescript
-buttonWasClicked: (node, event) ->
+buttonWasClicked: (node, event, view) ->
   $(node).toggleClass('activated')
   @redirect '/apocalypse/'
 ```
@@ -321,7 +321,7 @@ batman.js uses a bunch of these data attributes for different things:
 
 #### Handling DOM events
 
-* `data-event-click="foo.bar"`: when this node is clicked, the function specified by the keypath `foo.bar` is called with the node object as the first argument, and the click event as the second argument.
+* `data-event-click="foo.bar"`: when this node is clicked, the function specified by the keypath `foo.bar` is called with the node object as the first argument, the click event as the second argument, and the view as the third argument.
 
 * `data-event-change="foo.bar"`: like `data-event-click`, but fires on change events.
 
