@@ -1,4 +1,4 @@
-# Batman View Bindings
+# Batman.View Bindings
 
 Batman's view bindings are how data gets shown and collected from the user. They center on the notion of "bindings": that the view representation and the JavaScript land value are always guaranteed to be in sync, such that when one changes, the other will reflect it.
 
@@ -375,7 +375,7 @@ the contents of the `stub` partial will be inserted and rendered in the `<div>` 
 
 ## data-replace
 
-# Batman View Filters
+# Batman.View Filters
 
 ## raw(value) : string
 
