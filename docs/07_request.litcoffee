@@ -1,4 +1,4 @@
-# Batman Request
+# Batman.Request
  Request is an abstraction around XHR requests.  It can be used with a variety of platforms, and is implemented in the platform layer files.
 
 ### Platform Request Implmentation Libraries:

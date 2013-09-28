@@ -1,7 +1,6 @@
 # Batman.View
 
-For a general explanation of `Batman.View`s and how they work, see [the
-guide](/docs/views.html).
+For a general explanation of `Batman.View` and how it works, see [the guide](/docs/views.html).
 
 
 ## ::constructor(options = {})

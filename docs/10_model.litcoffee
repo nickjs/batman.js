@@ -1,37 +1,14 @@
 # Batman.Model
 
-`Batman.Model` is responsible for representing data in your application and providing a fluid interface for moving in to and out of your backend.
+For a general explanation of `Batman.Model` and it works, see [the guide](/docs/models.html).
 
-_Note_: This documentation uses the term _model_ to refer to the class `Model` or a `Model` subclass, and the term _record_ to refer to one instance of `Model` or of a `Model` subclass.
-
-## The Asynchronous Nature of the World
-
-`Batman.Model`'s operations on both the class and instance level are asynchronous and always will be. This means that the operation functions all accept node style callback functions as the last argument, and only call these callbacks when the operation is complete. Completion occurs, for example with `RestStorage`, only when the entire HTTP response has been received from the server, which can be many seconds after the original call to the operation function.
-
-These callbacks follow the nodejs convention for their signatures. They should regard the first argument as an error: if it is present, an error has occurred, and if it is null or undefined, the operation was successful. Successive arguments represent the result of the operation, such as the return value from the operation function if the operation were synchronous, records returned, a boolean representing status, or response JSON.
-
-## The Identity Map
-
-Batman uses an identity map when fetching and storing records to do its best to only ever represent a backend record with exactly one client side record. This means that if you use `Model.find` twice to fetch a record with the same ID, you will get back the same (`===`) instance in each callback. This is useful as any state the instance might be in is available and preserved no matter which piece of code asked for it, and bindings to the instance update no matter which piece of code actually updates the model.
-
-Practically, the identity map is an implementation detail on Batman's end which developers shouldn't have to interact with , but knowing that you have the "one true instance" is helpful when reasoning about code and bindings.
-
-## Subclassing
-
-Models in your applications should be subclasses of `Batman.Model`, or subclasses of subclasses, and so on. Extending `Batman.Model` will give your domain-modeling class all the functionality described here. Things like encoders, validations, and storage adapters will be inherited by sub-subclasses.
-
-## Storage Adapters
-
-`Batman.Model` alone only defines the logic surrounding loading and saving, but not the actual mechanism for doing so. This is left to a `Batman.StorageAdapter` subclass, 4 of which are included with Batman or in extras:
-
- 1. `Batman.LocalStorage` for storing data in the browsers' `localStorage`, if available
- 2. `Batman.SessionStorage` for storing data in the browser's `sessionStorage`, if available.
- 3. `Batman.RestStorage` for using HTTP GET, POST, PUT, and DELETE to store data in a backend.
- 4. `Batman.RailsStorage` which extends `Batman.RestStorage` with some handy Rails specific functionality like parsing out validation errors.
+_Note_: This documentation uses the term _model_ to refer to the class `Model`
+or a `Model` subclass, and the term _record_ to refer to one instance of a
+model.
 
 ## @primaryKey : string
 
-`primaryKey` is a class level configuration option to change which key Batman uses as the primary key. Change the option using `set`, like so:
+`primaryKey` is a class level configuration option to change which key batman.js uses as the primary key. Change the option using `set`, like so:
 
     test 'primary key can be set using @set', ->
       class Shop extends Batman.Model
@@ -39,7 +16,7 @@ Models in your applications should be subclasses of `Batman.Model`, or subclasse
 
       equal Shop.get('primaryKey'), 'shop_id'
 
-The `primaryKey` is what Batman uses to compare instances to see if they represent the same domain-level object: if two records have the same value at the key specified by `primaryKey`, only one will be in the identity map. The key specified by `primaryKey` is also used by the associations system when determining if a record is related to another record, and by the remote storage adapters to generate URLs for records.
+The `primaryKey` is what batman.js uses to compare instances to see if they represent the same domain-level object: if two records have the same value at the key specified by `primaryKey`, only one will be in the identity map. The key specified by `primaryKey` is also used by the associations system when determining if a record is related to another record, and by the remote storage adapters to generate URLs for records.
 
 _Note_: The default primaryKey is 'id'.
 
@@ -81,16 +58,15 @@ The default `storageKey` is `null`.
 
 ## @encode(keys...[, encoderObject : [Object|Function]])
 
-`@encode` specifies a list of `keys` a model should expect from and send back to a storage adapter, and any transforms to apply to those attributes as they enter and exit the world of Batman in the optional `encoderObject`.
+`@encode` specifies a list of `keys` a model should expect from and send back to a storage adapter, and any transforms to apply to those attributes as they enter and exit the world of batman.js in the optional `encoderObject`.
 
-The `encoderObject` should have an `encode` and/or a `decode` key which point to functions. The functions accept the "raw" data (the Batman land value in the case of `encode`, and the backend land value in the case of `decode`), and should return the data suitable for the other side of the link. The functions should have the following signatures:
+The `encoderObject` should have an `encode` and/or a `decode` key which point to functions. The functions accept the "raw" data (the batman.js land value in the case of `encode`, and the backend land value in the case of `decode`), and should return the data suitable for the other side of the link. The functions should have the following signatures:
 
-```coffeescript
-encoderObject = {
-  encode: (value, key, builtJSON, record) ->
-  decode: (value, key, incomingJSON, outgoingObject, record) ->
-}
-```
+    encoderObject = {
+      encode: (value, key, builtJSON, record) ->
+      decode: (value, key, incomingJSON, outgoingObject, record) ->
+    }
+
 By default these functions are the identity functions. They apply no transformation. The arguments for `encode` functions are as follows:
 
  + `value` is the client side value of the `key` on the `record`
@@ -189,7 +165,7 @@ Some more handy examples:
 
 Validations allow a model to be marked as `valid` or `invalid` based on a set of programmatic rules. By validating a model's data before it gets to the server we can provide immediate feedback to the user about what they have entered and forgo waiting on a round trip to the server. `validate` allows the attachment of validations to the model on particular keys, where the validation is either a built in one (invoked by use of options to pass to them) or a custom one (invoked by use of a custom function as the second argument).
 
-_Note_: Validation in Batman is always asynchronous, despite the fact that none of the validations may use an asynchronous operation to check for validity. This is so that the API is consistent regardless of the validations used.
+_Note_: Validation in batman.js is always asynchronous, despite the fact that none of the validations may use an asynchronous operation to check for validity. This is so that the API is consistent regardless of the validations used.
 
 Built in validators are attached by calling `@validate` with options designating how to calculate the validity of the key:
 
@@ -304,7 +280,7 @@ _Note_: The notion of "all the records" is relative only to the client. It compl
 
 `Model.find()` retrieves a record with the specified `id` from the storage adapter and calls back with an error if one occurred and the record if the operation was successful. `find` delegates to the storage adapter the `Model` has been `@persist`ed with, so it is up to the storage adapter's semantics to determine what type of errors may return and the timeline on which the callback may be called. The `callback` is a required function which should adopt the node style callback signature which accepts two arguments: an error, and the record asked for. `find` returns an "unloaded" record which, following the load completion, will be populated with the data from the storage adapter.
 
-_Note_: `find` gives two results to calling code: one immediately, and one later. `find` returns a record synchronously as it is called and calls back with a record, and importantly these two records are __not__ guaranteed to be the same instance. This is because Batman maps the identities of incoming and outgoing records such that there is only ever one canonical instance representing a record, which is useful so bindings are always bound to the same thing. In practice, this means that calling code should use the record `find` calls back with if anything is going to bind to that object, which is most of the time. The returned record however remains useful for state inspection and bookkeeping.
+_Note_: `find` gives two results to calling code: one immediately, and one later. `find` returns a record synchronously as it is called and calls back with a record, and importantly these two records are __not__ guaranteed to be the same instance. This is because batman.js maps the identities of incoming and outgoing records such that there is only ever one canonical instance representing a record, which is useful so bindings are always bound to the same thing. In practice, this means that calling code should use the record `find` calls back with if anything is going to bind to that object, which is most of the time. The returned record however remains useful for state inspection and bookkeeping.
 
     asyncTest '@find calls back the requested model if no error occurs', ->
       class Post extends Batman.Model
@@ -339,7 +315,7 @@ _Note_: `find` must be passed a callback function. This is for two reasons: call
 
 `Model.load()` retrieves an array of records according to the given `options` from the storage adapter and calls back with an error if one occurred and the set of records if the operation was successful. `load` delegates to the storage adapter the `Model` has been `@persist`ed with, so it is up to the storage adapter's semantics to determine what the options do, what kind of errors may arise, and the timeline on which the callback may be called. The `callback` is a required function which should adopt the node style callback signature which accepts two arguments, an error, and the array of records. `load` returns undefined.
 
-For the two main `StorageAdapter`s Batman provides, the `options` do different things:
+For the two main `StorageAdapter`s batman.js provides, the `options` do different things:
 
   + For `Batman.LocalStorage`, `options` act as a filter. The adapter will scan all the records in `localStorage` and return only those records which match all the key/value pairs given in the options.
   + For `Batman.RestStorage`, `options` are serialized into query parameters on the `GET` request.
