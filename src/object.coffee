@@ -106,6 +106,12 @@ class BatmanObject extends Object
 
   @accessor '_batmanID', -> @_batmanID()
 
+  @delegate: (properties..., options = {}) ->
+    Batman.developer.warn 'delegate must include to option', @, properties if !options.to
+    properties.forEach (property) =>
+      @accessor property, ->
+        @get(options.to)?.get(property)
+
   constructor: (mixins...) ->
     @_batman = new Batman._Batman(this)
     @mixin mixins...
