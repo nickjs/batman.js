@@ -28,10 +28,10 @@ follows:
 current view → chain of superviews → layout view → active controller → app →
 window
 
-If there is no match, `undefined` is returned. However if used in an accessor
+If there is no match, `undefined` is returned. However, if used in an accessor
 or binding, the entire path to the root will be registered as a potential
-source of the keypath. Consequently, if the keypath is later set on any part of
-the chain, the data will be correctly bound.
+source of data. Consequently, if the keypath is later set on any part of the
+chain, the data will be correctly bound.
 
 `lookupKeypath` is the function invoked to locate data when evaluating a
 binding.
