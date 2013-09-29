@@ -1,7 +1,7 @@
 #= require ./abstract_attribute_binding
 
 class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
-  onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
+  onlyObserve: Batman.BindingDefinitionOnlyObserve.None
   bindImmediately: false
 
   constructor: ->
@@ -20,7 +20,7 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
     else
       Batman.DOM.events.other(@node, @attributeName, callback, @view)
 
-    @view.bindings.push(this)
+    @bind()
 
   _unfilteredValue: (key) ->
     @unfilteredKey = key
