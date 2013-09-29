@@ -12,11 +12,9 @@
 
 The APIs are heavily inspired by [Rails](http://rubyonrails.org/) and are designed to make Rails devs feel right at home.
 
-To find out more or get started with batman.js, check out the website: [http://batmanjs.org](http://batmanjs.org).
+To find out more or get started with batman.js, check out the website: **[http://batmanjs.org](http://batmanjs.org)**.
 
-## Contributing
-
-[![Build Status](https://secure.travis-ci.org/batmanjs/batman.png)](http://travis-ci.org/batmanjs/batman)
+## Contributing [![Build Status](https://secure.travis-ci.org/batmanjs/batman.png)](http://travis-ci.org/batmanjs/batman)
 
 Well-tested contributions are always welcome! Here's what you should do:
 
@@ -72,7 +70,7 @@ bin/generate_docs --dir <path to batman.js>/docs
 
 If it's good code that fits with the goals of the project, we'll merge it in!
 
-# License
+## License
 
 batman.js is copyright 2013 by [Shopify](http://www.shopify.com), released under the MIT License (see LICENSE for details).
 
