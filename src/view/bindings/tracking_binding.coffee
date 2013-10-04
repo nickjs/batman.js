@@ -12,8 +12,8 @@ Batman.Tracking =
 
     return Batman.Tracking.tracker
 
-  trackEvent: (type, data) ->
-    Batman.Tracking.loadTracker().track(type, data)
+  trackEvent: (type, data, node) ->
+    Batman.Tracking.loadTracker().track(type, data, node)
 
 class Batman.DOM.ClickTrackingBinding extends Batman.DOM.AbstractAttributeBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.None
@@ -22,7 +22,7 @@ class Batman.DOM.ClickTrackingBinding extends Batman.DOM.AbstractAttributeBindin
   constructor: ->
     super
 
-    callback = => Batman.Tracking.trackEvent('click', @get('filteredValue'))
+    callback = => Batman.Tracking.trackEvent('click', @get('filteredValue'), @node)
     Batman.DOM.events.click(@node, callback, @view, 'click', false)
 
     @bind()
@@ -32,4 +32,4 @@ class Batman.DOM.ViewTrackingBinding extends Batman.DOM.AbstractAttributeBinding
 
   constructor: ->
     super
-    Batman.Tracking.trackEvent('view', @get('filteredValue'))
+    Batman.Tracking.trackEvent('view', @get('filteredValue'), @node)

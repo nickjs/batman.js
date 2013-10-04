@@ -24,7 +24,7 @@ asyncTest 'data-track-click should call track on the current app\'s EventTracker
     helpers.triggerClick(node[0])
 
     ok @trackSpy.called
-    deepEqual @trackSpy.lastCallArguments, ['click', 'bar']
+    deepEqual @trackSpy.lastCallArguments, ['click', 'bar', node[0]]
 
     QUnit.start()
 
@@ -34,7 +34,7 @@ asyncTest 'data-track-view should call track on the current app\'s EventTracker 
   source = '<div data-track-view="foo"></div>'
   helpers.render source, context, (node, view) =>
     ok @trackSpy.called
-    deepEqual @trackSpy.lastCallArguments, ['view', 'bar']
+    deepEqual @trackSpy.lastCallArguments, ['view', 'bar', node[0]]
 
     QUnit.start()
 
