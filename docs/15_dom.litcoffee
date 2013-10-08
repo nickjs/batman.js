@@ -15,7 +15,7 @@ The following are included in the platform adapters:
 Scrolls the desired element into view.  If the element isn't there or
 doesn't have a `scrollIntoView` method this will fail silently.
 
-## @setStyleProperty(node : Node,property : string,value : string, importance : string)
+## @setStyleProperty(node : Node, property : string,value : string, importance : string)
 Sets the style property or attribute on the supplied node.  This method will prefer `setProperty` over `setAttribute`.
 
 	test "setStyleProperty", ->
@@ -24,7 +24,7 @@ Sets the style property or attribute on the supplied node.  This method will pre
 	  equal node.style.getPropertyValue("color"), "white"
 	  equal "important", node.style.getPropertyPriority("color")
 
-## @valueForNode(node: Node [, value = '',escapeValue = true ]) : string
+## @valueForNode(node: Node [, value = '', escapeValue = true ]) : string
 Gets the value of a node and optionally sets it as well.  `escapeValue` will escape the value via `Batman.escapeHTML`
 
 	test 'valueForNode', ->

@@ -189,7 +189,7 @@ The `options` argument can take three forms to imply different things:
       class TestController extends Batman.Controller
         routingKey: "test"
         show: (params) ->
-          result = params.id 
+          result = params.id
           @render false
         other: ->
           @executeAction("show", {id: 4})
@@ -205,7 +205,7 @@ The `options` argument can take three forms to imply different things:
         routingKey: "test"
         @beforeAction only: "index", -> results.push "before!"
         @afterAction only: "index", -> results.push "after!"
-        index: -> 
+        index: ->
           results.push "action!"
           @render false
         other: ->
