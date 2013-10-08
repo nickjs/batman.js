@@ -358,7 +358,7 @@ _Note_: `observe` works excellently on keypaths. If you attach a handler to a "d
       post = new Batman.Object
         text: "Hello World!"
         author: author
-      post.observe "author.name", (newName, oldName) -> 
+      post.observe "author.name", (newName, oldName) ->
         result = [newName, oldName]
       newAuthor = new Batman.Object({name: "James"})
       post.set "author", newAuthor
@@ -614,7 +614,7 @@ Asks if the specified event is currently being prevented from firing
       dynamite.allow('detonate')
       equal dynamite.isPrevented('detonate'), false
 
-## ::mutate (wrappedFunction : Function)
+## ::mutate(wrappedFunction : Function)
 
 Prevents change events from firing while the specified function is called. Only after `wrappedFunction` is complete will the `change` event be fired. Returns the result of `wrappedFunction`.
 
@@ -638,7 +638,7 @@ This can be useful when making multiple changes, and only want a single change e
       mutateResult = dynamite.mutate(mutateFunction)
       equal mutateResult, 'BOOM!'
 
-## ::mutation (wrappedFunction : Function)
+## ::mutation(wrappedFunction : Function)
 
 A helper method that returns a function that will call `wrappedFunction` and fires the change event when complete (if it is present).
 
