@@ -7,7 +7,7 @@ class Batman.BindingParser extends Batman.Object
     @node = @view.node
     @parseTree(@node)
 
-  bindingSortOrder = ["defineview", "foreach", "renderif", "view", "formfor", "context", "bind", "source", "target"]
+  bindingSortOrder = ["defineview", "foreach", "renderif", "view", "formfor", "context", "bind", "source", "target", "track", "event"]
   viewBackedBindings = ["foreach", "renderif", "formfor", "context"]
 
   bindingSortPositions = {}

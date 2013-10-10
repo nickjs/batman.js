@@ -37,6 +37,12 @@ Batman.DOM.attrReaders =
   event: (definition) ->
     new Batman.DOM.EventBinding(definition)
 
+  track: (definition) ->
+    if definition.attr == 'view'
+      new Batman.DOM.ViewTrackingBinding(definition)
+    else if definition.attr == 'click'
+      new Batman.DOM.ClickTrackingBinding(definition)
+
   addclass: (definition) ->
     new Batman.DOM.AddClassBinding(definition)
 
