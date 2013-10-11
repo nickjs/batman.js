@@ -41,10 +41,10 @@ class Batman.TestCase extends Batman.Object
     QUnit.ok assertion, message
 
   assertEqual: (expected, actual, message) ->
-    QUnit.deepEqual actual, expected, message
+    QUnit.ok @_areEquivalent(expected, actual), message
 
   assertNotEqual: (expected, actual, message) ->
-    QUnit.notDeepEqual actual, expected, message
+    QUnit.ok !@_areEquivalent(expected, actual), message
 
   assertMatch: (expected, actual, message) ->
     QUnit.ok expected.test(actual), message
@@ -139,6 +139,57 @@ class Batman.TestCase extends Batman.Object
 
       return params
 
+  _unwrapStringOrNumber: (obj) ->
+    return obj.valueOf() if obj instanceof Number || obj instanceof String
+    obj
+
+  # http://stackoverflow.com/a/6402977
+  _areEquivalent: (a, b) ->
+    a = @_unwrapStringOrNumber(a)
+    b = @_unwrapStringOrNumber(b)
+
+    return true if a == b
+    return false if a == null || b == null || typeof (a) != typeof (b)
+
+    if a instanceof Date
+      return b instanceof Date && a.valueOf() == b.valueOf()
+    if typeof (a) != "object"
+      return a == b
+
+    newA = a.areEquivalent_Eq_91_2_34 == undefined
+    newB = b.areEquivalent_Eq_91_2_34 == undefined
+
+    try
+      if newA
+        a.areEquivalent_Eq_91_2_34 = []
+      else if a.areEquivalent_Eq_91_2_34.some((other) -> other == b)
+        return true
+
+      if newB
+        b.areEquivalent_Eq_91_2_34 = []
+      else if b.areEquivalent_Eq_91_2_34.some((other) -> other == a)
+        return true
+
+      a.areEquivalent_Eq_91_2_34.push(b)
+      b.areEquivalent_Eq_91_2_34.push(a)
+
+      tmp = {}
+      for prop of a
+        if prop != "areEquivalent_Eq_91_2_34"
+          tmp[prop] = null
+
+      for prop of b
+        if prop != "areEquivalent_Eq_91_2_34"
+          tmp[prop] = null
+
+      for prop of tmp
+        if !@_areEquivalent(a[prop], b[prop])
+          return false
+
+      return true
+    finally
+      delete a.areEquivalent_Eq_91_2_34 if newA
+      delete b.areEquivalent_Eq_91_2_34 if newB
 
 # Nicer messages for the command line runner
 do ->
