@@ -53,6 +53,26 @@ asyncTest 'should set href when given query parameters', 1, ->
       QUnit.start()
   @App.run()
 
+asyncTest 'should set query parameters when data-route-params is an object', 1, ->
+  source  = '<a data-route="foo" data-route-params="bar"></a>'
+  context = foo: '/test', bar: {a: 1, b: 2}
+
+  @App.on 'run', ->
+    helpers.render source, context, (node) ->
+      equal node.attr('href'), Batman.navigator.linkTo('/test?a=1&b=2')
+      QUnit.start()
+  @App.run()
+
+asyncTest 'should set query parameters when data-route-params is a string', 1, ->
+  source  = '<a data-route="foo" data-route-params="bar"></a>'
+  context = foo: '/test', bar: 'a=1&b=2'
+
+  @App.on 'run', ->
+    helpers.render source, context, (node) ->
+      equal node.attr('href'), Batman.navigator.linkTo('/test?a=1&b=2')
+      QUnit.start()
+  @App.run()
+
 asyncTest 'should set corresponding href for model and action', 1, ->
   @App.resources 'tweets', 'users'
 
