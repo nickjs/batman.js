@@ -16,7 +16,7 @@ QUnit.module "Batman.ControllerTestCaseTest",
     @testCase.controllerClass = TestController
     Batman.currentApp =
       get: ->
-        { childrenByOrder: [ { controller: 'foo', action: 'index', namedArguments: [ 'id' ] } ] }
+        { childrenByOrder: [ { controller: 'test', action: 'index', namedArguments: [ 'id' ] } ] }
       stop: ->
   
   teardown: ->
