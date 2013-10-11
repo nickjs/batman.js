@@ -272,7 +272,7 @@ class Batman.View extends Batman.Object
         return target
 
       if forceTarget and not nearestNonBackingView and not lookupNode.isBackingView
-        nearestNonBackingView = lookupNode
+        nearestNonBackingView = Batman.get(lookupNode, 'proxiedObject') || lookupNode
 
       controller = lookupNode.controller if not controller and lookupNode.isView and lookupNode.controller
 
