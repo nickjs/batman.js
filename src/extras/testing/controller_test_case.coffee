@@ -35,7 +35,7 @@ class Batman.ControllerTestCase extends Batman.TestCase
       currentView.propagateToSubviews('isInDOM', true)
       currentView.propagateToSubviews('viewDidAppear')
     catch e
-      @assert false, "exception was raised in view bindings: #{e.toString()}"
+      @assert false, "exception was raised in view bindings: #{e.stack}"
     finally
       document.body.removeChild(div) if div?
       
