@@ -50,19 +50,14 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
 
     return path if !params || !path
 
-    if Batman.typeOf(params) == 'String'
-      return if path.indexOf('?') == -1
-        path += "?#{params}"
-      else
-        path += "&#{params}"
+    if Batman.typeOf(params) == 'Object'
+      params = params.toObject() if params.toObject?
+      params = Batman.URI.queryFromParams(params)
 
-    for key, val of params
-      path = if path.indexOf('?') == -1
-        path += "?#{key}=#{val}"
-      else
-        path += "&#{key}=#{val}"
-
-    return path
+    return if path.indexOf('?') == -1
+      path += "?#{params}"
+    else
+      path += "&#{params}"
 
 class Batman.DOM.RouteParamsBinding extends Batman.DOM.AbstractBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
