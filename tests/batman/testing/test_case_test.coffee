@@ -9,6 +9,9 @@ test 'setup variables should be available', 1, ->
 test 'assert should return true if condition is true', 1, ->
   @testCase.assert true
 
+test 'refute should return true if condition is false', 1, ->
+  @testCase.refute false
+
 test 'assertEqual should compare equality', 2, ->
   @testCase.assertEqual 1, 1
   @testCase.assertEqual 'foo', 'foo'

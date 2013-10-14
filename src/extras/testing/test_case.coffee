@@ -40,6 +40,9 @@ class Batman.TestCase extends Batman.Object
   assert: (assertion, message = 'was not true') ->
     QUnit.ok assertion, message
 
+  refute: (assertion, message = 'was not false') ->
+    QUnit.ok !assertion, message
+
   assertEqual: (expected, actual, message) ->
     QUnit.ok @_areEquivalent(expected, actual), message
 
