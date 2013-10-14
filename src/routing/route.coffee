@@ -47,7 +47,7 @@ class Batman.Route extends Batman.Object
     matches = @get('regexp').exec(uri.path).slice(1)
     for match, index in matches
       name = namedArguments[index]
-      params[name] = match
+      params[name] = decodeURIComponent(match) if match?
 
     Batman.extend params, uri.queryParams
 

@@ -170,6 +170,12 @@ test "routes should build paths with optional segments", 3, ->
   equal route.pathFromParams({type: "m"}), "/calendar/m"
   equal route.pathFromParams({type: "m", date: "2012-11"}), "/calendar/m/2012-11"
 
+test "routes should decode URI components when parsing params", ->
+  route = new Batman.Route("/users/:name", {})
+
+  path = '/users/Hello%20World'
+  deepEqual route.paramsFromPath(path), { name: 'Hello World', path }
+
 test "routes with optional segments should parse params", ->
   type = 'm'
   date = '2012-11'
@@ -179,7 +185,7 @@ test "routes with optional segments should parse params", ->
   deepEqual route.paramsFromPath(path), { path, type, date }
 
   path = "/calendar/#{type}"
-  deepEqual route.paramsFromPath(path), { path, type, date: undefined }
+  deepEqual route.paramsFromPath(path), { path, type }
 
   path = "/calendar"
-  deepEqual route.paramsFromPath(path), { path, type: undefined, date: undefined }
+  deepEqual route.paramsFromPath(path), { path }
