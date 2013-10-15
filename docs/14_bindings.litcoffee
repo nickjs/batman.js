@@ -373,7 +373,20 @@ the contents of the `stub` partial will be inserted and rendered in the `<div>` 
 
 ## data-yield
 
+`data-yield` is used for binging HTML from views into the document. By default `data-yield="main"` will bind view HTML based on the current controller and action. You can also define HTML templates using `data-contentfor`.
+
+```html
+<div data-yield="main"></div>
+```
+
 ## data-contentfor
+
+`data-contentfor` provides the keypath for which child nodes are bound to for use in a `data-yield`.
+
+```html
+<div data-contentfor="header"><h1 data-bind="title"></h1></div>
+<div data-yield="header"></div>
+```
 
 # Batman.View Filters
 
