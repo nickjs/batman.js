@@ -135,11 +135,6 @@ Batman.Filters =
     return if not block
     return (regularArgs...) -> block.call @, curryArgs..., regularArgs...
 
-  routeToAction: buntUndefined (model, action) ->
-    params = Batman.Dispatcher.paramsFromArgument(model)
-    params.action = action
-    params
-
   escape: buntUndefined(Batman.escapeHTML)
 
 do ->
