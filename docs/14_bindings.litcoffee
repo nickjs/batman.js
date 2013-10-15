@@ -369,9 +369,9 @@ the contents of the `stub` partial will be inserted and rendered in the `<div>` 
 
 ## data-renderif
 
-`data-renderif` defers parsing of a nodes child bindings until its keypath updates to true. `data-renderif` should generally be combined with a `data-showif` or `data-insertif` to prevent it being visible until ready.
+`data-renderif` defers parsing of a node's child bindings until its keypath updates to true. `data-renderif` should generally be combined with a `data-showif` or `data-insertif` to prevent it from being visible until it is ready.
 
-Deferring rendering can help prevent portions of the page updating many times while data is being loaded. It can also prevent you from allowing features that are not yet ready from being used.
+Deferring rendering can help prevent portions of the page updating many times while data is being loaded. It can also allow you to prevent features that are not yet ready from being used.
 
 ## data-yield
 
