@@ -375,8 +375,6 @@ the contents of the `stub` partial will be inserted and rendered in the `<div>` 
 
 ## data-contentfor
 
-## data-replace
-
 # Batman.View Filters
 
 ## raw(value) : string
