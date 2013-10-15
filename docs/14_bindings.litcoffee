@@ -369,6 +369,8 @@ the contents of the `stub` partial will be inserted and rendered in the `<div>` 
 
 ## data-renderif
 
+`data-renderif` defers parsing of a nodes child bindings until its keypath updates to true. `data-renderif` should generally be combined with a `data-showif` or `data-insertif` to prevent it being visible until ready.
+
 ## data-yield
 
 ## data-contentfor
