@@ -52,9 +52,9 @@ The tests are in `tests/batman`. All test files in there are automatically picke
 
 The [API documentation](http://batmanjs.org/docs/api/) is written using [literate CoffeeScript](http://coffeescript.org/#literate).
 
-This documentation includes its own set of tests, which serve as both an
-assurance that the API hasn't broken, as well a set of examples for how to use
-it. These tests need not be comprehensive (that's what the primary tests are
+The API documentation includes its own set of tests, which serves as both an
+assurance that the API hasn't broken, as well as a set of examples for how to use
+it. These tests need not be comprehensive (that's what the regular tests are
 for), but should cover the most common use cases. They're automatically run
 alongside the primary tests, so you don't need to run them manually.
 
