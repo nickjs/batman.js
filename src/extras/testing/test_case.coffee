@@ -41,16 +41,16 @@ class Batman.TestCase extends Batman.Object
     QUnit.ok assertion, message
 
   assertEqual: (expected, actual, message) ->
-    QUnit.ok @_areEquivalent(expected, actual), message
+    QUnit.ok @_areEquivalent(expected, actual), message or "Expected: #{expected} \nGot: #{actual}"
 
   assertNotEqual: (expected, actual, message) ->
-    QUnit.ok !@_areEquivalent(expected, actual), message
+    QUnit.ok !@_areEquivalent(expected, actual), message or "Expected and actual value matched: #{expected}"
 
   assertMatch: (expected, actual, message) ->
-    QUnit.ok expected.test(actual), message
+    QUnit.ok expected.test(actual), message or "Expected: #{expected} \nGot: #{actual}"
 
   assertNoMatch: (expected, actual, message) ->
-    QUnit.ok !expected.test(actual), message
+    QUnit.ok !expected.test(actual), message or "Expected and actual value matched: #{expected}"
 
   assertDifference: (expressions, difference = 1, message, callback) ->
     if Batman.typeOf(expressions) != 'Array'
