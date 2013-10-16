@@ -369,11 +369,28 @@ the contents of the `stub` partial will be inserted and rendered in the `<div>` 
 
 ## data-renderif
 
+`data-renderif` defers parsing of a node's child bindings until its keypath updates to true. `data-renderif` should generally be combined with a `data-showif` or `data-insertif` to prevent it from being visible until it is ready.
+
+Deferring rendering can help prevent portions of the page updating many times while data is being loaded. It can also allow you to prevent features that are not yet ready from being used.
+
 ## data-yield
+
+`data-yield` specifies that this node should be a render target for any view renderings that specify they should be rendered into a yield with this name. For example, `data-yield="myYieldNode"` can be rendered into by using `new Batman.View(contentFor: 'myYieldNode')`. The special case of `data-yield="main"` will be the render target for any view rendered by a controller action. This can mean the implicit render that happens by default at the end of a controller action or by explicitly calling `@render` inside a controller.
+
+You can also specify a render target inside your HTML using `data-contentfor`.
+
+```html
+<div data-yield="main"></div>
+```
 
 ## data-contentfor
 
-## data-replace
+`data-contentfor` specifies that the content of this node should be rendered into a `yield` with the corresponding name.
+
+```html
+<div data-contentfor="header"><h1 data-bind="title"></h1></div>
+<div data-yield="header"></div>
+```
 
 # Batman.View Filters
 
