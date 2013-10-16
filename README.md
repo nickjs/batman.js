@@ -58,13 +58,7 @@ it. These tests need not be comprehensive (that's what the primary tests are
 for), but should cover the most common use cases. They're automatically run
 alongside the primary tests, so you don't need to run them manually.
 
-If you want to render the docs, check out the site repo and run the generator:
-
-```bash
-git clone git@github.com:batmanjs/batmanjs.github.io.git
-cd batmanjs.github.io
-bin/generate_docs --dir <path to batman.js>/docs
-```
+If you want to render the docs, see the [README for batmanjs.github.io](https://github.com/batmanjs/batmanjs.github.io/blob/master/README.md).
 
 #### 6. Create a pull request
 
