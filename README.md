@@ -56,9 +56,9 @@ The API documentation includes its own set of tests, which serves as both an
 assurance that the API hasn't broken, as well as a set of examples for how to use
 it. These tests need not be comprehensive (that's what the regular tests are
 for), but should cover the most common use cases. They're automatically run
-alongside the primary tests, so you don't need to run them manually.
+alongside the regular tests, so you don't need to run them manually.
 
-If you want to render the docs, see the [README for batmanjs.github.io](https://github.com/batmanjs/batmanjs.github.io/blob/master/README.md).
+If you want to render the API docs, see the [README for batmanjs.github.io](https://github.com/batmanjs/batmanjs.github.io/blob/master/README.md).
 
 #### 6. Create a pull request
 
