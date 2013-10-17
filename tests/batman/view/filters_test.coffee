@@ -523,6 +523,20 @@ asyncTest "it should interpolate strings with counts", ->
       equal node.childNodes[0].innerHTML, "3 pamplemouses"
       QUnit.start()
 
+asyncTest "it should properly traverse keypaths", ->
+  @controller = new Batman.Controller
+  @layout = new Batman.View(controller: @controller)
+
+  @layout.subviews.add(@view = new Batman.View)
+  @view.subviews.add(@backingView = new Batman.View(isBackingView: true))
+  @view.set('number', 3)
+  @backingView.set('how_many_grapefruits', {1: "1 pamplemouse", other: "%{count} pamplemouses"})
+
+  source = '<div data-bind="how_many_grapefruits | interpolate {\'count\': \'number\'}"></div>'
+  helpers.render source, false, @backingView, (node, view) ->
+    equal node.childNodes[0].innerHTML, "3 pamplemouses"
+    QUnit.start()
+
 QUnit.module "Batman.View user defined filter execution"
 
 asyncTest 'should render a user defined filter', 4, ->

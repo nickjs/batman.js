@@ -123,7 +123,7 @@ Batman.Filters =
     return if not string
     values = {}
     for k, v of interpolationKeypaths
-      values[k] = @get(v)
+      values[k] = @lookupKeypath(v)
       if !values[k]?
         Batman.developer.warn "Warning! Undefined interpolation key #{k} for interpolation", string
         values[k] = ''
