@@ -58,6 +58,9 @@ be created for the layout using the `document` node as its content.
 Use `MyApp.layout = null` to turn off the default behavior.
 
 ## @currentParams
+
+`@currentParams` contains the current parameters for the current request, including the path relative to the app's base path.
+
 ## @paramsManager
 ## @paramsPusher
 
@@ -75,8 +78,60 @@ The `Batman` routing DSL is similar to Rails 3's routing DSL. It is oriented aro
 
 ## @resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])
 
-
 ## @member
+
+`@member` defines a route relative to a specific resource. For example:
+
+```coffeescript
+class window.Example extends Batman.App
+  @resources 'pages', ->
+    @member 'comment'
+
+class Example.PagesController extends Batman.Controller
+  comment: (params) ->
+```
+
+Would result in `/pages/:id/comment` being added to the routing map, pointed to `PagesController#comment`.
+
 ## @collection
+
+`@collection` defines a route relative to a base resource. For example:
+
+```coffeescript
+class window.Example extends Batman.App
+  @resources 'pages', ->
+    @collection 'comments'
+
+class Example.PagesController extends Batman.Controller
+  comments: ->
+```
+
+Would result in `/pages/comments` being added to the routing map, pointed to `PagesController#comments`.
+
 ## @route
+
+`@route` defines a custom route and can be pointed to a controller action directly. For example:
+
+```coffeescript
+class window.Example extends Batman.App
+  @route 'comments', 'pages#comments'
+
+class Example.PagesController extends Batman.Controller
+  comments: ->
+```
+
+Would result in `/comments` being added to the routing map, pointed to `PagesController#comments`.
+
 ## @root
+
+`@root` defines the root controller and action to be used when visiting the base application URL. For example:
+
+```coffeescript
+class window.Example extends Batman.App
+  @root 'pages#index'
+
+class Example.PagesController extends Batman.Controller
+  index: ->
+```
+
+Would result in `/` being pointed to `PagesController#index`.
