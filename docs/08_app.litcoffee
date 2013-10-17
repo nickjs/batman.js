@@ -52,6 +52,11 @@ $ ->
 
 ## @layout
 
+`@layout` is the base view that other views can be yielded into. The
+default behavior is that when `app.run()` is called, a new view will
+be created for the layout using the `document` node as its content.
+Use `MyApp.layout = null` to turn off the default behavior.
+
 ## @currentParams
 ## @paramsManager
 ## @paramsPusher
