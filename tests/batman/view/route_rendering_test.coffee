@@ -79,12 +79,12 @@ asyncTest 'should set corresponding href for model and action', 1, ->
         @App.set 'tweet', tweet
 
         source = '''
-          <a data-route="Tweet">index</a>
-          <a data-route="Tweet | routeToAction 'new'">new</a>
-          <a data-route="tweet">show</a>
-          <a data-route="tweet | routeToAction 'edit'">edit</a>
-          <a data-route="tweet.user">user</a>
-          <a data-route="tweet.user | routeToAction 'edit'">edit user</a>
+          <a data-route="routes.tweets">index</a>
+          <a data-route="routes.tweets.new">new</a>
+          <a data-route="routes.tweets[tweet]">show</a>
+          <a data-route="routes.tweets.edit[tweet]">edit</a>
+          <a data-route="routes.users[tweet.user]">user</a>
+          <a data-route="routes.users.edit[tweet.user]">edit user</a>
         '''
 
         helpers.render source, {}, (node, view) ->
@@ -111,8 +111,8 @@ asyncTest 'should bind to models when routing to them', 3, ->
 
   @App.on 'run', =>
     source = '''
-      <a data-route="tweet">index</a>
-      <a data-route="tweet | routeToAction 'duplicate'">duplicate</a>
+      <a data-route="routes.tweets[tweet]">index</a>
+      <a data-route="routes.tweets.duplicate[tweet]">duplicate</a>
     '''
 
     helpers.render source, {tweet: tweetA}, (node, view) ->
