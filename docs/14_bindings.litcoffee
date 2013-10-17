@@ -172,7 +172,9 @@ This is the Batman equivalent of a templating language's `if` construct, where e
 The outer span in the HTML below will have an "error" class when the `product.errors.length` keypath evaluates to anything other than 0, since 0 is falsy and other numbers are truthy.
 
 ```html
-<span data-addclass-error="product.errors.length">This product has <span data-bind="product.errors.length"></span> errors.</button>
+<p data-addclass-error="product.errors.length">
+  This product has <span data-bind="product.errors.length"></span> errors.
+</p>
 ```
 
 ## data-foreach
