@@ -132,4 +132,15 @@ class BatmanObject extends Object
       obj[key] = if value?.toJSON then value.toJSON() else value
     obj
 
+  batchAccessorChanges: (properties..., wrappedFunction) ->
+    for key, i in properties
+      property = properties[i] = @property(key)
+      property.isBatchingChanges = true
+      properties.push(property)
+    result = wrappedFunction.call(this)
+    for property in properties
+      property.isBatchingChanges = false
+      property.refresh()
+    result
+
 Batman.Object = BatmanObject

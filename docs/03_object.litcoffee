@@ -198,6 +198,12 @@ To create a new `Batman.Object`, the `Batman.Object` constructor can be used, or
 
 `hashKey` returns a unique string identifying this particular `Batman.Object`. No two `Batman.Object`s will have the same `hashKey`. Feel free to override the implmentation of this function on your objects if you have a better hashing scheme for a domain object of yours.
 
+## batchAccessorChanges(key, wrappedFunction) : string
+
+Prevents accessor from being recalculated while the specified function is called. Only after `wrappedFunction` is complete will the accessor be recomputed. Returns the result of `wrappedFunction`.
+
+This can be useful when making multiple changes, and only want a single change event fired after the modifications are in place.
+
 ## accessor([keys...], objectOrFunction)
 
 `accessor` defines an accessor on one instance of an object instead of on all instances like the class level `@accessor`. See `@accessor` for the details surrounding accessors.

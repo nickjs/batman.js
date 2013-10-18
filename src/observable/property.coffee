@@ -68,11 +68,12 @@ class Batman.Property extends Batman.PropertyEvent
 
   constructor: (@base, @key) ->
   _isolationCount: 0
-  cached: no
+  cached: false
   value: null
   sources: null
   isProperty: true
   isDead: false
+  isBatchingChanges: false
 
   registerAsMutableSource: ->
     Batman.Property.registerSource(this)
@@ -169,7 +170,7 @@ class Batman.Property extends Batman.PropertyEvent
     else if not @isFinal() && not @hasObservers()
       @cached = no
       @_removeHandlers()
-    else
+    else if !@isBatchingChanges
       @refresh()
 
   valueFromAccessor: -> @accessor().get?.call(@base, @key)
