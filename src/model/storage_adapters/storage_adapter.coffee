@@ -18,6 +18,11 @@ class Batman.StorageAdapter extends Batman.Object
     constructor: (message) ->
       super(message || "Record couldn't be found in storage!")
 
+  class @UnauthorizedError extends @StorageError
+    name: 'UnauthorizedError'
+    constructor: (message) ->
+      super(message || "Storage operation denied due to invalid credentials!")
+
   class @NotAllowedError extends @StorageError
     name: "NotAllowedError"
     constructor: (message) ->

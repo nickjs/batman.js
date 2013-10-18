@@ -241,6 +241,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
   @_statusCodeErrors:
     '0':   @CommunicationError
+    '401': @UnauthorizedError
     '403': @NotAllowedError
     '404': @NotFoundError
     '406': @NotAcceptableError
