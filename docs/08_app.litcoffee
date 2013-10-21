@@ -52,14 +52,11 @@ $ ->
 
 ## @layout
 
-`@layout` is the base view that other views can be yielded into. The
-default behavior is that when `app.run()` is called, a new view will
-be created for the layout using the `document` node as its content.
-Use `MyApp.layout = null` to turn off the default behavior.
+`@layout` is the base view of the entire view hierarchy. By default, it will parse any data-* attributes in the entire document, excluding any `data-yield`'s, when `App.run()` is called. Use `MyApp.layout = null` to disable the creation of this default view.
 
 ## @currentParams
 
-`@currentParams` contains the current parameters for the current request, including the path relative to the app's base path.
+`@currentParams` contains the URL parameters for the current request, including the path relative to the app's base path (`Batman.config.pathToApp`). Some interesting parts to look at: `@currentParams.controller`, `@currentParams.action`.
 
 ## @paramsManager
 ## @paramsPusher
@@ -76,11 +73,26 @@ The `ready` class event is fired once the app's layout is rendered.
 
 The `Batman` routing DSL is similar to Rails 3's routing DSL. It is oriented around the notion of a resource:
 
+## @route
+
+`@route` defines a custom route and can be pointed to a controller action directly. For example:
+
+```coffeescript
+class window.Example extends Batman.App
+  @route 'comments', 'pages#comments'
+
+class Example.PagesController extends Batman.Controller
+  comments: ->
+```
+
+Would result in `/comments` being added to the routing map, pointed to `PagesController#comments`.
+
+
 ## @resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])
 
 ## @member
 
-`@member` defines a route relative to a specific resource. For example:
+`@member` defines a routable action you can call on a specific instance of a member of a collection resource. For example, if you have a collection of `Page` resources, and a user can post a comment on a specific page:
 
 ```coffeescript
 class window.Example extends Batman.App
@@ -95,32 +107,18 @@ Would result in `/pages/:id/comment` being added to the routing map, pointed to 
 
 ## @collection
 
-`@collection` defines a route relative to a base resource. For example:
+`@collection` is similar to `@member` in that it adds routable actions to a `@resources` set of routes. In this case the action would apply to the entire collection. For example, if you have a list of spam comments made across _all_ your `Page` resources:
 
 ```coffeescript
 class window.Example extends Batman.App
   @resources 'pages', ->
-    @collection 'comments'
+    @collection 'spam_comments'
 
 class Example.PagesController extends Batman.Controller
   comments: ->
 ```
 
-Would result in `/pages/comments` being added to the routing map, pointed to `PagesController#comments`.
-
-## @route
-
-`@route` defines a custom route and can be pointed to a controller action directly. For example:
-
-```coffeescript
-class window.Example extends Batman.App
-  @route 'comments', 'pages#comments'
-
-class Example.PagesController extends Batman.Controller
-  comments: ->
-```
-
-Would result in `/comments` being added to the routing map, pointed to `PagesController#comments`.
+Would result in `/pages/spam_comments` being added to the routing map, pointed to `PagesController#spam_comments`.
 
 ## @root
 
