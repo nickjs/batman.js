@@ -26,10 +26,6 @@ class Batman.App extends Batman.Object
   @classAccessor 'dispatcher', -> new Batman.Dispatcher(@, @get('routeMap'))
   @classAccessor 'controllers', -> @get('dispatcher.controllers')
 
-  # Layout is the base view that other views can be yielded into. The
-  # default behavior is that when `app.run()` is called, a new view will
-  # be created for the layout using the `document` node as its content.
-  # Use `MyApp.layout = null` to turn off the default behavior.
   @layout: undefined
 
   # shouldAllowEvent is a hash of global function delegates. You can use
