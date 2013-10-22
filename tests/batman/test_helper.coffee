@@ -92,10 +92,6 @@ createSpy = (original) ->
   f = (args...) ->
     f.called = true
     f.callCount++
-    if f.callCount == 1
-      f.firstCall =
-        context: this
-        arguments: args
     f.lastCall =
       context: this
       arguments: args
