@@ -191,17 +191,32 @@ test "passing false for an encoder should never do a get on the property", ->
   encoded.toJSON()
   ok !getSpy.called
 
-test "passing an as option should put the encoded value in that key in the outgoing json", ->
+test "passing an as option as a string should put the encoded value in that key in the outgoing json", ->
   class TestProduct extends Batman.Model
     @encode 'shouldDestroy', {as: '_destroy'}
 
   p = new TestProduct(shouldDestroy: true)
   deepEqual p.toJSON(), {_destroy: true}
 
-test "passing an as option should put the dencoded value in that key on the record", ->
+test "passing an as option as a string should put the dencoded value in that key on the record", ->
   class TestProduct extends Batman.Model
     @encode 'shouldDestroy', {as: '_destroy'}
 
   p = new TestProduct()
   p.fromJSON({_destroy: true})
   equal p.get('shouldDestroy'), true
+
+test "passing an as option as a function should put the encoded value in that key in the outgoing json", ->
+  class TestProduct extends Batman.Model
+    @encode 'excitingName', {as: (k) -> Batman.helpers.underscore(k)}
+
+  p = new TestProduct(excitingName: "Batman")
+  deepEqual p.toJSON(), {exciting_name: "Batman"}
+  
+test "passing an as option as a function should put the dencoded value in that key on the record", ->
+  class TestProduct extends Batman.Model
+    @encode 'excitingName', {as: (k) -> Batman.helpers.underscore(k)}
+
+  p = new TestProduct()
+  p.fromJSON({exciting_name: "Batman"})
+  equal p.get('excitingName'), "Batman"
