@@ -10,7 +10,7 @@ glob         = require 'glob'
 
 option '-w', '--watch',  'continue to watch the files and rebuild them when they change'
 option '-c', '--commit', 'operate on the git index instead of the working tree'
-option '-d', '--dist',   'compile minified versions of the platform dependent code into lib/dist (build task only)'
+option '-d', '--dist',   'compile minified versions of the platform dependent code into build/dist (build task only)'
 option '-m', '--compare', 'compare to git refs (stat task only)'
 option '-s', '--coverage', 'run jscoverage during tests and report coverage (test task only)'
 
@@ -78,5 +78,3 @@ task 'test:travis', 'run the tests once using PhantomJS', (options) ->
   pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'PhantomJS', './karma.conf.coffee', (code) ->
     process.exit(code)
 
-task 'stats', 'compile the files and report on their final size', (options) ->
-  muffin.statFiles(glob.sync('./src/**/*.coffee').concat(glob.sync('./lib/**/*.js')), options)
