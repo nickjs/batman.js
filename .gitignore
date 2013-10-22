@@ -1,5 +1,5 @@
 node_modules
-/build
+build
 examples/test*
 tests/batman/build/test_file.js
 tests/build
