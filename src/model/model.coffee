@@ -344,7 +344,7 @@ class Batman.Model extends Batman.Object
         obj[key] = value
     else
       encoders.forEach (key, encoder) =>
-        as = encoder.as?(key, @get(key), obj, this) ? encoder.as
+        as = encoder.as?(key, data[key], obj, this) ? encoder.as
         if encoder.decode and typeof data[as] isnt 'undefined'
           obj[key] = encoder.decode(data[as], as, data, obj, this)
 
