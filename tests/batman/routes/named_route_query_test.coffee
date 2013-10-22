@@ -32,6 +32,10 @@ test "should find root level routes", ->
   equal @query.get('path'), '/'
   equal @query.path(), '/'
 
+test "should find root by name", ->
+  equal @query.get('root.path'), '/'
+  equal @query.path('root'), '/'
+
 test "should find root level collection routes", ->
   equal @query.get('products.path'), '/products'
   equal @query.products().path(), '/products'

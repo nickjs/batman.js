@@ -3,7 +3,12 @@ class Batman.ControllerActionRoute extends Batman.Route
   optionKeys: ['member', 'collection', 'app', 'controller', 'action']
   constructor: (templatePath, options) ->
     if options.signature
-      [controller, action] = options.signature.split('#')
+      if typeof options.signature is 'string'
+        [controller, action] = options.signature.split('#')
+      else
+        controller = options.signature.controller
+        action = options.signature.action
+
       action ||= 'index'
       options.controller = controller
       options.action = action
