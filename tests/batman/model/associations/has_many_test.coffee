@@ -9,11 +9,33 @@ QUnit.module "Batman.Model hasMany Associations",
     namespace.Store = class @Store extends Batman.Model
       @encode 'id', 'name'
       @hasMany 'products', namespace: namespace
+      @hasMany 'stringyProducts', namespace: namespace
 
     @storeAdapter = createStorageAdapter @Store, AsyncTestStorageAdapter,
       stores1:
         name: "Store One"
         id: 1
+
+    namespace.StringyProduct = class @StringyProduct extends Batman.Model
+      @encode 'id',
+        encode: (x) -> "#{x}"
+        decode: (x) -> +x
+      @encode 'price'
+      @belongsTo 'store', namespace: namespace, inverseOf: "stringyProducts"
+
+    @stringyProductsAdapter = createStorageAdapter @StringyProduct, AsyncTestStorageAdapter,
+      stringy_product1:
+        store_id: 1
+        id: "1"
+        price: 55
+      stringy_product2:
+        store_id: 1
+        id: "2"
+        price: 60
+      stringy_product3:
+        store_id: 1
+        id: "15"
+        price: 65
 
     namespace.Product = class @Product extends Batman.Model
       @encode 'id', 'name'
@@ -536,6 +558,18 @@ asyncTest "saved hasMany models should decode their child records based on ID", 
     equal five.get('price'), 50
     equal six.get('price'), 60
     QUnit.start()
+
+asyncTest "integer-ish, string `id` doesn't cause the same items to be loaded twice", 2, ->
+  @Store.find 1, (err, store) ->
+    throw err if err
+    window.store_1 = store
+    sp = store.get("stringyProducts")
+    delay ->
+      equal sp.length, 3
+      store_json = store.toJSON() # get those stringyProduct ids as strings
+      store.fromJSON(store_json)
+      delay ->
+        deepEqual sp.length, 3
 
 asyncTest "hasMany adds new related model instances to its set", ->
   @Store.find 1, (err, store) =>
