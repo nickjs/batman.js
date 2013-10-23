@@ -14,7 +14,7 @@ The APIs are heavily inspired by [Rails](http://rubyonrails.org/) and are design
 
 To find out more or get started with batman.js, check out the website: **[http://batmanjs.org](http://batmanjs.org)**.
 
-## Contributing [![Build Status](https://secure.travis-ci.org/batmanjs/batman.png)](http://travis-ci.org/batmanjs/batman)
+## Contributing [![Build Status](https://travis-ci.org/batmanjs/batman.png?branch=master)](http://travis-ci.org/batmanjs/batman)
 
 Well-tested contributions are always welcome! Here's what you should do:
 
