@@ -130,6 +130,21 @@ validationsTestSuite = ->
         equal errors.length, 1
         QUnit.start()
 
+  asyncTest "inclusion with allow blank", ->
+    class Product extends Batman.Model
+      @validate 'name', allowBlank: true, inclusion: in: ["Batman", "Catwoman"]
+
+    p = new Product(name: "Batman")
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+
+      p.unset 'name'
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        QUnit.start()
+
   asyncTest "exclusion", ->
     class Product extends Batman.Model
       @validate 'name', exclusion: in: ["Batman", "Catwoman"]
