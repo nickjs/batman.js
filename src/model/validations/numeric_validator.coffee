@@ -1,7 +1,7 @@
 #= require ./validators
 
 class Batman.NumericValidator extends Batman.Validator
-  @triggers 'numeric', 'greaterThan', 'greaterThanOrEqualTo', 'equalTo', 'lessThan', 'lessThanOrEqualTo'
+  @triggers 'numeric', 'greaterThan', 'greaterThanOrEqualTo', 'equalTo', 'lessThan', 'lessThanOrEqualTo', 'onlyInteger'
   @options 'allowBlank'
 
   validateEach: (errors, record, key, callback) ->
@@ -10,6 +10,8 @@ class Batman.NumericValidator extends Batman.Validator
     return callback() if @handleBlank(value)
     if !value? || !(@isNumeric(value) || @canCoerceToNumeric(value))
       errors.add key, @format(key, 'not_numeric')
+    else if options.onlyInteger and !@isInteger(value)
+      errors.add key, @format(key, 'not_an_integer')
     else
       if options.greaterThan? and value <= options.greaterThan
         errors.add key, @format(key, 'greater_than', {count: options.greaterThan})
@@ -25,6 +27,9 @@ class Batman.NumericValidator extends Batman.Validator
 
   isNumeric: (value) ->
     !isNaN(parseFloat(value)) && isFinite(value)
+
+  isInteger: (value) ->
+    parseFloat(value) == (value | 0)
 
   canCoerceToNumeric: (value) ->
     `(value - 0) == value && value.length > 0`
