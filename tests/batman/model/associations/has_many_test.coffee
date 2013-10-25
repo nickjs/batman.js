@@ -562,7 +562,6 @@ asyncTest "saved hasMany models should decode their child records based on ID", 
 asyncTest "integer-ish, string `id` doesn't cause the same items to be loaded twice", 2, ->
   @Store.find 1, (err, store) ->
     throw err if err
-    window.store_1 = store
     sp = store.get("stringyProducts")
     delay ->
       equal sp.length, 3

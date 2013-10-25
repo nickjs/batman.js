@@ -267,6 +267,17 @@ asyncTest "saved hasMany models should decode their child records based on ID", 
     equal thirty.get('key'), "SEO Handle"
     QUnit.start()
 
+asyncTest "integer-ish string IDs don't cause the associations to be loaded more than once", 2, ->
+  @Store.find 1, (err, store) ->
+    throw err if err
+    sm = store.get("stringyMetafields")
+    delay ->
+      equal sm.length, 2
+      store_json = store.toJSON() # get those stringyMetafield ids as strings
+      store.fromJSON(store_json)
+      delay ->
+        equal sm.length, 2
+
 asyncTest "hasMany sets the foreign key on the inverse relation if the children haven't been loaded", 3, ->
   @Product.find 6, (err, product) =>
     throw err if err

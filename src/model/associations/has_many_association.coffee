@@ -52,8 +52,8 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
 
       for jsonObject in data
         id = jsonObject[primaryKeyAttribute]
-        decoded_id = primaryKeyDecoder(id)
-        record = relatedModel._loadIdentity(decoded_id)
+        decodedId = primaryKeyDecoder(id)
+        record = relatedModel._loadIdentity(decodedId)
 
         if record?
           recordsToAdd.push(record)
