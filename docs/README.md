@@ -43,15 +43,15 @@ Example:
 
 ```coffee
 class X extends Batman.Object
-  @someProperty: false
+  @someClassProperty: false
 
-  @classAccessor 'access', -> @someProperty
-  @accessor 'access', -> @someString
+  @classAccessor 'classAccess', -> @someClassProperty
+  @accessor 'instanceAccess', -> @someInstanceString
 
   method: (a, b) ->
-    @someString = a
-    @someFunction = b if b
-    @someBoolean
+    @someInstanceString = a
+    @someInstanceFunction = b if b
+    @someInstanceBoolean
 
 ```
 
@@ -62,12 +62,30 @@ class X extends Batman.Object
 
 ## @.someProperty : boolean
 
-## @%access : boolean
+You'll set this in the class declaration and access it by `X.someProperty`.
 
-## ::%access : String
+## @%classAccess : boolean
+
+This is a class accessor. It will be defined in the class declaration and accessed by `X.get("classAccess")`.
+
+## ::%instanceAccess : String
+
+This is also defined in the class declaration, but will be accessed from an instance of the class, like:
+```coffeescript
+new_x = new X
+new_x.get('instanceAccess')
+```
 
 ## ::method(a : String[, b : Function]) : boolean
 
+This is an instance method. It's defined in the class declaration and called on the instance directly, like:
+
+```coffeescript
+new_x = new X
+new_x.method(
+  "some string",
+  (arg) -> (console.log("some function", arg))
+)
 ```
 
 If you're (rightfully) confused, look to the existing API docs for further examples.
