@@ -1,6 +1,6 @@
 # Batman.Model
 
-For a general explanation of `Batman.Model` and it works, see [the guide](/docs/models.html).
+For a general explanation of `Batman.Model` and how it works, see [the guide](/docs/models.html).
 
 _Note_: This documentation uses the term _model_ to refer to the class `Model`
 or a `Model` subclass, and the term _record_ to refer to one instance of a
@@ -362,9 +362,9 @@ It takes a callback with two arguments: error and the array of loaded records.
 
 ## dirtyKeys : Set
 
-## errors : ErrorsSet
+## ::%errors : ErrorsSet
 
-A record's errors are accessible with `get('errors')`, which returns a `Batman.Set` of `Batman.ValidationError`s.
+A record's errors are accessible with `get('errors')`, which returns a [`Batman.Set`](/docs/api/batman.set.html) of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s.
 
 - `user.get('errors')` returns the errors on the `user` record
 - `user.get('errors.length')` returns the number of errors, total
@@ -398,35 +398,50 @@ You can also access the errors for a specific attribute of the record:
 
 ## destroy(options = {}, callback)
 
-## validate(callback)
+## ::validate(callback)
 
-`Model::validate` checks the model against the validations declared in the model definition (see `Model@validate` above). This method takes a callback with two arguments: any JavaScript error that occurs, then the `Batman.ErrorsSet` corresponding to the validation action.
+`Model::validate` checks the model against the validations declared in the model definition (with [`Model@validate`](/docs/api/batman.model.html#class_function_validate)). This method takes a callback with two arguments: any JavaScript error that occurs and the [`Batman.ErrorsSet`](/docs/api/batman.errorsset.html) resulting from the validation tests.
 For example:
 
     asyncTest "validate(callback) will call the callback only after all keys have been validated", 4, ->
       class Product extends Batman.Model
         @validate 'name', 'price', presence: yes
 
-      p = new Product
-      p.validate (js_error, validation_errors) ->
+      new_product = new Product
+      new_product.validate (js_error, validation_errors) ->
         throw js_error if js_error
         equal validation_errors.length, 2
-        equal p.get('errors.length'), 2
-        equal p.get('errors.name.length'), 1
-        equal p.get('errors.price.length'), 1
+        equal new_product.get('errors.length'), 2
+        equal new_product.get('errors.name.length'), 1
+        equal new_product.get('errors.price.length'), 1
 
 # Batman.ValidationError
 
-A `Batman.ValidationError` is a `Batman.Object`. It is initialized with an `attribute` and a `message`.  It also responds to `fullMessage`:
+A `Batman.ValidationError` is a [`Batman.Object`](/docs/api/batman.object.html). It is initialized with an `attribute` and a `message`.  It also responds to `fullMessage`:
 
     test "ValidationError should humanize attribute in the full message", ->
       error = new Batman.ValidationError("fooBarBaz", "isn't valid")
       equal error.get('fullMessage'), "Foo bar baz isn't valid"
 
+## ::constructor(attribute_name, message)
+
+Creates a new `Batman.ValidationError`, as in:
+
+```coffeescript
+new_error = new Batman.ValidationError("password", "must include letters and numbers")
+```
+
+## ::%fullMessage
+
+Returns the attribute name and the validation message.
+```coffeescript
+new_error.get('fullMessage') # "password must include letters and numbers"
+```
+
 
 # Batman.ErrorsSet
 
-A `Batman.ErrorsSet` is a `Batman.Set` populated with `Batman.ValidationErrors`.
+A `Batman.ErrorsSet` is a [`Batman.Set`](/docs/api/batman.set.html) populated with [`Batman.ValidationErrors`](/docs/api/batman.validationerror.html).
 
 - `user.get('errors')` returns the errors on the `user` record
 - `user.get('errors.length')` returns the number of errors, total
@@ -436,5 +451,13 @@ You can also access the errors for a specific attribute of the record:
 - `user.get('errors.email_address')` returns the errors on the `email_address` attribute
 - `user.get('errors.email_address.length')` returns the number of errors on the `email_address` attribute
 
-`Batman.ErrorsSet::add` is overridden for convenience. It takes an attribute name and a message, which it uses to
+## ::add(attribute_name, message)
+
+`Batman.ErrorsSet::add` is overridden for convenience. It takes an attribute_name and a message, which it uses to
 create a new `Batman.ValidationError` then it adds that error to the `Batman.ErrorsSet`.
+
+    test "ErrorsSet::add passes its arguments to the ValidationError constructor", ->
+      error_set = new Batman.ErrorsSet()
+      error_set.add("Foo bar baz", "isn't valid")
+      error = error_set.at(0)
+      equal error.get('fullMessage'), "Foo bar baz isn't valid"
