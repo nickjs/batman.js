@@ -317,8 +317,10 @@ _Note_: `find` must be passed a callback function. This is for two reasons: call
 
 For the two main `StorageAdapter`s batman.js provides, the `options` do different things:
 
-  + For `Batman.LocalStorage`, `options` act as a filter. The adapter will scan all the records in `localStorage` and return only those records which match all the key/value pairs given in the options.
-  + For `Batman.RestStorage`, `options` are serialized into query parameters on the `GET` request.
+- For `Batman.LocalStorage`, `options` act as a filter. The adapter will scan all the records in `localStorage` and return only those records which match all the key/value pairs given in the options.
+- For `Batman.RestStorage`, `options` are serialized into query parameters on the `GET` request.
+
+It takes a callback with two arguments: error and the array of loaded records.
 
     asyncTest '@load calls back an array of records retrieved from the storage adapter', ->
       class Post extends Batman.Model
