@@ -1,10 +1,16 @@
 # batman.js API Documentation
 
+The API documentation is the primary reference for batman.js. It contains a
+listing and description of public functionality, along with tests to serve as
+usage examples.
+
+The current version is readable [here](http://batmanjs.org/docs/api/).
+
 ## Heading Format
 
-In the API docs, second-level headings (i.e. `##` in markdown) follow a certain
-format to allow for parsing metadata. If the heading is intended to document a
-function, property, or accessor, it should follow this specification:
+Second-level headings (i.e. `##` in markdown) must follow a certain format to
+allow for parsing metadata. If the heading is intended to document a function,
+property, or accessor, it should follow this specification:
 
 ```
 ## XYname(args)[= default] : type
@@ -66,5 +72,5 @@ class X extends Batman.Object
 
 If you're (rightfully) confused, look to the existing API docs for further examples.
 
-The parsing code is [here](https://github.com/batmanjs/batmanjs.github.io/blob/master/bin/generate_docs#L22-L45) if you're interested.
+The parsing code is [here](https://github.com/batmanjs/batmanjs.github.io/blob/master/bin/generate_docs#L22-L45) if you'd like to take a look.
 

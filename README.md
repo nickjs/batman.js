@@ -60,6 +60,9 @@ alongside the regular tests, so you don't need to run them manually.
 
 If you want to render the API docs, see the [README for batmanjs.github.io](https://github.com/batmanjs/batmanjs.github.io/blob/master/README.md).
 
+Please read the [README for the docs](https://github.com/batmanjs/batman/blob/master/docs/README.md)
+before writing any.
+
 #### 6. Create a pull request
 
 If it's good code that fits with the goals of the project, we'll merge it in!
