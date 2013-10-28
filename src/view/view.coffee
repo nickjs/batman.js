@@ -73,6 +73,9 @@ class Batman.View extends Batman.Object
       yieldObject = Batman.DOM.Yield.withName(yieldName)
       yieldObject.set('contentView', subview)
 
+    if filters = @_batman.get('filters')
+      subview._batman.set('filters', Batman.mixin(filters, subview._batman.get('filters')))
+
     @get('node')
     subview.get('node')
 
