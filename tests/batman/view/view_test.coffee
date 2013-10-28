@@ -130,7 +130,7 @@ test "should copy parent view's filters", ->
   @superview = new SuperView
   @superview.subviews.add(@subview = new Batman.View)
 
-  equal @superview._batman.get('filters'), @subview._batman.get('filters')
+  deepEqual @superview._batman.get('filters'), @subview._batman.get('filters')
 
 QUnit.module 'Batman.View isInDOM',
   setup: ->
