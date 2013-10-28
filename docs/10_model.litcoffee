@@ -364,6 +364,16 @@ It takes a callback with two arguments: error and the array of loaded records.
 
 ## errors : ErrorsSet
 
+A record's errors are accessible with `get('errors')`, which returns a `Batman.Set` of `Batman.ValidationError`s.
+
+- `user.get('errors')` returns the errors on the `user` record
+- `user.get('errors.length')` returns the number of errors, total
+
+You can also access the errors for a specific attribute of the record:
+
+- `user.get('errors.email_address')` returns the errors on the `email_address` attribute
+- `user.get('errors.email_address.length')` returns the number of errors on the `email_address` attribute
+
 ## constructor(idOrAttributes = {}) : Model
 
 ## isNew() : boolean
@@ -390,6 +400,46 @@ It takes a callback with two arguments: error and the array of loaded records.
 
 ## validate(callback)
 
+`Model::validate` checks the model against the validations declared in the model definition (see `Model@validate` above). Its callback takes two arguments:
+
+- Any JavaScript errors
+- A `Batman.ErrorsSet`
+
+This method takes a callback with two arguments: any JavaScript error that occurs, then the `Batman.ErrorsSet` corresponding to the validation action.
+For example:
+
+    asyncTest "validate(callback) will call the callback only after all keys have been validated", 4, ->
+      class Product extends Batman.Model
+        @validate 'name', 'price', presence: yes
+
+      p = new Product
+      p.validate (js_error, validation_errors) ->
+        throw js_error if js_error
+        equal validation_errors.length, 2
+        equal p.get('errors.length'), 2
+        equal p.get('errors.name.length'), 1
+        equal p.get('errors.price.length'), 1
+
 # Batman.ValidationError
 
+A `Batman.ValidationError` is a `Batman.Object`. It is initialized with an `attribute` and a `message`.  It also responds to `fullMessage`:
+
+    test "ValidationError should humanize attribute in the full message", ->
+      error = new Batman.ValidationError("fooBarBaz", "isn't valid")
+      equal error.get('fullMessage'), "Foo bar baz isn't valid"
+
+
 # Batman.ErrorsSet
+
+A `Batman.ErrorsSet` is a `Batman.Set` populated with `Batman.ValidationErrors`.
+
+- `user.get('errors')` returns the errors on the `user` record
+- `user.get('errors.length')` returns the number of errors, total
+
+You can also access the errors for a specific attribute of the record:
+
+- `user.get('errors.email_address')` returns the errors on the `email_address` attribute
+- `user.get('errors.email_address.length')` returns the number of errors on the `email_address` attribute
+
+`Batman.ErrorsSet::add` is overridden for convenience. It takes an attribute name and a message, which it uses to
+create a new `Batman.ValidationError` then it adds that error to the `Batman.ErrorsSet`.
