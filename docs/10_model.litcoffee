@@ -403,7 +403,7 @@ You can also access the errors for a specific attribute of the record:
 `Model::validate` checks the model against the validations declared in the model definition (with [`Model@validate`](/docs/api/batman.model.html#class_function_validate)). This method takes a callback with two arguments: any JavaScript error that occurs and the [`Batman.ErrorsSet`](/docs/api/batman.errorsset.html) resulting from the validation tests.
 For example:
 
-    asyncTest "validate(callback) will call the callback only after all keys have been validated", 4, ->
+    test "validate(callback) will call the callback only after all keys have been validated", ->
       class Product extends Batman.Model
         @validate 'name', 'price', presence: yes
 
