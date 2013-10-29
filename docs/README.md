@@ -43,15 +43,15 @@ Example:
 
 ```coffee
 class X extends Batman.Object
-  @someProperty: false
+  @someClassProperty: false
 
-  @classAccessor 'access', -> @someProperty
-  @accessor 'access', -> @someString
+  @classAccessor 'classAccess', -> @someClassProperty
+  @accessor 'instanceAccess', -> @someInstanceString
 
   method: (a, b) ->
-    @someString = a
-    @someFunction = b if b
-    @someBoolean
+    @someInstanceString = a
+    @someInstanceFunction = b if b
+    @someInstanceBoolean
 
 ```
 
@@ -60,14 +60,25 @@ class X extends Batman.Object
 
 ## Regular second-level headings are still OK
 
-## @.someProperty : boolean
+## @.someClassProperty : boolean
+You'll set this in the class declaration and access it by `X.someProperty`.
 
-## @%access : boolean
+## @%classAccess : boolean
+This is a class accessor. It will be defined in the class declaration and accessed by `X.get("classAccess")`.
 
-## ::%access : String
+## ::%instanceAccess : String
+This is also defined in the class declaration, but will be accessed from an instance of the class, like:
+```coffeescript
+instance = new X
+instance.get('instanceAccess')
+```
 
 ## ::method(a : String[, b : Function]) : boolean
-
+This is an instance method. It's defined in the class declaration and called on the instance directly, like:
+```coffeescript
+instance = new X
+instance.method "some string", (arg) ->
+  console.log("instance method was called!", arg)
 ```
 
 If you're (rightfully) confused, look to the existing API docs for further examples.
