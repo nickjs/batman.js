@@ -198,7 +198,7 @@ Custom validators should have the signature `(errors, record, key, callback)`. T
  + `key`: the key to which the validation has been attached
  + `callback`: a function to call once validation has been completed. Calling this function is __mandatory__.
 
-See `Model::validate` for information on how to get a particular record's validity.
+See [`Model::validate`](/docs/api/batman.model.html#prototype_function_validate) for information on how to get a particular record's validity.
 
 ## @loaded : Set
 
@@ -362,9 +362,9 @@ It takes a callback with two arguments: error and the array of loaded records.
 
 ## dirtyKeys : Set
 
-## ::%errors : ErrorsSet
+## ::%errors : Batman.ErrorsSet
 
-A record's errors are accessible with `get('errors')`, which returns a [`Batman.Set`](/docs/api/batman.set.html) of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s.
+`errors` contains a [`Batman.ErrorsSet`](/docs/api/batman.errorsset.html) of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s present on the model instance.
 
 - `user.get('errors')` returns the errors on the `user` record
 - `user.get('errors.length')` returns the number of errors, total
@@ -407,57 +407,23 @@ For example:
       class Product extends Batman.Model
         @validate 'name', 'price', presence: yes
 
-      new_product = new Product
-      new_product.validate (js_error, validation_errors) ->
-        throw js_error if js_error
-        equal validation_errors.length, 2
-        equal new_product.get('errors.length'), 2
-        equal new_product.get('errors.name.length'), 1
-        equal new_product.get('errors.price.length'), 1
+      newProduct = new Product
+      newProduct.validate (javascriptError, validationErrors) ->
+        throw javascriptError if javascriptError
+        equal validationErrors.length, 2
+        equal newProduct.get('errors.length'), 2
+        equal newProduct.get('errors.name.length'), 1
+        equal newProduct.get('errors.price.length'), 1
 
 # Batman.ValidationError
 
-A `Batman.ValidationError` is a [`Batman.Object`](/docs/api/batman.object.html). It is initialized with an `attribute` and a `message`.  It also responds to `fullMessage`:
-
-    test "ValidationError should humanize attribute in the full message", ->
-      error = new Batman.ValidationError("fooBarBaz", "isn't valid")
-      equal error.get('fullMessage'), "Foo bar baz isn't valid"
-
-## ::constructor(attribute_name, message)
-
-Creates a new `Batman.ValidationError`, as in:
-
-```coffeescript
-new_error = new Batman.ValidationError("password", "must include letters and numbers")
-```
+`Batman.ValidationError`s represent a failure to validate a particular field on a model.
+They are usually accessed by getting a model's [errors](/docs/api/batman.model.html#prototype_accessor_errors).
 
 ## ::%fullMessage
 
-Returns the attribute name and the validation message.
-```coffeescript
-new_error.get('fullMessage') # "password must include letters and numbers"
-```
+Returns the human-readable attribute name and the validation message:
 
-
-# Batman.ErrorsSet
-
-A `Batman.ErrorsSet` is a [`Batman.Set`](/docs/api/batman.set.html) populated with [`Batman.ValidationErrors`](/docs/api/batman.validationerror.html).
-
-- `user.get('errors')` returns the errors on the `user` record
-- `user.get('errors.length')` returns the number of errors, total
-
-You can also access the errors for a specific attribute of the record:
-
-- `user.get('errors.email_address')` returns the errors on the `email_address` attribute
-- `user.get('errors.email_address.length')` returns the number of errors on the `email_address` attribute
-
-## ::add(attribute_name, message)
-
-`Batman.ErrorsSet::add` is overridden for convenience. It takes an attribute_name and a message, which it uses to
-create a new `Batman.ValidationError` then it adds that error to the `Batman.ErrorsSet`.
-
-    test "ErrorsSet::add passes its arguments to the ValidationError constructor", ->
-      error_set = new Batman.ErrorsSet()
-      error_set.add("Foo bar baz", "isn't valid")
-      error = error_set.at(0)
+    test "ValidationError should humanize attribute in the full message", ->
+      error = new Batman.ValidationError("fooBarBaz", "isn't valid")
       equal error.get('fullMessage'), "Foo bar baz isn't valid"
