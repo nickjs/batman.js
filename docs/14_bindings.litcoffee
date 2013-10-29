@@ -365,8 +365,6 @@ and in `views/villains/show.html` we have this HTML:
 
 the contents of the `stub` partial will be inserted and rendered in the `<div>` above.
 
-## data-mixin
-
 ## data-defineview
 
 ## data-renderif
