@@ -47,13 +47,9 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       recordsToMap = []
       recordsToAdd = []
 
-      primaryKeyAttribute = relatedModel.primaryKey
-      primaryKeyDecoder = relatedModel.prototype._batman.get("encoders").get(primaryKeyAttribute).decode
-
       for jsonObject in data
-        id = jsonObject[primaryKeyAttribute]
-        decodedId = primaryKeyDecoder(id)
-        record = relatedModel._loadIdentity(decodedId)
+        id = jsonObject[relatedModel.primaryKey]
+        record = relatedModel._loadIdentity(id)
 
         if record?
           recordsToAdd.push(record)
