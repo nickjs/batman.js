@@ -232,13 +232,16 @@ asyncTest "create method returns an instance of a model while saving it", ->
     QUnit.start()
   ok result instanceof @Product
 
-asyncTest "string ids are coerced into integers when possible", ->
+asyncTest "string ids aren't coerced into integers -- they won't find ", ->
   product = new @Product
   product.save (err) =>
     throw err if err
     id = product.get('id')
     @Product.find ""+id, (err, foundProduct) ->
-      equal foundProduct, product
+      throw err if err
+      notEqual foundProduct, product
+      equal Batman.typeOf(foundProduct.get("id")), "String"
+      equal Batman.typeOf(product.get("id")), "Number"
       QUnit.start()
 
 asyncTest "save calls in an accessor will have no sources", ->
