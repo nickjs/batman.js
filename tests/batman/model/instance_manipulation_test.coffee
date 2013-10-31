@@ -232,7 +232,7 @@ asyncTest "create method returns an instance of a model while saving it", ->
     QUnit.start()
   ok result instanceof @Product
 
-asyncTest "string ids aren't coerced into integers -- they won't find ", ->
+asyncTest "string ids aren't coerced into integers", ->
   product = new @Product
   product.save (err) =>
     throw err if err
