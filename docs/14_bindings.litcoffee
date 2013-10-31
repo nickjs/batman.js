@@ -366,6 +366,23 @@ and in `views/villains/show.html` we have this HTML:
 the contents of the `stub` partial will be inserted and rendered in the `<div>` above.
 
 ## data-defineview
+`data-defineview` specifies that the innerHTML of an element should be used for rendering the given view.
+This is especially useful for defining multiple views in one HTML file.
+
+The value follows Rails-style "#{resource_name}/#{controller_action}". For example:
+
+```html
+<div data-defineview="crimes/index">
+  <ul class="crimes">
+    <li class="crime" data-foreach-crime="crimes">
+      <span data-bind="crime.name" data-addclass-heinous="crime.heinous" />
+    </li>
+  </ul>
+</div>
+```
+
+will be used by the `CrimesController`'s  `index` action.
+
 
 ## data-renderif
 
