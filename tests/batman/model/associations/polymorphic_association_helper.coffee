@@ -47,9 +47,7 @@ ex.baseSetup = ->
 
   namespace.StringyMetafield = class @StringyMetafield extends Batman.Model
     @belongsTo 'stringySubject', {polymorphic: true, namespace}
-    @encode 'id', ->
-      encode: (x) -> "#{x}"
-      decode: (x) -> +x
+    @encode 'id' # ids are integer-y strings, eg "1", "2", "3"...
     @encode 'key'
 
   @stringyMetafieldAdapter = createStorageAdapter @StringyMetafield, AsyncTestStorageAdapter,

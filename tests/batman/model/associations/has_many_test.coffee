@@ -17,9 +17,7 @@ QUnit.module "Batman.Model hasMany Associations",
         id: 1
 
     namespace.StringyProduct = class @StringyProduct extends Batman.Model
-      @encode 'id',
-        encode: (x) -> "#{x}"
-        decode: (x) -> +x
+      @encode 'id' # they're gonna be integer-y strings: "1", "2", etc
       @encode 'price'
       @belongsTo 'store', namespace: namespace, inverseOf: "stringyProducts"
 
