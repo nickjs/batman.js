@@ -320,7 +320,7 @@ For the two main `StorageAdapter`s batman.js provides, the `options` do differen
 - For `Batman.LocalStorage`, `options` act as a filter. The adapter will scan all the records in `localStorage` and return only those records which match all the key/value pairs given in the options.
 - For `Batman.RestStorage`, `options` are serialized into query parameters on the `GET` request.
 
-It takes a callback with two arguments: error and the array of loaded records.
+It accepts a callback with two arguments: any error that occurred, and an array of loaded records.
 
     asyncTest '@load calls back an array of records retrieved from the storage adapter', ->
       class Post extends Batman.Model
@@ -364,7 +364,7 @@ It takes a callback with two arguments: error and the array of loaded records.
 
 ## ::%errors : Batman.ErrorsSet
 
-`errors` contains a [`Batman.ErrorsSet`](/docs/api/batman.errorsset.html) of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s present on the model instance.
+`errors` is a `Batman.ErrorsSet`, which is simply a `Batman.Set` of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s present on the model instance.
 
 - `user.get('errors')` returns the errors on the `user` record
 - `user.get('errors.length')` returns the number of errors, total
@@ -400,7 +400,8 @@ You can also access the errors for a specific attribute of the record:
 
 ## ::validate(callback)
 
-`Model::validate` checks the model against the validations declared in the model definition (with [`Model@validate`](/docs/api/batman.model.html#class_function_validate)). This method takes a callback with two arguments: any JavaScript error that occurs and the [`Batman.ErrorsSet`](/docs/api/batman.errorsset.html) resulting from the validation tests.
+`Model::validate` checks the model against the validations declared in the model definition (with [`Model@validate`](/docs/api/batman.model.html#class_function_validate)). This method accepts a callback with two arguments: any JS error that occured within the validator function, and the set of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s that the input generated.
+
 For example:
 
     test "validate(callback) will call the callback only after all keys have been validated", ->
@@ -417,7 +418,7 @@ For example:
 
 # Batman.ValidationError
 
-`Batman.ValidationError`s represent a failure to validate a particular field on a model.
+`Batman.ValidationError`s represent a failure for a model's field to to pass validation.
 They are usually accessed by getting a model's [errors](/docs/api/batman.model.html#prototype_accessor_errors).
 
 ## ::%fullMessage
@@ -427,3 +428,4 @@ Returns the human-readable attribute name and the validation message:
     test "ValidationError should humanize attribute in the full message", ->
       error = new Batman.ValidationError("fooBarBaz", "isn't valid")
       equal error.get('fullMessage'), "Foo bar baz isn't valid"
+
