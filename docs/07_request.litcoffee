@@ -11,10 +11,10 @@
 
 ### How to use Batman Request
 
-  Batman.Request can be used a variety of ways.  This is the underlying library that the `rest_storage_adapater` uses to communicate.
+Batman.Request can be used a variety of ways.  This is the underlying library that the `rest_storage_adapater` uses to communicate.
 
-  In other cases where you want to communicate with a server that isn't your default storage_adapter you would use it like:
-    
+In other cases where you want to communicate with a server that isn't your default storage_adapter you would use it like:
+
     test "Send a simple Batman.Request", ->
       Batman.Request.setupMockedResponse()
       Batman.Request.addMockedResponse( "GET", "http://batmanjs.org", ->{})
@@ -25,9 +25,10 @@
           ok true
 
 ### Lifecycle events
- There are a variety of lifecycle events that get fired in a `Request`.  Each of these are passed in as parameters in the options object in the `Request` constructor.
 
- 1. `loading()`: fired before `send()` has been called.
+There are a variety of lifecycle events that get fired in a `Request`.  Each of these are passed in as parameters in the options object in the `Request` constructor.
+
+1) `loading()`: fired before `send()` has been called.
 
     test "Demonstrate the loading event", 1, ->
        new Batman.Request
@@ -35,7 +36,7 @@
          loading: ->
            ok true, "After send but before the request is made"
 
- 2. `loaded()`: fired after the request is complete
+2) `loaded()`: fired after the request is complete
 
      test "Demo the loaded event", 1, ->
        Batman.Request.setupMockedResponse()
@@ -45,7 +46,7 @@
          loaded: ->
            ok true, "Loaded"
 
- 3. `error( xhr )`: fired when an error is detected,  `xhr` is the platform defined xhr object with a property named `request` being the `Batman.Request` object.
+3) `error( xhr )`: fired when an error is detected,  `xhr` is the platform defined xhr object with a property named `request` being the `Batman.Request` object.
 
     test "Demo the error event", 1, ->
       Batman.Request.setupMockedResponse()
@@ -55,7 +56,7 @@
         error: (xhr) ->
           ok true, "Error"
 
- 4. `success ( response )`: fired when a successful request has been made, `response` is the body of the request response.
+4) `success ( response )`: fired when a successful request has been made, `response` is the body of the request response.
 
     test "Demonstrate the success event", 1,  ->
       Batman.Request.setupMockedResponse()
@@ -66,7 +67,7 @@
           equal "foo", response
 
 ## .status
-  The response status, only set after `error` or `success`
+The response status, only set after `error` or `success`
 
     test "Demo the error event", 1, ->
      Batman.Request.setupMockedResponse()
@@ -77,7 +78,7 @@
          equal 400, @status
 
 ## .response
-  The response object
+The response object
 
     test "Demonstrate the response object", 1, ->
       Batman.Request.setupMockedResponse()
@@ -89,7 +90,7 @@
           equal "foo", JSON.parse(@response)
 
 ## .responseHeaders : object
-  An key/value object with the response headers
+An key/value object with the response headers
 
     test "responseHeaders", 1, ->
       Batman.Request.setupMockedResponse()
@@ -102,11 +103,13 @@
 
 ## @Request(options : object)
 
-  Constructs a new `Batman.Request` with the supplied options
+Constructs a new `Batman.Request` with the supplied options
 
-  `options` description
-  1. `url : String`: A string containing the URL to which the request is sent.  Mandatory
-  2. `method : String`: The type of request to make eg. `GET`, `POST`.  Default is `GET`
+### `options`
+
+1) `url : String`: A string containing the URL to which the request is sent.  Mandatory
+
+2) `method : String`: The type of request to make eg. `GET`, `POST`.  Default is `GET`
 
     test "method test", ->
       Batman.Request.setupMockedResponse()
@@ -118,14 +121,15 @@
         success: (response) ->
           ok true
 
-  3. `data`: Data to be sent to the server. It is converted to a query string, if not already a string. It's appended to the url for GET-requests.
-  4. `contentType`: the content type to send, defaults to `application/x-www-form-urlencoded`
+3) `data`: Data to be sent to the server. It is converted to a query string, if not already a string. It's appended to the url for GET-requests.
+
+4) `contentType`: the content type to send, defaults to `application/x-www-form-urlencoded`
 
     test "contentType default", ->
        req = new Batman.Request
        equal req.contentType, "application/x-www-form-urlencoded"
 
-  5. `autosend`: controls whether the request will be sent automatically, deafults to `true`
+5) `autosend`: controls whether the request will be sent automatically, deafults to `true`
 
     test "autosend test", ->
       response_sent = false
@@ -140,13 +144,15 @@
       req.send()
       ok response_sent
 
-  6. `username`: username for authentication
-  7. `password`: password for authentication
-  8. `type`: The type of data you're expecting from the server, defaults to `json`
+6) `username`: username for authentication
+
+7) `password`: password for authentication
+
+8) `type`: The type of data you're expecting from the server, defaults to `json`
 
 
 ## ::send([data])
-  If `autosend` is `false`, this will initiate the request.  The data object passed in will take priority over the one specified in the `options` object
+If `autosend` is `false`, this will initiate the request.  The data object passed in will take priority over the one specified in the `options` object
 
     test "request.send()", ->
       beforeResponse = (req, data) ->
