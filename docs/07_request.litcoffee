@@ -28,43 +28,43 @@ In other cases where you want to communicate with a server that isn't your defau
 
 There are a variety of lifecycle events that get fired in a `Request`.  Each of these are passed in as parameters in the options object in the `Request` constructor.
 
-1) `loading()`: fired before `send()` has been called.
+1. `loading()`: fired before `send()` has been called.
 
-    test "Demonstrate the loading event", 1, ->
-       new Batman.Request
-         url: "http:://batmanjs.org"
-         loading: ->
-           ok true, "After send but before the request is made"
+        test "Demonstrate the loading event", 1, ->
+           new Batman.Request
+             url: "http:://batmanjs.org"
+             loading: ->
+               ok true, "After send but before the request is made"
 
-2) `loaded()`: fired after the request is complete
+1. `loaded()`: fired after the request is complete
 
-     test "Demo the loaded event", 1, ->
-       Batman.Request.setupMockedResponse()
-       Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> {})
-       new Batman.Request
-         url: "http://batmanjs.org"
-         loaded: ->
-           ok true, "Loaded"
+         test "Demo the loaded event", 1, ->
+           Batman.Request.setupMockedResponse()
+           Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> {})
+           new Batman.Request
+             url: "http://batmanjs.org"
+             loaded: ->
+               ok true, "Loaded"
 
-3) `error( xhr )`: fired when an error is detected,  `xhr` is the platform defined xhr object with a property named `request` being the `Batman.Request` object.
+1. `error( xhr )`: fired when an error is detected,  `xhr` is the platform defined xhr object with a property named `request` being the `Batman.Request` object.
 
-    test "Demo the error event", 1, ->
-      Batman.Request.setupMockedResponse()
-      Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> status: 400)
-      new Batman.Request
-        url: "http://batmanjs.org"
-        error: (xhr) ->
-          ok true, "Error"
+        test "Demo the error event", 1, ->
+          Batman.Request.setupMockedResponse()
+          Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> status: 400)
+          new Batman.Request
+            url: "http://batmanjs.org"
+            error: (xhr) ->
+              ok true, "Error"
 
-4) `success ( response )`: fired when a successful request has been made, `response` is the body of the request response.
+1. `success ( response )`: fired when a successful request has been made, `response` is the body of the request response.
 
-    test "Demonstrate the success event", 1,  ->
-      Batman.Request.setupMockedResponse()
-      Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> response: "foo")
-      new Batman.Request
-        url: "http://batmanjs.org"
-        success: (response) ->
-          equal "foo", response
+        test "Demonstrate the success event", 1,  ->
+          Batman.Request.setupMockedResponse()
+          Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> response: "foo")
+          new Batman.Request
+            url: "http://batmanjs.org"
+            success: (response) ->
+              equal "foo", response
 
 ## .status
 The response status, only set after `error` or `success`
@@ -107,48 +107,48 @@ Constructs a new `Batman.Request` with the supplied options
 
 ### `options` description
 
-1) `url : String`: A string containing the URL to which the request is sent.  Mandatory
+1. `url : String`: A string containing the URL to which the request is sent.  Mandatory
 
-2) `method : String`: The type of request to make eg. `GET`, `POST`.  Default is `GET`
+1. `method : String`: The type of request to make eg. `GET`, `POST`.  Default is `GET`.
 
-    test "method test", ->
-      Batman.Request.setupMockedResponse()
-      Batman.Request.addMockedResponse("POST", "http://batmanjs.org", -> response : { FOO: "BAR" })
-      new Batman.Request
-        url: "http://batmanjs.org"
-        method: "POST"
-        data: { some: "data" }
-        success: (response) ->
-          ok true
+        test "method test", ->
+          Batman.Request.setupMockedResponse()
+          Batman.Request.addMockedResponse("POST", "http://batmanjs.org", -> response : { FOO: "BAR" })
+          new Batman.Request
+            url: "http://batmanjs.org"
+            method: "POST"
+            data: { some: "data" }
+            success: (response) ->
+              ok true
 
-3) `data`: Data to be sent to the server. It is converted to a query string, if not already a string. It's appended to the url for GET-requests.
+1. `data`: Data to be sent to the server. It is converted to a query string, if not already a string. It's appended to the url for GET-requests.
 
-4) `contentType`: the content type to send, defaults to `application/x-www-form-urlencoded`
+1. `contentType`: the content type to send, defaults to `application/x-www-form-urlencoded`
 
-    test "contentType default", ->
-       req = new Batman.Request
-       equal req.contentType, "application/x-www-form-urlencoded"
+        test "contentType default", ->
+           req = new Batman.Request
+           equal req.contentType, "application/x-www-form-urlencoded"
 
-5) `autosend`: controls whether the request will be sent automatically, deafults to `true`
+1. `autosend`: controls whether the request will be sent automatically, deafults to `true`
 
-    test "autosend test", ->
-      response_sent = false
-      Batman.Request.setupMockedResponse()
-      Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> {} )
-      req = new Batman.Request
-        url: "http://batmanjs.org"
-        autosend: false
-        success: (response) ->
-          response_sent = true
-      ok !response_sent
-      req.send()
-      ok response_sent
+        test "autosend test", ->
+          response_sent = false
+          Batman.Request.setupMockedResponse()
+          Batman.Request.addMockedResponse("GET", "http://batmanjs.org", -> {} )
+          req = new Batman.Request
+            url: "http://batmanjs.org"
+            autosend: false
+            success: (response) ->
+              response_sent = true
+          ok !response_sent
+          req.send()
+          ok response_sent
 
-6) `username`: username for authentication
+1. `username`: username for authentication
 
-7) `password`: password for authentication
+1. `password`: password for authentication
 
-8) `type`: The type of data you're expecting from the server, defaults to `json`
+1. `type`: The type of data you're expecting from the server, defaults to `json`
 
 
 ## ::send([data])
