@@ -50,6 +50,12 @@ $ ->
       controller = Alfred.get('controllers.todos')
       equal Batman._functionName(controller.constructor), "TodosController"
 
+    test "Multi-word controller names have a lowercase first letter", ->
+      class Alfred extends Batman.App
+      class Alfred.ReminderEmailsController extends Batman.Controller
+      controller = Alfred.get('controllers.reminderEmails')
+      equal Batman._functionName(controller.constructor), "ReminderEmailsController"
+
 ## @layout
 
 `@layout` is the base view of the entire view hierarchy. By default, it will parse any data-* attributes in the entire document, excluding any `data-yield`'s, when `App.run()` is called. Use `MyApp.layout = null` to disable the creation of this default view.

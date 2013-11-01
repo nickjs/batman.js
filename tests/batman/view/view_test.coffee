@@ -123,6 +123,14 @@ asyncTest 'die should forget observers and fire destroy', 2, ->
     ok forgetSpy.called
     QUnit.start()
 
+test "should copy parent view's filters", ->
+  class SuperView extends Batman.View
+    @filter 'testing', -> true
+
+  @superview = new SuperView
+  @superview.subviews.add(@subview = new Batman.View)
+
+  deepEqual @superview._batman.get('filters'), @subview._batman.get('filters')
 
 QUnit.module 'Batman.View isInDOM',
   setup: ->
@@ -270,4 +278,3 @@ test 'setKeypath should work in the basic case', ->
 test 'setKeypath should set on the nearest non-backing view if the keypath misses', ->
   @backingView.setKeypath('test', 'foo')
   equal @view.get('test'), 'foo'
-

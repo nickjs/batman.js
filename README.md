@@ -14,7 +14,7 @@ The APIs are heavily inspired by [Rails](http://rubyonrails.org/) and are design
 
 To find out more or get started with batman.js, check out the website: **[http://batmanjs.org](http://batmanjs.org)**.
 
-## Contributing [![Build Status](https://secure.travis-ci.org/batmanjs/batman.png)](http://travis-ci.org/batmanjs/batman)
+## Contributing [![Build Status](https://travis-ci.org/batmanjs/batman.png?branch=master)](http://travis-ci.org/batmanjs/batman)
 
 Well-tested contributions are always welcome! Here's what you should do:
 
@@ -59,6 +59,9 @@ for), but should cover the most common use cases. They're automatically run
 alongside the regular tests, so you don't need to run them manually.
 
 If you want to render the API docs, see the [README for batmanjs.github.io](https://github.com/batmanjs/batmanjs.github.io/blob/master/README.md).
+
+Please read the [README for the docs](https://github.com/batmanjs/batman/blob/master/docs/README.md)
+before writing any.
 
 #### 6. Create a pull request
 
