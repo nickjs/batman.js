@@ -105,7 +105,7 @@ An key/value object with the response headers
 
 Constructs a new `Batman.Request` with the supplied options
 
-### `options`
+### `options` description
 
 1) `url : String`: A string containing the URL to which the request is sent.  Mandatory
 
