@@ -44,20 +44,20 @@ class Batman.DOM.RouteBinding extends Batman.DOM.AbstractBinding
 
   generatePath: (value, params) ->
     path = if value?.isNamedRouteQuery
-        value.get('path')
-      else
-        @get('dispatcher')?.pathFromParams(value)
+      value.get('path')
+    else
+      @get('dispatcher')?.pathFromParams(value)
 
     return path if !params || !path
 
     if Batman.typeOf(params) == 'Object'
       params = params.toObject() if params.toObject?
-      params = Batman.URI.queryFromParams(params)
-
-    return if path.indexOf('?') == -1
-      path += "?#{params}"
     else
-      path += "&#{params}"
+      params = Batman.URI.paramsFromQuery(params)
+
+    uri = new Batman.URI(path)
+    uri.queryParams = params
+    uri.toString()
 
 class Batman.DOM.RouteParamsBinding extends Batman.DOM.AbstractBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
