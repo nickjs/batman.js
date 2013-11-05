@@ -1,6 +1,2 @@
-node_modules
+/node_modules
 /build
-examples/test*
-tests/batman/build/test_file.js
-tests/build
-libpeerconnection.log

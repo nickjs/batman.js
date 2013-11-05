@@ -10,7 +10,7 @@ glob         = require 'glob'
 
 option '-w', '--watch',  'continue to watch the files and rebuild them when they change'
 option '-c', '--commit', 'operate on the git index instead of the working tree'
-option '-d', '--dist',   'compile minified versions of the platform dependent code into lib/dist (build task only)'
+option '-d', '--dist',   'compile minified versions of the platform dependent code into build/dist (build task only)'
 option '-m', '--compare', 'compare to git refs (stat task only)'
 option '-s', '--coverage', 'run jscoverage during tests and report coverage (test task only)'
 
@@ -33,9 +33,9 @@ task 'build', 'compile Batman.js and all the tools', (options) ->
     files: files
     options: options
     map:
-      'src/batman\.coffee'            : (matches) -> muffin.compileTree(matches[0], 'lib/batman.js', options)
-      'src/platform/([^/]+)\.coffee'     : (matches) -> muffin.compileTree(matches[0], "lib/batman.#{matches[1]}.js", options) unless matches[1] == 'node'
-      'src/extras/(.+)\.coffee'       : (matches) -> muffin.compileTree(matches[0], "lib/extras/#{matches[1]}.js", options)
+      'src/batman\.coffee'            : (matches) -> muffin.compileTree(matches[0], 'build/batman.js', options)
+      'src/platform/([^/]+)\.coffee'  : (matches) -> muffin.compileTree(matches[0], "build/batman.#{matches[1]}.js", options) unless matches[1] == 'node'
+      'src/extras/(.+)\.coffee'       : (matches) -> muffin.compileTree(matches[0], "build/extras/#{matches[1]}.js", options)
       'tests/run\.coffee'             : (matches) -> muffin.compileTree(matches[0], 'tests/run.js', options)
 
   invoke 'build:tools'
@@ -52,21 +52,20 @@ task 'build:tools', 'compile command line batman tools and build transforms', (o
       'src/tools/(.+)\.coffee'        : (matches) -> muffin.compileScript(matches[0], "tools/#{matches[1]}.js", options)
 
 task 'build:dist', 'compile Batman.js files for distribution', (options) ->
-  temp    = require 'temp'
+  temp = require 'temp'
   tmpdir = temp.mkdirSync()
-  distDir = "lib/dist"
   developmentTransform = require('./tools/remove_development_transform').removeDevelopment
 
-  # Run a task which concats the coffeescript, compiles it, and then minifies it
-  first = true
   muffin.run
     files: './src/**/*'
     options: options
     map:
       'src/dist/(.+)\.coffee' : (matches) ->
-        return if matches[1] in ['batman.testing', 'undefine_module']
-        destination = "lib/dist/#{matches[1]}.js"
-        muffin.compileTree(matches[0], destination).then ->
+        [srcPath, srcName] = matches
+        return if srcName in ['undefine_module']
+        destination = "build/dist/#{srcName}.js"
+        muffin.compileTree(srcPath, destination).then ->
+          return if srcName in ['batman.testing']
           options.transform = developmentTransform
           muffin.minifyScript(destination, options).then ->
             muffin.notify(destination, "File #{destination} minified.")
@@ -79,5 +78,3 @@ task 'test:travis', 'run the tests once using PhantomJS', (options) ->
   pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'PhantomJS', './karma.conf.coffee', (code) ->
     process.exit(code)
 
-task 'stats', 'compile the files and report on their final size', (options) ->
-  muffin.statFiles(glob.sync('./src/**/*.coffee').concat(glob.sync('./lib/**/*.js')), options)
