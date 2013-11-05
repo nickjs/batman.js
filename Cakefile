@@ -8,6 +8,8 @@ q            = require 'q'
 glob         = require 'glob'
 {exec, fork, spawn} = require 'child_process'
 
+require 'coffee-script'
+
 option '-w', '--watch',  'continue to watch the files and rebuild them when they change'
 option '-c', '--commit', 'operate on the git index instead of the working tree'
 option '-d', '--dist',   'compile minified versions of the platform dependent code into build/dist (build task only)'
@@ -27,7 +29,7 @@ pipedExec = do ->
         callback(code)
 
 
-task 'build', 'compile Batman.js and all the tools', (options) ->
+task 'build', 'compile batman.js', (options) ->
   files = glob.sync('./src/**/*')
   muffin.run
     files: files
@@ -38,23 +40,13 @@ task 'build', 'compile Batman.js and all the tools', (options) ->
       'src/extras/(.+)\.coffee'       : (matches) -> muffin.compileTree(matches[0], "build/extras/#{matches[1]}.js", options)
       'tests/run\.coffee'             : (matches) -> muffin.compileTree(matches[0], 'tests/run.js', options)
 
-  invoke 'build:tools'
-
   if options.dist
     invoke 'build:dist'
 
-task 'build:tools', 'compile command line batman tools and build transforms', (options) ->
-  muffin.run
-    files: './src/tools/**/*'
-    options: options
-    map:
-      'src/tools/batman\.coffee'      : (matches) -> muffin.compileScript(matches[0], "tools/batman", muffin.extend({}, options, {mode: 0o755, hashbang: true}))
-      'src/tools/(.+)\.coffee'        : (matches) -> muffin.compileScript(matches[0], "tools/#{matches[1]}.js", options)
-
-task 'build:dist', 'compile Batman.js files for distribution', (options) ->
+task 'build:dist', 'compile batman.js files for distribution', (options) ->
   temp = require 'temp'
   tmpdir = temp.mkdirSync()
-  developmentTransform = require('./tools/remove_development_transform').removeDevelopment
+  developmentTransform = require('./src/tools/remove_development_transform').removeDevelopment
 
   muffin.run
     files: './src/**/*'
