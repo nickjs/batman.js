@@ -67,6 +67,15 @@ before writing any.
 
 If it's good code that fits with the goals of the project, we'll merge it in!
 
+## Compiling the library
+
+To generate the JavaScript representation of batman.js, cake tasks are provided for compiling the CoffeeScript sources.
+After an `npm install`, the following tasks are available:
+
+- `cake build`: compile the library to `/build/`
+- `cake build:dist`: compile the library to `/build/dist/`, remove calls to `Batman.developer`, and minify the output
+- `cake --dist build`: perform both of the previous tasks
+
 ## License
 
 batman.js is copyright 2013 by [Shopify](http://www.shopify.com), released under the MIT License (see LICENSE for details).
