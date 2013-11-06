@@ -393,7 +393,7 @@ Returns a JavaScript object containing the attributes of the record, using any s
       class Criminal extends Batman.Model
         @encode "name", "notorious"
 
-      criminal = new Criminal name: "Talia al Ghul", notorious: true
+      criminal = new Criminal(name: "Talia al Ghul", notorious: true)
       criminal_json = criminal.toJSON()
       equal criminal_json.name, "Talia al Ghul"
       equal criminal_json.notorious, true
@@ -407,7 +407,7 @@ Reloads attributes of a record from a JavaScript object.
       class Criminal extends Batman.Model
         @encode "name", "notorious"
 
-      criminal = new Criminal name: "Dr. Jonathan Crane", notorious: false
+      criminal = new Criminal(name: "Dr. Jonathan Crane", notorious: false)
       new_params =
         name: "Scarecrow"
         notorious: true
