@@ -18,7 +18,7 @@ class Batman.Dispatcher extends Batman.Object
         {
           controller: resourceNameFromModel(argument.constructor)
           action: 'show'
-          id: argument.get('id')
+          id: argument.toParam?() || argument.get('id')
         }
       else
         {}

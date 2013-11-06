@@ -177,6 +177,28 @@ asyncTest 'should bind to models when routing to them', 3, ->
 
   @App.run()
 
+asyncTest 'models with toParam defined should route to that instead of the id', ->
+  @App.resources 'tweets'
+
+  class @App.Tweet extends Batman.Model
+    toParam: -> "#{@get('id')}-#{@get('title')}"
+
+  class @App.TweetsController extends Batman.Controller
+    show: ->
+
+  tweet = new @App.Tweet(id: 1, title: 'foo')
+
+  @App.on 'run', =>
+    source = '<a data-route="tweet" id="model">tweet</a><a data-route="routes.tweets[tweet]" id="named-route">tweet</a>'
+    helpers.render source, {tweet}, (node, view) ->
+      links = $('a', view.get('node'))
+      links.each ->
+        equal $(this).attr('href'), Batman.navigator.linkTo('/tweets/1-foo'), @id
+
+      QUnit.start()
+
+  @App.run()
+
 asyncTest 'should allow you to use {controller, action} routes, if they are defined', 1, ->
   @App.route 'foo/bar', 'foo#bar'
   class @App.FooController extends Batman.Controller
