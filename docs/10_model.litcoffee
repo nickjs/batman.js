@@ -377,10 +377,9 @@ You can also access the errors for a specific attribute of the record:
 ## constructor(idOrAttributes = {}) : Model
 
 ## ::isNew() : boolean
+Returns whether or not the instance represents a record that hasn't yet been persisted to the server. The default implementation simply checks if `@get('id')` is undefined, but you could override this on your own models.
 
-Returns whether the object is new (i.e., not saved yet) or not. The default implementation simply checks if `@get('id')` is undefined, but you could override this on your own models.
-
-It used to determine whether `record.save()` will perform a `create` action or a `save` action.
+It is used to determine whether `record.save()` will perform a `create` action or a `save` action.
 
 ## updateAttributes(attributes) : Model
 
