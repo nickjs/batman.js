@@ -376,15 +376,46 @@ You can also access the errors for a specific attribute of the record:
 
 ## constructor(idOrAttributes = {}) : Model
 
-## isNew() : boolean
+## ::isNew() : boolean
+Returns whether or not the instance represents a record that hasn't yet been persisted to the server. The default implementation simply checks if `@get('id')` is undefined, but you could override this on your own models.
+
+It is used to determine whether `record.save()` will perform a `create` action or a `save` action.
 
 ## updateAttributes(attributes) : Model
 
 ## toString() : string
 
-## toJSON() : Object
+## ::toJSON() : Object
 
-## fromJSON() : Model
+Returns a JavaScript object containing the attributes of the record, using any specified encoders.
+
+    test "toJSON returns a JavaScript object with the record's attributes", ->
+      class Criminal extends Batman.Model
+        @encode "name", "notorious"
+
+      criminal = new Criminal(name: "Talia al Ghul", notorious: true)
+      criminal_json = criminal.toJSON()
+      equal criminal_json.name, "Talia al Ghul"
+      equal criminal_json.notorious, true
+
+
+## ::fromJSON() : Model
+
+Reloads attributes of a record from a JavaScript object.
+
+    test 'fromJSON overwrites existing attributes', ->
+      class Criminal extends Batman.Model
+        @encode "name", "notorious"
+
+      criminal = new Criminal(name: "Dr. Jonathan Crane", notorious: false)
+      new_params =
+        name: "Scarecrow"
+        notorious: true
+      criminal.fromJSON(new_params)
+
+      equal criminal.get("notorious"), true
+      equal criminal.get("name"), "Scarecrow"
+
 
 ## toParam() : value
 
@@ -392,11 +423,30 @@ You can also access the errors for a specific attribute of the record:
 
 ## hasStorage() : boolean
 
-## load(options = {}, callback)
+## ::load(options = {}, callback)
+`Load` tries to read the record from its storage adapter. The options object will be passed to the storage adapter when it performs the `read` operation. The callback takes three parameters: error, the loaded record, and the environment. `Load`ing a record clears all errors on that record.
 
-## save(options = {}, callback)
+If the read operation fails or if the record is in a state which doesn't permit `load`, (for example, calling `load` on a deleted record) the callback will be invoked with an error.
 
-## destroy(options = {}, callback)
+## ::save(options = {}, callback)
+`Save` [validates](http://localhost:4000/docs/api/batman.model.html#prototype_function_validate) the record, and if it passes, fires the corresponding storage operation (defined by the `Batman.StorageAdapter` passed to  [`@persist`](/docs/api/batman.model.html#class_function_persist)). When the storage operation is complete, the callback is invoked with two parameters: any JavaScript error and the record.
+
+If the record [`isNew`](/docs/api/batman.model.html#prototype_function_isnew), `save` performs a `create` operation. Otherwise, it performs a `save` operation.
+
+If the record is not valid, the [validation errors](/docs/api/batman.validationerror.html) will be passed to the first parameter of the callback function and the storage operation will not be performed.
+
+## ::destroy(options = {}, callback)
+
+`Destroy` fires the corresponding storage operation. The callback takes three arguments: JavaScript Error, the record, and the environment. If the operation is successful, the record is removed from its Model's [`loaded`](/docs/api/batman.model.html#class_function_loaded) set.
+
+```coffeescript
+criminal = new Criminal name: "The penguin"
+criminal.destroy (err, record, env) ->
+  if err
+    console.log "Oh no! #{record.get('name')} is still on the loose!"
+```
+
+If the record's current lifecycle state doesn't allow the `destroy` action, the callback will be invoked with a `Batman.StateMachine.InvalidTransitionError`. For example, this could occur if `destroy` is called on an already-destroyed record.
 
 ## ::validate(callback)
 
