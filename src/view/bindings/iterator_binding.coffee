@@ -27,22 +27,6 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       @bind()
       @view.allowAndFire('ready')
 
-  dataChange: (collection) ->
-    if collection?
-      unless @bindCollection(collection)
-        items = if collection?.forEach
-          _items = []
-          collection.forEach (item) -> _items.push item
-          _items
-        else
-          Object.keys(collection)
-        @handleArrayChanged(items)
-    else
-      @unbindCollection()
-      @collection = []
-      @handleArrayChanged([])
-    return
-
   handleArrayChanged: (newItems) =>
     unless @backingView.isDead
       @backingView.destroySubviews()

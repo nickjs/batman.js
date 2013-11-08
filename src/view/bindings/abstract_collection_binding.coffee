@@ -2,6 +2,22 @@
 
 class Batman.DOM.AbstractCollectionBinding extends Batman.DOM.AbstractAttributeBinding
 
+  dataChange: (collection) ->
+    if collection?
+      unless @bindCollection(collection)
+        items = if collection?.forEach
+          _items = []
+          collection.forEach (item) -> _items.push item
+          _items
+        else
+          Object.keys(collection)
+        @handleArrayChanged(items)
+    else
+      @unbindCollection()
+      @collection = []
+      @handleArrayChanged([])
+    return
+
   bindCollection: (newCollection) ->
     if newCollection instanceof Batman.Hash
       newCollection = newCollection.meta # Get the object which will  have a toArray
