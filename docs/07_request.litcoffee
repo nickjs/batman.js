@@ -1,7 +1,7 @@
 # Batman.Request
  Request is an abstraction around XHR requests.  It can be used with a variety of platforms, and is implemented in the platform layer files.
 
-### Platform Request Implmentation Libraries:
+## Platform Request Implmentation Libraries
   Depending on the platform library the underlying request implementation will change:
 
  - `batman.jquery.js`: jQuery XHR
