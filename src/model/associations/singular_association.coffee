@@ -13,9 +13,6 @@ class Batman.SingularAssociation extends Batman.Association
       proxy = @associationProxy(association)
       record = false
 
-      proxy._loadSetter ?= proxy.once 'loaded', (child) =>
-        @_withoutDirtyTracking -> @set association.label, child
-
       unless Batman.Property.withoutTracking(-> proxy.get('loaded'))
         if association.options.autoload
           Batman.Property.withoutTracking(-> proxy.load())

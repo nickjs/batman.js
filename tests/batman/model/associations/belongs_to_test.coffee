@@ -59,14 +59,6 @@ asyncTest "belongsTo associations are loaded via ID", 1, ->
       equal store.get('id'), 1
       QUnit.start()
 
-asyncTest "belongsTo associations return a proxy before load and the record after", 1, ->
-  @Product.find 1, (err, product) =>
-    throw err if err
-    product.get('store').load (err, store) =>
-      throw err if err
-      ok product.get('store') instanceof @Store
-      QUnit.start()
-
 asyncTest "belongsTo associations are not loaded when autoload is off", 1, ->
   namespace = @
   class @Product extends Batman.Model
@@ -81,7 +73,7 @@ asyncTest "belongsTo associations are not loaded when autoload is off", 1, ->
     delay ->
       ok !store.get('loaded')
 
-asyncTest "belongsTo associations with autoload is off put the record at the property when loaded", 2, ->
+asyncTest "belongsTo associations with autoload is off put the record at the property when loaded", 3, ->
   namespace = @
   class @Product extends Batman.Model
     @encode 'id', 'name'
@@ -93,7 +85,8 @@ asyncTest "belongsTo associations with autoload is off put the record at the pro
   @Product.find 1, (err, product) =>
     product.get('store').load (err, store) =>
       throw err if err
-      ok product.get('store') instanceof @Store
+      ok product.get('store.target') instanceof @Store
+      ok product.get('store.loaded') == true
       equal product.get('lifecycle.state'), 'clean'
       QUnit.start()
 
