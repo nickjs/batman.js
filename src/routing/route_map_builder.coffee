@@ -73,7 +73,8 @@ class Batman.RouteMapBuilder
   member: -> @_addRoutesWithCardinality('member', arguments...)
   collection: -> @_addRoutesWithCardinality('collection', arguments...)
 
-  root: (signature, options) -> @route '/', signature, options
+  root: (signature, options = {}) ->
+    @route '/', signature, options
 
   route: (path, signature, options, callback) ->
     if !callback
@@ -123,6 +124,7 @@ class Batman.RouteMapBuilder
     options.app = @app
     route = new klass(path, options)
     @routeMap.addRoute(name, route)
+    @routeMap.addRoute('root', route) if name is ''
 
   _nameFromPath: (path) ->
     path = path
