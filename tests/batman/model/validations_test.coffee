@@ -480,3 +480,5 @@ test "ValidationError doesn't add 'base' to fullMessage", ->
 test "ValidationError should singularize associated attribute in the full message", ->
   error = new Batman.ValidationError("emails.address", "isn't valid")
   equal error.get('fullMessage'), "Email address isn't valid"
+  error = new Batman.ValidationError("users.emails.address", "isn't valid")
+  equal error.get('fullMessage'), "User email address isn't valid"
