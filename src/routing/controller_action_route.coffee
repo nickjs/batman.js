@@ -6,7 +6,7 @@ class Batman.ControllerActionRoute extends Batman.Route
       if Batman.typeOf(options.signature) is 'String'
         [controller, action] = options.signature.split('#')
       else
-        [controller, action] = options.signature
+        {controller, action} = options.signature
 
       action ||= 'index'
       options.controller = controller
