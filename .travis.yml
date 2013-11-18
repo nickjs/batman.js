@@ -1,3 +1,18 @@
-language: 'node_js'
+language: node_js
 node_js:
   - 0.10
+before_script:
+  - gem install travis-artifacts
+after_success:
+  - >
+      test ${TRAVIS_BRANCH} = travis-artifacts &&
+      cake build:dist &&
+      cd build &&
+      mv dist batman.js &&
+      tar cvzf batman-master.tar.gz batman.js &&
+      travis-artifacts upload --path batman-master.tar.gz --target-path --cache-control no-cache
+env:
+  global:
+    - ARTIFACTS_S3_BUCKET=batman.js
+    - secure: WOHbnm3EXKX6hnYVUAKROzqjiB9AQ0BWx7C7UQVtF1wyjw5jkYBwdLwVKR38gRw1ioyvd3Zn+hDHm7PBU5lD1qK6So9Fq8upTbquAZhk71APPCkejFfe5INPKdJ8UYVmHM8xJwHa9M2kSkdQWC9yVQl84qnD7IYbggFPAuazNdc=
+    - secure: btHxHJRyBPuY8j2ewVzk2if0aL0YISVIuLvQ2dhq11ztfwcfJeFiIHMBKsqbhhmxh2sDMr6CPFNLY2QY2EvH4nX1ryiA+uXtdkAVoki4pT8Ede1wZey1Pr8NmqOJA9Q6K4Jr6lnyfLl6eWapNqZYEHkaYRyWdg2xnrdxeTt2uTs=
