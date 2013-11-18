@@ -96,7 +96,7 @@ Would result in `/comments` being added to the routing map, pointed to `PagesCon
 
 ## @resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])
 
-`@resources` is modeled after the Rails routing `resources` method. It automatically defines some routes (and matches them to controller actions) for you. For example,
+`@resources` is modeled after the Rails routing `resources` method. It automatically defines some routes and matches them to controller actions. For example,
 
 ```coffeescript
 class App extends Batman.App
