@@ -5,7 +5,7 @@ capitalize_rx = /(^|\s)([a-z])/g
 underscore_rx1 = /([A-Z]+)([A-Z][a-z])/g
 underscore_rx2 = /([a-z\d])([A-Z])/g
 humanize_rx1 = /_id$/
-humanize_rx2 = /_|-/g
+humanize_rx2 = /_|-|\./g
 humanize_rx3 = /^\w/g
 
 Batman.helpers =
