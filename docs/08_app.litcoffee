@@ -96,6 +96,56 @@ Would result in `/comments` being added to the routing map, pointed to `PagesCon
 
 ## @resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])
 
+`@resources` is modeled after the Rails routing `resources` method. It automatically defines some routes (and matches them to controller actions) for you. For example,
+
+```coffeescript
+class App extends Batman.App
+  @resources 'pages'
+
+class App.PagesController extends Batman.Controller
+  index: ->
+    # ...
+  new: ->
+    # ...
+  show: (params) ->
+    App.Page.find params.id, (err, page) ->
+      @set('currentPage', page)
+  edit: (params) ->
+    App.Page.find params.id, (err, page) ->
+      @set('currentPage', page)
+```
+
+Will set up these routes:
+
+Path | Controller Action | View binding
+-- | -- | -- |
+/pages | App.PagesController#index | `data-route="routes.pages"`
+/pages/new | App.PagesController#new | `data-route="routes.pages.new"`
+/pages/:id | App.PagesController#show | `data-route="routes.pages[currentPage]"`
+/pages/:id/edit | App.PagesController#edit | `data-route="routes.pages[currentPage].edit"`
+
+Of course, `destroy`, `update`, and `create` are not performed by controller actions in Batman. Instead, call `save` or `destroy` on your records.
+
+### Nested Resources
+
+You may also nest resources, as in Rails:
+
+```coffeescript
+class App extends Batman.App
+  @resources 'pages', ->
+    @resources 'comments'
+```
+
+Will set up these routes for `App.Comment`:
+
+Path | Controller Action | View binding
+-- | -- | -- |
+/pages/:page_id/comments | App.CommentsController#index | `data-route="routes.pages[currentPage].comments"`
+/pages/:page_id/comments/new | App.CommentsController#new | `data-route="routes.pages[currentPage].comments.new"`
+/pages/:page_id/comments/:id | App.CommentsController#show | `data-route="routes.pages[currentPage].comments[currentComment]"`
+/pages/:page_id/comments/:id/edit | App.CommentsController#edit | `data-route="routes.pages[currentPage].comments[currentComment].edit"`
+
+
 ## @member
 
 `@member` defines a routable action you can call on a specific instance of a member of a collection resource. For example, if you have a collection of `Page` resources, and a user can post a comment on a specific page:
