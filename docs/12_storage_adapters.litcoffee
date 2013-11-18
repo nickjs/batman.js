@@ -57,13 +57,43 @@ class App.Superhero extends Batman.Model
 
 Storage operations and callbacks each take two arguments: `env` and `next`.
 
-`next` ...
+`env` in a vanilla JS object which is passed to each function in the chain. `Batman.StorageAdapter` expects at least two attributes:
 
-`env` ...
+- `env.subject` is the `Batman.Model` record which had the storage operation called on it.
+- `env.options` is an object containing the options passed when the operations was called on the subject.
+
+        test "env.subject and env.options are present in storage adapter calls", ->
+          spiedEnvSubject = false
+          spiedEnvOptions = false
+
+          class SpyStorageAdapter extends TestStorageAdapter
+            @::before 'create', 'update' (env, next) ->
+              console.log "Spying!", env, next
+              spiedEnvSubject = env.subject
+              spiedEnvOptions = env.options
+              next()
+
+          class SpyModel extends Batman.Model
+            @persist SpyStorageAdapter
+
+          @spy = new SpyModel
+          saveOptions = {someKey: "someValue"}
+          @spy.save saveOptions, (err, savedSpy) ->
+            throw err if err
+
+          console.log @spy, spiedEnvSubject
+          console.log saveOptions, spiedEnvOptions
+
+          equal undefined, spiedEnvSubject.message
+          equal spiedEnvSubject, @spy.toJSON()
+          equal spiedEnvOptions, saveOptions
+
+`next` is a reference to the next operation in the call chain. Any operation must call `next()`, otherwise the call chain will fail.
+
 
 ### Adding Callbacks
 
-Callbacks can be registered on any storage operation (listed below).
+Callbacks can be registered on any storage operation (listed below). Callbacks accept
 
 ```coffeescript
 class App.SpecificHeaderStorageAdapter extends Batman.RestStorage
@@ -84,16 +114,47 @@ Any `StorageAdapter` must implement these operations as instance methods, for ex
 ```
 class App.ModifiedStorageAdapter extends Batman.RestStorage
   destroy: (env, next) ->
-    # your destroy operation
+    # your alternative destroy operation
     next()
 ```
 
-## create
+## ::create(env : Object, next : Function)
 
-## read
+When `save` is called on a record and `isNew` returns
 
-## update
+## ::read(env : Object, next : Function)
 
-## destroy
+## ::update(env : Object, next : Function)
 
-## readAll
+## ::destroy(env : Object, next : Function)
+
+## ::readAll(env : Object, next : Function)
+
+### Other useful methods
+
+## @nextIfError(wrappedFunction : Function )
+
+Wraps functions in the call chain, bypassing the function body and calling `next()` if `env.error?`
+Otherwise, calls the wrapped function with `env` and `next`.
+
+    test "StorageAdapter@skipIfError doesn't call the function if env.error?", ->
+      insideFunctionWasCalled = false
+      nextFunctionWasCalled = false
+
+      insideFunction = ->
+        insideFunctionWasCalled = true
+
+      nextFunction = ->
+        nextFunctionWasCalled = true
+
+      functionWithWrapper = Batman.LocalStorage.skipIfError (env, next) ->
+        insideFunction() # would set insideFunctionWasCalled to true
+
+      dummyEnv = {error: true}
+
+      functionWithWrapper(dummyEnv, nextFunction)
+
+      equal nextFunctionWasCalled, true
+      equal insideFunctionWasCalled, false
+
+
