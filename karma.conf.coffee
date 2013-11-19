@@ -40,7 +40,7 @@ module.exports = (config) ->
         return main.concat(glob.sync(pattern))
       return main.concat(files.tests, files.docs)
 
-    reporters: ['progress']
+    reporters: ['dots']
 
     autoWatch: true
 
