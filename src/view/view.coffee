@@ -67,7 +67,7 @@ class Batman.View extends Batman.Object
 
     subview.set('controller', subviewController || @controller)
     subview.set('superview', this)
-    subview.fire('viewDidMoveToSuperview')
+    subview.fireAndCall('viewDidMoveToSuperview')
 
     if (yieldName = subview.contentFor) and not subview.parentNode
       yieldObject = Batman.DOM.Yield.withName(yieldName)
@@ -86,7 +86,7 @@ class Batman.View extends Batman.Object
 
   _removeFromSuperview: ->
     return if not @superview
-    @fire('viewWillRemoveFromSuperview')
+    @fireAndCall('viewWillRemoveFromSuperview')
 
     @forget('node', @_nodesChanged)
     @forget('parentNode', @_nodesChanged)
@@ -142,8 +142,7 @@ class Batman.View extends Batman.Object
     if value?
       @set(eventName, value)
     else
-      @fire(eventName)
-      @[eventName]?()
+      @fireAndCall(eventName)
 
     subview.propagateToSubviews(eventName, value) for subview in @subviews._storage
 
@@ -190,7 +189,7 @@ class Batman.View extends Batman.Object
       if not @node? and not @isDead
         node = @loadView()
         @set('node', node) if node
-        @fire('viewDidLoad')
+        @fireAndCall('viewDidLoad')
 
       return @node
 
@@ -218,8 +217,7 @@ class Batman.View extends Batman.Object
     new Batman.BindingParser(this)
 
     @set('isBound', true)
-    @fire('ready')
-    @ready?()
+    @fireAndCall('ready')
 
   destroyBindings: ->
     binding.die() for binding in @bindings
@@ -238,22 +236,22 @@ class Batman.View extends Batman.Object
       Batman.developer.warn "Tried to die() a view more than once."
       return
 
-    @fire('destroy')
+    @fireAndCall('destroy')
+
+    @destroyBindings()
+    @destroySubviews()
 
     if @node
       @wasInDOM = Batman.DOM.containsNode(@node)
       Batman.DOM.destroyNode(@node)
+
+    @removeFromSuperview()
 
     @forget()
     @_batman.properties?.forEach (key, property) -> property.die()
 
     if @_batman.events
       event.clearHandlers() for _, event of @_batman.events
-
-    @destroyBindings()
-    @destroySubviews()
-
-    @removeFromSuperview()
 
     @node = null
     @parentNode = null
@@ -312,6 +310,10 @@ class Batman.View extends Batman.Object
 
     return if not target || target is Batman.container
     Batman.Property.forBaseAndKey(target, keypath)?.setValue(value)
+
+  fireAndCall: (key) ->
+    @fire(key)
+    @[key]?()
 
 Batman.container.$context ?= (node) ->
   while node
