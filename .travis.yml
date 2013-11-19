@@ -5,7 +5,7 @@ before_script:
   - gem install travis-artifacts
 after_success:
   - >
-      test ${TRAVIS_BRANCH} = master &&
+      test "$TRAVIS_BRANCH" = "master" &&
       cake build:dist &&
       cd build &&
       mv dist batman.js &&
