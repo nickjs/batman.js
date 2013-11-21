@@ -2,7 +2,13 @@
 
 QUnit.module "Batman.Model",
   setup: ->
+    namespace = this
+
+    class @Shop extends Batman.Model
+      @hasMany 'products', {namespace: namespace}
+
     class @Product extends Batman.Model
+      @belongsTo 'shop', {namespace: namespace}
 
 test "constructors should always be called with new", ->
   Product = @Product
@@ -53,6 +59,10 @@ test "updateAttributes will update a model's attributes", ->
 test "updateAttributes will returns the updated record", ->
   product = new @Product(id: 10)
   equal product, product.updateAttributes {name: "foobar", id: 20}
+
+test "createFromJSON does not crash when associations are null in attributes", ->
+  product = @Product.createFromJSON(name: 'Test', id: 1, shop: null)
+  ok true
 
 test "createFromJSON will create a record using encoders", ->
   @Product.encode 'name', 'id'

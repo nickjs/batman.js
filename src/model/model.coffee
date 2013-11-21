@@ -344,8 +344,14 @@ class Batman.Model extends Batman.Object
         obj[key] = value
     else
       encoders.forEach (key, encoder) =>
-        if encoder.decode and typeof data[encoder.as] isnt 'undefined'
-          obj[key] = encoder.decode(data[encoder.as], encoder.as, data, obj, this)
+        return if !encoder.decode
+
+        value = data[encoder.as]
+        return if value is undefined
+
+        return if value is null && @_associationForAttribute(encoder.as)?
+
+        obj[key] = encoder.decode(value, encoder.as, data, obj, this)
 
     if @constructor.primaryKey isnt 'id'
       obj.id = data[@constructor.primaryKey]
@@ -495,6 +501,9 @@ class Batman.Model extends Batman.Object
       true
     else
       false
+
+  _associationForAttribute: (attribute) ->
+    @constructor._batman.get('associations')?.get(attribute)
 
   _doStorageOperation: (operation, options, callback) ->
     Batman.developer.assert @hasStorage(), "Can't #{operation} model #{Batman.functionName(@constructor)} without any storage adapters!"
