@@ -36,6 +36,8 @@ test 'response should contain the expected parameters on error', ->
     method: 'GET'
     error: (response) ->
       QUnit.equal(response.responseText, "responseText")
+      QUnit.equal(response.response, "response")
+      QUnit.equal(response.somethingElse, undefined)
 
 asyncTest 'assertGET will pass if the if a GET request is made', 2, ->
   testFn = (validate) =>
