@@ -16,6 +16,29 @@ test 'beforeResponse is called before the success event', ->
 
   QUnit.equal(successCallCount, 1)
 
+test 'response should contain the expected parameters on success', ->
+  validResponse = {absolutely: "valid"}
+  Batman.Request.addMockedResponse 'GET', '/test', ->
+    {status: 200, response: validResponse}
+
+  new Batman.Request
+    url: '/test'
+    method: 'GET'
+    success: (response) ->
+      QUnit.equal(response, validResponse)
+
+test 'response should contain the expected parameters on error', ->
+  Batman.Request.addMockedResponse 'GET', '/test', ->
+    {status: 500, response: "response", responseText: "responseText", somethingElse: "somethingElse"}
+
+  new Batman.Request
+    url: '/test'
+    method: 'GET'
+    error: (response) ->
+      QUnit.equal(response.responseText, "responseText")
+      QUnit.equal(response.response, "response")
+      QUnit.equal(response.somethingElse, undefined)
+
 asyncTest 'assertGET will pass if the if a GET request is made', 2, ->
   testFn = (validate) =>
     @testCase.assertGET '/fake.json', {response: "{}"}
