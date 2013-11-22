@@ -280,12 +280,12 @@ basicSetTestSuite = ->
     equal observer.callCount, 2
     strictEqual obj.get('firstBiggerThan2'), 4
 
-
-  test "using .toJSON() returns an array representation of the set", ->
+  test "using .toJSON() returns a serializable array representation of the set", ->
     set = new Batman.Set
     set.add new Batman.Object foo: 'bar'
     set.add new Batman.Object bar: 'baz'
-    deepEqual set.toJSON(), set.toArray()
+    deepEqual set.toJSON(), [{foo: 'bar'}, {bar: 'baz'}]
+
 
 sortAndIndexSuite = ->
   test "sortedBy(property, order) returns a cached SetSort", ->
