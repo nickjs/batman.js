@@ -38,7 +38,7 @@ $ ->
 
 ## @routes
 
-`@routes` is a class level property referencing the root level `NamedRouteQuery` which allows for binding to routes on objects. See `data-route` bindings for more information.
+`@routes` is a class level property referencing the root level `NamedRouteQuery` which allows for binding to routes on objects. See the [`data-route` binding](batman.view_bindings.html#data-route) for more information.
 
 ## @controllers
 
@@ -117,14 +117,15 @@ class App.PagesController extends Batman.Controller
 
 Will set up these routes:
 
-Path | Controller Action | View binding
--- | -- | -- |
-/pages | App.PagesController#index | `data-route="routes.pages"`
-/pages/new | App.PagesController#new | `data-route="routes.pages.new"`
-/pages/:id | App.PagesController#show | `data-route="routes.pages[currentPage]"`
-/pages/:id/edit | App.PagesController#edit | `data-route="routes.pages[currentPage].edit"`
+Path | Controller Action
+-- | -- |
+/pages | App.PagesController#index
+/pages/new | App.PagesController#new
+/pages/:id | App.PagesController#show
+/pages/:id/edit | App.PagesController#edit
 
-Of course, `destroy`, `update`, and `create` are not performed by controller actions in Batman. Instead, call `save` or `destroy` on your records.
+Note that unlike Rails, `destroy`, `update`, and `create` are not performed by controller actions in batman.js. Instead, call `save` or `destroy` on your records directly.
+To access a generated route from within a view, use the [`data-route` binding](batman.view_bindings.html#data-route).
 
 ### Nested Resources
 
@@ -138,12 +139,12 @@ class App extends Batman.App
 
 Will set up these routes for `App.Comment`:
 
-Path | Controller Action | View binding
--- | -- | -- |
-/pages/:page_id/comments | App.CommentsController#index | `data-route="routes.pages[currentPage].comments"`
-/pages/:page_id/comments/new | App.CommentsController#new | `data-route="routes.pages[currentPage].comments.new"`
-/pages/:page_id/comments/:id | App.CommentsController#show | `data-route="routes.pages[currentPage].comments[currentComment]"`
-/pages/:page_id/comments/:id/edit | App.CommentsController#edit | `data-route="routes.pages[currentPage].comments[currentComment].edit"`
+Path | Controller Action
+-- | -- |
+/pages/:page_id/comments | App.CommentsController#index
+/pages/:page_id/comments/new | App.CommentsController#new
+/pages/:page_id/comments/:id | App.CommentsController#show
+/pages/:page_id/comments/:id/edit | App.CommentsController#edit
 
 
 ## @member
@@ -189,3 +190,4 @@ class Example.PagesController extends Batman.Controller
 ```
 
 Would result in `/` being pointed to `PagesController#index`.
+
