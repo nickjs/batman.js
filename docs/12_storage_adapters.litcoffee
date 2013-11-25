@@ -26,7 +26,7 @@ Batman ships with a few storage adapters to get you up and coding quickly:
 
 - `Batman.LocalStorage` uses [`window.localStorage`](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Storage#localStorage) to persist records.
 - `Batman.SessionStorage` extends `Batman.LocalStorage` and uses [`window.sessionStorage`](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Storage#sessionStorage) to persist records.
-- `Batman.RestStorage` uses [HTTP REST](http://en.wikipedia.org/wiki/REST) to persist records, mapping HTTP verbs to storage operations and handling HTTP response codes appropriately. _Note: Because `Batman.RestStorage` depends on [`Batman.Request`](/docs/api/batman.request.html), you'll need a [platform library](/docs/api/batman.request.html#platform_request_implmentation_libraries) to implement `Batman.Request`._
+- `Batman.RestStorage` uses [HTTP REST](http://en.wikipedia.org/wiki/REST) to persist records, mapping HTTP verbs to storage operations and handling HTTP response codes appropriately. _Note: Because `Batman.RestStorage` depends on [`Batman.Request`](/docs/api/batman.request.html), you'll need a [platform library](/docs/api/batman.request.html#platform_request_implementation_libraries) to implement `Batman.Request`._
 
 ### Batman.RailsStorage
 Also, `Batman.RailsStorage` (available in separate file: [Coffee](https://github.com/batmanjs/batman/blob/master/src/extras/batman.rails.coffee), JS) extends `Batman.RestStorage` and provides some helpful Rails integrations:
@@ -36,7 +36,7 @@ Also, `Batman.RailsStorage` (available in separate file: [Coffee](https://github
 - If a record's URL doesn't end in `.json` and doesn't include a query string, `.json` is automatically appended to the URL.
 
 
-_Note: Like `Batman.RestStorage`, `Batman.RailsStorage` depends on [`Batman.Request`](/docs/api/batman.request.html), so you'll need a [platform library](/docs/api/batman.request.html#platform_request_implmentation_libraries) to implement `Batman.Request`._
+_Note: Like `Batman.RestStorage`, `Batman.RailsStorage` depends on [`Batman.Request`](/docs/api/batman.request.html), so you'll need a [platform library](/docs/api/batman.request.html#platform_request_implementation_libraries) to implement `Batman.Request`._
 
 If you're using Batman and Rails, be sure to check out the [batman-rails](https://github.com/batmanjs/batman-rails) gem.
 
@@ -62,18 +62,21 @@ Storage operations and callbacks each take two arguments: `env` and `next`.
 `env` is a vanilla JS object which is passed to each function in the chain. `Batman.StorageAdapter` sets these attributes on `env`:
 
 - `env.subject` is the `Batman.Model` record which had the storage operation called on it.
-- `env.options` is an object containing the options passed when the operations was called on the subject.
+- `env.options` contains the options passed to the operation on the subject.
 - `env.action` is the storage operation that will be executed by the storage adapter.
-- `env.error` stores any errors that occur during the chain. It becomes the first argument to them model's callback.
-- `env.result` must be set by the `Batman.StorageAdapter` subclass after the operation is complete. It is a copy of the record and it becomes the second argument to the model's callback.
+- `env.error` stores any errors that occur during the chain. It becomes the first argument to the operation callback.
+- `env.result` contains the record(s) returned by the operation and should be set by the storage adapter implementation. It becomes the second argument to the operation's callback.
 
-Storage adapters may use `env` to gather information and use it in its operations. For example, `Batman.RestStorage` adds some attributes to `env` and `env.options`:
+Storage adapters may use `env` to collect any extra information needed by their operations. For example, `Batman.RestStorage` adds some attributes to `env` and `env.options`:
 
 - `env.request` is the `Batman.Request` which implements the storage operation.
 - `env.options.method` is the HTTP method used by `Batman.Request` to implement the storage operation.
 - `env.options.url` is the URL used by `Batman.Request` to implement the storage operation.
 
-`next` is a reference to the next operation in the call chain. Any operation must call `next()`, otherwise the call chain will not continue. To ensure the completion of the call chain, consider wrapping your function in [`@nextIfError`](/docs/api/batman.storageadapter.html#class_function_nextiferror).
+`next` is a reference to the next function in the call chain for the current storage operation. `Batman.StorageAdapter` uses this to execute before-filters, storage operations and after-filters in the correct sequence.
+
+
+`next` should be called (`next()`) when the current function has completed. This indicates that the operation should proceed with the next function in its call chain. To ensure the completion of the call chain, consider wrapping your function in [`@nextIfError`](/docs/api/batman.storageadapter.html#class_function_nextiferror).
 
 
 ### Adding Callbacks
@@ -93,9 +96,11 @@ class App.SpecificHeaderStorageAdapter extends Batman.RestStorage
     next()
 ```
 
-### Storage Operations
+## Storage Operations
 
 Any `StorageAdapter` must implement these operations as instance methods, for example:
+
+
 ```
 class App.ModifiedStorageAdapter extends Batman.RestStorage
   destroy: (env, next) ->
@@ -103,32 +108,28 @@ class App.ModifiedStorageAdapter extends Batman.RestStorage
     next()
 ```
 
-## ::create(env : Object, next : Function)
+When a record is saved, destroyed or loaded, `Batman.StorageAdapter` invokes these methods. Although you may reimplement them, you probably don't need to call them in your application code.
 
-Saves a new record. When `save` is called on a record and `isNew` returns `true`, the storage adapter's `create` method is called.
+## ::create(env : Object, next : Function)
+Called to save a new record. When `save` is called on a record and `isNew` returns `true`, the storage adapter's `create` method is called.
 
 ## ::read(env : Object, next : Function)
-
-Loads a record from storage into a Batman app.
+Called to load a record from storage.
 
 ## ::update(env : Object, next : Function)
-
-Updates an existing record. When `save` is called on a record and `isNew` returns `false`, the storage adapter's `save` method is called.
+Called to update an existing record. When `save` is called on a record and `isNew` returns `false`, the storage adapter's `update` method is called.
 
 ## ::destroy(env : Object, next : Function)
-
-Destroys an existing record.
+Called to destroy an existing record.
 
 ## ::readAll(env : Object, next : Function)
+Called to load all records of a particular type from storage.
 
-Loads all instances of a `Batman.Model` from storage into memory.
-
-### Other Useful Methods
+## Other Useful Methods
 
 ## @nextIfError(wrappedFunction : Function )
 
-Wraps functions in the call chain, bypassing the function body and calling `next()` if `env.error?`
-Otherwise, calls the wrapped function with `env` and `next`.
+Wraps a function, bypassing the function body and calling next() if an error has already occurred.
 
     test "StorageAdapter@skipIfError doesn't call the function if env.error?", ->
       insideFunction = createSpy()
@@ -155,9 +156,7 @@ class App.SpecialStorageAdapter extends Batman.RestStorage
 ```
 
 ## ::before (keys... : Strings, filter : Function)
-
 Registers `filter` as a before-operation callback for the storage operations named by `keys...`.
 
 ## ::after (keys... : Strings, filter : Function)
-
 Registers `filter` as a after-operation callback for the storage operations named by `keys...`.
