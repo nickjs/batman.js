@@ -94,6 +94,22 @@ test 'it should render views if given in the options', ->
   @controller.render({view})
   equal Batman.currentApp.layout.subviews.get('first'), view
 
+test 'it should load the HTML from the default location', ->
+  class TestShowView extends Batman.View
+    
+  Batman.currentApp["TestShowView"] = TestShowView
+  
+  @controller.dispatch('show')
+  equal @controller.currentView.source, 'test/show'
+
+test 'it should load the HTML from the override location on the view prototype', ->
+  class TestShowView extends Batman.View
+    source: 'override/source'
+  Batman.currentApp["TestShowView"] = TestShowView
+  
+  @controller.dispatch('show')
+  equal @controller.currentView.source, 'override/source'
+
 test 'it should allow setting the default render destination yield', ->
   view = new Batman.View
   @controller.defaultRenderYield = 'sidebar'

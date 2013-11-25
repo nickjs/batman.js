@@ -148,7 +148,7 @@ class Batman.Controller extends Batman.Object
       options.view = null
     else
       options.viewClass ||= @_viewClassForAction(action)
-      options.source ||= Batman.helpers.underscore(@get('routingKey') + '/' + action)
+      options.source ||= options.viewClass?::source || Batman.helpers.underscore(@get('routingKey') + '/' + action)
       view = @renderCache.viewForOptions(options)
 
     if view
