@@ -121,7 +121,7 @@ Destroys an existing record.
 
 Loads all instances of a `Batman.Model` from storage into memory.
 
-### Other useful methods
+### Other Useful Methods
 
 ## @nextIfError(wrappedFunction : Function )
 
@@ -143,7 +143,7 @@ Otherwise, calls the wrapped function with `env` and `next`.
       equal insideFunction.called, false, 'insideFunction was skipped'
       equal nextFunction.called, true, 'nextFunction was called'
 
-Note that inside a storage adapter definition, this function is referenced as `@skipIfError`, for example:
+Inside a storage adapter definition, this function is referenced as `@skipIfError`, for example:
 
 ```
 class App.SpecialStorageAdapter extends Batman.RestStorage
