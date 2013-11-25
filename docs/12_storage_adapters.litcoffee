@@ -38,6 +38,8 @@ Also, `Batman.RailsStorage` (available in separate file: [Coffee](https://github
 
 _Note: Like `Batman.RestStorage`, `Batman.RailsStorage` depends on [`Batman.Request`](/docs/api/batman.request.html), so you'll need a [platform library](/docs/api/batman.request.html#platform_request_implmentation_libraries) to implement `Batman.Request`._
 
+If you're using Batman and Rails, be sure to check out the [batman-rails](https://github.com/batmanjs/batman-rails) gem.
+
 ## Subclassing Batman.StorageAdapter
 
 You may want to customize Batman's storage operations for your own app, for example:
