@@ -158,7 +158,7 @@ class Batman.Property extends Batman.PropertyEvent
     @lockValue() if @value isnt undefined and @isFinal()
 
   sourceChangeHandler: ->
-    @_sourceChangeHandler ||= @_handleSourceChange.bind(@)
+    @_sourceChangeHandler ||= => @_handleSourceChange()
     Batman.developer.do => @_sourceChangeHandler.property = @
     @_sourceChangeHandler
 
