@@ -76,7 +76,7 @@ Storage adapters may use `env` to collect any extra information needed by their 
 `next` is a reference to the next function in the call chain for the current storage operation. `Batman.StorageAdapter` uses this to execute before-filters, storage operations and after-filters in the correct sequence.
 
 
-`next` should be called (`next()`) when the current function has completed. This indicates that the operation should proceed with the next function in its call chain. To ensure the completion of the call chain, consider wrapping your function in [`@nextIfError`](/docs/api/batman.storageadapter.html#class_function_nextiferror).
+`next` should be called (`next()`) when the current function has completed. This indicates that the operation should proceed with the next function in its call chain. To ensure the completion of the call chain, consider wrapping your function in [`@skipIfError`](/docs/api/batman.storageadapter.html#class_function_skipiferror).
 
 
 ### Adding Callbacks
@@ -127,7 +127,7 @@ Called to load all records of a particular type from storage.
 
 ## Other Useful Methods
 
-## @nextIfError(wrappedFunction : Function )
+## @skipIfError(wrappedFunction : Function )
 
 Wraps a function, bypassing the function body and calling next() if an error has already occurred.
 
