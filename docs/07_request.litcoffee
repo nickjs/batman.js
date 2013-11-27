@@ -129,7 +129,7 @@ Constructs a new `Batman.Request` with the supplied options
            req = new Batman.Request
            equal req.contentType, "application/x-www-form-urlencoded"
 
-1. `autosend`: controls whether the request will be sent automatically, deafults to `true`
+1. `autosend`: controls whether the request will be sent automatically, defaults to `true`
 
         test "autosend test", ->
           response_sent = false
