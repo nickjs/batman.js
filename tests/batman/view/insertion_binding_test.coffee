@@ -1,11 +1,6 @@
 helpers = window.viewHelpers
 
-QUnit.module 'Batman.View insertion bindings',
-  setup: ->
-    class @TestView extends Batman.View
-      constructor: ->
-        @constructor.instance = @
-        super
+QUnit.module 'Batman.View insertion bindings'
 
 asyncTest 'it should allow elements to be removed when the keypath evaluates to true', 3, ->
   source = '<div class="foo" data-removeif="foo"></div>'
@@ -44,6 +39,18 @@ asyncTest 'nodes after the binding should be rendered if the keypath starts as f
 
   helpers.render source, false, context, (node) ->
     equal $('.test', node).html(), 'bar'
+    QUnit.start()
+
+asyncTest 'child bindings should be rendered if the keypath starts as false', 1, ->
+  spy = createSpy()
+  class @TestView extends Batman.View
+    @accessor 'test', spy
+
+  source = '<div data-insertif="foo"><div data-bind="test"></div></div>'
+  context = foo: false, bar: 'bar', viewClass: @TestView
+
+  helpers.render source, false, context, (node) ->
+    equal spy.callCount, 1
     QUnit.start()
 
 asyncTest 'it should allow keypaths to transition from falsy values to other falsy values', 3, ->
