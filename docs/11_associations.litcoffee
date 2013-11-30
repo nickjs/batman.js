@@ -47,8 +47,7 @@ or,
 
 ## Batman.AssocationProxy
 
-Association accessors won't always return a `Batman.AssociationSet` or `Batman.Model`. Generally they will return a `Batman.AssocationProxy` named after the association type,
-such as `Batman.BelongsToAssociationProxy` or `Batman.HasOneAssociationProxy`.
+Association accessors won't always return a `Batman.AssociationSet` or `Batman.Model`. Generally they will return a `Batman.AssocationProxy` named after the association type, such as `Batman.BelongsToAssociationProxy` or `Batman.HasOneAssociationProxy`.
 
 
 ## ::load(callback : Function)
@@ -61,17 +60,15 @@ Returns JSON for the target record, if the [`target`](/docs/api/batman.model_ass
 The associated record. Getting `target` does not implicitly call `load` on the association.
 
 ## ::%loaded
-`true` or `false`, Whether or not the record has been loaded from storage.
+`true` or `false`, whether or not the record has been loaded from storage.
 
-## ::fetchFromLocal() : Model
-This method is called by [`load`](/docs/api/batman.model_associations.html#prototype_function_load) to fetch the [`target`](/docs/api/batman.model_associations.html#prototype_accessor_target) record. If this method returns a falsy value, then [`fetchFromRemote`](/docs/api/batman.model_associations.html#prototype_function_fetchfromremote) is called.  `Batman.AssocationProxy` subclasses must implement this method.
+## ::fetchFromLocal()
+This method is called by [`load`](/docs/api/batman.model_associations.html#prototype_function_load) to fetch the [`target`](/docs/api/batman.model_associations.html#prototype_accessor_target) record(s). If this method returns a falsy value, then [`fetchFromRemote`](/docs/api/batman.model_associations.html#prototype_function_fetchfromremote) is called.  `Batman.AssocationProxy` subclasses must implement this method.
 
-## ::fetchFromRemote() : Model
-If [`fetchFromLocal`](/docs/api/batman.model_associations.html#prototype_function_fetchfromlocal) returns a falsy value, this method is called by [`load`](/docs/api/batman.model_associations.html#prototype_function_load) to fetch the [`target`](/docs/api/batman.model_associations.html#prototype_accessor_target) record. `Batman.AssocationProxy` subclasses must implement this method.
-
+## ::fetchFromRemote([callback : Function])
+If [`fetchFromLocal`](/docs/api/batman.model_associations.html#prototype_function_fetchfromlocal) returns a falsy value, this method is called by [`load`](/docs/api/batman.model_associations.html#prototype_function_load) to fetch the [`target`](/docs/api/batman.model_associations.html#prototype_accessor_target) record(s). The `callback` is called with two arguments: any error and the fetched record(s). `Batman.AssocationProxy` subclasses must implement this method.
 
 ## Association Options
-All assocations have a common set of options, as well as specific options for each type of relationship.
 
 ##### `primaryKey[= "id"] : string`
 The primary key for the association.
@@ -101,7 +98,7 @@ child.url() # => 'parent_items/1/child_items/5'
 `nestUrl` only applies if the model is persisted with `Batman.RestStorage` (or a subclass).
 
 ##### `name : string`
-By default, Batman checks for a model with this singular, camel-case name of association's `label` attached to `Batman.currentApp`. If the associated model is different from that, use `name` (and/or `namespace` to specify it.
+By default, Batman checks for a model with the singular, camel-case name of association's `label` attached to `Batman.currentApp`. If the associated model's name is different from that, use `name` to specify it.
 
 ```coffeescript
 class App.ChildItem extends Batman.Model
