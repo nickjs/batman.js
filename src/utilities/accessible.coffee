@@ -5,3 +5,4 @@ class Batman.Accessible extends Batman.Object
 
 class Batman.TerminalAccessible extends Batman.Accessible
   propertyClass: Batman.Property
+  isTerminalAccessible: true

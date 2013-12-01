@@ -447,7 +447,6 @@ asyncTest 'Pass arguments to accessor with Batman.TerminalAccessible', ->
 
     @accessor 'accessible', ->
       new Batman.TerminalAccessible (id) =>
-        debugger
         return @col[id]
 
   context = Batman
@@ -456,3 +455,20 @@ asyncTest 'Pass arguments to accessor with Batman.TerminalAccessible', ->
   helpers.render '<div data-bind="test.accessible[1]"></div>', context, (node) ->
     equal node[0].innerHTML, "b"
     QUnit.start()
+
+asyncTest 'withArguments with Batman.TerminalAccessible', ->
+  class TestClass extends Batman.Object
+
+    @::col = ["a", "b", "c"]
+
+    @accessor 'accessible', ->
+      new Batman.TerminalAccessible (id) =>
+        return @col[id]
+
+  context = Batman
+    test: new TestClass
+
+  helpers.render '<div data-bind="test.accessible | withArguments 1"></div>', context, (node) ->
+    equal node[0].innerHTML, "b"
+    QUnit.start()
+
