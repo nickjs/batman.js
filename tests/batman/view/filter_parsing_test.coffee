@@ -434,8 +434,7 @@ asyncTest 'withArguments passes arguments to specified function and returns resu
     foo: spy = createSpy()
 
   helpers.render '<a data-event-click="foo | withArguments 2">', context, (node) ->
-    node[0].click()
-
+    helpers.triggerClick(node[0])
     ok spy.called
     equal spy.lastCallArguments[0], 2
     QUnit.start()
