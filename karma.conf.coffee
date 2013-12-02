@@ -62,6 +62,13 @@ module.exports = (config) ->
       }
     }
 
+    customLaunchers: {
+      'PhantomJS_debug': {
+        base: 'PhantomJS',
+        flags: ['--remote-debugger-port=9000', '--remote-debugger-autorun=yes']
+      }
+    }
+
     preprocessors: {
       '**/*.coffee': ['coffee'],
       '**/*.litcoffee': ['literate_coffee']
