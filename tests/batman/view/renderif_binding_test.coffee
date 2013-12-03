@@ -2,7 +2,7 @@ helpers = window.viewHelpers
 
 QUnit.module "Batman.View: data-render-if bindings"
 
-asyncTest 'it should not render the inner nodes until the keypath is truthy', 4, ->
+asyncTest 'should not render inner nodes until keypath is truthy', 4, ->
   context = proceed: false
 
   source = '<div data-renderif="proceed"><span data-bind="deferred">unrendered</span></div>'
@@ -19,7 +19,18 @@ asyncTest 'it should not render the inner nodes until the keypath is truthy', 4,
 
     QUnit.start()
 
-asyncTest 'it should render the inner nodes in the same context as the node was in when it deferred rendering', 2, ->
+asyncTest 'should render inner nodes and remove attribute if keypath is truthy', 2, ->
+  context = { proceed: true, deferred: 'inner value' }
+
+  source = '<div class="foo" data-renderif="proceed"><span data-bind="deferred">unrendered</span></div>'
+
+  helpers.render source, context, (node, view) ->
+    equal $('span', node).html(), 'inner value'
+    equal $('.foo', node).attr('data-renderif'), undefined
+
+    QUnit.start()
+
+asyncTest 'should render inner nodes in same context as node was in when it deferred rendering', 2, ->
   context =
     proceed: false
     foo: Batman
@@ -33,7 +44,7 @@ asyncTest 'it should render the inner nodes in the same context as the node was 
     equal $('span', node).html(), 'bar'
     QUnit.start()
 
-asyncTest 'it should continue rendering on the node it stopped rendering', 2, ->
+asyncTest 'should continue rendering on node it stopped rendering', 2, ->
   context = proceed: false, foo: "bar"
 
   source = '<div data-bind="foo" data-renderif="proceed" >unrendered</div>'
@@ -44,7 +55,7 @@ asyncTest 'it should continue rendering on the node it stopped rendering', 2, ->
     equal node.html(), 'bar'
     QUnit.start()
 
-asyncTest 'it should only render the inner nodes once', 3, ->
+asyncTest 'should only render inner nodes once', 3, ->
   context = proceed: false, deferred: spy = createSpy().whichReturns('inner value')
 
   source = '<div data-renderif="proceed"><span data-bind="deferred">unrendered</span></div>'
