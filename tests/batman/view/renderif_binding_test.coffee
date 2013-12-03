@@ -20,7 +20,7 @@ asyncTest 'should not render inner nodes until keypath is truthy', 4, ->
     QUnit.start()
 
 asyncTest 'should render inner nodes and remove attribute if keypath is truthy', 2, ->
-  context = { proceed: true, deferred: 'inner value' }
+  context = proceed: true, deferred: 'inner value'
 
   source = '<div class="foo" data-renderif="proceed"><span data-bind="deferred">unrendered</span></div>'
 
@@ -77,5 +77,35 @@ asyncTest 'should only render inner nodes once', 3, ->
     view.set('proceed', true)
     equal InstrumentedRenderer.instanceCount, 2
     Batman.BindingParser = oldRenderer
+
+    QUnit.start()
+
+QUnit.module "Batman.View: data-delayif bindings"
+
+asyncTest 'should render inner nodes and remove attribute if keypath is falsy', 2, ->
+  context = doNotProceed: false, deferred: 'inner value'
+
+  source = '<div class="foo" data-delayif="doNotProceed"><span data-bind="deferred">unrendered</span></div>'
+
+  helpers.render source, context, (node, view) ->
+    equal $('span', node).html(), 'inner value'
+    equal $('.foo', node).attr('data-delayif'), undefined
+
+    QUnit.start()
+
+asyncTest 'should not render inner nodes until keypath is falsy', 4, ->
+  context = doNotProceed: true
+
+  source = '<div data-delayif="doNotProceed"><span data-bind="deferred">unrendered</span></div>'
+
+  helpers.render source, context, (node, view) ->
+    view.accessor 'deferred', spy = createSpy().whichReturns('inner value')
+
+    ok !spy.called
+    equal $('span', node).html(), 'unrendered'
+
+    view.set('doNotProceed', false)
+    ok spy.called
+    equal $('span', node).html(), 'inner value'
 
     QUnit.start()

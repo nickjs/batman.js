@@ -56,6 +56,10 @@ Batman.DOM.readers =
     definition.invert = true
     new Batman.DOM.InsertionBinding(definition)
 
+  delayif: (definition) ->
+    definition.invert = true
+    new Batman.DOM.DeferredRenderBinding(definition)
+
   renderif: (definition) ->
     new Batman.DOM.DeferredRenderBinding(definition)
 
