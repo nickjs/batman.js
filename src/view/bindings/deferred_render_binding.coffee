@@ -11,7 +11,7 @@ class Batman.DOM.DeferredRenderBinding extends Batman.DOM.AbstractBinding
 
   constructor: (definition) ->
     {@invert} = definition
-    @attributeName = if @invert then 'data-delayif' else 'data-renderif'
+    @attributeName = if @invert then 'data-deferif' else 'data-renderif'
     super
 
   dataChange: (value) ->

@@ -80,23 +80,23 @@ asyncTest 'should only render inner nodes once', 3, ->
 
     QUnit.start()
 
-QUnit.module "Batman.View: data-delayif bindings"
+QUnit.module "Batman.View: data-deferif bindings"
 
 asyncTest 'should render inner nodes and remove attribute if keypath is falsy', 2, ->
   context = doNotProceed: false, deferred: 'inner value'
 
-  source = '<div class="foo" data-delayif="doNotProceed"><span data-bind="deferred">unrendered</span></div>'
+  source = '<div class="foo" data-deferif="doNotProceed"><span data-bind="deferred">unrendered</span></div>'
 
   helpers.render source, context, (node, view) ->
     equal $('span', node).html(), 'inner value'
-    equal $('.foo', node).attr('data-delayif'), undefined
+    equal $('.foo', node).attr('data-deferif'), undefined
 
     QUnit.start()
 
 asyncTest 'should not render inner nodes until keypath is falsy', 4, ->
   context = doNotProceed: true
 
-  source = '<div data-delayif="doNotProceed"><span data-bind="deferred">unrendered</span></div>'
+  source = '<div data-deferif="doNotProceed"><span data-bind="deferred">unrendered</span></div>'
 
   helpers.render source, context, (node, view) ->
     view.accessor 'deferred', spy = createSpy().whichReturns('inner value')
