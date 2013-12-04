@@ -476,3 +476,9 @@ test "ValidationError should humanize attribute in the full message", ->
 test "ValidationError doesn't add 'base' to fullMessage", ->
   error = new Batman.ValidationError('base', "Model isn't valid")
   equal error.get('fullMessage'), "Model isn't valid"
+
+test "ValidationError should singularize associated attribute in the full message", ->
+  error = new Batman.ValidationError("emails.address", "isn't valid")
+  equal error.get('fullMessage'), "Email address isn't valid"
+  error = new Batman.ValidationError("users.emails.address", "isn't valid")
+  equal error.get('fullMessage'), "User email address isn't valid"

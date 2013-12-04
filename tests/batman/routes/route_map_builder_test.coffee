@@ -9,6 +9,17 @@ simpleSetup = ->
 QUnit.module "Batman.RouteMapBuilder defining simple routes",
   setup: simpleSetup
 
+test "defines route for root via '/'", ->
+  @builder.root { controller: 'default', action: 'index' }
+  [name, route] = @routeMap.addRoute.calls[0].arguments
+  equal name, ''
+
+test "defines route for root by name", ->
+  @builder.root('default#index')
+  [name, route] = @routeMap.addRoute.lastCallArguments
+  equal @routeMap.addRoute.callCount, 2
+  equal name, 'root'
+
 test "can define simple routes to a controller and action", ->
   @builder.route '/foo/bar', {controller: 'foo', action: 'bar'}
 

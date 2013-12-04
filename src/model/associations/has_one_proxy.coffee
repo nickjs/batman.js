@@ -12,8 +12,7 @@ class Batman.HasOneProxy extends Batman.AssociationProxy
       loadOptions.collectionUrl = @association.options.url
       loadOptions.urlContext = @model
     @association.getRelatedModel().loadWithOptions loadOptions, (error, loadedRecords) =>
-      throw error if error
       if !loadedRecords or loadedRecords.length <= 0
-        callback new Error("Couldn't find related record!"), undefined
+        callback(error || new Error("Couldn't find related record!"), undefined)
       else
         callback undefined, loadedRecords[0]

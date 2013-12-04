@@ -70,3 +70,7 @@ task 'test:travis', 'run the tests once using PhantomJS', (options) ->
   pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'PhantomJS', './karma.conf.coffee', (code) ->
     process.exit(code)
 
+task 'test:travis_debug', 'run the tests once using PhantomJS', (options) ->
+  pipedExec './node_modules/.bin/karma', 'start', '--single-run', '--browsers', 'PhantomJS_debug', './karma.conf.coffee', (code) ->
+    process.exit(code)
+

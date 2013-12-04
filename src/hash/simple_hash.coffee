@@ -164,4 +164,13 @@ class Batman.SimpleHash
         obj[key] = pair[0][1] # the first value for this key
     obj
 
-  toJSON: @::toObject
+  toJSON: ->
+    obj = {}
+    for key, value of @_storage
+      obj[@unprefixedKey(key)] = value.toJSON?() || value
+    if @_objectStorage
+      for key, values of @_objectStorage
+        [[objectKey, value]] = values
+        obj[key] = value.toJSON?() || value
+    obj
+

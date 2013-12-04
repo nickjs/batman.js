@@ -1,6 +1,6 @@
 QUnit.module "Batman.unescapeHTML helper",
 test "should unescape escaped basic HTML characters", ->
-  equal Batman.unescapeHTML('&lt;&gt;&amp;&#34;&#39;'), '<>&"\''
+  equal Batman.unescapeHTML('&lt;&gt;&amp;&#34;&#39;&#47;'), '<>&"\'/'
 
 test "should unescape escaped symbol characters", ->
   # http://www.w3.org/TR/html4/sgml/entities.html

@@ -34,7 +34,7 @@ class Batman.Set extends Batman.Object
         @registerAsMutableSource()
         Batman.SimpleSet::[k].apply(this, arguments)
 
-  toJSON: @::toArray
+  toJSON: -> @map (value) -> value.toJSON?() || value
 
   add: @mutation ->
     addedItems = Batman.SimpleSet::add.apply(this, arguments)

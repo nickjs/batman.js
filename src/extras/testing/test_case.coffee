@@ -40,6 +40,9 @@ class Batman.TestCase extends Batman.Object
   assert: (assertion, message = 'was not true') ->
     QUnit.ok assertion, message
 
+  refute: (assertion, message = 'was not false') ->
+    QUnit.ok !assertion, message
+
   assertEqual: (expected, actual, message) ->
     QUnit.ok @_areEquivalent(expected, actual), message or "Expected: #{expected} \nGot: #{actual}"
 
@@ -87,7 +90,9 @@ class Batman.TestCase extends Batman.Object
     if @_expectations[name] then @_expectations[name]++ else @_expectations[name] = 1
 
   stubAccessor: (object, keypath, fn) ->
-    sinon.sandbox.stub(object.property(keypath), 'getValue', fn)
+    stub = sinon.sandbox.stub(object.property(keypath), 'getValue', fn)
+    object.property(keypath).refresh()
+    stub
 
   completeExpectation: (name) ->
     return if not @_expectations[name]

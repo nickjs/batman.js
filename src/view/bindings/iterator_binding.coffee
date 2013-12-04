@@ -19,7 +19,11 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
 
     @backingView.set('attributeName', @attributeName)
     @view.prevent('ready')
-    Batman.setImmediate =>
+    @_handle = Batman.setImmediate =>
+      if @backingView.isDead
+        Batman.developer.warn "IteratorBinding trying to insert dead backing view into DOM"
+        return
+
       parentNode = @prototypeNode.parentNode
       parentNode.insertBefore(@backingView.get('node'), @prototypeNode)
       parentNode.removeChild(@prototypeNode)
@@ -49,5 +53,6 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
       @backingView.moveItem(oldIndex, newIndex)
 
   die: ->
+    Batman.clearImmediate(@_handle) if @_handle
     @prototypeNode = null
     super

@@ -9,6 +9,9 @@ test 'setup variables should be available', 1, ->
 test 'assert should return true if condition is true', 1, ->
   @testCase.assert true
 
+test 'refute should return true if condition is false', 1, ->
+  @testCase.refute false
+
 test 'assertEqual should compare equality', 2, ->
   @testCase.assertEqual 1, 1
   @testCase.assertEqual 'foo', 'foo'
@@ -77,3 +80,13 @@ test 'stubAccessor should stub the return value', ->
   order = new Order
   @testCase.stubAccessor(order, 'twenty', -> 35)
   @testCase.assertEqual 35, order.get('twenty')
+
+test 'stubAccessor should refresh other accessors that depend on the stubbed one', ->
+  class Order extends Batman.Object
+    @accessor 'twenty', -> 20
+    @accessor 'test', -> @get('twenty')
+
+  order = new Order
+  @testCase.assertEqual 20, order.get('test')
+  @testCase.stubAccessor(order, 'twenty', -> 35)
+  @testCase.assertEqual 35, order.get('test')

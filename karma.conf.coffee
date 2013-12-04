@@ -40,7 +40,7 @@ module.exports = (config) ->
         return main.concat(glob.sync(pattern))
       return main.concat(files.tests, files.docs)
 
-    reporters: ['progress']
+    reporters: ['dots']
 
     autoWatch: true
 
@@ -59,6 +59,13 @@ module.exports = (config) ->
           bare: true,
           literate: true
         }
+      }
+    }
+
+    customLaunchers: {
+      'PhantomJS_debug': {
+        base: 'PhantomJS',
+        flags: ['--remote-debugger-port=9000', '--remote-debugger-autorun=yes']
       }
     }
 

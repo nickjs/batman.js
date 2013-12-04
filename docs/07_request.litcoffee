@@ -1,7 +1,7 @@
 # Batman.Request
  Request is an abstraction around XHR requests.  It can be used with a variety of platforms, and is implemented in the platform layer files.
 
-### Platform Request Implmentation Libraries:
+## Platform Request Implementation Libraries
   Depending on the platform library the underlying request implementation will change:
 
  - `batman.jquery.js`: jQuery XHR
@@ -129,7 +129,7 @@ Constructs a new `Batman.Request` with the supplied options
            req = new Batman.Request
            equal req.contentType, "application/x-www-form-urlencoded"
 
-1. `autosend`: controls whether the request will be sent automatically, deafults to `true`
+1. `autosend`: controls whether the request will be sent automatically, defaults to `true`
 
         test "autosend test", ->
           response_sent = false

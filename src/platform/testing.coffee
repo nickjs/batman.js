@@ -22,7 +22,7 @@ Batman.Request::send = (data) ->
   mockedResponse = Batman.Request.fetchMockedResponse(@get('method'), @get('url'))
 
   return if not mockedResponse
-  {status, response, beforeResponse, responseHeaders} = mockedResponse
+  {status, response, beforeResponse, responseHeaders, responseText} = mockedResponse
 
   @mixin
     status: status || 200
@@ -34,7 +34,7 @@ Batman.Request::send = (data) ->
   if @status < 400
     @fire 'success', response
   else
-    @fire 'error', {response: response, status: @status, request: this}
+    @fire 'error', {response: response, responseText: responseText, status: @status, request: this}
 
   @fire 'loaded'
 

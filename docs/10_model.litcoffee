@@ -177,7 +177,7 @@ Built in validators are attached by calling `@validate` with options designating
 
 The built in validation options are listed below:
 
- + `presence : boolean`: Assert that the string value is existent (not undefined or null) and has length greather than 0.
+ + `presence : boolean`: Assert that the string value is existent (not undefined or null) and has length greater than 0.
  + `numeric : true`: Assert that the value is or can be coerced into a number using `parseFloat`.
  + `greaterThan : number`: Assert that the value is greater than the given number.
  + `greaterThanOrEqualTo : number`: Assert that the value is greater than or equal to the given number.
@@ -450,7 +450,7 @@ If the record's current lifecycle state doesn't allow the `destroy` action, the 
 
 ## ::validate(callback)
 
-`Model::validate` checks the model against the validations declared in the model definition (with [`Model@validate`](/docs/api/batman.model.html#class_function_validate)). This method accepts a callback with two arguments: any JS error that occured within the validator function, and the set of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s that the input generated.
+`Model::validate` checks the model against the validations declared in the model definition (with [`Model@validate`](/docs/api/batman.model.html#class_function_validate)). This method accepts a callback with two arguments: any JS error that occurred within the validator function, and the set of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s that the input generated.
 
 For example:
 

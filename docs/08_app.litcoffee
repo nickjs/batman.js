@@ -38,7 +38,7 @@ $ ->
 
 ## @routes
 
-`@routes` is a class level property referencing the root level `NamedRouteQuery` which allows for binding to routes on objects. See `data-route` bindings for more information.
+`@routes` is a class level property referencing the root level `NamedRouteQuery` which allows for binding to routes on objects. See the [`data-route` binding](batman.view_bindings.html#data-route) for more information.
 
 ## @controllers
 
@@ -96,6 +96,57 @@ Would result in `/comments` being added to the routing map, pointed to `PagesCon
 
 ## @resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])
 
+`@resources` is modeled after the Rails routing `resources` method. It automatically defines some routes and matches them to controller actions. For example,
+
+```coffeescript
+class App extends Batman.App
+  @resources 'pages'
+
+class App.PagesController extends Batman.Controller
+  index: ->
+    # ...
+  new: ->
+    # ...
+  show: (params) ->
+    App.Page.find params.id, (err, page) ->
+      @set('currentPage', page)
+  edit: (params) ->
+    App.Page.find params.id, (err, page) ->
+      @set('currentPage', page)
+```
+
+Will set up these routes:
+
+Path | Controller Action
+-- | -- |
+/pages | App.PagesController#index
+/pages/new | App.PagesController#new
+/pages/:id | App.PagesController#show
+/pages/:id/edit | App.PagesController#edit
+
+Note that unlike Rails, `destroy`, `update`, and `create` are not performed by controller actions in batman.js. Instead, call `save` or `destroy` on your records directly.
+To access a generated route from within a view, use the [`data-route` binding](batman.view_bindings.html#data-route).
+
+### Nested Resources
+
+You may also nest resources, as in Rails:
+
+```coffeescript
+class App extends Batman.App
+  @resources 'pages', ->
+    @resources 'comments'
+```
+
+Will set up these routes for `App.Comment`:
+
+Path | Controller Action
+-- | -- |
+/pages/:page_id/comments | App.CommentsController#index
+/pages/:page_id/comments/new | App.CommentsController#new
+/pages/:page_id/comments/:id | App.CommentsController#show
+/pages/:page_id/comments/:id/edit | App.CommentsController#edit
+
+
 ## @member
 
 `@member` defines a routable action you can call on a specific instance of a member of a collection resource. For example, if you have a collection of `Page` resources, and a user can post a comment on a specific page:
@@ -139,3 +190,4 @@ class Example.PagesController extends Batman.Controller
 ```
 
 Would result in `/` being pointed to `PagesController#index`.
+

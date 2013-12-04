@@ -505,6 +505,10 @@ test "using arrays of Batman.Model objects with mutable IDs as keys", ->
 
   strictEqual @hash.get(arr), "array value"
 
+test "toJSON() returns a serializable object representation of the hash", ->
+  @hash.set('foo', Batman('bar': 'baz'))
+  @hash.set('bar', Batman('foo': 'baz'))
+  deepEqual @hash.toJSON(), {foo: {bar: 'baz'}, bar: {foo: 'baz'}}
 
 test "updating a hash fires proper 'itemsWereAdded' and 'itemsWereChanged' events", ->
   @hash.set 'foo', 'bar'

@@ -103,9 +103,10 @@ asyncTest 'query params', 7, ->
   Batman.redirect '/?foo=bar&x=true'
 
 asyncTest 'route match with default params', 2, ->
-  @App.root controller: 'test', action: 'index'
-  @App.route 'show', controller: 'products', action: 'show', id: 1
+  @App.root(controller: 'test', action: 'index')
+  @App.route('show', controller: 'products', action: 'show', id: 1)
   @App.run()
+
   equal @App.test('/'), @App.TestController::index
   Batman.redirect '/show'
 
