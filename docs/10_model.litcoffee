@@ -84,7 +84,7 @@ For `decode` functions:
 
 The `encode` and `decode` keys can also be false to avoid using the default identity function encoder or decoder.
 
-To encode a `key` under a name which differs from that in the raw data, you can specify the `as` option with its raw key name. The `as` option can be either a string or function.
+To encode a `key` under a name which differs from that in the raw data, you can specify the `as` option with the raw key name. The `as` option can be either a string or function.
 
 If you specify the `as` option as a function it will have the following arguments:
 
