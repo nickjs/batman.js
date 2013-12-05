@@ -71,18 +71,27 @@ By default these functions are the identity functions. They apply no transformat
 
  + `value` is the client side value of the `key` on the `record`
  + `key` is the key which the `value` is stored under on the `record`. This is useful when passing the same `encoderObject` which needs to pivot on what key is being encoded to different calls to `encode`.
- + `builtJSON` is the object which is modified by each encoder which will eventually be returned by `toJSON`. To send the server the encoded value under a different key than the `key`, modify this object by putting the value under the desired key, and return `undefined`.
+ + `builtJSON` is the object which is modified by each encoder which will eventually be returned by `toJSON`.
  + `record` is the record on which `toJSON` has been called.
 
 For `decode` functions:
 
- + `value` is the server side value of the `key` which will end up on the `record`.
+ + `value` is the raw value of the `key` which will end up on the `record`.
  + `key` is the key which the `value` is stored under in the incoming JSON.
  + `incomingJSON` is the JSON which is being decoded into the `record`. This can be used to create compound key decoders.
  + `outgoingObject` is the object which is built up by the decoders and then `mixin`'d to the record.
  + `record` is the record on which `fromJSON` has been called.
 
 The `encode` and `decode` keys can also be false to avoid using the default identity function encoder or decoder.
+
+To encode a `key` under a name which differs from that in the raw data, you can specify the `as` option with its raw key name. The `as` option can be either a string or function.
+
+If you specify the `as` option as a function it will have the following arguments:
+
+ + `key` is the name which the `value` is stored under in the raw data.
+ + `value` is the `value` of the `key` which will end up on the `record`.
+ + `data` is the object which is modified by each encoder or decoder.
+ + `record` is the record on which `toJSON` or `fromJSON` has been called.
 
 _Note_: `Batman.Model` subclasses have no encoders by default, except for one which automatically decodes the `primaryKey` of the model, which is usually `id`. To get any data into or out of your model, you must white-list the keys you expect from the server or storage attribute.
 
@@ -135,6 +144,17 @@ _Note_: `Batman.Model` subclasses have no encoders by default, except for one wh
       equal record.get('url'), "snowdevil.ca"
       deepEqual record.toJSON(), {url: "snowdevil.ca"}, 'The name key is absent because of encode: false'
 
+    test '@encode accepts an as option to encode a key under a name which differs from that in the raw data', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @encode 'countryCode',
+          as: 'country_code'
+          encode: @defaultEncoder.encode
+          decode: @defaultEncoder.decode
+
+      record = new Shop(countryCode: 'SE')
+      deepEqual record.toJSON(), {country_code: 'SE'}
+
 Some more handy examples:
 
     test '@encode can be used to turn comma separated values into arrays', ->
@@ -160,6 +180,17 @@ Some more handy examples:
       record.fromJSON({tags: ['new', 'hot', 'cool']})
       ok record.get('tags') instanceof Batman.Set
       deepEqual record.toJSON(), {tags: ['new', 'hot', 'cool']}
+
+    test '@encode accepts the as option as a function', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @encode 'countryCode',
+          as: (key) -> Batman.helpers.underscore(key)
+          encode: @defaultEncoder.encode
+          decode: @defaultEncoder.decode
+
+      record = new Shop(countryCode: 'SE')
+      deepEqual record.toJSON(), {country_code: 'SE'}
 
 ## @validate(keys...[, options : [Object|Function]])
 
