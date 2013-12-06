@@ -70,23 +70,23 @@ The `encoderObject` should have an `encode` and/or a `decode` key which point to
 By default these functions are the identity functions. They apply no transformation. The arguments for `encode` functions are as follows:
 
  + `value` is the client side value of the `key` on the `record`
- + `key` is the key which the `value` is stored under on the `record`. This is useful when passing the same `encoderObject` which needs to pivot on what key is being encoded to different calls to `encode`.
- + `builtJSON` is the object which is modified by each encoder which will eventually be returned by `toJSON`.
+ + `key` is the key that `value` is stored under on the `record`. This is useful when passing the same `encoderObject` which needs to pivot on what key is being encoded to different calls to `encode`.
+ + `builtJSON` is the object passed to and modified by each encoder, and eventually becomes the return value of the `toJSON` call.
  + `record` is the record on which `toJSON` has been called.
 
 For `decode` functions:
 
- + `value` is the raw value of the `key` which will end up on the `record`.
- + `key` is the key which the `value` is stored under in the incoming JSON.
- + `incomingJSON` is the JSON which is being decoded into the `record`. This can be used to create compound key decoders.
- + `outgoingObject` is the object which is built up by the decoders and then `mixin`'d to the record.
+ + `value` is the raw value received from the storage adapter.
+ + `key` is the key that `value` is stored under on the incoming data.
+ + `incomingJSON` is the object which is being decoded into the `record`. This can be used to create compound key decoders.
+ + `outgoingObject` is the object built up by the decoders and mixed into the record.
  + `record` is the record on which `fromJSON` has been called.
 
 The `encode` and `decode` keys can also be false to avoid using the default identity function encoder or decoder.
 
 To encode a `key` under a name which differs from that in the raw data, you can specify the `as` option with the raw key name. The `as` option can be either a string or function.
 
-If you specify the `as` option as a function it will have the following arguments:
+If you specify the `as` option as a function it will receive the following arguments:
 
  + `key` is the name which the `value` is stored under in the raw data.
  + `value` is the `value` of the `key` which will end up on the `record`.
