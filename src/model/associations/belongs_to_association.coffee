@@ -23,6 +23,7 @@ class Batman.BelongsToAssociation extends Batman.SingularAssociation
   decoder: ->
     association = @
     (data, _, __, ___, childRecord) ->
+      return unless data?
       relatedModel = association.getRelatedModel()
       record = relatedModel.createFromJSON(data)
       if association.options.inverseOf
