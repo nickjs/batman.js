@@ -17,19 +17,19 @@ class Batman.DOM.InsertionBinding extends Batman.DOM.AbstractBinding
 
     if !!value is !@invert
       # Show
-      view?.fire('viewWillShow')
+      view?.fireAndCall('viewWillShow')
       if not @node.parentNode?
         parentNode.insertBefore(@node, @placeholderNode)
         parentNode.removeChild(@placeholderNode)
-      view?.fire('viewDidShow')
+      view?.fireAndCall('viewDidShow')
     else
       # Hide
-      view?.fire('viewWillHide')
+      view?.fireAndCall('viewWillHide')
       if @node.parentNode?
         parentNode.insertBefore(@placeholderNode, @node)
         parentNode.removeChild(@node)
 
-      view?.fire('viewDidHide')
+      view?.fireAndCall('viewDidHide')
 
   die: ->
     @placeholderNode = null
