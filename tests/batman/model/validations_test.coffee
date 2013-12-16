@@ -52,6 +52,20 @@ validationsTestSuite = ->
         equal errors.length, 1
         QUnit.start()
 
+  asyncTest "length with allow blank and empty string", ->
+    class Product extends Batman.Model
+      @validate 'min', minLength: 4, allowBlank: true
+
+    p = new Product min: ''
+    p.validate (error, errors) ->
+      throw error if error
+      equal errors.length, 0
+      p.set 'min', '123'
+      p.validate (error, errors) ->
+        throw error if error
+        equal errors.length, 1
+        QUnit.start()
+
   asyncTest "presence", 3, ->
     class Product extends Batman.Model
       @validate 'name', presence: yes

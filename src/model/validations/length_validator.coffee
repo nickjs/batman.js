@@ -15,7 +15,7 @@ class Batman.LengthValidator extends Batman.Validator
     validateEach: (errors, record, key, callback) ->
       options = @options
       value = record.get(key)
-      return callback() if value != '' && @handleBlank(value)
+      return callback() if @handleBlank(value)
       value ?= []
       if options.minLength and value.length < options.minLength
         errors.add key, @format(key, 'too_short', {count: options.minLength})
