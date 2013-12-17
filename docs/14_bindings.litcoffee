@@ -292,7 +292,7 @@ If the event name used doesn't match the above events, the event name used will 
 
 ## data-route
 
-`data-route` bindings are used to dispatch a new controller action upon the clicking of the node they bind to. `data-route` expects to find either a string or a `NamedRouteQuery` at the keypath passed to it. With this route, it will add an event handler to the `click` action of the element which dispatches the route and prevents the default action of the DOMEvent. `data-route` will also populate the `href` attribute if it occurs on an `<a>` tag so that other functons like "Copy Link Address" and Alt+Click continue to work on the link.
+`data-route` bindings are used to dispatch a new controller action upon the clicking of the node they bind to. `data-route` expects to find either a string or a `NamedRouteQuery` at the keypath passed to it. With this route, it will add an event handler to the `click` action of the element which dispatches the route and prevents the default action of the DOMEvent. `data-route` will also populate the `href` attribute if it occurs on an `<a>` tag so that other functions like "Copy Link Address" and Alt+Click continue to work on the link.
 
 The first way to use `data-route` is by passing it a string, which can be built using filters or an accessor, but the preferred way is to use the `NamedRouteQuery`. These objects are generated for you by starting keypaths at the `App.routes` property. All `Batman.App`s have a `routes` property which holds a nested list of all the routes, which you descend into by passing various key segments and objects. Since the `App` object is present in the default context stack, `data-route` keypaths can just start with `routes`.
 

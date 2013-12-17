@@ -57,7 +57,7 @@ The `options` argument can take three forms to imply different things:
  2. a String: implies that this filter function should be executed before the action named by the string.
  3. an Object: implies that this filter function should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.
 
-  
+If any `beforeAction` filter returns `false` or calls [`@redirect`](/docs/api/batman.controller.html#prototype_function_redirect), the controller action won't be executed.
 
     test "@beforeAction allows declaration of filters to execute before an action", ->
       results = []

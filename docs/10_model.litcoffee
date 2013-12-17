@@ -70,19 +70,28 @@ The `encoderObject` should have an `encode` and/or a `decode` key which point to
 By default these functions are the identity functions. They apply no transformation. The arguments for `encode` functions are as follows:
 
  + `value` is the client side value of the `key` on the `record`
- + `key` is the key which the `value` is stored under on the `record`. This is useful when passing the same `encoderObject` which needs to pivot on what key is being encoded to different calls to `encode`.
- + `builtJSON` is the object which is modified by each encoder which will eventually be returned by `toJSON`. To send the server the encoded value under a different key than the `key`, modify this object by putting the value under the desired key, and return `undefined`.
+ + `key` is the key that `value` is stored under on the `record`. This is useful when passing the same `encoderObject` which needs to pivot on what key is being encoded to different calls to `encode`.
+ + `builtJSON` is the object passed to and modified by each encoder, and eventually becomes the return value of the `toJSON` call.
  + `record` is the record on which `toJSON` has been called.
 
 For `decode` functions:
 
- + `value` is the server side value of the `key` which will end up on the `record`.
- + `key` is the key which the `value` is stored under in the incoming JSON.
- + `incomingJSON` is the JSON which is being decoded into the `record`. This can be used to create compound key decoders.
- + `outgoingObject` is the object which is built up by the decoders and then `mixin`'d to the record.
+ + `value` is the raw value received from the storage adapter.
+ + `key` is the key that `value` is stored under on the incoming data.
+ + `incomingJSON` is the object which is being decoded into the `record`. This can be used to create compound key decoders.
+ + `outgoingObject` is the object built up by the decoders and mixed into the record.
  + `record` is the record on which `fromJSON` has been called.
 
 The `encode` and `decode` keys can also be false to avoid using the default identity function encoder or decoder.
+
+To encode a `key` under a name which differs from that in the raw data, you can specify the `as` option with the raw key name. The `as` option can be either a string or function.
+
+If you specify the `as` option as a function it will receive the following arguments:
+
+ + `key` is the name which the `value` is stored under in the raw data.
+ + `value` is the `value` of the `key` which will end up on the `record`.
+ + `data` is the object which is modified by each encoder or decoder.
+ + `record` is the record on which `toJSON` or `fromJSON` has been called.
 
 _Note_: `Batman.Model` subclasses have no encoders by default, except for one which automatically decodes the `primaryKey` of the model, which is usually `id`. To get any data into or out of your model, you must white-list the keys you expect from the server or storage attribute.
 
@@ -135,6 +144,17 @@ _Note_: `Batman.Model` subclasses have no encoders by default, except for one wh
       equal record.get('url'), "snowdevil.ca"
       deepEqual record.toJSON(), {url: "snowdevil.ca"}, 'The name key is absent because of encode: false'
 
+    test '@encode accepts an as option to encode a key under a name which differs from that in the raw data', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @encode 'countryCode',
+          as: 'country_code'
+          encode: @defaultEncoder.encode
+          decode: @defaultEncoder.decode
+
+      record = new Shop(countryCode: 'SE')
+      deepEqual record.toJSON(), {country_code: 'SE'}
+
 Some more handy examples:
 
     test '@encode can be used to turn comma separated values into arrays', ->
@@ -161,6 +181,17 @@ Some more handy examples:
       ok record.get('tags') instanceof Batman.Set
       deepEqual record.toJSON(), {tags: ['new', 'hot', 'cool']}
 
+    test '@encode accepts the as option as a function', ->
+      class Shop extends Batman.Model
+        @resourceName: 'shop'
+        @encode 'countryCode',
+          as: (key) -> Batman.helpers.underscore(key)
+          encode: @defaultEncoder.encode
+          decode: @defaultEncoder.decode
+
+      record = new Shop(countryCode: 'SE')
+      deepEqual record.toJSON(), {country_code: 'SE'}
+
 ## @validate(keys...[, options : [Object|Function]])
 
 Validations allow a model to be marked as `valid` or `invalid` based on a set of programmatic rules. By validating a model's data before it gets to the server we can provide immediate feedback to the user about what they have entered and forgo waiting on a round trip to the server. `validate` allows the attachment of validations to the model on particular keys, where the validation is either a built in one (invoked by use of options to pass to them) or a custom one (invoked by use of a custom function as the second argument).
@@ -177,7 +208,7 @@ Built in validators are attached by calling `@validate` with options designating
 
 The built in validation options are listed below:
 
- + `presence : boolean`: Assert that the string value is existent (not undefined or null) and has length greather than 0.
+ + `presence : boolean`: Assert that the string value is existent (not undefined or null) and has length greater than 0.
  + `numeric : true`: Assert that the value is or can be coerced into a number using `parseFloat`.
  + `greaterThan : number`: Assert that the value is greater than the given number.
  + `greaterThanOrEqualTo : number`: Assert that the value is greater than or equal to the given number.
@@ -450,7 +481,7 @@ If the record's current lifecycle state doesn't allow the `destroy` action, the 
 
 ## ::validate(callback)
 
-`Model::validate` checks the model against the validations declared in the model definition (with [`Model@validate`](/docs/api/batman.model.html#class_function_validate)). This method accepts a callback with two arguments: any JS error that occured within the validator function, and the set of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s that the input generated.
+`Model::validate` checks the model against the validations declared in the model definition (with [`Model@validate`](/docs/api/batman.model.html#class_function_validate)). This method accepts a callback with two arguments: any JS error that occurred within the validator function, and the set of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s that the input generated.
 
 For example:
 

@@ -335,6 +335,42 @@ validationsTestSuite = ->
           equal errors.length, 0
           QUnit.start()
 
+  asyncTest "confirmation", ->
+    class Product extends Batman.Model
+      @validate 'password', confirmation: true
+
+    p = new Product password: 'test', password_confirmation: 'test'
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+      p.set 'password_confirmation', ''
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 1
+        p.set 'password_confirmation', 'test'
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
+  asyncTest "confirmation allows you to supply which field it is confirming against", ->
+    class Product extends Batman.Model
+      @validate 'password', confirmation: "custom_confirmation"
+
+    p = new Product password: 'test', custom_confirmation: 'test'
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 0
+      p.set 'custom_confirmation', ''
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 1
+        p.set 'custom_confirmation', 'test'
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
   asyncTest "associated for hasMany", ->
     namespace = @
     class @Product extends Batman.Model

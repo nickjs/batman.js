@@ -40,6 +40,11 @@ QUnit.module "Batman.Model belongsTo Associations",
         store:
           name: "Store Three"
           id: 3
+      'products5':
+        name: "Product Five"
+        id: 5
+        store: null
+
 
 asyncTest "belongsTo associations are loaded and custom url is used", 2, ->
   @Product._batman.get('associations').get('store').options.url = '/product/store'
@@ -146,6 +151,11 @@ test "belongsTo associations don't encode their foreignKeys if not asked to", ->
 
   @product = new Product(id: 1, name: "Chair", store_id: 1)
   deepEqual @product.toJSON(), {id: 1, name: "Chair"}
+
+asyncTest "belongsTo associations decode null inline", ->
+  @Product.find 5, (err, product) =>
+    equal null, product.get('store.target')
+    QUnit.start()
 
 asyncTest "belongsTo parent models are added to the identity map", 1, ->
   @Product.find 4, (err, product) =>
