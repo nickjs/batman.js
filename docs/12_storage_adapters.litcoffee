@@ -87,7 +87,7 @@ Callbacks can be registered with [`before`](/docs/api/batman.storageadapter.html
 class App.SpecificHeaderStorageAdapter extends Batman.RestStorage
   # include a specific header in all requests:
   @::before 'all', (env, next) ->
-    headers = env.options.headers || {}
+    headers = env.options.headers ||= {}
     headers["App-Specific-Header"] = App.getSpecificHeader()
     next()
 
