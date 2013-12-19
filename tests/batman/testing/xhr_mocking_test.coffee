@@ -60,3 +60,24 @@ asyncTest 'assertGET will fail if the if a POST request is made', 2, ->
     equal okCount, 1
     ok !okAssertions[0]
     QUnit.start()
+
+asyncTest 'refuteGET will fail if a GET request is made', 2, ->
+  testFn = (validate) =>
+    @testCase.refuteGET '/fake.json'
+    new Batman.Request(url: '/fake.json')
+    validate()
+
+  helpers.runTestCase @testCase, testFn, (okCount, okAssertions) ->
+    equal okCount, 1
+    ok !okAssertions[0]
+    QUnit.start()
+
+asyncTest 'refuteGET will pass if no GET request is made', 2, ->
+  testFn = (validate) =>
+    @testCase.refuteGET '/fake.json'
+    validate()
+
+  helpers.runTestCase @testCase, testFn, (okCount, okAssertions) ->
+    equal okCount, 1
+    ok okAssertions[0]
+    QUnit.start()

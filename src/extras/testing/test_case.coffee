@@ -19,6 +19,7 @@ class Batman.TestCase extends Batman.Object
 
   constructor: ->
     @_expectations = {}
+    @_refutations = {}
 
   runTests: ->
     QUnit.module @constructor.name,
@@ -86,24 +87,38 @@ class Batman.TestCase extends Batman.Object
   assertRaises: (expected, callback, message) ->
     QUnit.raises callback, expected, message
 
-  addExpectation: (name) ->
-    if @_expectations[name] then @_expectations[name]++ else @_expectations[name] = 1
-
   stubAccessor: (object, keypath, fn) ->
     stub = sinon.sandbox.stub(object.property(keypath), 'getValue', fn)
     object.property(keypath).refresh()
     stub
+
+  addExpectation: (name) ->
+    if @_expectations[name] then @_expectations[name]++ else @_expectations[name] = 1
+
+  addRefutation: (name) ->
+    @_refutations[name] = 0
 
   completeExpectation: (name) ->
     return if not @_expectations[name]
     QUnit.ok(true, "Completed #{name}")
     if @_expectations[name] is 1 then delete @_expectations[name] else @_expectations[name]--
 
+  completeRefutation: (name) ->
+    @_refutations[name] = 1
+
   verifyExpectations: ->
     for key, count of @_expectations
       QUnit.ok(false, "Expectation #{key} did not callback #{count} time(s)")
 
-  clearExpectations: -> @_expectations = {}
+    for key, occurred of @_refutations
+      if occurred
+        QUnit.ok(false, "Refutation #{key} occurred")
+      else
+        QUnit.ok(true,  "Refutation #{key} did not occur")
+
+  clearExpectations: ->
+    @_expectations = {}
+    @_refutations = {}
 
   expectationsWrapper: (fn) ->
     testCase = this
@@ -119,17 +134,15 @@ class Batman.TestCase extends Batman.Object
       Batman.Request.setupMockedResponse()
       return fn.apply(this, arguments)
 
-  assertGET: (url, params) ->
-    @_assertXHR('GET', url, params)
+  assertGET:    (url, params) -> @_assertXHR('GET', url, params)
+  assertPOST:   (url, params) -> @_assertXHR('POST', url, params)
+  assertPUT:    (url, params) -> @_assertXHR('PUT', url, params)
+  assertDELETE: (url, params) -> @_assertXHR('DELETE', url, params)
 
-  assertPOST: (url, params) ->
-    @_assertXHR('POST', url, params)
-
-  assertPUT: (url, params) ->
-    @_assertXHR('PUT', url, params)
-
-  assertDELETE: (url, params) ->
-    @_assertXHR('DELETE', url, params)
+  refuteGET:    (url) -> @_refuteXHR('GET', url)
+  refutePOST:   (url) -> @_refuteXHR('POST', url)
+  refutePUT:    (url) -> @_refuteXHR('PUT', url)
+  refuteDELETE: (url) -> @_refuteXHR('DELETE', url)
 
   _assertXHR: (method, url, params) ->
     id = "#{method} to #{url}"
@@ -143,6 +156,14 @@ class Batman.TestCase extends Batman.Object
       params.response ||= {}
 
       return params
+
+  _refuteXHR: (method, url, params) ->
+    id = "#{method} to #{url}"
+    @addRefutation(id)
+
+    Batman.Request.addMockedResponse method, url, =>
+      @completeRefutation(id)
+      return {}
 
   _unwrapStringOrNumber: (obj) ->
     return obj.valueOf() if obj instanceof Number || obj instanceof String
