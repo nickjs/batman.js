@@ -386,6 +386,14 @@ It accepts a callback with two arguments: any error that occurred, and an array 
         equal posts.length, 0
 
 ## @create(attributes = {}, callback) : Model
+  `Model.create` is a convenience method that is basically equivalent to
+
+    model = new Model(attributes)
+    model.save(callback)
+
+  _Note_ : Pay attention to the fact that attributes is an empty object `{}` by
+  default. This means Model.create({my_attribute: 'value'}) doesn't work like in
+  Rails.
 
 ## @findOrCreate(attributes = {}, callback) : Model
 
