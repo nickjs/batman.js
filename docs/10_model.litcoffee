@@ -392,7 +392,7 @@ It accepts a callback with two arguments: any error that occurred, and an array 
     model.save(callback)
 
   _Note_ : Pay attention to the fact that attributes is an empty object `{}` by
-  default. This means Model.create({my_attribute: 'value'}) does _not_ work like
+  default. This means `Model.create({my_attribute: 'value'})` does _not_ work like
   in Rails and does nothing. If you want to skip the callback, use
   `Model.create(attributes, (->))`
 
