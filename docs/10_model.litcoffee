@@ -408,13 +408,29 @@ calling `(new App.Model).save()`:
         equal record.isNew(), false
         equal otherRecord.isNew(), false
 
-_Note_ : Attributes is an empty object `{}` by default. This means the single-argument version accepts the callback, and not the attributes object.
+_Note_ : `attributes` is an empty object `{}` by default. This means the single-argument version of `create` accepts the callback, and not the attributes object.
 
 ## @findOrCreate(attributes = {}, callback) : Model
 
-## id : value
+## ::%id
 
-## dirtyKeys : Set
+A universally accessible accessor to the record's primary key. If the record's
+primary key is `id` (the default), getting/setting this accessor simply passes
+the call through to `id`, otherwise it proxies the call to the custom primary key.
+
+    asyncTest "id proxies the primary key", ->
+      class Post extends Batman.Model
+        @primaryKey: 'name'
+
+      post = new Post(name: 'Witty title')
+      equal post.get('id'), 'Witty title'
+
+      post.set('id', 'Wittier title')
+      equal post.get('name'), 'Wittier title'
+
+## ::%dirtyKeys : Set
+
+The set of keys which have been modified since the last time the record was saved.
 
 ## ::%errors : Batman.ErrorsSet
 
@@ -428,16 +444,18 @@ You can also access the errors for a specific attribute of the record:
 - `user.get('errors.email_address')` returns the errors on the `email_address` attribute
 - `user.get('errors.email_address.length')` returns the number of errors on the `email_address` attribute
 
-## constructor(idOrAttributes = {}) : Model
+## @constructor(idOrAttributes = {}) : Model
 
 ## ::isNew() : boolean
-Returns whether or not the instance represents a record that hasn't yet been persisted to the server. The default implementation simply checks if `@get('id')` is undefined, but you could override this on your own models.
+Returns true if the instance represents a record that hasn't yet been persisted to storage. The default implementation simply checks if `@get('id')` is undefined, but you can override this on your own models.
 
-It is used to determine whether `record.save()` will perform a `create` action or a `save` action.
+`isNew` is used to determine whether `record.save()` will perform a `create` action or a `save` action.
 
 ## updateAttributes(attributes) : Model
 
 ## toString() : string
+
+Returns a string representation suitable for debugging. By default this just contains the model's `resourceName` and `id`
 
 ## ::toJSON() : Object
 
@@ -455,7 +473,7 @@ Returns a JavaScript object containing the attributes of the record, using any s
 
 ## ::fromJSON() : Model
 
-Reloads attributes of a record from a JavaScript object.
+Loads attributes from a bare object into this instance.
 
     test 'fromJSON overwrites existing attributes', ->
       class Criminal extends Batman.Model
@@ -471,11 +489,15 @@ Reloads attributes of a record from a JavaScript object.
       equal criminal.get("name"), "Scarecrow"
 
 
-## toParam() : value
+## ::toParam() : value
 
-## state() : string
+Returns a representation of the model suitable for use in a URL. By default, this is the record's `id`.
 
-## hasStorage() : boolean
+This method is used by the routing system for serializing records into a URL.
+
+## ::hasStorage() : boolean
+
+True when the record has a storage adapter defined.
 
 ## ::load(options = {}, callback)
 `Load` tries to read the record from its storage adapter. The options object will be passed to the storage adapter when it performs the `read` operation. The callback takes three parameters: error, the loaded record, and the environment. `Load`ing a record clears all errors on that record.
