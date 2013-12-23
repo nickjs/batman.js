@@ -418,7 +418,7 @@ A universally accessible accessor to the record's primary key. If the record's
 primary key is `id` (the default), getting/setting this accessor simply passes
 the call through to `id`, otherwise it proxies the call to the custom primary key.
 
-    asyncTest "id proxies the primary key", ->
+    test "id proxies the primary key", ->
       class Post extends Batman.Model
         @primaryKey: 'name'
 
