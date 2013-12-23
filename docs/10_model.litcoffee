@@ -387,6 +387,32 @@ It accepts a callback with two arguments: any error that occurred, and an array 
 
 ## @create(attributes = {}, callback) : Model
 
+`App.Model.create` is a convenience method that is basically equivalent to
+calling `new App.Model` and 'record.save()' :
+
+    asyncTest "@create is an convience method around new and #save", ->
+      class Post extends Batman.Model
+        @resourceName: 'post'
+        @encode 'name'
+        @persist TestStorageAdapter, storage: []
+
+      # New and save
+      record = new Post(name: 'aName')
+      record.save()
+
+      # @create convenience method
+      other_record = Post.create name: 'aName', ->
+
+      delay ->
+        equal record.get('name'), other_record.get('name')
+        equal record.isNew(), false
+        equal other_record.isNew(), false
+
+  _Note_ : Pay attention to the fact that attributes is an empty object `{}` by
+  default. This means `Model.create({my_attribute: 'value'})` does _not_ work like
+  in Rails and does nothing. If you want to skip the callback, use
+  `Model.create(attributes, (->))`
+
 ## @findOrCreate(attributes = {}, callback) : Model
 
 ## id : value
