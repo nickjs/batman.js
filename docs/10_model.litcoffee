@@ -204,6 +204,7 @@ Built in validators are attached by calling `@validate` with options designating
       QUnit.expect(0)
       class Post extends Batman.Model
         @resourceName: 'post'
+
         @validate 'title', 'body', {presence: true} # title and body must be present (not undefined nor '')
         @validate 'body', {minLength: 10}           # body must be 10 characters long at least
         @validate 'title', {pattern: /^[A-Z]/}      # Title must start with an uppercase letter
