@@ -7,7 +7,6 @@ class Batman.EmailValidator extends Batman.Validator
   emailRegexp: /[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*/
 
   constructor: (options) ->
-    console.log @emailRegexp
     super
 
   validateEach: (errors, record, key, callback) ->
