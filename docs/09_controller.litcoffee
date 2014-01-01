@@ -215,9 +215,9 @@ If any `beforeAction` filter returns `false` or calls [`@redirect`](/docs/api/ba
       controller.dispatch "other"
       deepEqual results, ["before!", "action!", "after!"]
 
-## ::redirect(url: string)
+## ::redirect(options: [string|Object])
 
-`redirect` will forward the user to a new route defined by `url` without hard-refreshing the page. This modifies the current page URL using pushState if supported, otherwise falling back to hash-bang fragment identifiers. The url can be obtained dynamically using `MyApp.get('routes').myResourceName().path()` or by manually passing a string, such as `@redirect('/test')`.
+Properly handles the controller filter chain and loads a new page with [`Batman.redirect`](/docs/api/batman.html#class_function_redirect). See [`Batman.redirect`](/docs/api/batman.html#class_function_redirect) for allowed `options`. If `options` is an object, the current controller will be added as the object's `controller` attribute (if it isn't already present), so calling `@redirect({action: "show", id: itemId})` is equivalent to calling `@redirect({action: 'show', id: itemId, controller: 'items'})`.
 
 ## ::scrollToHash([hash: string])
 
