@@ -59,3 +59,16 @@ asyncTest 'it should allow contexts to be specified using filters', 2, ->
     view.set('namespace', Batman(foo: Batman(bar: 'qux')))
     equal $("#test", node).html(), 'qux', 'if the context changes the bindings should update'
     QUnit.start()
+
+asyncTest 'it should update the parent context when the inner context is changed', 2, ->
+  source = '<div data-context-foo="bar"></div>'
+  context = {bar: 5}
+
+  helpers.render source, context, (node, view) ->
+    subview = view.subviews.get('first')
+    equal(subview.get('foo'), 5)
+
+    subview.set('foo', 10)
+    equal(view.get('bar'), 10)
+
+    QUnit.start()

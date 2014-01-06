@@ -58,7 +58,7 @@ class Batman.DOM.ViewArgumentBinding extends Batman.DOM.AbstractBinding
 
     @targetView.observe @option, @_updateValue = (value) =>
       return if @isDataChanging
-      @view.set(@keyPath, value)
+      @view.setKeypath(@keyPath, value)
 
   dataChange: (value) ->
     @isDataChanging = true

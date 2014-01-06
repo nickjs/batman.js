@@ -6,7 +6,9 @@ class Batman.DOM.ContextBinding extends Batman.DOM.AbstractAttributeBinding
 
   bindingName: 'context'
 
-  constructor: ->
+  constructor: (definition) ->
+    @contextKeypath = definition.attr || 'proxiedObject'
+
     super
 
     contextAttribute = if @attributeName
@@ -17,9 +19,16 @@ class Batman.DOM.ContextBinding extends Batman.DOM.AbstractAttributeBinding
     @node.removeAttribute(contextAttribute)
     @node.insertBefore(document.createComment("batman-#{contextAttribute}=\"#{@keyPath}\""), @node.firstChild)
 
+    @backingView.observe @contextKeypath, @_updateValue = (value) =>
+      return if @isDataChanging
+      @view.setKeypath(@keyPath, value)
+
   dataChange: (proxiedObject) ->
-    @backingView.set(@attributeName || 'proxiedObject', proxiedObject)
+    @isDataChanging = true
+    @backingView.set(@contextKeypath, proxiedObject)
+    @isDataChanging = false
 
   die: ->
-    @backingView.unset(@attributeName || 'proxiedObject')
+    @backingView.forget(@contextKeypath, @_updateValue)
+    @backingView.unset(@contextKeypath)
     super
