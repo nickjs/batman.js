@@ -145,28 +145,30 @@ _Note_: When passed an object without a `has` function, `contains` will return `
 
 `get` is a general purpose function for retrieving the value from a `key` on an `object` of an indeterminate type. This is useful if code needs to work with both `Batman.Object`s and Plain Old JavaScript Objects. `get` has the following semantics:
 
- + if the `object` has a `get` function defined, return the result of `object.get(key)`
- + if the object does not have a `get` function defined, use an ephemeral `Batman.Property` to retrieve the key. This is equivalent to `object[key]` for single segment `key`s, but if the `key` is multi-segment (example: 'product.customer.name'), `get` will do nested gets until the either `undefined` or the end of the keypath is reached.
+- if the `object` has a `get` function defined, return the result of `object.get(key)`
+- if the object does not have a `get` function defined, use an ephemeral `Batman.Property` to retrieve the key. This is equivalent to `object[key]` for single segment `key`s, but if the `key` is multi-segment (example: 'product.customer.name'), `get` will do nested gets until the either `undefined` or the end of the keypath is reached.
 
-        test 'get returns the value at a key on a POJO', ->
-          subject = {fit: true}
-          equal Batman.get(subject, 'fit'), true
-          equal Batman.get(subject, 'flirty'), undefined
+<!-- tests -->
 
-        test 'get returns the value at a key on a Batman.Object', ->
-          subject = Batman {fit: true}
-          equal Batman.get(subject, 'fit'), true
-          equal Batman.get(subject, 'flirty'), undefined
+    test 'get returns the value at a key on a POJO', ->
+      subject = {fit: true}
+      equal Batman.get(subject, 'fit'), true
+      equal Batman.get(subject, 'flirty'), undefined
 
-        test 'get returns the value at a deep key on a POJO', ->
-          subject = {customer: {name: "Joe"}}
-          equal Batman.get(subject, 'customer.name'), "Joe"
-          equal Batman.get(subject, 'customer.age'), undefined
+    test 'get returns the value at a key on a Batman.Object', ->
+      subject = Batman {fit: true}
+      equal Batman.get(subject, 'fit'), true
+      equal Batman.get(subject, 'flirty'), undefined
 
-        test 'get returns the value at a deep key on a Batman.Object', ->
-          subject = Batman {customer: {name: "Joe"}}
-          equal Batman.get(subject, 'customer.name'), "Joe"
-          equal Batman.get(subject, 'customer.age'), undefined
+    test 'get returns the value at a deep key on a POJO', ->
+      subject = {customer: {name: "Joe"}}
+      equal Batman.get(subject, 'customer.name'), "Joe"
+      equal Batman.get(subject, 'customer.age'), undefined
+
+    test 'get returns the value at a deep key on a Batman.Object', ->
+      subject = Batman {customer: {name: "Joe"}}
+      equal Batman.get(subject, 'customer.name'), "Joe"
+      equal Batman.get(subject, 'customer.age'), undefined
 
 ## @getPath(base, segments) : string
 
