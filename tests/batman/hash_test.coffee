@@ -459,7 +459,7 @@ test "replace(pojo) replaces the keys and values with those of the given object"
   deepEqual sizeObserver.lastCallArguments, ['medium', undefined, 'size']
   equal changeHandler.callCount, 1
   deepEqual changeHandler.lastCallArguments, [@hash, @hash]
-  
+
   equal itemsWereAddedHandler.callCount, 1
   deepUnsortedEqual itemsWereAddedHandler.lastCallArguments, [['material', 'size'], ['silk', 'medium']]
 
@@ -509,6 +509,10 @@ test "toJSON() returns a serializable object representation of the hash", ->
   @hash.set('foo', Batman('bar': 'baz'))
   @hash.set('bar', Batman('foo': 'baz'))
   deepEqual @hash.toJSON(), {foo: {bar: 'baz'}, bar: {foo: 'baz'}}
+
+test "toJSON() supports null sub keys", ->
+  @hash.set('foo', new Batman.Hash(bar: null))
+  deepEqual @hash.toJSON(), { foo: { bar: null } }
 
 test "updating a hash fires proper 'itemsWereAdded' and 'itemsWereChanged' events", ->
   @hash.set 'foo', 'bar'
