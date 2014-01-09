@@ -48,6 +48,11 @@ class Batman.StorageAdapter extends Batman.Object
     constructor: (message) ->
       super(message || "This operation is not implemented by the storage adapter!")
 
+  class @BadGatewayError extends @StorageError
+    name: "BadGatewayError"
+    constructor: (message) ->
+      super(message || "Storage operation failed due to unavailability of the backend!")
+
   constructor: (model) ->
     super(model: model)
     constructor = @constructor

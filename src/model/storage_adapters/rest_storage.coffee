@@ -249,6 +249,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     '422': @UnprocessableRecordError
     '500': @InternalStorageError
     '501': @NotImplementedError
+    '502': @BadGatewayError
 
   _errorFor: (error, env) ->
     return error if error instanceof Error or not error.request?
