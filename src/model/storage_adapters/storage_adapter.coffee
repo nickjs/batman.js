@@ -33,6 +33,11 @@ class Batman.StorageAdapter extends Batman.Object
     constructor: (message) ->
       super(message || "Storage operation permitted but the request was malformed!")
 
+  class @EntityTooLargeError extends @StorageError
+    name: "EntityTooLargeError"
+    constructor: (message) ->
+      super(message || "Storage operation denied due to size constraints!")
+
   class @UnprocessableRecordError extends @StorageError
     name: "UnprocessableRecordError"
     constructor: (message) ->

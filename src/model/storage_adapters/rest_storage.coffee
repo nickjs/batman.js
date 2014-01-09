@@ -246,6 +246,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
     '404': @NotFoundError
     '406': @NotAcceptableError
     '409': @RecordExistsError
+    '413': @EntityTooLargeError
     '422': @UnprocessableRecordError
     '500': @InternalStorageError
     '501': @NotImplementedError
