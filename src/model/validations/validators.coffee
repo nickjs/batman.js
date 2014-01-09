@@ -23,3 +23,4 @@ Batman.extend Batman.translate.messages,
       invalid_association: "is not valid"
       not_included_in_list: "is not included in the list"
       included_in_list: "is included in the list"
+      not_an_email: "is not a valid email address"

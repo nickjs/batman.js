@@ -204,7 +204,11 @@ Built in validators are attached by calling `@validate` with options designating
       QUnit.expect(0)
       class Post extends Batman.Model
         @resourceName: 'post'
-        @validate 'title', 'body', {presence: true}
+
+        @validate 'title', 'body', {presence: true} # title and body must be present (not undefined nor '')
+        @validate 'body', {minLength: 10}           # body must be 10 characters long at least
+        @validate 'title', {pattern: /^[A-Z]/}      # Title must start with an uppercase letter
+        @validate 'author', {email: true}           # the author field must contain a valid email address
 
 The built in validation options are listed below:
 
@@ -221,6 +225,8 @@ The built in validation options are listed below:
  + `lengthWithin : [number, number]` or `lengthIn : [number, number]`: Assert that the value's `length` property is within the ranger specified by the given array of two numbers, where the first number is the lower bound and the second number is the upper bound.
  + `inclusion : in : [list, of, acceptable, values]`: Assert that the value is equal to one of the values in an array.
  + `exclusion : in : [list, of, unacceptable, values]`: Assert that the value is not equal to any of the values in an array.
+ + `regexp : /regexp/` : Assert that the value is matching the provided regular expression.
+ + `email: true` : Assert that the value is an email address. (using Webkit's html5 regexp)
 
 Custom validators should have the signature `(errors, record, key, callback)`. The arguments are as follows:
 

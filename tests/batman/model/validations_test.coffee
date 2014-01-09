@@ -129,6 +129,24 @@ validationsTestSuite = ->
         equal errors.length, 0
         QUnit.start()
 
+  asyncTest 'email', ->
+    class User extends Batman.Model
+      @validate 'email', {email: true}
+
+    u = new User(email: 'not_a_email')
+    u.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      u.set('email', 'test@test.fr')
+      u.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        u.set('email', 'test@test')
+        u.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
   asyncTest "inclusion", ->
     class Product extends Batman.Model
       @validate 'name', inclusion: in: ["Batman", "Catwoman"]
