@@ -145,8 +145,10 @@ _Note_: When passed an object without a `has` function, `contains` will return `
 
 `get` is a general purpose function for retrieving the value from a `key` on an `object` of an indeterminate type. This is useful if code needs to work with both `Batman.Object`s and Plain Old JavaScript Objects. `get` has the following semantics:
 
- + if the `object` has a `get` function defined, return the result of `object.get(key)`
- + if the object does not have a `get` function defined, use an ephemeral `Batman.Property` to retrieve the key. This is equivalent to `object[key]` for single segment `key`s, but if the `key` is multi-segment (example: 'product.customer.name'), `get` will do nested gets until the either `undefined` or the end of the keypath is reached.
+- if the `object` has a `get` function defined, return the result of `object.get(key)`
+- if the object does not have a `get` function defined, use an ephemeral `Batman.Property` to retrieve the key. This is equivalent to `object[key]` for single segment `key`s, but if the `key` is multi-segment (example: 'product.customer.name'), `get` will do nested gets until the either `undefined` or the end of the keypath is reached.
+
+<!-- tests -->
 
     test 'get returns the value at a key on a POJO', ->
       subject = {fit: true}
@@ -213,3 +215,14 @@ _Note_: When passed an object without a `has` function, `contains` will return `
 
     test 'escapeHTML encodes special characters into HTML entities', ->
       equal Batman.escapeHTML("& < > \" '"), "&amp; &lt; &gt; &#34; &#39;"
+
+## @redirect(options: [string|Object])
+
+Redirects to a new path with either pushState or hashbang navigation, depending on your [configuration](/docs/configuration.html). `options` may be:
+
+- a string, which is treated as the target path (eg, `"/posts"`)
+- a `Batman.Model` class, which redirects to "index" (eg, `Batman.redirect(MyApp.Post)` redirects to `"/posts"`)
+- a `Batman.Model` instance, which redirects to "show" (eg, `Batman.redirect(thisPost)` redirects to `"/posts/#{thisPost.toParam()}"`)
+- an object containing params:
+  - `Batman.redirect({controller: "posts", action: "index"})` redirects to  `"/posts"`
+  - `Batman.redirect({controller: "posts", action: "edit", id: 6})` redirects to `"/posts/6/edit"`
