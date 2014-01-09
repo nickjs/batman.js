@@ -349,6 +349,44 @@ validationsTestSuite = ->
           equal errors.length, 1
           QUnit.start()
 
+  asyncTest "valdiation skipped with unless option", ->
+    class Product extends Batman.Model
+      @validate 'state', presence: true, unless: (errors, record, key) -> record.get('country') == 'CA'
+
+    p = new Product country: 'US'
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      p.set 'country', 'CA'
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        p.set 'country', 'US'
+        p.set 'state', 'OH'
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
+  asyncTest "validation skipped with if option", ->
+    class Product extends Batman.Model
+      @validate 'state', presence: true, if: (errors, record, key) -> record.get('country') == 'US'
+
+    p = new Product country: 'US'
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      p.set 'country', 'CA'
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        p.set 'country', 'US'
+        p.set 'state', 'OH'
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
   asyncTest "numeric using onlyInteger", ->
     class Product extends Batman.Model
       @validate 'number', onlyInteger: true

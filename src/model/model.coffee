@@ -70,6 +70,8 @@ class Batman.Model extends Batman.Object
           validators.push
             keys: keys
             validator: new validatorClass(matches)
+            if: optionsOrFunction.if
+            unless: optionsOrFunction.unless
     return
 
   @classAccessor 'resourceName',
@@ -474,6 +476,10 @@ class Batman.Model extends Batman.Object
         callback?(undefined, errors)
 
     for validator in validators
+      if (validator.if && !validator.if.call(this, errors, @, key)) || (validator.unless && validator.unless.call(this, errors, @, key))
+        finishedValidation()
+        continue
+
       for key in validator.keys
         args = [errors, @, key, finishedValidation]
         try
