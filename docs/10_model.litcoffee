@@ -226,7 +226,7 @@ The built in validation options are listed below:
  + `inclusion : in : [list, of, acceptable, values]`: Assert that the value is equal to one of the values in an array.
  + `exclusion : in : [list, of, unacceptable, values]`: Assert that the value is not equal to any of the values in an array.
  + `regexp : /regexp/` : Assert that the value is matching the provided regular expression.
- + `email: true` : Assert that the value is an email address. (using Webkit's html5 regexp)
+ + `email : true` : Assert that the value is an email address, per the [W3C HTML5 definition](http://www.w3.org/TR/html5/forms.html#valid-e-mail-address).
 
 Custom validators should have the signature `(errors, record, key, callback)`. The arguments are as follows:
 
