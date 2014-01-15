@@ -422,6 +422,7 @@ class Batman.Model extends Batman.Object
           @get('lifecycle').failedValidation()
           return callback?(error || errors, @)
 
+        @fire 'validated'
         associations = @constructor._batman.get('associations')
         # Save belongsTo models immediately since we don't need this model's id
         @_withoutDirtyTracking ->

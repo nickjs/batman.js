@@ -123,12 +123,14 @@ QUnit.module "Batman.Model instance saving",
     @adapter = new AsyncTestStorageAdapter(@Product)
     @Product.persist @adapter
 
-asyncTest "model instances should save", ->
+asyncTest "model instances should save and fire validated", ->
   product = new @Product()
+  product.on 'validated', validated = createSpy()
   product.save (err, product, env) =>
     throw err if err?
     ok product.get('id') # We rely on the test storage adapter to add an ID, simulating what might actually happen IRL
     ok env
+    equal validated.callCount, 1
     QUnit.start()
 
 asyncTest "new instances should be added to the identity map", ->
@@ -190,11 +192,13 @@ asyncTest "model instances should throw if they can't be saved", ->
     ok err
     QUnit.start()
 
-asyncTest "model instances shouldn't save if they don't validate", ->
+asyncTest "model instances shouldn't save or fire validated if they don't validate", ->
   @Product.validate 'name', presence: yes
   product = new @Product()
+  product.on 'validated', validated = createSpy()
   product.save (err, product) ->
     equal err.length, 1
+    equal validated.callCount, 0
     QUnit.start()
 
 asyncTest "model instances should not be in error if they don't validate", ->
