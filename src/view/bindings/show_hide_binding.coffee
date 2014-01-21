@@ -15,10 +15,10 @@ class Batman.DOM.ShowHideBinding extends Batman.DOM.AbstractBinding
     view = Batman.View.viewForNode(@node, false)
 
     if !!value is not @invert
-      view?.fire('viewWillShow')
+      view?.fireAndCall('viewWillShow')
       @node.style.display = @originalDisplay
-      view?.fire('viewDidShow')
+      view?.fireAndCall('viewDidShow')
     else
-      view?.fire('viewWillHide')
+      view?.fireAndCall('viewWillHide')
       Batman.DOM.setStyleProperty(@node, 'display', 'none', 'important')
-      view?.fire('viewDidHide')
+      view?.fireAndCall('viewDidHide')
