@@ -383,9 +383,9 @@ The binding value should be a regular view path, i.e. "#{resource_name}/#{contro
 will be used by the `CrimesController`'s  `index` action.
 
 
-## data-renderif
+## data-renderif / data-deferif
 
-`data-renderif` defers parsing of a node's child bindings until its keypath updates to true. `data-renderif` should generally be combined with a `data-showif` or `data-insertif` to prevent it from being visible until it is ready.
+`data-renderif` (and `data-deferif`) defers parsing of a node's child bindings until its keypath updates to true (or false, respectively). Note that this does not prevent the node from being inserted into the DOM. These bindings should generally be combined with a `data-showif` or `data-insertif` to prevent it from being visible until it is ready.
 
 Deferring rendering can help prevent portions of the page updating many times while data is being loaded. It can also allow you to prevent features that are not yet ready from being used.
 

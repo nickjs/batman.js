@@ -9,8 +9,12 @@ class Batman.DOM.DeferredRenderBinding extends Batman.DOM.AbstractBinding
   backWithView: Batman.DeferredRenderView
   skipChildren: true
 
-  dataChange: (value) ->
-    if value and not @backingView.isBound
-      @node.removeAttribute('data-renderif')
-      @backingView.initializeBindings()
+  constructor: (definition) ->
+    {@invert} = definition
+    @attributeName = if @invert then 'data-deferif' else 'data-renderif'
+    super
 
+  dataChange: (value) ->
+    if !!value is !@invert and not @backingView.isBound
+      @node.removeAttribute(@attributeName)
+      @backingView.initializeBindings()
