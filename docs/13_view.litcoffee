@@ -91,12 +91,25 @@ loaded.
       node = view.get('node')
       equal 'cat', node.firstChild.innerHTML
 
+You can also access a view's `node` in its methods, for example, activating jQuery plugins:
+
+```
+class App.SearchBarView extends Batman.View
+  viewDidAppear: ->
+    $node = $(@get('node'))
+    $node.typeahead() # <= whatever jQuery plugin you want!
+```
 
 ## ::%html : String
 
 The HTML source for the view's template. Setting this will parse the template
 and build bindings automatically, but it will not be inserted into the DOM
-until the view is added to a superview.
+until the view is added to a superview. You can specify a view's HTML when you define the class:
+
+```
+class App.SearchBarView extends Batman.View
+  html: "<input type='text' placeholder='Enter a search term' />"
+```
 
 If you don't explicitly set `html` but you do set `source`, then getting `html`
 will automatically fetch the template source from the local template store.
