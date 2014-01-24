@@ -99,6 +99,32 @@ class App.SearchBarView extends Batman.View
     $node = $(@get('node'))
     $node.typeahead() # <= whatever jQuery plugin you want!
 ```
+## ::%source : String
+
+This string will be used to fetch a view's HTML, relative to [`Batman.config.pathToHTML`](/docs/configuration.html).
+You don't need to add `.html` to this string -- it will be added automatically.
+
+Inside a controller action, batman.js provides a default source based on the
+contoller's [`routingKey`](/docs/api/batman.controller.html#routingkey_and_minification) and the [controller action](/docs/api/batman.controller.html#actions).
+
+You can set `source` in the class definition:
+
+```
+class App.HeaderNavigationView extends Batman.View
+  source: 'layout/_header'
+```
+
+Or when calling `@render()` inside a controller action:
+
+```
+class App.PostsController extends Batman.Controller
+  show: ->
+    @set('post', new App.Post)
+    if @get('post.isAlternative')
+      @render(source: "posts/alternative_new")
+    else
+      @render() # defaults to 'posts/new'
+```
 
 ## ::%html : String
 
