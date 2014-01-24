@@ -53,13 +53,22 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
     test 'underscore converts CamelCase to under_scores', ->
       equal Batman.helpers.underscore("BatmanObject"), "batman_object"
 
+## @titleize(string) : string
+
+`titleize` does a word-wise capitalization of a phrase or word.
+
+    test 'titleize makes the first letter of each word in the string uppercase', ->
+      equal Batman.helpers.titleize("batmanObject"), "BatmanObject"
+      equal Batman.helpers.titleize("batman object"), "Batman Object"
+      equal Batman.helpers.titleize("AlreadyCapitalized"), "AlreadyCapitalized"
+
 ## @capitalize(string) : string
 
-`capitalize` does a word-wise capitalization of a phrase or word.
+`capitalize` capitalizes the first letter of the string.
 
-    test 'capitalize makes the first letter of each word in the string uppercase', ->
+    test 'capitalize makes the first letter in the string uppercase', ->
       equal Batman.helpers.capitalize("batmanObject"), "BatmanObject"
-      equal Batman.helpers.capitalize("batman object"), "Batman Object"
+      equal Batman.helpers.capitalize("batman object"), "Batman object"
       equal Batman.helpers.capitalize("AlreadyCapitalized"), "AlreadyCapitalized"
 
 ## @trim(string) : string
@@ -108,3 +117,13 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
 
     test 'humanize gets rid of _id suffix', ->
       equal Batman.helpers.humanize('identifying_string_id'), 'Identifying string'
+
+## @toSentence(array) : string
+
+`toSentence` joins the items in the array with commas or "and", as appropriate:
+
+    test 'toSentence joins array items with commas or "and"', ->
+      equal Batman.helpers.toSentence(["The Joker"]), "The Joker"
+      equal Batman.helpers.toSentence(["The Joker", "Scarecrow"]), "The Joker and Scarecrow"
+      equal Batman.helpers.toSentence(["The Joker", "Scarecrow", "Poison Ivy"]), "The Joker, Scarecrow, and Poison Ivy"
+      equal Batman.helpers.toSentence(["The Joker", "Scarecrow", "Poison Ivy", "Penguin"]), "The Joker, Scarecrow, Poison Ivy, and Penguin"

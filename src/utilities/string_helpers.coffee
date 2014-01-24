@@ -1,7 +1,7 @@
 #= require ./inflector
 
 camelize_rx = /(?:^|_|\-)(.)/g
-capitalize_rx = /(^|\s)([a-z])/g
+titleize_rx = /(^|\s)([a-z])/g
 underscore_rx1 = /([A-Z]+)([A-Z][a-z])/g
 underscore_rx2 = /([a-z\d])([A-Z])/g
 humanize_rx1 = /_id$/
@@ -29,8 +29,8 @@ Batman.helpers =
           .replace(underscore_rx2, '$1_$2')
           .replace('-', '_').toLowerCase()
 
-  capitalize: (string) -> string.replace capitalize_rx, (m,p1,p2) -> p1 + p2.toUpperCase()
-
+  titleize: (string) -> string.replace titleize_rx, (m,p1,p2) -> p1 + p2.toUpperCase()
+  capitalize: (string) -> string.charAt(0).toUpperCase() + string.slice(1)
   trim: (string) -> if string then string.trim() else ""
 
   interpolate: (stringOrObject, keys) ->
@@ -51,6 +51,15 @@ Batman.helpers =
     string.replace(humanize_rx1, '')
           .replace(humanize_rx2, ' ')
           .replace(humanize_rx3, (match) -> match.toUpperCase())
+
+  toSentence: (array) ->
+    if array.length < 3
+      return array.join ' and '
+    else
+      last = array.pop()
+      itemString = array.join(', ')
+      itemString += ", and #{last}"
+      return itemString
 
 Inflector = new Batman.Inflector
 Batman.helpers.inflector = Inflector

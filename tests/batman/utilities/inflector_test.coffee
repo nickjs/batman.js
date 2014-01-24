@@ -216,3 +216,35 @@ QUnit.module 'Batman.helpers humanization',
 test "helpers humanize", ->
   for underscored, human of UnderscoreToHuman
     equal Batman.helpers.humanize(underscored), human
+
+UncaptializedToCapitalized =
+  "congratulations" : 'Congratulations'
+  "you're the big winner" : "You're the big winner"
+  "you win one US dollar" : "You win one US dollar"
+
+QUnit.module 'Batman.helpers capitalization',
+test 'capitalizes the first letter of the first word', ->
+  for lowercased, capitalized of UncaptializedToCapitalized
+    equal Batman.helpers.capitalize(lowercased), capitalized
+
+UncapitalizedToTitleized =
+  "congratulations" : 'Congratulations'
+  "you're the big winner" : "You're The Big Winner"
+  "you win one US dollar" : "You Win One US Dollar"
+
+QUnit.module 'Batman.helpers titleization',
+test 'capitalizes the first letter of each word', ->
+  for lowercased, titleized of UncapitalizedToTitleized
+    equal Batman.helpers.titleize(lowercased), titleized
+
+ArrayToSentence = [
+  {array: ["Paris"], sentence: "Paris"}
+  {array: ["Paris", "New York"], sentence: "Paris and New York"}
+  {array: ["Paris", "New York", "Tokyo"], sentence: "Paris, New York, and Tokyo"}
+  {array: ["Paris", "New York", "Tokyo", "Abu Dhabi"], sentence: "Paris, New York, Tokyo, and Abu Dhabi"}
+]
+
+QUnit.module 'Batman.helpers toSentence',
+test 'joins the words with commas/"and"', ->
+ for {array, sentence} in ArrayToSentence
+  equal Batman.helpers.toSentence(array), sentence
