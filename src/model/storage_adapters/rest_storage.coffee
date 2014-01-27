@@ -156,6 +156,14 @@ class Batman.RestStorage extends Batman.StorageAdapter
     else
       data = json
 
+    if env.options.only?
+      for key of env.options.data
+        delete data[key] if !env.options.only.indexOf(key)
+
+    if env.options.except?
+      for key in env.options.except
+        delete data[key]
+
     env.options.data = data
     next()
 

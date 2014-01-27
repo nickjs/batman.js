@@ -127,7 +127,7 @@ class Batman.Model extends Batman.Object
       options = { data: options }
 
     @loadWithOptions options, callback
-  
+
   @loadWithOptions: (options, callback) ->
     @fire 'loading', options
     @_doStorageOperation 'readAll', options, (err, records, env) =>
@@ -428,7 +428,9 @@ class Batman.Model extends Batman.Object
         @_withoutDirtyTracking ->
           associations?.getByType('belongsTo')?.forEach (association, label) => association.apply(this)
 
-        @_doStorageOperation storageOperation, {data: options}, (err, record, env) =>
+        payload = Batman.extend {}, options, {data: options}
+
+        @_doStorageOperation storageOperation, payload, (err, record, env) =>
           unless err
             @get('dirtyKeys').clear()
             @get('_dirtiedKeys').clear()
