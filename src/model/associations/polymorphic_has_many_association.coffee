@@ -35,7 +35,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
 
     Batman.developer.do ->
       if Batman.currentApp? and not relatedModel
-        Batman.developer.warn "Related model #{type} for polymorphic association not found."
+        Batman.developer.warn "Related model #{type} for hasMany polymorphic association #{@label} not found."
 
     relatedModel
 
