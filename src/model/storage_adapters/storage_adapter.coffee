@@ -138,4 +138,5 @@ class Batman.StorageAdapter extends Batman.Object
 
     @runBeforeFilter key, env, (env) ->
       @[key](env, next)
+
     undefined

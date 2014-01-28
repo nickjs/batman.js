@@ -122,6 +122,48 @@ exports.run = ->
       equal readProducts[0]?.get("name"), "test"
       QUnit.start()
 
+  asyncTest 'updating in storage: whitelist when supplied option `only`', ->
+    @adapter.serializeAsForm = false
+
+    exports.MockRequest.expect
+      url: '/products/10'
+      method: 'PUT'
+      data: '{"product":{"id":10}}'
+    , product:
+        id: 10
+        name: "test"
+        other_field: "another test"
+
+    @Product.encode 'other_field'
+    @Product.encode 'id'
+    product = new @Product(name: "test", id: 10)
+    @adapter.perform 'update', product, {only: ['id']}, (err, record) =>
+      throw err if err
+      equal record.get('other_field'), "another test"
+      QUnit.start()
+
+
+  asyncTest 'updating in storage: blacklist when supplied option `except`', ->
+    @adapter.serializeAsForm = false
+
+    exports.MockRequest.expect
+      url: '/products/10'
+      method: 'PUT'
+      data: '{"product":{"name":"test"}}'
+    , product:
+        id: 10
+        name: "test"
+        other_field: "another test"
+
+    @Product.encode 'other_field'
+    @Product.encode 'id'
+    @Product.encode 'name'
+    product = new @Product(name: "test", id: 10)
+    @adapter.perform 'update', product, {except: ['id']}, (err, record) =>
+      throw err if err
+      equal record.get('other_field'), "another test"
+      QUnit.start()
+
   asyncTest 'updating in storage: should update the record with the response if it is different', 1, ->
     exports.MockRequest.expect
       url: '/products/10'

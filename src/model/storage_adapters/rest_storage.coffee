@@ -150,19 +150,20 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
   @::before 'create', 'update', @skipIfError (env, next) ->
     json = env.subject.toJSON()
+
+    if env.options.only?
+      for key of json
+        delete json[key] if env.options.only.indexOf(key) < 0
+
+    if env.options.except?
+      for key in env.options.except
+        delete json[key]
+
     if namespace = @recordJsonNamespace(env.subject)
       data = {}
       data[namespace] = json
     else
       data = json
-
-    if env.options.only?
-      for key of data
-        delete data[key] if !env.options.only.indexOf(key)
-
-    if env.options.except?
-      for key in env.options.except
-        delete data[key]
 
     env.options.data = data
     next()
