@@ -41,7 +41,6 @@ if typeof window.localStorage isnt 'undefined'
       @adapter.perform 'read', new product.constructor(createdRecord.get('id')), {}, (err, foundRecord) =>
         deepEqual foundRecord.toJSON(), {name: 'foo'}
 
-
         foundRecord.set 'name', 'bar'
         foundRecord.set 'cost', 75
 
@@ -60,7 +59,6 @@ if typeof window.localStorage isnt 'undefined'
     @adapter.perform 'create', product, {except: ['cost']}, (err, createdRecord) =>
       @adapter.perform 'read', new product.constructor(createdRecord.get('id')), {}, (err, foundRecord) =>
         deepEqual foundRecord.toJSON(), {name: 'foo'}
-
 
         foundRecord.set 'name', 'bar'
         foundRecord.set 'cost', 75

@@ -142,7 +142,6 @@ exports.run = ->
       equal record.get('other_field'), "another test"
       QUnit.start()
 
-
   asyncTest 'updating in storage: blacklist when supplied option `except`', ->
     @adapter.serializeAsForm = false
 
