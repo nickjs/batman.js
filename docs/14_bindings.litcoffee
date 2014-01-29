@@ -354,7 +354,7 @@ will route to `/villians/new?mastermind=true` and
 <a data-route='routes.villians.new' data-route-params='otherRouteParams'>Other</a>
 ```
 
-will look up `otherRouteParams` and append it to `/villains/new`.
+will look up `otherRouteParams` and append it to `/villains/new`, adding a `?` if necessary.
 
 ## data-view
 
