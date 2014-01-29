@@ -523,6 +523,10 @@ If the record [`isNew`](/docs/api/batman.model.html#prototype_function_isnew), `
 
 If the record is not valid, the [validation errors](/docs/api/batman.validationerror.html) will be passed to the first parameter of the callback function and the storage operation will not be performed.
 
+Available options include:
+- `only`: A whitelist that will submit only the specified model attributes from the storage adapter.  This is useful when you want to do partial updates of a model without sending the full model content.  e.g., `options = {only: ['name', 'bio']}`
+- `except`: A blacklist that will prevent specified model attributes from being transmitted from the storage adapter.  e.g., `options = {except: ['sensitive_data']}`
+
 ## ::destroy(options = {}, callback)
 
 `Destroy` fires the corresponding storage operation. The callback takes three arguments: JavaScript Error, the record, and the environment. If the operation is successful, the record is removed from its Model's [`loaded`](/docs/api/batman.model.html#class_function_loaded) set.

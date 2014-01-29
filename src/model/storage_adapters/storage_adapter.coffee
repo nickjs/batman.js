@@ -66,6 +66,18 @@ class Batman.StorageAdapter extends Batman.Object
 
   isStorageAdapter: true
 
+  onlyCertainAttributes: (json, only) ->
+    for key of json
+      delete json[key] if only.indexOf(key) < 0
+
+    json
+
+  exceptCertainAttributes: (json, except) ->
+    for key in except
+      delete json[key]
+
+    json
+
   storageKey: (record) ->
     model = record?.constructor || @model
     model.get('storageKey') || Batman.helpers.pluralize(Batman.helpers.underscore(model.get('resourceName')))
@@ -138,4 +150,5 @@ class Batman.StorageAdapter extends Batman.Object
 
     @runBeforeFilter key, env, (env) ->
       @[key](env, next)
+
     undefined

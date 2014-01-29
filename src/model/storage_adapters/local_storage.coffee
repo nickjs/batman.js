@@ -54,7 +54,11 @@ class Batman.LocalStorage extends Batman.StorageAdapter
     next()
 
   @::before 'create', 'update', @skipIfError (env, next) ->
-    env.recordAttributes = JSON.stringify(env.subject)
+    json = env.subject.toJSON()
+    json = @onlyCertainAttributes(json, env.options.only) if env.options.only
+    json = @exceptCertainAttributes(json, env.options.except) if env.options.except
+
+    env.recordAttributes = JSON.stringify(json)
     next()
 
   @::after 'read', @skipIfError (env, next) ->

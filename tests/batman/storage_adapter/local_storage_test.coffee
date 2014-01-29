@@ -30,3 +30,41 @@ if typeof window.localStorage isnt 'undefined'
             equal readProducts.length, 1
             deepEqual readProducts[0].get('name'), "testA"
             QUnit.start()
+
+  asyncTest 'create or update whitelists attributes when supplied `only`', ->
+
+    product = new @Product
+      name: 'foo'
+      cost: 50
+
+    @adapter.perform 'create', product, {only: ['id', 'name']}, (err, createdRecord) =>
+      @adapter.perform 'read', new product.constructor(createdRecord.get('id')), {}, (err, foundRecord) =>
+        deepEqual foundRecord.toJSON(), {name: 'foo'}
+
+        foundRecord.set 'name', 'bar'
+        foundRecord.set 'cost', 75
+
+        @adapter.perform 'update', foundRecord, {only: ['cost']}, (err, updatedRecord) =>
+          @adapter.perform 'read', new product.constructor(updatedRecord.get('id')), {}, (err, foundRecord) ->
+            deepEqual foundRecord.toJSON(), {cost: 75}
+
+            QUnit.start()
+
+  asyncTest 'create or update blacklists attributes when supplied `except`', ->
+
+    product = new @Product
+      name: 'foo'
+      cost: 50
+
+    @adapter.perform 'create', product, {except: ['cost']}, (err, createdRecord) =>
+      @adapter.perform 'read', new product.constructor(createdRecord.get('id')), {}, (err, foundRecord) =>
+        deepEqual foundRecord.toJSON(), {name: 'foo'}
+
+        foundRecord.set 'name', 'bar'
+        foundRecord.set 'cost', 75
+
+        @adapter.perform 'update', foundRecord, {except: ['name']}, (err, updatedRecord) =>
+          @adapter.perform 'read', new product.constructor(updatedRecord.get('id')), {}, (err, foundRecord) ->
+            deepEqual foundRecord.toJSON(), {cost: 75}
+
+            QUnit.start()
