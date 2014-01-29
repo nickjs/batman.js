@@ -94,7 +94,7 @@ The following is a list of available keypaths that can be used with bindings. Fo
  + `round` : Runs `Math.round` on input value.
  + `precision` : Runs `toPrecision()` on input value.
  + `fixed` : Runs `toFixed()` on input value.
- + `numberDelimeter` : Adds comma delimiters to a number
+ + `delimitNumber` : Adds comma delimiters to a number
 
 ## Keypath Literals
 
@@ -464,12 +464,12 @@ The `fixed` filter will run `toFixed()` on the input value. Value can be either 
 <span data-bind="someValue | fixed 3"></span>
 ```
 
-## numberDelimeter(value) : string
+## delimitNumber(value) : string
 
-The `numberDelimeter` filter will comma delimit a 'number'. Value can be either a `string` or `integer`
+The `delimitNumber` filter will comma delimit a 'number'. Value can be either a `string` or `integer`
 
 ```html
-<span data-bind="someValue | numberDelimeter"></span>
+<span data-bind="someValue | delimitNumber"></span>
 ```
 
 ## raw(value) : string
