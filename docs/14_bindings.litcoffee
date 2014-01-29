@@ -86,6 +86,16 @@ Note that filtered keypaths cannot propagate DOM land changes because values can
 
 The `<input>`'s value can be updated when the `post.body` property changes but if a user types into this input field, they will edit the truncated body. If Batman updated the `post.body` property with the contents of the input, all characters which had been truncated will be lost to the nether. To avoid this loss of information and inconsistency, bindings to filtered keypaths will _only update from JavaScript land to HTML_, and never vice versa.
 
+#### Available Keypath Filters
+
+The following is a list of available keypaths that can be used with bindings. For a more complete description with acompanying example see `Batman.View Filters`
+ + `ceil` : Runs `Math.ceil` on input value.
+ + `floor` : Runs `Math.floor` on input value.
+ + `round` : Runs `Math.round` on input value.
+ + `precision` : Runs `toPrecision()` on input value.
+ + `fixed` : Runs `toFixed()` on input value.
+ + `commafy` : Adds comma delimiters to a number
+
 ## Keypath Literals
 
 Keypaths also support a select few literals within them. Numbers, strings, and booleans can be passed as arguments to filters or used as the actual value of the keypath.
@@ -411,6 +421,56 @@ You can also specify a render target inside your HTML using `data-contentfor`.
 # Batman.View Filters
 
 Batman filters are evaluated from left to right, with the output of each filter being injected into the next. This allows you to form filter chains for display purposes. Accessor caching does not apply to filter chains. If any component of the chain changes, the entire chain will be recalculated for each binding in the template.
+
+## ceil(value) : [ string, integer ]
+
+The `ceil` filter will run `Math.ceil` on the input value
+
+```html
+<span data-bind="someValue | ceil"></span>
+```
+
+## floor(value) : [ string, integer ]
+
+The `floor` filter will run `Math.floor` on the input value
+
+```html
+<span data-bind="someValue | floor"></span>
+```
+
+## round(value) : [ string, integer ]
+
+The `round` filter will run `Math.round` on the input value
+
+```html
+<span data-bind="someValue | round"></span>
+```
+
+## percision(value, toPlace) : [ string, integer ]
+
+The `precision` filter will run `toPrecision()` on the input value
+
+```html
+<span data-bind="someValue | precision"></span>
+<span data-bind="someValue | precision 3"></span>
+```
+
+## fixed(value, toPlace) : [ string, integer ]
+
+The `fixed` filter will run `toFixed()` on the input value
+
+```html
+<span data-bind="someValue | fixed"></span>
+<span data-bind="someValue | fixed 3"></span>
+```
+
+## commafy(value) : [ string, integer ]
+
+The `commafy` filter will comma delimit a 'number'
+
+```html
+<span data-bind="someValue | commafy"></span>
+```
 
 ## raw(value) : string
 
