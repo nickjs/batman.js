@@ -36,16 +36,22 @@ Batman.Filters =
   not: (value, binding) ->
     !value
 
-  ceil       : (value) -> Math.ceil(value)
-  floor      : (value) -> Math.floor(value)
-  round      : (value) -> Math.round(value)
-  precision  : (value, p, binding) ->
-    value = parseFloat(value)
-    if p then value.toPrecision(p) else value.toPrecision()
-  fixed      : (value, f, binding) ->
-    value = parseFloat(value)
-    if f then value.toFixed(f) else value.toFixed()
-  commafy    : (value) ->
+  ceil: (value) ->
+    Math.ceil(value)
+
+  floor: (value) ->
+    Math.floor(value)
+
+  round: (value) ->
+    Math.round(value)
+
+  precision: (value, p) ->
+    parseFloat(value).toPrecision(p)
+
+  fixed: (value, f) ->
+    parseFloat(value).toFixed(f)
+
+  commafy: (value) ->
     value = value.toString()
     value.replace /(^|[^\w.])(\d{4,})/g, ($0, $1, $2) ->
       $1 + $2.replace(/\d(?=(?:\d\d\d)+(?!\d))/g, "$&,")

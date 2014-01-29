@@ -341,7 +341,6 @@ asyncTest 'precision', ->
     thing2: '1.234'
 
   source =  """
-    <div data-source="thing1 | precision"></div>
     <div data-source="thing1 | precision 1"></div>
     <div data-source="thing1 | precision 2"></div>
     <div data-source="thing1 | precision 5"></div>
@@ -349,11 +348,10 @@ asyncTest 'precision', ->
   """
 
   helpers.render source, context, (node) ->
-    equal node[0].innerHTML, "1.234"
-    equal node[1].innerHTML, "1"
-    equal node[2].innerHTML, "1.2"
-    equal node[3].innerHTML, "1.2340"
-    equal node[4].innerHTML, "1.2"
+    equal node[0].innerHTML, "1"
+    equal node[1].innerHTML, "1.2"
+    equal node[2].innerHTML, "1.2340"
+    equal node[3].innerHTML, "1.2"
     QUnit.start()
 
 asyncTest 'fixed', ->
@@ -362,7 +360,6 @@ asyncTest 'fixed', ->
     thing2: '1.234'
 
   source =  """
-    <div data-source="thing1 | fixed"></div>
     <div data-source="thing1 | fixed 1"></div>
     <div data-source="thing1 | fixed 2"></div>
     <div data-source="thing1 | fixed 5"></div>
@@ -370,11 +367,10 @@ asyncTest 'fixed', ->
   """
 
   helpers.render source, context, (node) ->
-    equal node[0].innerHTML, "1"
-    equal node[1].innerHTML, "1.2"
-    equal node[2].innerHTML, "1.23"
-    equal node[3].innerHTML, "1.23400"
-    equal node[4].innerHTML, "1.23"
+    equal node[0].innerHTML, "1.2"
+    equal node[1].innerHTML, "1.23"
+    equal node[2].innerHTML, "1.23400"
+    equal node[3].innerHTML, "1.23"
     QUnit.start()
 
 asyncTest 'commafy', ->

@@ -422,51 +422,51 @@ You can also specify a render target inside your HTML using `data-contentfor`.
 
 Batman filters are evaluated from left to right, with the output of each filter being injected into the next. This allows you to form filter chains for display purposes. Accessor caching does not apply to filter chains. If any component of the chain changes, the entire chain will be recalculated for each binding in the template.
 
-## ceil(value) : [ string, integer ]
+## ceil(value) : string
 
-The `ceil` filter will run `Math.ceil` on the input value
+The `ceil` filter will run `Math.ceil` on the input value. Value can be either a `string` or `integer`
 
 ```html
 <span data-bind="someValue | ceil"></span>
 ```
 
-## floor(value) : [ string, integer ]
+## floor(value) : string
 
-The `floor` filter will run `Math.floor` on the input value
+The `floor` filter will run `Math.floor` on the input value. Value can be either a `string` or `integer`
 
 ```html
 <span data-bind="someValue | floor"></span>
 ```
 
-## round(value) : [ string, integer ]
+## round(value) : string
 
-The `round` filter will run `Math.round` on the input value
+The `round` filter will run `Math.round` on the input value. Value can be either a `string` or `integer`
 
 ```html
 <span data-bind="someValue | round"></span>
 ```
 
-## percision(value, toPlace) : [ string, integer ]
+## percision(value, toPlace) : string
 
-The `precision` filter will run `toPrecision()` on the input value
+The `precision` filter will run `toPrecision()` on the input value. Value can be either a `string` or `integer`
 
 ```html
 <span data-bind="someValue | precision"></span>
 <span data-bind="someValue | precision 3"></span>
 ```
 
-## fixed(value, toPlace) : [ string, integer ]
+## fixed(value, toPlace) : string
 
-The `fixed` filter will run `toFixed()` on the input value
+The `fixed` filter will run `toFixed()` on the input value. Value can be either a `string` or `integer`
 
 ```html
 <span data-bind="someValue | fixed"></span>
 <span data-bind="someValue | fixed 3"></span>
 ```
 
-## commafy(value) : [ string, integer ]
+## commafy(value) : string
 
-The `commafy` filter will comma delimit a 'number'
+The `commafy` filter will comma delimit a 'number'. Value can be either a `string` or `integer`
 
 ```html
 <span data-bind="someValue | commafy"></span>
