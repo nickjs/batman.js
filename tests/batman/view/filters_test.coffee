@@ -290,127 +290,119 @@ asyncTest 'and', 4, ->
     equal node[3].checked, false
     QUnit.start()
 
-asyncTest 'ceil', 2, ->
-  helpers.render '<div data-source="value | ceil"></div>',
-    value: 1.234
-  , (node) ->
-    equal node.html(), "2"
+asyncTest 'ceil', ->
+  context = Batman
+    thing1: 1.234
+    thing2: 1.987
 
-    helpers.render '<div data-source="value | ceil"></div>',
-      value: 1.987
-    , (node) ->
-      equal node.html(), "2"
-      QUnit.start()
+  source =  """
+    <div data-source="thing1 | ceil"></div>
+    <div data-source="thing2 | ceil"></div>
+  """
 
-asyncTest 'floor', 2, ->
-  helpers.render '<div data-source="value | floor"></div>',
-    value: 1.234
-  , (node) ->
-    equal node.html(), "1"
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "2"
+    equal node[1].innerHTML, "2"
+    QUnit.start()
 
-    helpers.render '<div data-source="value | floor"></div>',
-      value: 1.987
-    , (node) ->
-      equal node.html(), "1"
-      QUnit.start()
+asyncTest 'floor', ->
+  context = Batman
+    thing1: 1.234
+    thing2: 1.987
 
-asyncTest 'round', 2, ->
-  helpers.render '<div data-source="value | round"></div>',
-    value: 1.234
-  , (node) ->
-    equal node.html(), "1"
+  source =  """
+    <div data-source="thing1 | floor"></div>
+    <div data-source="thing2 | floor"></div>
+  """
 
-    helpers.render '<div data-source="value | round"></div>',
-      value: 1.987
-    , (node) ->
-      equal node.html(), "2"
-      QUnit.start()
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "1"
+    equal node[1].innerHTML, "1"
+    QUnit.start()
 
-asyncTest 'precision', 5, ->
-  helpers.render '<div data-source="value | precision"></div>',
-    value: 1.234
-  , (node) ->
-    equal node.html(), "1.234"
+asyncTest 'round', ->
+  context = Batman
+    thing1: 1.234
+    thing2: 1.987
 
-    helpers.render '<div data-source="value | precision 1"></div>',
-      value: 1.234
-    , (node) ->
-      equal node.html(), "1"
+  source =  """
+    <div data-source="thing1 | round"></div>
+    <div data-source="thing2 | round"></div>
+  """
 
-      helpers.render '<div data-source="value | precision 2"></div>',
-        value: 1.234
-      , (node) ->
-        equal node.html(), "1.2"
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "1"
+    equal node[1].innerHTML, "2"
+    QUnit.start()
 
-        helpers.render '<div data-source="value | precision 5"></div>',
-          value: 1.234
-        , (node) ->
-          equal node.html(), "1.2340"
+asyncTest 'precision', ->
+  context = Batman
+    thing1: 1.234
+    thing2: '1.234'
 
-          helpers.render '<div data-source="value | precision 2"></div>',
-            value: "1.234"
-          , (node) ->
-            equal node.html(), "1.2"
-            QUnit.start()
+  source =  """
+    <div data-source="thing1 | precision"></div>
+    <div data-source="thing1 | precision 1"></div>
+    <div data-source="thing1 | precision 2"></div>
+    <div data-source="thing1 | precision 5"></div>
+    <div data-source="thing2 | precision 2"></div>
+  """
 
-asyncTest 'fixed', 5, ->
-  helpers.render '<div data-source="value | fixed"></div>',
-    value: 1.234
-  , (node) ->
-    equal node.html(), "1"
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "1.234"
+    equal node[1].innerHTML, "1"
+    equal node[2].innerHTML, "1.2"
+    equal node[3].innerHTML, "1.2340"
+    equal node[4].innerHTML, "1.2"
+    QUnit.start()
 
-    helpers.render '<div data-source="value | fixed 1"></div>',
-      value: 1.234
-    , (node) ->
-      equal node.html(), "1.2"
+asyncTest 'fixed', ->
+  context = Batman
+    thing1: 1.234
+    thing2: '1.234'
 
-      helpers.render '<div data-source="value | fixed 2"></div>',
-        value: 1.234
-      , (node) ->
-        equal node.html(), "1.23"
+  source =  """
+    <div data-source="thing1 | fixed"></div>
+    <div data-source="thing1 | fixed 1"></div>
+    <div data-source="thing1 | fixed 2"></div>
+    <div data-source="thing1 | fixed 5"></div>
+    <div data-source="thing2 | fixed 2"></div>
+  """
 
-        helpers.render '<div data-source="value | fixed 5"></div>',
-          value: 1.234
-        , (node) ->
-          equal node.html(), "1.23400"
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "1"
+    equal node[1].innerHTML, "1.2"
+    equal node[2].innerHTML, "1.23"
+    equal node[3].innerHTML, "1.23400"
+    equal node[4].innerHTML, "1.23"
+    QUnit.start()
 
-          helpers.render '<div data-source="value | fixed 2"></div>',
-            value: "1.234"
-          , (node) ->
-            equal node.html(), "1.23"
-            QUnit.start()
+asyncTest 'commafy', ->
+  context = Batman
+    onefish: 0.0001
+    twofish: 0.001
+    redfish: 100
+    blufish: 1000
+    hotfish: 1000000
+    cldfish: '1000000'
 
-asyncTest 'commafy', 6, ->
-  helpers.render '<div data-source="value | commafy"></div>',
-    value: 0.0001
-  , (node) ->
-    equal node.html(), "0.0001"
+  source =  """
+    <div data-source="onefish | commafy"></div>
+    <div data-source="twofish | commafy"></div>
+    <div data-source="redfish | commafy"></div>
+    <div data-source="blufish | commafy"></div>
+    <div data-source="hotfish | commafy"></div>
+    <div data-source="cldfish | commafy"></div>
+  """
 
-    helpers.render '<div data-source="value | commafy"></div>',
-      value: 0.001
-    , (node) ->
-      equal node.html(), "0.001"
-
-      helpers.render '<div data-source="value | commafy"></div>',
-        value: 100
-      , (node) ->
-        equal node.html(), "100"
-
-        helpers.render '<div data-source="value | commafy"></div>',
-          value: 1000
-        , (node) ->
-          equal node.html(), "1,000"
-
-          helpers.render '<div data-source="value | commafy"></div>',
-            value: 1000000
-          , (node) ->
-            equal node.html(), "1,000,000"
-
-            helpers.render '<div data-source="value | commafy"></div>',
-              value: '1000000'
-            , (node) ->
-              equal node.html(), "1,000,000"
-              QUnit.start()
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "0.0001"
+    equal node[1].innerHTML, "0.001"
+    equal node[2].innerHTML, "100"
+    equal node[3].innerHTML, "1,000"
+    equal node[4].innerHTML, "1,000,000"
+    equal node[5].innerHTML, "1,000,000"
+    QUnit.start()
 
 asyncTest 'or', 6, ->
   context = Batman

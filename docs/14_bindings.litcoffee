@@ -88,7 +88,7 @@ The `<input>`'s value can be updated when the `post.body` property changes but i
 
 #### Available Keypath Filters
 
-The following is a list of available keypaths that can be used with bindings. For a more complete description with acompanying example see `Batman.View Filters`
+The following is a list of available keypaths that can be used with bindings. For a more complete description with accompanying examples see `Batman.View Filters`
  + `ceil` : Runs `Math.ceil` on input value.
  + `floor` : Runs `Math.floor` on input value.
  + `round` : Runs `Math.round` on input value.
