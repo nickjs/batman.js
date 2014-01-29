@@ -51,7 +51,9 @@ Batman.Filters =
   fixed: (value, f) ->
     parseFloat(value).toFixed(f)
 
-  commafy: (value) ->
+  # this method was found here http://blog.stevenlevithan.com/archives/commafy-numbers
+  # and only slightly modified here. I won't take credit for creating this.
+  numberDelimeter: (value) ->
     value = value.toString()
     value.replace /(^|[^\w.])(\d{4,})/g, ($0, $1, $2) ->
       $1 + $2.replace(/\d(?=(?:\d\d\d)+(?!\d))/g, "$&,")

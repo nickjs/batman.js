@@ -373,7 +373,7 @@ asyncTest 'fixed', ->
     equal node[3].innerHTML, "1.23"
     QUnit.start()
 
-asyncTest 'commafy', ->
+asyncTest 'numberDelimeter', ->
   context = Batman
     onefish: 0.0001
     twofish: 0.001
@@ -383,12 +383,12 @@ asyncTest 'commafy', ->
     cldfish: '1000000'
 
   source =  """
-    <div data-source="onefish | commafy"></div>
-    <div data-source="twofish | commafy"></div>
-    <div data-source="redfish | commafy"></div>
-    <div data-source="blufish | commafy"></div>
-    <div data-source="hotfish | commafy"></div>
-    <div data-source="cldfish | commafy"></div>
+    <div data-source="onefish | numberDelimeter"></div>
+    <div data-source="twofish | numberDelimeter"></div>
+    <div data-source="redfish | numberDelimeter"></div>
+    <div data-source="blufish | numberDelimeter"></div>
+    <div data-source="hotfish | numberDelimeter"></div>
+    <div data-source="cldfish | numberDelimeter"></div>
   """
 
   helpers.render source, context, (node) ->
