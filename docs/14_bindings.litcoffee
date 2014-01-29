@@ -340,6 +340,22 @@ Routes for collection and member crimes should look like `/villains/:villain_id/
 
 _Note_: `data-route` bindings route only to internal dispatch, and not external links. Use a regular `<a>` tag to link away from the application.
 
+## data-route-params
+
+Adds the provided keypath or literal value to the route provided to `data-route`. For example:
+
+```html
+<a data-route='routes.villians.new' data-route-params='"mastermind=true"'>Mastermind</a>
+```
+
+will route to `/villians/new?mastermind=true` and
+
+```
+<a data-route='routes.villians.new' data-route-params='otherRouteParams'>Other</a>
+```
+
+will look up `otherRouteParams` and append it to `/villains/new`, adding a `?` if necessary.
+
 ## data-view
 
 `data-view` bindings attach custom `Batman.View` instances or instantiate custom `View` subclasses to / on a node. `data-view` expects either a `Batman.View` instance or subclass at the keypath passed to it. If an instance is passed, it will `set` the `node` property of the view to the node the `data-view` occurs on. If a class is passed, that class will be instantiated with the context the `data-view` binding executed in and with the node it occurred upon. See `Batman.View` for more information on custom Views and their uses.
