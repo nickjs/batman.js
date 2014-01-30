@@ -155,3 +155,70 @@ asyncTest 'it shouldn\'t create redundant whitespace', ->
     view.set('bar', false)
     equal node[0].className, 'foo'
     QUnit.start()
+
+asyncTest 'it should not remove already existing classes when binding a new (single) class', ->
+  source = '<div data-bind-class="fish" class="onefish twofish"></div>'
+  helpers.render source, { fish: false }, (node, view) ->
+    ok node.hasClass('onefish')
+    ok node.hasClass('twofish')
+    view.set('fish', 'newfish')
+    ok node.hasClass('onefish')
+    ok node.hasClass('twofish')
+    ok node.hasClass('newfish')
+    QUnit.start()
+
+asyncTest 'it should not remove already existing classes when binding new (multiple) classes', ->
+  source = '<div data-bind-class="fish" class="onefish twofish"></div>'
+  helpers.render source, { fish: false }, (node, view) ->
+    ok node.hasClass('onefish')
+    ok node.hasClass('twofish')
+    view.set 'fish', new Batman.Set('redfish', 'blufish')
+    ok node.hasClass('onefish')
+    ok node.hasClass('twofish')
+    ok node.hasClass('redfish')
+    ok node.hasClass('blufish')
+    view.set 'fish',
+      new Batman.Hash
+        'oldfish': true
+        'newfish': true
+    ok node.hasClass('onefish')
+    ok node.hasClass('twofish')
+    ok node.hasClass('oldfish')
+    ok node.hasClass('newfish')
+    view.set 'fish',
+      {
+        'hotfish': true
+        'cldfish': true
+      }
+    ok node.hasClass('onefish')
+    ok node.hasClass('twofish')
+    ok node.hasClass('hotfish')
+    ok node.hasClass('cldfish')
+    QUnit.start()
+
+asyncTest 'it should not add already existing classes when binding a new (single) class', ->
+  source = '<div data-bind-class="fish" class="onefish twofish"></div>'
+  helpers.render source, { fish: false }, (node, view) ->
+    equal node[0].className.split(" ").length, 2
+    view.set('fish', 'newfish')
+    equal node[0].className.split(" ").length, 3
+    QUnit.start()
+
+asyncTest 'it should not add already existing classes when binding new (multiple) classes', ->
+  source = '<div data-bind-class="fish" class="onefish twofish"></div>'
+  helpers.render source, { fish: false }, (node, view) ->
+    equal node[0].className.split(" ").length, 2
+    view.set 'fish', new Batman.Set('redfish', 'blufish')
+    equal node[0].className.split(" ").length, 4
+    view.set 'fish',
+      new Batman.Hash
+        'oldfish': true
+        'newfish': true
+    equal node[0].className.split(" ").length, 4
+    view.set 'fish',
+      {
+        'hotfish': true
+        'cldfish': true
+      }
+    equal node[0].className.split(" ").length, 4
+    QUnit.start()
