@@ -7,17 +7,17 @@ class App.Superhero extends Batman.Model
   @persist Batman.RestStorage # a StorageAdapter subclass
 ```
 
-__Protip:__ Consider setting the storage adapter in one `Batman.Model` subclass, then extending that subclass in the rest of your app. Then, you won't have to call `@persist` every time:
+__Note:__ `@persist` instantiates a StorageAdapter instance during model definition, so it will use `@storageKey` and `@resourceName` from the model where it was instantiated, but it won't play well with inheritance. For example:
 
 ```coffeescript
 class App.Model extends Batman.Model
+  @storageKey: 'model'
   @persist Batman.LocalStorage
 
 class App.Superhero extends App.Model
-  # no need to call @persist here!
-
-class App.Sidekick extends App.Model
-  # or here!
+  # have to do it again here, or else it will use @storageKey of 'model'
+  @storageKey: 'superhero'
+  @persist Batman.LocalStorage
 ```
 
 ### Batman's Included StorageAdapters
