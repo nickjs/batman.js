@@ -3,19 +3,18 @@
 class Batman.DOM.ClassBinding extends Batman.DOM.AbstractCollectionBinding
   onlyObserve: Batman.BindingDefinitionOnlyObserve.Data
 
-  constructor: () ->
+  constructor: ->
     @existingClasses = arguments[0].node.className.split(' ')
     super
 
   dataChange: (value) ->
     if value?
       @unbindCollection()
+
       if typeof value is 'string'
-
-        newClasses = [].concat(@existingClasses)
-        newClasses.push value
-
+        newClasses = [value].concat(@existingClasses)
         @node.className = newClasses.join(' ').trim()
+
       else
         @bindCollection(value)
         @updateFromCollection()
@@ -29,7 +28,7 @@ class Batman.DOM.ClassBinding extends Batman.DOM.AbstractCollectionBinding
 
       array = array.toArray() if array.toArray?
 
-      existingClasses = [].concat @existingClasses
+      existingClasses = @existingClasses.slice(0)
       newClasses = array.filter (val) ->
         existingClasses.indexOf(val) == -1
 
