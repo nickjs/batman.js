@@ -1,4 +1,4 @@
-# Batman.Model Associations
+# /api/App Components/Batman.Model/Batman.Model Associations
 batman.js associations are modeled after [ActiveRecord Associations](http://api.rubyonrails.org/classes/ActiveRecord/Associations/ClassMethods.html). There are 3 types of assocations available on `Batman.Model`: [`hasMany`](/docs/api/batman.model_associations.html#class_function_hasmany), [`belongsTo`](/docs/api/batman.model_associations.html#class_function_belongsto), and [`hasOne`](/docs/api/batman.model_associations.html#class_function_hasone). batman.js also supports polymorphic associations through the use of [polymorphic-specific options](/docs/api/batman.model_associations.html#polymorphic_association_options).
 
 To add associations to your models, declare them in your model definition. Association functions take a label (string) and options (Object). The label names the association and is used to provide smart defaults for several options. All available options are [detailed below](/docs/api/batman.model_associations.html#association_options).

@@ -1,4 +1,4 @@
-# Batman.DOM
+# /api/App Components/Batman.DOM
 
 Batman includes some helper methods to assist in DOM manipulation.
 

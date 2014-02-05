@@ -1,4 +1,4 @@
-# Batman.Hash
+# /api/Data Structures/Batman.Hash
 
 `Batman.Hash` is an observable [`Batman.Object`](/docs/api/batman.object.html) wrapper around `Batman.SimpleHash`. `Hash` also extends [`Batman.Enumerable`](/docs/api/batman.enumerable.html), which provides [many useful methods](/docs/api/batman.enumerable.html).
 

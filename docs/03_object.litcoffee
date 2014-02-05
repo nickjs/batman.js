@@ -1,4 +1,4 @@
-# Batman.Object
+# /api/Data Structures/Batman.Object
 
 `Batman.Object` is the superclass for virtually all objects in a Batman application. `Batman.Object` mixes in `Batman.Observable` and `Batman.EventEmitter` for things like `get`, `set`, `observe`, and `fire`, and then defines some more useful things for tying everything together.
 
@@ -240,7 +240,7 @@ _Note_: Since the `Batman.mixin` helper is used, mixin functionality like using 
       ok snake.get('canSlither')
       ok snake.get('canHiss')
 
-## Batman.Observable
+# /api/Data Structures/Batman.Object/Batman.Observable
 
 `Batman.Observable` is a mixin which gives objects the ability to notify subscribers to changes on its properties. `Observable` also adds functionality for observing _keypaths_: arbitrarily deeply nested properties on objects. All `Batman.Object`s, their subclasses and instances are observable by default.
 
@@ -442,7 +442,7 @@ Returns the object on which `forget` was called.
       equal results.length, 1, "Nothing more has been logged because neither observer fired."
 
 
-## Batman.EventEmitter
+# /api/Data Structures/Batman.Object/Batman.EventEmitter
 
 `EventEmitter` is a mixin which can be applied to any object to give it the ability to fire events and accept listeners for those events. All `Batman.Object`s, their subclasses and instances are `EventEmitter`s by default.
 

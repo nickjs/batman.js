@@ -1,4 +1,4 @@
-# Batman.View Bindings
+# /api/App Components/Batman.View/Batman.View Bindings
 
 Batman's view bindings are how data gets shown and collected from the user. They center on the notion of "bindings": that the view representation and the JavaScript land value are always guaranteed to be in sync, such that when one changes, the other will reflect it.
 
@@ -424,7 +424,7 @@ You can also specify a render target inside your HTML using `data-contentfor`.
 <div data-yield="header"></div>
 ```
 
-# Batman.View Filters
+# /api/App Components/Batman.View/Batman.View Filters
 
 Batman filters are evaluated from left to right, with the output of each filter being injected into the next. This allows you to form filter chains for display purposes. Accessor caching does not apply to filter chains. If any component of the chain changes, the entire chain will be recalculated for each binding in the template.
 

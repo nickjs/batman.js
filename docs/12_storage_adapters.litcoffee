@@ -1,4 +1,4 @@
-# Batman.StorageAdapter
+# /api/App Components/Batman.StorageAdapter
 
 `Batman.StorageAdapter`s handle persistence of [`Batman.Model`s](/docs/api/batman.model.html). Any `Batman.Model` which will be created, read, updated or deleted must have a storage adapter, which is declared with [`Batman.Model@persist`](/docs/api/batman.model.html#class_function_persist):
 

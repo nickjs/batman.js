@@ -1,4 +1,4 @@
-# Batman.Model
+# /api/App Components/Batman.Model
 
 For a general explanation of `Batman.Model` and how it works, see [the guide](/docs/models.html).
 
@@ -558,7 +558,7 @@ For example:
         equal newProduct.get('errors.name.length'), 1
         equal newProduct.get('errors.price.length'), 1
 
-# Batman.Validator
+# /api/App Components/Batman.Model/Batman.Validator
 
 batman.js ships with a plethora of [built-in validators](/docs/api/batman.model.html#class_function_validate), but when they don't meet your needs, you can create custom validators by subclassing `Batman.Validator`, implementing `Batman.Validator::validateEach`, and adding the new validator to `Batman.Validators`. For example:
 
@@ -634,7 +634,7 @@ When the validator is finished, it must call `callback` to continue the validati
 
 Returns `true` if `options.allowBlank` is `true` _and_ `value` is `null`, `undefined` or `""`
 
-# Batman.ValidationError
+# /api/App Components/Batman.Model/Batman.ValidationError
 
 `Batman.ValidationError`s represent a failure for a model's field to to pass validation.
 They are usually accessed by getting a model's [errors](/docs/api/batman.model.html#prototype_accessor_errors).
