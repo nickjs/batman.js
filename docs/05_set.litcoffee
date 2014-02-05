@@ -1,4 +1,4 @@
-# Batman.Set
+# /api/Data Structures/Batman.Set
 
 `Set` is an observable, `Batman.Object` wrapper around `SimpleSet`. `Set` also extends [`Batman.Enumerable`](/docs/api/batman.enumerable.html), which provides [many useful methods](/docs/api/batman.enumerable.html).
 

@@ -1,4 +1,4 @@
-# Batman.Controller
+# /api/App Components/Batman.Controller
 
 `Batman.Controller` is the base class from which all an application's controllers should descend from. `Batman.Controller`s are responsible for executing _actions_ which fire off requests for model data, render views, or redirect to other actions in response to navigation state changes.
 

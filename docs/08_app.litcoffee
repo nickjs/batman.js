@@ -1,4 +1,4 @@
-# Batman.App
+# /api/App Components/Batman.App
 
 `Batman.App` is the central object in any Batman application. It manages the routing table and the current URL parameters, as well as the initial start of the application. It should also be used as a namespace for models and views so that other objects can find them. Batman assumes that there will only ever be one `Batman.App` in use at once.
 
@@ -75,7 +75,7 @@ The `run` class event is fired once the app has run. This indeterminately but of
 
 The `ready` class event is fired once the app's layout is rendered.
 
-# Batman.App Routing
+# /api/App Components/Batman.App/Batman.App Routing
 
 The `Batman` routing DSL is similar to Rails 3's routing DSL. It is oriented around the notion of a resource:
 

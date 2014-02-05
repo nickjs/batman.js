@@ -1,4 +1,4 @@
-# Batman.View
+# /api/App Components/Batman.View
 
 For a general explanation of `Batman.View` and how it works, see [the guide](/docs/views.html).
 

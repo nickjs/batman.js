@@ -1,4 +1,4 @@
-# Batman.Enumerable
+# /api/Data Structures/Batman.Enumerable
 
 `Batman.Enumerable` is a mixin that defines methods available for every
 enumerable type (`Batman.Set` and `Batman.Hash` being the main two).
