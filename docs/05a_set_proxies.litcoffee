@@ -110,6 +110,8 @@ Returns:
 
 Precedence is determined by testing for `undefined`, `null`, `false`, `true`, `NaN`, `a < b` and `a > b`. Please see [the source](https://github.com/batmanjs/batman/blob/master/src/set/set_sort.coffee#L91) for implementation details.
 
+Since `::compareElements` delegates to `::compare`, you can acheive custom sorting by overriding `::compare` in a `SetSort` subclass.
+
 ## ::compareElements(a, b) : Number
 
 Used by `SetSort` to compare its elements when sorting. Like `::compare`, it returns `-1`, `0`, or `1`. To arrive at this value, it:
