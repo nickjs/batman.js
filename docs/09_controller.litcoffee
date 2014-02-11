@@ -1,63 +1,109 @@
 # /api/App Components/Batman.Controller
 
-`Batman.Controller` is the base class from which all an application's controllers should descend from. `Batman.Controller`s are responsible for executing _actions_ which fire off requests for model data, render views, or redirect to other actions in response to navigation state changes.
+All controllers in a batman.js app extend `Batman.Controller`. `Batman.Controller`s are responsible for executing _actions_ which fire off requests for model data, render views, or redirect to other actions in response to navigation state changes. `Batman.Controller` is inspired by [ActionController](http://guides.rubyonrails.org/action_controller_overview.html), a key component of Ruby on Rails.
 
 ## Controller Directory
 
-`Batman.Controller`s are singletons which means each controller in your application is instantiated exactly once. The instance of each controller is available on the class at the `@sharedController` property, or within a `ControllerDirectory` on the `Application` class. See `Batman.Application.controllers`.
+`Batman.Controller`s are singletons and each controller's instance is available at `@%sharedController`. Controller instances are also available at `App.get('controllers')`. You can get the controller instance by the part of its name before "Controller", downcased. For example:
+
+```
+Alfred.TodosController.get('sharedController') # => TodosController instance
+Alfred.get('controllers.todos')                # => TodosController instance
+```
 
 ## Actions
 
-Each `Batman.Controller` should have a number of instance level functions which can fetch the data needed and often render a view (or views) to display that data. These functions can be declared in typical CoffeeScript fashion like so:
+Each `Batman.Controller` should have instance functions which can fetchdata and often render a view (or views):
 
-```example
-  class Alfred extends Batman.App
-    @root "todos#index"
+```coffeescript
+class Alfred.TodosController extends Batman.Controller
+  routingKey: 'todos'
+  index: (params) ->
+    @set('todos', Alfred.Todo.get('all'))
+    # will automatically render Alfred.TodosIndexView with source `todos/index`
 
-  class Alfred.TodosController extends Batman.Controller
-    index: (params) ->
-    show: (params) ->
+  show: (params) ->
+    Alfred.Todo.find params.id, (err, record) ->
+      throw err if err
+      @set('todo', record)
+    # will automatically render Alfred.TodosShowView with source `todos/show`
 ```
 
-Each action function receives the parameters from the dispatcher which are pulled out of the navigated-to URL. This includes both named route parameters (`/:foo` style) as well as arbitrary query parameters (`?foo=bar` style).
+Actions take a `params` argument, which is a JavaScript object containing URL parameters. Named route parameters (eg, `todos/:id`) and query string parameters (`?key=value`) are accessible in `params`.
 
 ## routingKey and Minification
 
-For functionality like contextual redirects and automatic view source and class inference, Batman needs to know the name of all your `Controller` subclasses. The usual way to do this is by using `Function::name` which Batman will use in development, but this is often mangled in minified production environments. For this reason, Batman will error out on boot if a `Controller` subclass' `routingKey` is not defined on the prototype. The `routingKey` is a `String` which remains unmangled after minification and thus allows Batman to continue using the aforementioned features. To disable this requirement (if you know your code won't ever be minified), set `Batman.config.minificationErrors` to false.
+All `Batman.Controller` prototypes must have a `routingKey`. It is a string which serves as the controller's name and is used by the batman.js router. It also makes the app minification-safe. You can set it inside the controller definition:
+
+```coffeescript
+class Alfred.TodosController extends Batman.Controller
+  routingKey: 'todos'
+```
+
+An app will fail to run if a controller's `routingKey` is not defined on the prototype. To disable this requirement, set `Batman.config.minificationErrors` to false.
+
+## Error Handling
+
+`Batman.Controller` has a built-in structure for handling errors that occur during controller actions. Inside a controller definition, you can map errors to handlers using `@catchError`. Then, when you make a storage operation (such as reading, saving, or destroying), you can wrap your callback in `@errorHandler` so that, if an error is present, it will be handled by the assigned handler. Errors without declared handlers will be thrown.
+
+```coffeescript
+class App.TodosController extends Batman.Controller
+  routingKey: 'todos'
+  # declare a handler with `@catchError`:
+  @catchError Batman.StorageAdapter.NotFoundError, with: 'render404'
+
+  show: (params) ->
+    # wrap your storage operation in `@errorHandler`
+    App.Todo.find params.id, @errorHandler (record, env) =>
+      @set('todo', record)
+
+  # error is passed to the handler
+  render404: (error) -> @render(source: "errors/404")
+```
+
+For a full list of storage errors, see [`Batman.StorageAdapter` Errors](/docs/api/batman.storageadapter_errors.html).
 
 ## ::render([options : [Object|boolean]])
 
-`render` is used to control the rendering of the currently executed action. Passing `false` will prevent the current action from implicitly rendering the view. Passing an `options` object allows the default `view`, `source`, `viewClass` or `yield` block to be overridden, all of which are optional. If no parameters are passed to options, it will manually trigger the render function, rather than waiting for it to be implicitly called at the end of the action.
+`render` is used to control the rendering of the current action. Unless specified otherwise, `Batman.Controller` actions render automatically.
 
-_Note_: For more information on yield blocks, see Controller::.defaultRenderYield
+Passing `false` will prevent the current action from rendering the view.
 
-    class TestController extends Batman.Controller
-      routingKey: 'test'
+```coffeescript
+class Alfred.TodosController extends Batman.Controller
+  nonVisibleAction: ->
+    @render(false) # no view will be rendered
 
-      nonVisibleAction: ->
-        @render(false)
+  delayedRender: ->
+    setTimeout (-> @render()), 1000 # view rendered after 1 second
+    @render(false)
+```
 
-      customSource: ->
-        @render(source: 'errors/404')
+By passing an `options` object, you may override the default `view`, `source`, `viewClass` or `yield` block.
 
-      customYield: ->
-        @render(into: 'not-main')
+```coffeescript
+class Alfred.TodosController extends Batman.Controller
+  customSource: ->
+    @render(source: 'errors/404')
 
-      delayedRender: ->
-        setTimeout (-> @render()), 1000
-        @render(false)
+  customYield: ->
+    @render(into: 'not-main')
+```
+
+For more information on yield blocks, see [`Controller::.defaultRenderYield`](/docs/api/batman.controller.html#prototype_property_defaultrenderyield).
 
 ## @beforeAction([options : [string|Object],] filter : [string|Function])
 
-`@beforeAction` allows controllers to declare that a function should be executed before the body of an action during action execution. `@beforeAction` optionally accepts some options representing which action(s) to execute the filter before, and then a string naming a function or function proper to execute.
+Declares that a function should be executed before the body of a controller action. If any `beforeAction` filter returns `false` or calls [`@redirect`](/docs/api/batman.controller.html#prototype_function_redirect), the controller action won't be executed. `@beforeAction` accepts:
 
-The `options` argument can take three forms to imply different things:
+-  `options` representing which action(s) to execute the filter before (optional)
+-  `filter`, either a string naming a function _or_ a function to execute.
 
- 1. `undefined`: implies that this filter function should be executed before all actions.
- 2. a String: implies that this filter function should be executed before the action named by the string.
- 3. an Object: implies that this filter function should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.
+The `options` argument can take three forms:
 
-If any `beforeAction` filter returns `false` or calls [`@redirect`](/docs/api/batman.controller.html#prototype_function_redirect), the controller action won't be executed.
+ 1. `undefined`: this filter should be executed before all actions.
+ 2. `String`: this filter should be executed before the action named by the string.
+ 3. `Object`: this filter should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.
 
     test "@beforeAction allows declaration of filters to execute before an action", ->
       results = []
@@ -118,7 +164,7 @@ If any `beforeAction` filter returns `false` or calls [`@redirect`](/docs/api/ba
 
 ## @afterAction([options : [string|Object],] filter : [string|Function])
 
-`@afterAction` allows controllers to declare that a function should be run after the action body and all operations have completed during action execution. Functions declared by `@afterAction` will thus be run after the code of the action body and also after any redirects or renders have taken place and completed. `@afterAction` optionally accepts some options representing which action(s) to execute the filter after, and then a string naming a function or function proper to execute. See `Batman.Controller.beforeAction` for documentation on the structure of the options.
+Declares that a function should be executed after the body of a controller action (and therefore after any `render` or `redirect`s). `@afterAction` accepts `options` and `filter` (see [`@beforeAction`](/docs/api/batman.controller.html#class_function_beforeaction)).
 
     test "@afterAction allows declaration of filters to execute after an action", ->
       results = []
@@ -181,24 +227,9 @@ If any `beforeAction` filter returns `false` or calls [`@redirect`](/docs/api/ba
 
 ## ::executeAction(action: string[, params: Object])
 
-`executeAction` will run the `action` specified, running all `@beforeAction` and `@afterAction` filters that match that endpoint. Optionally, `params` can be passed into the new action for processing. If no params are passed, it will default to the params of the current action.
+Runs the `action` specified, including all applicable `@beforeAction`s and `@afterAction`s. Optionally, `params` can be passed into the new action for processing. If no params are passed, it will default to the params of the current action.
 
-    test "executeAction will run the called action", ->
-      result = null
-
-      class TestController extends Batman.Controller
-        routingKey: "test"
-        show: (params) ->
-          result = params.id
-          @render false
-        other: ->
-          @executeAction("show", {id: 4})
-
-      controller = TestController.get("sharedController")
-      controller.dispatch "other"
-      equal result, 4
-
-    test "executeAction will run all @beforeAction and @afterAction filters", ->
+    test "executeAction will run the action and all @beforeAction and @afterAction filters", ->
       results = []
 
       class TestController extends Batman.Controller
@@ -225,8 +256,16 @@ Properly handles the controller filter chain and loads a new page with [`Batman.
 
 ## ::.autoScrollToHash[= true] : boolean
 
-`autoScrollToHash` is a boolean property on the instance level of a controller describing whether or not the controller should automatically scroll the browser window to the element with ID equal to the `hash` parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing. `autoScrollToHash` is true by default.
+Specifies if the controller should automatically scroll to the element with ID equal to the `hash` parameter. This behaviour emulates the native behaviour of the same nature, but is implemented in Batman so the functionality works after each dispatch (instead of each page refresh) and when Batman is using hash bang routing.
 
 ## ::.defaultRenderYield[= 'main'] : string
 
-`defaultRenderYield` is a `string` representing which yield a controller should automatically render into if no yield is mentioned explicitly. `defaultRenderYield` is `'main'` normally, which means calls to `@render()` or actions which rely on the implicit rendering render their views into the `main` yield (and end up wherever `data-yield="main"` is found in your HTML).
+`defaultRenderYield` specifies which yield (see [`data-yield`](/docs/api/batman.view_bindings.html#data-yield)) a controller should automatically render into if no yield is declared.
+
+## @catchError(errorClasses..., {with : [String|Array]})
+
+Declares that errors which are `instanceof` any of `errorClasses` should be handled by `with` when using [`@errorHandler`](/docs/api/batman.controller.html#class_function_errorhandler). `with` is the name of a prototype function (or an array of names) which will be invoked with the error. See ["Error Handling"](/docs/api/batman.controller.html#error_handling).
+
+## @errorHandler(callback)
+
+Wraps a storage action, passing the first argument (`error`) to error handlers declared with [`@catchError`](/docs/api/batman.controller.html#class_function_catcherror). Callback should take arguments `result, env` (`error` is not present because it was passed to error handlers). See ["Error Handling"](/docs/api/batman.controller.html#error_handling).

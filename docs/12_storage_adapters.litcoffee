@@ -40,6 +40,10 @@ _Note: Like `Batman.RestStorage`, `Batman.RailsStorage` depends on [`Batman.Requ
 
 If you're using Batman and Rails, be sure to check out the [batman-rails](https://github.com/batmanjs/batman-rails) gem.
 
+## Storage Errors
+
+`Batman.StorageAdapter` throws [storage errors](/docs/api/batman.storageadapter_errors.html) when its operations fail. You can catch these errors with [`Batman.Controller.catchError`](/docs/api/batman.controller.html#class_function_catcherror).
+
 ## Subclassing Batman.StorageAdapter
 
 You may want to customize Batman's storage operations for your own app, for example:
