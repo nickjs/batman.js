@@ -4,7 +4,7 @@ All controllers in a batman.js app extend `Batman.Controller`. `Batman.Controlle
 
 ## Controller Directory
 
-`Batman.Controller`s are singletons and each controller's instance is available at `@%sharedController`. Controller instances are also available at `App.get('controllers')`. You can get the controller instance by the part of its name before "Controller", downcased. For example:
+`Batman.Controller`s are singletons and each controller's instance is available at `@sharedController`. Controller instances are also available at `MyApp.get('controllers')`. You can get the controller instance by the part of its name before "Controller", downcased. For example:
 
 ```
 Alfred.TodosController.get('sharedController') # => TodosController instance
@@ -13,7 +13,7 @@ Alfred.get('controllers.todos')                # => TodosController instance
 
 ## Actions
 
-Each `Batman.Controller` should have instance functions which can fetchdata and often render a view (or views):
+Each `Batman.Controller` declares functions which represent actions to be run on a particular page. Typically, these functions will fetch data or render views:
 
 ```coffeescript
 class Alfred.TodosController extends Batman.Controller
@@ -29,25 +29,25 @@ class Alfred.TodosController extends Batman.Controller
     # will automatically render Alfred.TodosShowView with source `todos/show`
 ```
 
-Actions take a `params` argument, which is a JavaScript object containing URL parameters. Named route parameters (eg, `todos/:id`) and query string parameters (`?key=value`) are accessible in `params`.
+Actions are passed a `params` argument, which is an object containing URL parameters. Named route parameters (eg, `todos/:id`) and query string parameters (`?key=value`) are accessible in `params`.
 
 ## routingKey and Minification
 
-All `Batman.Controller` prototypes must have a `routingKey`. It is a string which serves as the controller's name and is used by the batman.js router. It also makes the app minification-safe. You can set it inside the controller definition:
+Each `Batman.Controller` must have a `routingKey`, which is used by the batman.js router. It also makes the app minification-safe. You can set it inside the controller definition:
 
 ```coffeescript
 class Alfred.TodosController extends Batman.Controller
   routingKey: 'todos'
 ```
 
-An app will fail to run if a controller's `routingKey` is not defined on the prototype. To disable this requirement, set `Batman.config.minificationErrors` to false.
+An app will fail to run if a controller's `routingKey` is not defined. To disable this requirement, set `Batman.config.minificationErrors` to false.
 
 ## Error Handling
 
-`Batman.Controller` has a built-in structure for handling errors that occur during controller actions. Inside a controller definition, you can map errors to handlers using `@catchError`. Then, when you make a storage operation (such as reading, saving, or destroying), you can wrap your callback in `@errorHandler` so that, if an error is present, it will be handled by the assigned handler. Errors without declared handlers will be thrown.
+`Batman.Controller` has a built-in structure for handling errors that occur during controller actions. Inside a controller definition, you can map errors to handlers using `@catchError`. Then, you can wrap a storage operation callback with `@errorHandler` to have any errors caught by the defined handlers. If you use `@errorHandler`, errors without declared handlers will be thrown (since they aren't passed to the callback).
 
 ```coffeescript
-class App.TodosController extends Batman.Controller
+class Alfred.TodosController extends Batman.Controller
   routingKey: 'todos'
   # declare a handler with `@catchError`:
   @catchError Batman.StorageAdapter.NotFoundError, with: 'render404'
@@ -61,6 +61,17 @@ class App.TodosController extends Batman.Controller
   render404: (error) -> @render(source: "errors/404")
 ```
 
+Usually, you want to declare error handlers in `MyApp.ApplicationController`, then extend `MyApp.ApplicationController` in your other controllers:
+
+```coffeescript
+class Alfred.ApplicationController extends Batman.Controller
+  @catchError Batman.StorageAdapter.NotFoundError, with: 'render404'
+  # etc...
+
+class Alfred.TodosController extends Alfred.ApplicationController
+  # will use ApplicationController's handlers for @errorHandler
+```
+
 For a full list of storage errors, see [`Batman.StorageAdapter` Errors](/docs/api/batman.storageadapter_errors.html).
 
 ## ::render([options : [Object|boolean]])
@@ -71,10 +82,10 @@ Passing `false` will prevent the current action from rendering the view.
 
 ```coffeescript
 class Alfred.TodosController extends Batman.Controller
-  nonVisibleAction: ->
+  actionWithNoRender: ->
     @render(false) # no view will be rendered
 
-  delayedRender: ->
+  actionWithDelayedRender: ->
     setTimeout (-> @render()), 1000 # view rendered after 1 second
     @render(false)
 ```
@@ -83,10 +94,10 @@ By passing an `options` object, you may override the default `view`, `source`, `
 
 ```coffeescript
 class Alfred.TodosController extends Batman.Controller
-  customSource: ->
+  actionWithCustomSource: ->
     @render(source: 'errors/404')
 
-  customYield: ->
+  actionWithCustomYield: ->
     @render(into: 'not-main')
 ```
 
@@ -94,7 +105,7 @@ For more information on yield blocks, see [`Controller::.defaultRenderYield`](/d
 
 ## @beforeAction([options : [string|Object],] filter : [string|Function])
 
-Declares that a function should be executed before the body of a controller action. If any `beforeAction` filter returns `false` or calls [`@redirect`](/docs/api/batman.controller.html#prototype_function_redirect), the controller action won't be executed. `@beforeAction` accepts:
+Declares that a function should be executed should be executed before this controller's actions. If any `beforeAction` filter returns `false` or calls [`@redirect`](/docs/api/batman.controller.html#prototype_function_redirect), the controller action won't be executed. `@beforeAction` accepts:
 
 -  `options` representing which action(s) to execute the filter before (optional)
 -  `filter`, either a string naming a function _or_ a function to execute.
@@ -164,7 +175,7 @@ The `options` argument can take three forms:
 
 ## @afterAction([options : [string|Object],] filter : [string|Function])
 
-Declares that a function should be executed after the body of a controller action (and therefore after any `render` or `redirect`s). `@afterAction` accepts `options` and `filter` (see [`@beforeAction`](/docs/api/batman.controller.html#class_function_beforeaction)).
+Declares that a function should be executed after this controller's actions (and after any `render` or `redirect`s). `@afterAction` accepts `options` and `filter` (see [`@beforeAction`](/docs/api/batman.controller.html#class_function_beforeaction)).
 
     test "@afterAction allows declaration of filters to execute after an action", ->
       results = []
