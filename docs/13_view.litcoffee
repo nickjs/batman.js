@@ -1,72 +1,72 @@
 # /api/App Components/Batman.View
 
-For a general explanation of `Batman.View` and how it works, see [the guide](/docs/views.html).
+`Batman.View`s connect a batman.js app to the DOM. This includes rendering HTML, handling DOM events, and maintaining view bindings. `Batman.View` extends `Batman.Object`. When subclassing `Batman.View`, you can create reusable UI components by defining attributes of the new view:
 
+- [`::source`](/docs/api/batman.view.html#prototype_accessor_source) or [`::html`](/docs/api/batman.view.html#prototype_accessor_html) define the view's HTML.
+- [`@option`](/docs/api/batman.view.html#class_function_option) adds context-based initialization options.
+- [`@filter`](/docs/api/batman.view.html#class_function_filter) adds custom view filters.
+- [Lifecycle hooks](/docs/views.html) fire when the view is loaded, rendered, or destroyed.
 
-## ::constructor(options = {})
+For more information about views, see [the guide](/docs/views.html).
 
-A `View` is a `Batman.Object`, so any options you pass are mixed in. Use this
-to set `html`, `node`, `superview`, `parentNode` and/or your custom data.
+## Accessors and Event Handlers
 
-    test 'constructor mixes in options', ->
-      view = new Batman.View(animal: 'cat')
-      equal 'cat', view.get('animal')
+[View bindings](/docs/api/batman.view_bindings.html) have access to the views they're rendered by, so custom views are a great place to define view-specific accessors and event handlers. Then, you can connect them to your HTML with view bindings. For example, define a view:
 
-    test 'constructor automatically adds to the superview if supplied', ->
-      superview = new Batman.View()
-      view = new Batman.View(superview: superview)
-      equal 1, superview.subviews.length
+```coffeescript
+class CoffeeView extends Batman.View
+  @accessor 'coffeeOfTheDay', -> "Guatemalan"
+  drinkCoffee: -> alert("Yum!!")
+```
 
+then apply it to some HTML:
 
-## ::lookupKeypath(keypath) : Object
+```html
+<div data-view='CoffeeView'>
+  <span data-bind='coffeeOfTheDay'></span>
+  <button data-event-click='drinkCoffee'> Take a sip! </button>
+<div>
+```
 
-Traverses up the view tree searching for the specified keypath, and returns the
-result. This is equivalent to performing a `Batman.get` for each view above
-`this` in the tree, until a defined result is returned. The path it takes is as
-follows:
+Data bindings look for keys on their closest views first, so these bindings will be handled by `CoffeeView`. If the HTML inside a custom view will always be the same, you can use [`::source`](/docs/api/batman.view.html#prototype_accessor_source) or [`::html`](/docs/api/batman.view.html#prototype_accessor_html) to define it.
+
+## ::constructor(options = {}) : Batman.View
+
+Returns a new `Batman.View`. Since `Batman.View` extends `Batman.Object`, all `options` are mixed in to the new instance. Use this to override `html`, `node`, `superview`, `parentNode`, and/or your custom data.
+
+## ::lookupKeypath(keypath : String)
+
+Traverses up the view tree searching for `keypath` and returns the first
+result or `undefined` if no match is found. The path it takes is:
 
 current view → chain of superviews → layout view → active controller → app →
 window
 
-If there is no match, `undefined` is returned. However, if used in an accessor
-or binding, the entire path to the root will be registered as a potential
-source of data. Consequently, if the keypath is later set on any part of the
-chain, the data will be correctly bound.
+    test 'lookupKeypath returns the value if defined on the view or on an ancestor', ->
+      superview = new Batman.View(cat: 'Meowie')
+      subview = new Batman.View(superview: superview, dog: 'Fido')
+      equal 'Fido', subview.lookupKeypath('dog'), "finds an accessor on itself"
+      equal 'Meowie', subview.lookupKeypath('cat'), "finds an accessor on its superview"
+      equal undefined, subview.lookupKeypath('bogusKeypath'), "returns undefined if the keypath isn't defined"
 
-`lookupKeypath` is the function invoked to locate data when evaluating a
-binding.
+If used in an accessor, `keypath` is registered as source and will be correctly bound. `lookupKeypath` is used by [view bindings](/docs/api/batman.view_bindings.html) to get data.
 
-    test 'lookupKeypath returns the value if defined on the view', ->
-      view = new Batman.View(animal: 'cat')
-      equal 'cat', view.lookupKeypath('animal')
+## ::setKeypath(keypath, value)
 
-    test 'lookupKeypath returns the value if defined on an ancestor', ->
-      superview = new Batman.View(animal: 'cat')
-      subview = new Batman.View(superview: superview)
-      equal 'cat', subview.lookupKeypath('animal')
-
-
-## ::setKeypath(keypath, value) : Object
-
-Traverses the View tree searching for the specified keypath, and sets the value
+Traverses the view tree searching for the specified keypath and sets the value
 on the nearest ancestor which defines it. If no ancestor view defines the given
 keypath, it will be set on the nearest ancestor which is not a
 backing view.
 
-`setKeypath` is the function invoked to set data when using an input binding.
+`setKeypath` is used by [view bindings](/docs/api/batman.view_bindings.html) to set data.
 
-    test 'setKeypath sets the value if defined on the view', ->
-      view = new Batman.View(animal: 'dog')
-
-      view.setKeypath('animal', 'cat')
-      equal 'cat', view.get('animal')
-
-    test 'setKeypath sets the value if defined on an ancestor', ->
-      superview = new Batman.View(animal: 'dog')
-      subview = new Batman.View(superview: superview)
-
-      subview.setKeypath('animal', 'cat')
-      equal 'cat', superview.get('animal')
+    test 'setKeypath sets the value if defined on the view or on an ancestor', ->
+      superview = new Batman.View(cat: 'Meowie')
+      subview = new Batman.View(superview: superview, dog: 'Fido')
+      subview.setKeypath('cat', 'Mittens')
+      equal 'Mittens', superview.get('cat'), "updates an accessor on its superview"
+      subview.setKeypath('dog', 'Lassie')
+      equal 'Lassie', subview.get('dog'), "updates an accessor on itself"
 
     test 'setKeypath sets the value on the nearest non-backing view when not defined anywhere', ->
       superview = new Batman.View()
@@ -76,13 +76,11 @@ backing view.
       backingView.setKeypath('animal', 'cat')
       equal 'cat', view.get('animal')
 
-
 ## ::%node : Node
 
-A reference to the DOM node that this view encapsulates. The entire tree
-beneath this node is also the responsibility of this view and/or its subviews.
+Returns the DOM node that this view encapsulates.
 
-Accessing `node` will load and parse the template on demand if it isn't already
+Accessing `node` will load and parse the template if it isn't already
 loaded.
 
     test 'node parses the template', ->
@@ -147,24 +145,59 @@ will automatically fetch the template source from the local template store.
       node = view.get('node')
       equal 'cat', node.firstChild.innerHTML
 
+## @filter(label : string, filter : function)
+
+Defines a custom [view filter](/docs/api/batman.view_filters.html) for use within the `View`.
+
+`filter` will be invoked with the pre-filter `value` and any arguments passed to the view filter. For example:
+
+```coffeescript
+class App.MultiplierView extends Batman.View
+  @filter 'multiplyBy', (value, multiplier) -> value * multiplier
+```
+
+would handle:
+
+```html
+<div data-view='MultiplierView' data-context-amount='100'>
+  <span data-bind='amount | multiplyBy 6'>
+    <!-- would render to "600" -->
+  </span>
+</div>
+```
+
+_Note_: If the `View`'s HTML is loaded before the view is instantiated, this filter won't have been defined yet and batman.js will throw an error. Avoid this by defining your custom filter at app-level or by defining the `View`'s HTML with [`::source`](/docs/api/batman.view.html#prototype_accessor_source) or [`::html`](/docs/api/batman.view.html#prototype_accessor_html).
+
+## @option(keys...)
+
+Defines a custom option for the `View`. `@option` allows you to initialize your view with data from its context. For example:
+
+```coffeescript
+class App.MultiplierView extends Batman.View
+  @option 'amount', 'multiplier'
+  @accessor 'finalAmount', -> @get('amount') * @get('multiplier')
+```
+
+```html
+<div data-view='MultiplierView' data-view-amount='10' data-view-multiplier='8'>
+  <span data-bind='finalAmount'>
+    <!-- would render to "80" !-->
+  </span>
+</div>
+```
+
+Options passed with `data-view-#{option}` may also be keypaths. Keypath changes will be tracked by the view.
+
 ## ::.superview : Batman.View
 
-A reference to the current superview (the direct ancestor in the tree). This is
-used for traversing the tree when searching for data, as in
-`View::lookupKeypath`.
-
+Returns the view's superview. Every view except an app's `LayoutView` has a superview.
 
 ## ::.subviews : Batman.Set
 
-The set of direct children of a `View`. To manipulate the view tree, you should
-operate directly on this set — batman.js will automatically keep the DOM in
-sync with the logical tree.
+The set of direct children of this `View`. Since it's a [`Batman.Set`](/docs/api/batman.set.html), you can operate directly on this set and batman.js will automatically keep the DOM in sync.
 
-
-## ::subviews.add(view)
-
-Adding to a view's subview set will automatically update the tree, and parse
-the template and bindings. If the superview is already in the DOM, this will
+Adding to a view's subviews will automatically update the tree and parse
+the template and bindings. If the superview is in the DOM, this will
 insert the current view's node into the DOM.
 
     test 'adding to a superview parses bindings', ->
@@ -174,10 +207,7 @@ insert the current view's node into the DOM.
       superview.subviews.add(view)
       equal 'cat', view.get('node').firstChild.innerHTML
 
-
-## ::subviews.remove(view)
-
-Removing from a view's subview set will automatically remove the subview from
+Removing from a view's subviews will automatically remove the subview from
 the DOM.
 
     test 'removing from the current superview removes the node from the DOM', ->
@@ -192,7 +222,7 @@ the DOM.
 
 ## ::removeFromSuperview()
 
-Removes this view from its parent, without killing it.
+Removes this view from its parent (and from the DOM), without killing it.
 
     test 'removing from the current superview removes the node from the DOM', ->
       superview = new Batman.View()
@@ -211,19 +241,18 @@ following implications:
 - The view's bindings are destroyed
 - The view's current subviews are killed
 
-    test 'die kills the view', ->
-      superview = new Batman.View()
-      view = new Batman.View(superview: superview)
+      test 'die kills the view', ->
+        superview = new Batman.View()
+        view = new Batman.View(superview: superview)
 
-      view.die()
-      equal true, view.isDead
-      equal 0, superview.subviews.length
+        view.die()
+        equal true, view.isDead
+        equal 0, superview.subviews.length
 
 
 ## ::.isDead : boolean
 
 True if the view has been killed, false otherwise.
-
 
 ## ::destroySubviews()
 
@@ -270,15 +299,9 @@ Otherwise, fire `eventOrKey` on the entire subtree.
       equal one.get('key'), 'value'
       equal two.get('key'), 'value'
 
-
 ## @viewForNode(node, climbTree = true) : Batman.View
 
 Finds the view acting as the current context for a node — i.e. perform the
 reverse mapping of the view tree to the DOM. If you pass `false` for
 `climbTree`, it won't traverse up the DOM, and will return `undefined` unless
 the node is the view's root.
-
-
-## ::filter(label : string, filter : function)
-
-Defines a filter on the `View` class for use within the `View` during rendering.
