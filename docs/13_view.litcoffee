@@ -170,7 +170,7 @@ _Note_: If the `View`'s HTML is loaded before the view is instantiated, this fil
 
 ## @option(keys...)
 
-Defines a custom option for the `View`. `@option` allows you to initialize your view with data from its context. For example:
+Defines a custom option for the `View`. `@option` allows you to initialize your view with data from its context. For example, you can define some options:
 
 ```coffeescript
 class App.MultiplierView extends Batman.View
@@ -178,15 +178,17 @@ class App.MultiplierView extends Batman.View
   @accessor 'finalAmount', -> @get('amount') * @get('multiplier')
 ```
 
+then pass in keypaths or [keypath literals](/docs/api/batman.view_bindings.html#keypath_literals):
+
 ```html
-<div data-view='MultiplierView' data-view-amount='10' data-view-multiplier='8'>
-  <span data-bind='finalAmount'>
-    <!-- would render to "80" !-->
-  </span>
+<div data-context-ten='10'> <!-- sets 10 on keypath "ten" -->
+  <div data-view='MultiplierView' data-view-amount='ten' data-view-multiplier='8'>
+    <span data-bind='finalAmount'>
+      <!-- would render to 80 !-->
+    </span>
+  </div>
 </div>
 ```
-
-Options passed with `data-view-#{option}` may also be keypaths. Keypath changes will be tracked by the view.
 
 ## ::.superview : Batman.View
 
