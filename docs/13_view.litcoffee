@@ -28,7 +28,7 @@ then apply it to some HTML:
 <div>
 ```
 
-Data bindings look for keys on their closest views first, so these bindings will be handled by `CoffeeView`. If the HTML inside a custom view will always be the same, you can use [`::source`](/docs/api/batman.view.html#prototype_accessor_source) or [`::html`](/docs/api/batman.view.html#prototype_accessor_html) to define it.
+Data bindings look for keys on their closest views first, so these bindings will be handled by `CoffeeView`.
 
 ## ::constructor(options = {}) : Batman.View
 
