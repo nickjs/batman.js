@@ -469,7 +469,7 @@ You can also access the errors for a specific attribute of the record:
 
 ## ::constructor(idOrAttributes = {}) : Model
 
-Returns a new `Batman.Model`. If `idOrAttributes` is an object, the values are mixed into the new record. Otherwise, `idOrAttrubutes` is set to the new record's [`id`](/docs/api/batman.model.html#prototype_accessor_id).
+If `idOrAttributes` is an object, the values are mixed into the new record. Otherwise, `idOrAttrubutes` is set to the new record's [`id`](/docs/api/batman.model.html#prototype_accessor_id).
 
 ## ::isNew() : boolean
 
