@@ -440,13 +440,17 @@ the call through to `id`, otherwise it proxies the call to the custom primary ke
       post.set('id', 'Wittier title')
       equal post.get('name'), 'Wittier title'
 
+## ::%isDirty : Boolean
+
+Returns `true` if any keys have been changed since the record was initialized or saved.
+
 ## ::%dirtyKeys : Set
 
-The set of keys which have been modified since the last time the record was saved.
+The [`Batman.Set`](/docs/api/batman.set.html) of keys which have been modified since the last time the record was saved.
 
 ## ::%errors : Batman.ErrorsSet
 
-`errors` is a `Batman.ErrorsSet`, which is simply a `Batman.Set` of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s present on the model instance.
+`errors` is a `Batman.ErrorsSet`, which is simply a [`Batman.Set`](/docs/api/batman.set.html) of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s present on the model instance.
 
 - `user.get('errors')` returns the errors on the `user` record
 - `user.get('errors.length')` returns the number of errors, total
@@ -456,7 +460,9 @@ You can also access the errors for a specific attribute of the record:
 - `user.get('errors.email_address')` returns the errors on the `email_address` attribute
 - `user.get('errors.email_address.length')` returns the number of errors on the `email_address` attribute
 
-## @constructor(idOrAttributes = {}) : Model
+## ::constructor(idOrAttributes = {}) : Model
+
+Returns a new `Batman.Model`. If `idOrAttributes` is an object, the values are mixed into the new record. Otherwise, `idOrAttrubutes` is set to the new record's [`id`](/docs/api/batman.model.html#prototype_accessor_id).
 
 ## ::isNew() : boolean
 Returns true if the instance represents a record that hasn't yet been persisted to storage. The default implementation simply checks if `@get('id')` is undefined, but you can override this on your own models.
