@@ -6,19 +6,22 @@ _Note_: This documentation uses the term _model_ to refer to the class `Model`
 or a `Model` subclass, and the term _record_ to refer to one instance of a
 model.
 
-## @primaryKey : string
+## @primaryKey[= "id"] : string
 
-`primaryKey` is a class level configuration option to change which key batman.js uses as the primary key. Change the option using `set`, like so:
+Defines the `Model`'s primary key. This attribute will be used for determining:
+
+- record identity (ie, records with the same `primaryKey` are assumed to be the same record)
+- whether a record [`isNew`](/docs/api/batman.model.html#prototype_function_isnew)
+- whether records are related (see [`Batman.Model` Associations](/docs/api/batman.model_associations.html))
+- URL parameters via [`toParam`](/docs/api/batman.model.html#prototype_function_toparam)
+
+Change the option using `set`, like so:
 
     test 'primary key can be set using @set', ->
       class Shop extends Batman.Model
         @set 'primaryKey', 'shop_id'
-
       equal Shop.get('primaryKey'), 'shop_id'
 
-The `primaryKey` is what batman.js uses to compare instances to see if they represent the same domain-level object: if two records have the same value at the key specified by `primaryKey`, only one will be in the identity map. The key specified by `primaryKey` is also used by the associations system when determining if a record is related to another record, and by the remote storage adapters to generate URLs for records.
-
-_Note_: The default primaryKey is 'id'.
 
 ## @storageKey : string
 
@@ -440,13 +443,21 @@ the call through to `id`, otherwise it proxies the call to the custom primary ke
       post.set('id', 'Wittier title')
       equal post.get('name'), 'Wittier title'
 
+## ::isDirty() : Boolean
+
+Returns `true` if any keys have been changed since the record was initialized or saved.
+
+## ::%isDirty : Boolean
+
+A bindable accessor on [`isDirty`](/docs/api/batman.model.html#prototype_function_isdirty).
+
 ## ::%dirtyKeys : Set
 
-The set of keys which have been modified since the last time the record was saved.
+The [`Batman.Set`](/docs/api/batman.set.html) of keys which have been modified since the last time the record was saved.
 
 ## ::%errors : Batman.ErrorsSet
 
-`errors` is a `Batman.ErrorsSet`, which is simply a `Batman.Set` of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s present on the model instance.
+`errors` is a `Batman.ErrorsSet`, which is simply a [`Batman.Set`](/docs/api/batman.set.html) of [`Batman.ValidationError`](/docs/api/batman.validationerror.html)s present on the model instance.
 
 - `user.get('errors')` returns the errors on the `user` record
 - `user.get('errors.length')` returns the number of errors, total
@@ -456,12 +467,19 @@ You can also access the errors for a specific attribute of the record:
 - `user.get('errors.email_address')` returns the errors on the `email_address` attribute
 - `user.get('errors.email_address.length')` returns the number of errors on the `email_address` attribute
 
-## @constructor(idOrAttributes = {}) : Model
+## ::constructor(idOrAttributes = {}) : Model
+
+If `idOrAttributes` is an object, the values are mixed into the new record. Otherwise, `idOrAttrubutes` is set to the new record's [`id`](/docs/api/batman.model.html#prototype_accessor_id).
 
 ## ::isNew() : boolean
+
 Returns true if the instance represents a record that hasn't yet been persisted to storage. The default implementation simply checks if `@get('id')` is undefined, but you can override this on your own models.
 
 `isNew` is used to determine whether `record.save()` will perform a `create` action or a `save` action.
+
+## ::%isNew : Boolean
+
+A bindable accessor on [`isNew`](/docs/api/batman.model.html#prototype_function_isnew).
 
 ## updateAttributes(attributes) : Model
 
@@ -499,7 +517,6 @@ Loads attributes from a bare object into this instance.
 
       equal criminal.get("notorious"), true
       equal criminal.get("name"), "Scarecrow"
-
 
 ## ::toParam() : value
 
