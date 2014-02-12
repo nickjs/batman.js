@@ -12,8 +12,8 @@ Defines the `Model`'s primary key. This attribute will be used for determining:
 
 - record identity (ie, records with the same `primaryKey` are assumed to be the same record)
 - whether a record [`isNew`](/docs/api/batman.model.html#prototype_function_isnew)
-- records are related (see [`Batman.Model` Associations](/docs/api/batman.model_associations.html))
-- generating URLs
+- whether records are related (see [`Batman.Model` Associations](/docs/api/batman.model_associations.html))
+- URL parameters via [`toParam`](/docs/api/batman.model.html#prototype_function_toparam)
 
 Change the option using `set`, like so:
 
