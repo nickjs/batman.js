@@ -69,7 +69,7 @@ Returns `true`.
 
 ## ::.key : String
 
-Returns the used to sort members of the `SetSort`, as defined in the constructor.
+Returns the key used to sort members of the `SetSort`, as defined in the constructor.
 
 ## ::.descending
 
