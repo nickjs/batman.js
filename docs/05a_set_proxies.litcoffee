@@ -67,10 +67,13 @@ Returns a new `SetSort`, tracking `base` and ordering by `key` in the direction 
 
 Returns `true`.
 
+## ::.key : String
+
+Returns the key used to sort members of the `SetSort`, as defined in the constructor.
+
 ## ::.descending
 
-`true` if `"desc"` was passed to as `order` to the constructor, otherwise `false`.
-Descending `SetSort`s may also be made by getting `sortedByDescending` from a `Set`:
+`true` if `"desc"` was passed to as `order` to the constructor, otherwise `false`. Descending `SetSort`s may also be made by getting `sortedByDescending` from a `Set`:
 
     test "get sortedByDescending creates a descending SetSort", ->
       batmobile = new Batman.Object(name: "Batmobile", wheelCount: 4)
