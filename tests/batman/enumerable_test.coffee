@@ -39,6 +39,12 @@ test "every should test every element", ->
   @enumerable = getEnumerable(@array)
   deepEqual @enumerable.every(f), @array.every(f)
 
+test "every should always always return a boolean", ->
+  @array = [1,2,3,4]
+  @enumerable = getEnumerable(@array)
+  identity = (x) -> x
+  deepEqual @enumerable.every(identity), @array.every(identity)
+
 test "some should test every element", ->
   @array = [false, false, false]
   @enumerable = getEnumerable(@array)
@@ -48,6 +54,12 @@ test "some should test every element", ->
   @array = [true, false, true]
   @enumerable = getEnumerable(@array)
   deepEqual @enumerable.some(f), @array.some(f)
+
+test "some should always always return a boolean", ->
+  @array = [1,2,3,4]
+  @enumerable = getEnumerable(@array)
+  identity = (x) -> x
+  deepEqual @enumerable.some(identity), @array.some(identity)
 
 test "filter should return an instance of the constructor if the constructor has `add` or `push` defined", ->
   @array = [false, false, false]
