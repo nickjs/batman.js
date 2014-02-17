@@ -1,6 +1,6 @@
 QUnit.module "Batman.Event",
   setup: ->
-    @ottawaWeather = {}
+    @ottawaWeather = {city: "Ottawa"}
     @rain = new Batman.Event(@ottawaWeather, 'rain')
 
 test "new Batman.Event(base, key) constructs an event object", ->
@@ -80,6 +80,12 @@ asyncTest "fireWithContext() calls handlers with given context", 2, ->
     equal data, 'foo'
     QUnit.start()
   @rain.fireWithContext(this, ['foo'])
+
+asyncTest 'allowAndFire fires on the handlerContext', 1,->
+  @rain.addHandler (data) ->
+    equal @city, "Ottawa"
+    QUnit.start()
+  @rain.allowAndFire(['raindrops!'])
 
 asyncTest 'allowAndFireWithContext() calls handlers with given context', 4, ->
   @foo = 'bar'
