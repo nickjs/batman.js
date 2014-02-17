@@ -51,7 +51,7 @@ class Batman.Event
       @_oneShotArgs = args
     @eachHandler (handler) -> handler.apply(context, args)
   allowAndFire: ->
-    @allowAndFireWithContext(@handlerContext, arguments)
+    @allowAndFireWithContext(@handlerContext(), arguments)
   allowAndFireWithContext: (context, args) ->
     @allow()
     @fireWithContext(context, args)
