@@ -421,13 +421,15 @@ _Note_ : `attributes` is an empty object `{}` by default. This means the single-
 
 ## @findOrCreate(attributes = {}, callback) : Model
 
-## @createFromJSON(attributes: [Object|Array])
+## @createFromJSON(attributes = {}) : Model
 
-Updates the `loaded` set from `attributes`. If `attributes` is an Object, it returns the loaded record. If `attributes` is an Array, it returns an array of loaded records.
-
-`createFromJSON` loads a record by checking if the `primaryKey` is present in `attributes` then searching the in-memory identity map for a match. If a match is found, it will be updated with `attributes` (without tracking). Otherwise, a new instance is added to the `loaded` set.
+Returns an instance of the model based on `attributes`. If the `primaryKey` is present in `attributes`, the in-memory identity map will be searched for a match. If a match is found, it will be updated with `attributes` (without tracking) and returned. If the `primaryKey` isn't present, a new instance is added to the `loaded` set and returned.
 
 Since `createFromJSON` checks the identity map, it's a great way to load data without duplicating records in memory.
+
+## @createMultipleFromJSON(attributesArray: Array) : Array
+
+Loads data from JSON like `Model.createFromJSON`, but `attributesArray` is an array of objects and returns an array of records. `createMultipleFromJSON` loads new records all at once, so `Model.loaded.itemsWereAdded` is only fired once.
 
 ## ::%id
 
