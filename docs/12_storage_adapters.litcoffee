@@ -158,9 +158,24 @@ class App.SpecialStorageAdapter extends Batman.RestStorage
     console.log("This will be skipped if env.error? is true!")
     next()
 ```
+## ::constructor(model: Function) : StorageAdapter
+
+Returns a `StorageAdapter` attached to `model`, which should be a subclass of `Batman.Model`.
+
+## ::.model : Function
+
+Returns the `Batman.Model` passed to the constructor.
 
 ## ::before (keys... : Strings, filter : Function)
 Registers `filter` as a before-operation callback for the storage operations named by `keys...`.
 
 ## ::after (keys... : Strings, filter : Function)
 Registers `filter` as a after-operation callback for the storage operations named by `keys...`.
+
+## ::getRecordFromData(attributes: Object, constructor[=@model] : Function) : Model
+
+Finds or creates an instance of `constructor` with `attributes` and returns it. Delegated to `Model.createFromJSON`.
+
+## ::getRecordsFromData(attributesArray: Array, constructor[=@model] : Function) : Array
+
+Finds or creates instances of `constructor` for each item in `attributesArray` and returns the resulting records. Delegated to `Model.createMultipleFromJSON`.
