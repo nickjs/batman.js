@@ -156,7 +156,10 @@ class Batman.Model extends Batman.Object
     record
 
   @createFromJSON: (json) ->
-    @_makeOrFindRecordFromData(json)
+    if json instanceof Array
+      @_makeOrFindRecordsFromData(json)
+    else
+      @_makeOrFindRecordFromData(json)
 
   @_loadIdentity: (id) ->
     @get('loaded.indexedByUnique.id').get(id)

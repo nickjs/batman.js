@@ -88,6 +88,18 @@ test "createFromJSON will return an existing instance if in the identity map", -
   otherProduct = @Product.createFromJSON(id: 1)
   strictEqual product, otherProduct
 
+test "createFromJSON accepts an array of attribute objects", ->
+  @Product.encode 'name', 'id'
+  productAttrs = [
+    {id: 1, name: "Snuggie"}
+    {id: 2, name: "Jean Jammies"}
+  ]
+  productRecords = @Product.createFromJSON(productAttrs)
+  equal productRecords[0].get('name'), "Snuggie"
+  equal productRecords[0].get('id'), 1
+  equal productRecords[1].get('name'), "Jean Jammies"
+  equal productRecords[1].get('id'), 2
+
 test "_makeOrFindRecordFromData with a new record will add it to the loaded set and apply the attributes", ->
   @Product.encode('name', 'id')
   equal @Product.get('loaded.length'), 0
