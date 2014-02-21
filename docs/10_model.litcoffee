@@ -427,6 +427,10 @@ Returns an instance of the model based on `attributes`. If the `primaryKey` is p
 
 Since `createFromJSON` checks the identity map, it's a great way to load data without duplicating records in memory.
 
+## @createMultipleFromJSON(attributesArray: Array) : Array
+
+Loads data from JSON like `Model.createFromJSON`, but `attributesArray` is an array of objects and returns an array of records. `createMultipleFromJSON` loads new records all at once, so `Model.loaded.itemsWereAdded` is only fired once.
+
 ## ::%id
 
 A universally accessible accessor to the record's primary key. If the record's
