@@ -13,6 +13,12 @@ test 'delegate a single property to containing keypath', ->
 
   obj = new @MyObject
   equal obj.get('number'), '123'
+  equal obj.set('number', '456'), '456', "it's set on the object"
+  equal obj.get('address').get('number'), '456', "it's set on the delegation target"
+  equal obj.get('number'), '456'
+  obj.unset('number')
+  equal obj.get('number'), undefined, "it's unset on the object"
+  equal obj.get('address').get('number'), undefined, "it's unset on the delegation target"
 
 test 'delegate multiple properties to containing keypath', ->
   @MyObject.delegate 'number', 'zip', to: 'address'
@@ -26,6 +32,12 @@ test 'delegate property to a multi segment keypath', ->
 
   obj = new @MyObject
   equal obj.get('country_code'), 'CA'
+  obj.set('country_code', 'US')
+  equal obj.get('country_code'), 'US'
+  equal obj.get('address').get('country').get('country_code'), 'US'
+  obj.unset('country_code')
+  equal obj.get('address').get('country').get('country_code'), undefined
+
 
 test 'chained delegates should resolve', ->
   @MyObject.delegate 'country', to: 'address'
@@ -33,3 +45,9 @@ test 'chained delegates should resolve', ->
 
   obj = new @MyObject
   equal obj.get('country_code'), 'CA'
+  obj.set('country_code', 'US')
+  equal obj.get('country_code'), 'US'
+  equal obj.get('address').get('country').get('country_code'), 'US'
+  obj.unset('country_code')
+  equal obj.get('country_code'), undefined
+  equal obj.get('address').get('country').get('country_code'), undefined
