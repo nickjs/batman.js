@@ -290,6 +290,116 @@ asyncTest 'and', 4, ->
     equal node[3].checked, false
     QUnit.start()
 
+asyncTest 'ceil', ->
+  context = Batman
+    thing1: 1.234
+    thing2: 1.987
+
+  source =  """
+    <div data-source="thing1 | ceil"></div>
+    <div data-source="thing2 | ceil"></div>
+  """
+
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "2"
+    equal node[1].innerHTML, "2"
+    QUnit.start()
+
+asyncTest 'floor', ->
+  context = Batman
+    thing1: 1.234
+    thing2: 1.987
+
+  source =  """
+    <div data-source="thing1 | floor"></div>
+    <div data-source="thing2 | floor"></div>
+  """
+
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "1"
+    equal node[1].innerHTML, "1"
+    QUnit.start()
+
+asyncTest 'round', ->
+  context = Batman
+    thing1: 1.234
+    thing2: 1.987
+
+  source =  """
+    <div data-source="thing1 | round"></div>
+    <div data-source="thing2 | round"></div>
+  """
+
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "1"
+    equal node[1].innerHTML, "2"
+    QUnit.start()
+
+asyncTest 'precision', ->
+  context = Batman
+    thing1: 1.234
+    thing2: '1.234'
+
+  source =  """
+    <div data-source="thing1 | precision 1"></div>
+    <div data-source="thing1 | precision 2"></div>
+    <div data-source="thing1 | precision 5"></div>
+    <div data-source="thing2 | precision 2"></div>
+  """
+
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "1"
+    equal node[1].innerHTML, "1.2"
+    equal node[2].innerHTML, "1.2340"
+    equal node[3].innerHTML, "1.2"
+    QUnit.start()
+
+asyncTest 'fixed', ->
+  context = Batman
+    thing1: 1.234
+    thing2: '1.234'
+
+  source =  """
+    <div data-source="thing1 | fixed 1"></div>
+    <div data-source="thing1 | fixed 2"></div>
+    <div data-source="thing1 | fixed 5"></div>
+    <div data-source="thing2 | fixed 2"></div>
+  """
+
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "1.2"
+    equal node[1].innerHTML, "1.23"
+    equal node[2].innerHTML, "1.23400"
+    equal node[3].innerHTML, "1.23"
+    QUnit.start()
+
+asyncTest 'delimitNumber', ->
+  context = Batman
+    onefish: 0.0001
+    twofish: 0.001
+    redfish: 100
+    blufish: 1000
+    hotfish: 1000000
+    cldfish: '1000000'
+
+  source =  """
+    <div data-source="onefish | delimitNumber"></div>
+    <div data-source="twofish | delimitNumber"></div>
+    <div data-source="redfish | delimitNumber"></div>
+    <div data-source="blufish | delimitNumber"></div>
+    <div data-source="hotfish | delimitNumber"></div>
+    <div data-source="cldfish | delimitNumber"></div>
+  """
+
+  helpers.render source, context, (node) ->
+    equal node[0].innerHTML, "0.0001"
+    equal node[1].innerHTML, "0.001"
+    equal node[2].innerHTML, "100"
+    equal node[3].innerHTML, "1,000"
+    equal node[4].innerHTML, "1,000,000"
+    equal node[5].innerHTML, "1,000,000"
+    QUnit.start()
+
 asyncTest 'or', 6, ->
   context = Batman
     hotdog: true

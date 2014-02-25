@@ -36,6 +36,28 @@ Batman.Filters =
   not: (value, binding) ->
     !value
 
+  ceil: (value) ->
+    Math.ceil(value)
+
+  floor: (value) ->
+    Math.floor(value)
+
+  round: (value) ->
+    Math.round(value)
+
+  precision: (value, p) ->
+    parseFloat(value).toPrecision(p)
+
+  fixed: (value, f) ->
+    parseFloat(value).toFixed(f)
+
+  # this method was found here http://blog.stevenlevithan.com/archives/commafy-numbers
+  # and only slightly modified here. I won't take credit for creating this.
+  delimitNumber: (value) ->
+    value = value.toString()
+    value.replace /(^|[^\w.])(\d{4,})/g, ($0, $1, $2) ->
+      $1 + $2.replace(/\d(?=(?:\d\d\d)+(?!\d))/g, "$&,")
+
   trim: buntUndefined (value, binding) ->
     value.trim()
 
