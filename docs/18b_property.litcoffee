@@ -156,6 +156,13 @@ Returns `true` if the accessor specifies `final: true`.
 
 Reloads the value from the accessor and, if the value has changed, fires itself with `value`, `previousValue`, `@key`. If the new value isn't undefined and `isFinal()` is true, it locks the value with `lockValue`.
 
+_Note:_ For a `Batman.Keypath`, these two are not equivalent:
+
+```
+someObject.property('nestedObject.someNestedProperty').refresh()        # refreshes the Keypath on someObject
+someObject.get('nestedObject').property('someNestedProperty').refresh() # refreshes the Property on nestedObject
+```
+
 ## ::sourceChangeHandler() : Function
 
 Returns the function to be called when any of the `Property`'s sources change. By default, this function implements several of `Batman.Property`'s features:
