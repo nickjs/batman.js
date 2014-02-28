@@ -1,15 +1,22 @@
 class Batman.I18N extends Batman.Object
   @defaultLocale: "en"
 
+  @classAccessor 'useFallback',
+    get: -> @useFallback || false
+    set: (k, v) -> @useFallback = v
+    unser: -> x = @useFallback; delete @useFallback; x
+
   @classAccessor 'locale',
     get: -> @locale || @get('defaultLocale')
     set: (k,v) -> @locale = v
     unset: -> x = @locale; delete @locale; x
 
   @classAccessor 'translations', -> @get("locales.#{@get('locale')}")
+  @classAccessor 'defaultTranslations', -> @get("locales.#{@defaultLocale}")
 
   @translate: (key, values) ->
     translation = @get("translations.#{key}")
+    translation ||= @get("defaultTranslations.#{key}") if @get("useFallback")
     if ! translation?
       Batman.developer.warn "Warning, undefined translation #{key} when in local #{@get('locale')}"
       return ""
@@ -52,7 +59,6 @@ class Batman.I18N.LocalesStorage extends Batman.Object
 
 Batman.I18N.set 'locales', new Batman.I18N.LocalesStorage
 
-#Batman.Filters.t = Batman.Filters.translate = Batman.Filters.interpolate
 Batman.mixin Batman.Filters,
   translate: (args...) ->
     binding = if args[2] then args[2] else args[1]
