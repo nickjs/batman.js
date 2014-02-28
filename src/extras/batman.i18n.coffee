@@ -13,6 +13,7 @@ class Batman.I18N extends Batman.Object
     if ! translation?
       Batman.developer.warn "Warning, undefined translation #{key} when in local #{@get('locale')}"
       return ""
+    return translation unless values
     Batman.helpers.interpolate(translation, values)
 
   @enable: ->
