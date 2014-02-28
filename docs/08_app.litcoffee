@@ -25,7 +25,7 @@ See [`Batman.App` routing](/docs/api/batman.app_routing.html) for information ab
 
 The currently-running `Batman.App`. Also available at `Batman.currentApp`.
 
-## @.run()
+## @run()
 
 Initializes the `Batman.App` class by:
 
@@ -45,7 +45,7 @@ $ ->
   MyApp.run()
 ```
 
-## @.stop() : App
+## @stop() : App
 
 Stops the `App`. The URL will stop being monitored and no more actions will be dispatched. You generally shouldn't have to call this.
 
