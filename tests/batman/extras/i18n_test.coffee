@@ -118,6 +118,11 @@ asyncTest "it should accept string literals", ->
     equal node.childNodes[0].innerHTML, "this kind of defeats the purpose"
     QUnit.start()
 
+asyncTest "it should apply keypath value after get translation", ->
+  viewHelpers.render '<div data-bind="\'how_many_grapefruits.other\' | translate {\'count\': \'grapefruits.count\'}"></div>', false, {grapefruits: {count: 10}}, (node) ->
+    equal node.childNodes[0].innerHTML, "10 pamplemouses"
+    QUnit.start()
+
 asyncTest "it should look up keys in the translations under t", ->
   viewHelpers.render '<div data-bind="t.grapefruit | translate"></div>', false, {}, (node) ->
     equal node.childNodes[0].innerHTML, "pamplemouse", 't has been added to the default render stack'
