@@ -6,13 +6,15 @@ To use `Batman.I18N`, you must:
 
 - Include the [batman.js extra](https://github.com/batmanjs/batman/blob/master/src/extras/batman.i18n.coffee) in your project
 - Enable `Batman.I18N` with `Batman.I18N.enable()`
-- Define locales on the client or [provide support from the server](/docs/api/batman.i18n.html#getting_locales_from_the_server)
+- Define locales on the client or [provide support from the server](#getting_locales_from_the_server)
 
 For example:
 
 ```coffeescript
-# after inlcuding Batman.I18N
+# after including Batman.I18N
 Batman.I18N.enable()
+
+# define locales:
 Batman.I18N.set 'locales.en',
   messages:
     welcome: "Welcome"
@@ -20,6 +22,11 @@ Batman.I18N.set 'locales.en',
     sign_in: "Sign In"
     register: "Register"
 
+Batman.I18N.set 'locales.zh'
+  messages:
+    welcome: '欢迎'
+
+# get translations:
 Batman.I18N.get("locale")    # "en", default
 Batman.t("messages.welcome") # "Welcome"
 Batman.I18N.set("locale", "zh")
@@ -88,7 +95,7 @@ Returns the current `Batman.I18N.LocalesStorage`, which stores locales and there
 Batman.I18N.set("locales.uz", { ... })
 ```
 
-See ["Getting locales from the server"](/docs/api/batman.i18n.html#getting_locales_from_the_server) for information about how `Batman.I18N.LocalesStorage` handles missing keys.
+See ["Getting locales from the server"](#getting_locales_from_the_server) for information about how `Batman.I18N.LocalesStorage` handles missing keys.
 
 ## @%translations : Object
 
