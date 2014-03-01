@@ -101,8 +101,72 @@ Delegates `properties` to `options.to` by creating new accessors for `properties
 Shorthand for [singleton classes](http://en.wikipedia.org/wiki/Singleton_pattern). Defines a class accessor `singletonMethodName` which returns the singleton instance.
 
 ## @wrapAccessor([keys...,] wrapperFunction: Function)
+
+Defines a *wrap accessor* for the given keys. These accessors are intended to
+extend an existing accessor or property by wrapping calls to `get`/`set`/`unset`.
+
+`wrapperFunction` is called immediately, and should return an object with the
+same format as an accessor definition. It is passed an object that represents
+the original accessor being wrapped, called `core`.
+
+Some trivial examples:
+
+    test "@wrapAccessor can be used to extend get functionality", ->
+      class Product extends Batman.Object
+        @wrapAccessor 'title', (core) ->
+          get: (key) -> 'Product ' + core.get.call(this, key) # Call the original get function.
+
+      foo = new Product(title: 'Foo')
+      equal foo.get('title'), 'Product Foo'
+
+    test "@wrapAccessor can be used to extend set functionality", ->
+      class Product extends Batman.Object
+        @wrapAccessor 'title', (core) ->
+          set: (key, value) ->
+            core.set.call(this, key, value.toUpperCase()) # Call the original set function, with different arguments.
+
+      foo = new Product(title: 'Product Foo')
+      equal foo.get('title'), 'PRODUCT FOO'
+
+Here's a real-world example of a fairly common use-case.
+`Product` has a `handle`, which is the token used to identify the product in a
+URL. If the user hasn't set a custom handle, then the handle should be generated
+from the title. If they do set a custom handle, then changes to the title should
+not affect the handle.
+
+    test "@wrapAccessor makes custom shit woohoo", ->
+      handleize = (value) -> value?.toLowerCase().replace(/\W+/g, '-')
+
+      class Product extends Batman.Object
+        @wrapAccessor 'handle', (core) ->
+          get: -> core.get.apply(@, arguments) || handleize(@get('title'))
+
+        @wrapAccessor 'title', (core) ->
+          set: (key, value) ->
+            if @get('handle') == handleize(@get('title'))
+              @set('handle', handleize(value))
+
+            core.set.call(this, key, value)
+
+      foo = new Product(title: 'Product Foo!!')
+      equal foo.get('handle'), 'product-foo-' # Handle is automatically set.
+
+      foo.set('title', 'Product Bar')
+      equal foo.get('handle'), 'product-bar' # Handle is automatically set again.
+
+      foo.set('handle', 'custom-handle') # User defines a custom handle for this product...
+      foo.set('title', 'Product Foo!!')
+      equal foo.get('handle'), 'custom-handle' # so now it's not automatically set.
+
+`@wrapAccessor` may be called with no keys to wrap *all* accessors.
+
 ## @wrapClassAccessor([keys...,] wrapperFunction: Function )
+
+Like `@wrapAccessor`, but to wrap a class-level accessor.
+
 ## ::wrapAccessor([keys...,] wrapperFunction)
+
+Like `@wrapAccessor`, but wraps an accessor on a single instance.
 
 ## ::constructor(objects...) : Object
 
