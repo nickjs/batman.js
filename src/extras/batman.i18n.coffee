@@ -55,12 +55,15 @@ class Batman.I18N.LocalesStorage extends Batman.Object
 
 Batman.I18N.set 'locales', new Batman.I18N.LocalesStorage
 
-Batman.Filters.t = Batman.Filters.translate = (args...) ->
-    binding = if args[2] then args[2] else args[1]
-    key = args[0] # Store key for lookupKeypath if translate didn't found
-    unless binding.key and binding.key.substr(0, 2) == "t." # If already translated, skip it
-      args[0] = Batman.I18N.translate(key)
-      args[0] ||= key # no translate, return default key
-    Batman.Filters.interpolate.apply(@, args)
+Batman.Filters.t = Batman.Filters.translate = (string, interpolationKeypaths, binding) ->
+  if not binding
+    binding = interpolationKeypaths
+    interpolationKeypaths = undefined
+  return if not string
+  key = string # Store key for lookupKeypath if translate didn't found
+  unless binding.key and binding.key.substr(0, 2) == "t." # If already translated, skip it
+    string = Batman.I18N.translate(key)
+    string ||= key # no translate, return default key
+  Batman.Filters.interpolate.apply(@, [string, interpolationKeypaths, binding])
 
 Batman.config.translations = true
