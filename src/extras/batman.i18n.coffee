@@ -1,10 +1,6 @@
 class Batman.I18N extends Batman.Object
   @defaultLocale: "en"
-
-  @classAccessor 'useFallback',
-    get: -> @useFallback || false
-    set: (k, v) -> @useFallback = v
-    unser: -> x = @useFallback; delete @useFallback; x
+  @useFallback: false
 
   @classAccessor 'locale',
     get: -> @locale || @get('defaultLocale')
@@ -16,7 +12,7 @@ class Batman.I18N extends Batman.Object
 
   @translate: (key, values) ->
     translation = @get("translations.#{key}")
-    translation ||= @get("defaultTranslations.#{key}") if @get("useFallback")
+    translation ||= @get("defaultTranslations.#{key}") if @useFallback
     if ! translation?
       Batman.developer.warn "Warning, undefined translation #{key} when in local #{@get('locale')}"
       return ""

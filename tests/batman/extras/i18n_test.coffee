@@ -124,7 +124,7 @@ asyncTest "it should look up keys in the translations under t", ->
     QUnit.start()
 
 asyncTest "it should fallback string from default locale", ->
-  I18N.set('useFallback', true)
+  I18N.useFallback = true
   viewHelpers.render '<div data-bind="\'fallback\' | translate"></div>', false, {}, (node) ->
     equal node.childNodes[0].innerHTML, "fallback string"
     QUnit.start()
