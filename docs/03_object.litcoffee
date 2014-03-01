@@ -134,7 +134,7 @@ URL. If the user hasn't set a custom handle, then the handle should be generated
 from the title. If they do set a custom handle, then changes to the title should
 not affect the handle.
 
-    test "@wrapAccessor makes custom shit woohoo", ->
+    test "@wrapAccessor implementation of generating resource handles", ->
       handleize = (value) -> value?.toLowerCase().replace(/\W+/g, '-')
 
       class Product extends Batman.Object
