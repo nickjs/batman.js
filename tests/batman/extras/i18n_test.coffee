@@ -38,6 +38,10 @@ test "setting the locale should work", ->
   I18N.set 'locale', 'fr'
   equal I18N.get('locale'), 'fr'
 
+test "setting the use fallback should work", ->
+  I18N.set 'useFallback', true
+  equal I18N.get('useFallback'), true
+
 test "Batman.I18N.translations should reflect the locale", ->
   I18N.set 'locale', 'en'
   ok I18N.get('translations.grapefruit')
@@ -95,6 +99,8 @@ QUnit.module "Batman.I18N: translate filter",
         how_many_grapefruits:
           1: "1 pamplemouse"
           other: "%{count} pamplemouses"
+      en:
+        fallback: 'fallback string'
 
     I18N.set 'locale', 'fr'
 
@@ -112,7 +118,18 @@ asyncTest "it should accept string literals", ->
     equal node.childNodes[0].innerHTML, "this kind of defeats the purpose"
     QUnit.start()
 
+asyncTest "it should apply keypath value after get translation", ->
+  viewHelpers.render '<div data-bind="\'how_many_grapefruits.other\' | translate {\'count\': \'grapefruits.count\'}"></div>', false, {grapefruits: {count: 10}}, (node) ->
+    equal node.childNodes[0].innerHTML, "10 pamplemouses"
+    QUnit.start()
+
 asyncTest "it should look up keys in the translations under t", ->
   viewHelpers.render '<div data-bind="t.grapefruit | translate"></div>', false, {}, (node) ->
     equal node.childNodes[0].innerHTML, "pamplemouse", 't has been added to the default render stack'
+    QUnit.start()
+
+asyncTest "it should fallback string from default locale", ->
+  I18N.useFallback = true
+  viewHelpers.render '<div data-bind="\'fallback\' | translate"></div>', false, {}, (node) ->
+    equal node.childNodes[0].innerHTML, "fallback string"
     QUnit.start()

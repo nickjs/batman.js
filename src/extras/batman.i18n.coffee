@@ -1,5 +1,6 @@
 class Batman.I18N extends Batman.Object
   @defaultLocale: "en"
+  @useFallback: false
 
   @classAccessor 'locale',
     get: -> @locale || @get('defaultLocale')
@@ -7,12 +8,15 @@ class Batman.I18N extends Batman.Object
     unset: -> x = @locale; delete @locale; x
 
   @classAccessor 'translations', -> @get("locales.#{@get('locale')}")
+  @classAccessor 'defaultTranslations', -> @get("locales.#{@defaultLocale}")
 
   @translate: (key, values) ->
     translation = @get("translations.#{key}")
+    translation ||= @get("defaultTranslations.#{key}") if @useFallback
     if ! translation?
       Batman.developer.warn "Warning, undefined translation #{key} when in local #{@get('locale')}"
       return ""
+    return translation unless values
     Batman.helpers.interpolate(translation, values)
 
   @enable: ->
@@ -51,5 +55,14 @@ class Batman.I18N.LocalesStorage extends Batman.Object
 
 Batman.I18N.set 'locales', new Batman.I18N.LocalesStorage
 
-Batman.Filters.t = Batman.Filters.translate = Batman.Filters.interpolate
+Batman.Filters.t = Batman.Filters.translate = (string, interpolationKeypaths, binding) ->
+  if not binding
+    binding = interpolationKeypaths
+    interpolationKeypaths = undefined
+  return "" if not string?
+  unless binding.key and binding.key.substr(0, 2) == "t." # If already translated, skip it
+    translated = Batman.I18N.translate(string)
+    string = translated if translated
+  Batman.Filters.interpolate.call(@, string, interpolationKeypaths, binding)
+
 Batman.config.translations = true
