@@ -63,6 +63,6 @@ Batman.Filters.t = Batman.Filters.translate = (string, interpolationKeypaths, bi
   unless binding.key and binding.key.substr(0, 2) == "t." # If already translated, skip it
     translated = Batman.I18N.translate(string)
     string = translated if translated
-  Batman.Filters.interpolate.apply(@, [string, interpolationKeypaths, binding])
+  Batman.Filters.interpolate.call(@, string, interpolationKeypaths, binding)
 
 Batman.config.translations = true
