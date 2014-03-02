@@ -60,10 +60,9 @@ Batman.Filters.t = Batman.Filters.translate = (string, interpolationKeypaths, bi
     binding = interpolationKeypaths
     interpolationKeypaths = undefined
   return if not string
-  key = string # Store key for lookupKeypath if translate didn't found
   unless binding.key and binding.key.substr(0, 2) == "t." # If already translated, skip it
-    string = Batman.I18N.translate(key)
-    string ||= key # no translate, return default key
+    translated = Batman.I18N.translate(string)
+    string = translated if translated
   Batman.Filters.interpolate.apply(@, [string, interpolationKeypaths, binding])
 
 Batman.config.translations = true
