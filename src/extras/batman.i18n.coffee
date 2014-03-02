@@ -59,7 +59,7 @@ Batman.Filters.t = Batman.Filters.translate = (string, interpolationKeypaths, bi
   if not binding
     binding = interpolationKeypaths
     interpolationKeypaths = undefined
-  return if not string
+  return "" if not string?
   unless binding.key and binding.key.substr(0, 2) == "t." # If already translated, skip it
     translated = Batman.I18N.translate(string)
     string = translated if translated
