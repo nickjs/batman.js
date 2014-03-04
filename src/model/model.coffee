@@ -531,3 +531,77 @@ class Batman.Model extends Batman.Object
 
   for functionName in ['load', 'save', 'validate', 'destroy']
    @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])
+
+  transaction: -> @_transaction([], [])
+
+  _transaction: (visited, stack) ->
+    index = visited.indexOf(this)
+    return stack[index] if index != -1
+    visited.push(this)
+    stack.push(transaction = new @constructor)
+
+    attributes = @get('attributes').toObject()
+    for own key, value of attributes
+      if value instanceof Batman.Model && !value.isTransaction
+        attributes[key] = value._transaction(visited, stack)
+
+      else if value instanceof Batman.AssociationSet && !value.isTransaction
+        newValues = new Batman.AssociationSet()
+        value.forEach (v) -> newValues.add(v._transaction(visited, stack))
+        attributes[key] = newValues
+
+    transaction._withoutDirtyTracking -> transaction.updateAttributes(attributes)
+    transaction._batman.base = this
+
+    for key, value of Batman.Transaction
+      transaction[key] = value
+
+    transaction.accessor 'isTransaction', -> @isTransaction
+    transaction.accessor 'base', -> @base()
+    transaction
+
+Batman.Transaction =
+  isTransaction: true
+
+  base: ->
+    @_batman.base
+
+  applyChanges: (visited = []) ->
+    return @base if visited.indexOf(this) != -1
+    visited.push(this)
+
+    attributes = @get('attributes').toObject()
+    for own key, value of attributes
+      if value instanceof Batman.Model && value.isTransaction
+        value.applyChanges(visited)
+        delete attributes[key]
+
+      else if value instanceof Batman.AssociationSet
+        value.forEach (v) ->
+          if v instanceof Batman.Model && v.isTransaction
+            v.applyChanges(visited)
+        delete attributes[key]
+
+    base = @base()
+    base.mixin(attributes)
+    base.applyChanges?() ? base
+
+  save: (options, callback) ->
+    if !callback
+      [options, callback] = [{}, options]
+
+    @once 'validated', validated = => @applyChanges()
+
+    finish = =>
+      @off 'validated', validated
+      callback?(arguments...)
+
+    @constructor::save.call this, options, (err, result) =>
+      if not err
+        result = @base()
+        result.get('dirtyKeys').clear()
+        result.get('_dirtiedKeys').clear()
+        result.get('lifecycle').startTransition('save')
+        result.get('lifecycle').startTransition('saved')
+
+      finish(err, result)
