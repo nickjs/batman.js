@@ -42,7 +42,7 @@ test 'changes made to the transaction object do not affect the base', ->
 test 'applyChanges applies the changes in the transaction object to the base', ->
   @transaction.set('banana', 'rama')
   @transaction.applyChanges()
-  equal 'rama', @base.get('banana')
+  equal @base.get('banana'), 'rama'
 
 test 'save applies the changes in the transaction object and saves the object', ->
   s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (callback) -> callback?(null, this))
@@ -50,33 +50,33 @@ test 'save applies the changes in the transaction object and saves the object', 
   @transaction.save()
   s.restore()
 
-  equal 'rama', @base.get('banana')
+  equal @base.get('banana'), 'rama'
 
 test 'errors on the transaction object are not applied to the base object', ->
   @transaction.validate()
-  equal 1, @transaction.get('errors.length')
-  equal 0, @base.get('errors.length')
+  equal @transaction.get('errors.length'), 1
+  equal @base.get('errors.length'), 0
 
 test 'errors on the transaction object are not applied to the base object after save', ->
   s = sinon.stub(Batman.Model.prototype, 'save', (callback) => callback?(@transaction.get('errors'), this))
   @transaction.validate()
-  equal 1, @transaction.get('errors.length')
-  equal 0, @base.get('errors.length')
+  equal @transaction.get('errors.length'), 1
+  equal @base.get('errors.length'), 0
 
   @transaction.save()
-  equal 1, @transaction.get('errors.length')
-  equal 0, @base.get('errors.length')
+  equal @transaction.get('errors.length'), 1
+  equal @base.get('errors.length'), 0
 
   @transaction.set('money', 'banana tree')
   @transaction.validate()
   s.restore()
 
-  equal 2, @transaction.get('errors.length')
-  equal 0, @base.get('errors.length')
+  equal @transaction.get('errors.length'), 2
+  equal @base.get('errors.length'), 0
 
 test 'errors on the base object are applied to the transaction on save', ->
   @transaction.save()
-  equal 1, @transaction.get('errors.length')
+  equal @transaction.get('errors.length'), 1
 
 test 'nested models get their own transaction in a hasOne', ->
   ok @base.get('testNested') == @nested
@@ -91,8 +91,8 @@ test 'nested model transactions get properly applied', ->
   @transaction.set('banana', 'rama')
   @transaction.applyChanges()
 
-  equal 'rama', @base.get('banana')
-  equal 'jim', @nested.get('name')
+  equal @base.get('banana'), 'rama'
+  equal @nested.get('name'), 'jim'
 
 test 'nested model transactions get properly saved', ->
   @transaction.get('testNested').set('name', 'jim')
@@ -100,18 +100,18 @@ test 'nested model transactions get properly saved', ->
   @transaction.set('banana', 'rama')
   @transaction.save()
 
-  equal 'rama', @base.get('banana')
-  equal 'jim', @nested.get('name')
-  equal 'peach1', @base.get('apples.first.name')
+  equal @base.get('banana'), 'rama'
+  equal @nested.get('name'), 'jim'
+  equal @base.get('apples.first.name'), 'peach1'
 
 test 'nested model transactions block sets from modifying the original', ->
   @transaction.get('testNested').set('name', 'jim')
   @transaction.get('apples.first').set('name', 'peach1')
   @transaction.set('banana', 'rama')
 
-  equal undefined, @base.get('banana')
-  equal 'bob', @nested.get('name')
-  equal 'apple1', @apple1.get('name')
+  equal @base.get('banana'), undefined
+  equal @nested.get('name'), 'bob'
+  equal @apple1.get('name'), 'apple1'
 
 test 'recursive nested model transactions get properly loaded and applied', ->
   transaction = @base.transaction()
@@ -121,8 +121,8 @@ test 'recursive nested model transactions get properly loaded and applied', ->
   transaction.get('testNested.testModel').set('banana', 'rama')
   transaction.applyChanges()
 
-  equal 'rama', @base.get('banana')
-  equal 'jim', @nested.get('name')
+  equal @base.get('banana'), 'rama'
+  equal @nested.get('name'), 'jim'
 
 test 'recursive nested hasOne model transactions get properly saved', ->
   transaction = @base.transaction()
@@ -130,8 +130,8 @@ test 'recursive nested hasOne model transactions get properly saved', ->
   transaction.get('testNested.testModel').set('banana', 'rama')
   transaction.save()
 
-  equal 'rama', @base.get('banana')
-  equal 'jim', @nested.get('name')
+  equal @base.get('banana'), 'rama'
+  equal @nested.get('name'), 'jim'
 
 test 'recursive nested toMany transactions get properly saved', ->
   transaction = @base.transaction()
@@ -139,22 +139,22 @@ test 'recursive nested toMany transactions get properly saved', ->
   transaction.get('apples.first.testModel').set('banana', 'rama')
   transaction.save()
 
-  equal 'rama', @base.get('banana')
-  equal 'apple3', @base.get('apples.first.name')
+  equal @base.get('banana'), 'rama'
+  equal @base.get('apples.first.name'), 'apple3'
 
 test 'recursive nested hasOne model transactions block sets from modifying the original', ->
   transaction = @base.transaction()
   transaction.get('testNested').set('name', 'jim')
   transaction.get('testNested.testModel').set('banana', 'rama')
 
-  equal undefined, @base.get('banana')
-  equal 'bob', @nested.get('name')
+  equal @base.get('banana'), undefined
+  equal @nested.get('name'), 'bob'
 
 test 'recursive nested hasMany model transactions block sets from modifying the original', ->
   transaction = @base.transaction()
   transaction.get('apples.first').set('name', 'apple3')
   transaction.get('apples.first.testModel').set('banana', 'rama')
 
-  equal undefined, @base.get('banana')
-  equal 'bob', @nested.get('name')
-  equal 'apple1', @apple1.get('name')
+  equal @base.get('banana'), undefined
+  equal @nested.get('name'), 'bob'
+  equal @apple1.get('name'), 'apple1'

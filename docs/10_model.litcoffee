@@ -579,6 +579,25 @@ For example:
         equal newProduct.get('errors.name.length'), 1
         equal newProduct.get('errors.price.length'), 1
 
+## ::transaction()
+
+Creates a deep copy of the record instance, allowing it to be modified without affecting the original.
+Useful for implementing actions that can be cancelled.
+
+To apply the changes made to a transaction, call `applyChanges`.
+To apply changes and save the record after running validations, call `save`.
+
+    test "transaction creates an independent clone of a record", ->
+      record = new Batman.Model(name: 'Felix')
+
+      transaction = record.transaction()
+      transaction.set('name', 'Camouflage')
+      equal transaction.get('name'), 'Camouflage'
+      equal record.get('name'), 'Felix'
+
+      transaction.applyChanges()
+      equal record.get('name'), 'Camouflage'
+
 # /api/App Components/Batman.Model/Batman.Validator
 
 batman.js ships with a plethora of [built-in validators](/docs/api/batman.model.html#class_function_validate), but when they don't meet your needs, you can create custom validators by subclassing `Batman.Validator`, implementing `Batman.Validator::validateEach`, and adding the new validator to `Batman.Validators`. For example:
