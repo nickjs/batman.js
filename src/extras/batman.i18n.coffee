@@ -14,7 +14,7 @@ class Batman.I18N extends Batman.Object
     translation = @get("translations.#{key}")
     translation ||= @get("defaultTranslations.#{key}") if @useFallback
     if ! translation?
-      Batman.developer.warn "Warning, undefined translation #{key} when in local #{@get('locale')}"
+      Batman.developer.warn "Warning, undefined translation #{key} when in locale #{@get('locale')}"
       return ""
     return translation unless values
     Batman.helpers.interpolate(translation, values)
