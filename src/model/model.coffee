@@ -322,18 +322,17 @@ class Batman.Model extends Batman.Object
 
   # `toJSON` uses the various encoders for each key to grab a storable representation of the record.
   toJSON: ->
+    encoders = @_batman.get('encoders')
+    return {} if !encoders or encoders.isEmpty()
+
     obj = {}
 
     # Encode each key into a new object
-    encoders = @_batman.get('encoders')
-    unless !encoders or encoders.isEmpty()
-      encoders.forEach (key, encoder) =>
-        if encoder.encode
-          val = @get key
-          if typeof val isnt 'undefined'
-            encodedVal = encoder.encode(val, key, obj, this)
-            if typeof encodedVal isnt 'undefined'
-              obj[encoder.as?(key, val, obj, this) ? encoder.as] = encodedVal
+    encoders.forEach (key, encoder) =>
+      return if !encoder.encode || (val = @get(key)) == undefined
+
+      if (encodedVal = encoder.encode(val, key, obj, this)) != undefined
+        obj[encoder.as?(key, val, obj, this) ? encoder.as] = encodedVal
 
     obj
 
