@@ -1,5 +1,6 @@
 #= require ../object
 #= require ../utilities/state_machine
+#= require transaction
 
 class Batman.Model extends Batman.Object
   # Override this property to define the key which storage adapters will use to store instances of this model under.
@@ -560,48 +561,3 @@ class Batman.Model extends Batman.Object
     transaction.accessor 'base', -> @base()
     transaction
 
-Batman.Transaction =
-  isTransaction: true
-
-  base: ->
-    @_batman.base
-
-  applyChanges: (visited = []) ->
-    return @base if visited.indexOf(this) != -1
-    visited.push(this)
-
-    attributes = @get('attributes').toObject()
-    for own key, value of attributes
-      if value instanceof Batman.Model && value.isTransaction
-        value.applyChanges(visited)
-        delete attributes[key]
-
-      else if value instanceof Batman.AssociationSet
-        value.forEach (v) ->
-          if v instanceof Batman.Model && v.isTransaction
-            v.applyChanges(visited)
-        delete attributes[key]
-
-    base = @base()
-    base.mixin(attributes)
-    base.applyChanges?() ? base
-
-  save: (options, callback) ->
-    if !callback
-      [options, callback] = [{}, options]
-
-    @once 'validated', validated = => @applyChanges()
-
-    finish = =>
-      @off 'validated', validated
-      callback?(arguments...)
-
-    @constructor::save.call this, options, (err, result) =>
-      if not err
-        result = @base()
-        result.get('dirtyKeys').clear()
-        result.get('_dirtiedKeys').clear()
-        result.get('lifecycle').startTransition('save')
-        result.get('lifecycle').startTransition('saved')
-
-      finish(err, result)
