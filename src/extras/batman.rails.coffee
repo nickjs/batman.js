@@ -23,7 +23,6 @@ date_re = ///
 ///
 
 Batman.Encoders.railsDate =
-  defaultTimezoneOffset: (new Date()).getTimezoneOffset()
   encode: (value) -> value
   decode: (value) ->
     # Thanks to https://github.com/csnover/js-iso8601 for the majority of this algorithm.
@@ -43,7 +42,7 @@ Batman.Encoders.railsDate =
           minutesOffset = obj[10] * 60 + obj[11]
           minutesOffset = 0 - minutesOffset  if obj[9] == "+"
         else
-          minutesOffset = Batman.Encoders.railsDate.defaultTimezoneOffset
+          minutesOffset = new Date(obj[1], obj[2], obj[3], obj[4], obj[5], obj[6], obj[7]).getTimezoneOffset()
         return new Date(Date.UTC(obj[1], obj[2], obj[3], obj[4], obj[5] + minutesOffset, obj[6], obj[7]))
       else
         Batman.developer.warn "Unrecognized rails date #{value}!"
