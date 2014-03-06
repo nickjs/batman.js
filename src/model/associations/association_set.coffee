@@ -32,3 +32,24 @@ class Batman.AssociationSet extends Batman.SetSort
   markAsLoaded: ->
     @set('loaded', true)
     @fire('loaded')
+
+  @accessor 'parentRecord', ->
+    parentClass =  @get('association.model')
+    parentPrimaryKey = parentClass.get('primaryKey')
+    parentPrimaryKeyValue = @get('foreignKeyValue')
+    query = {}
+    query[parentPrimaryKey] = parentPrimaryKeyValue
+    # pull it from the identity map, if it's there:
+    parentClass.createFromJSON(query)
+
+  build: (attrs={}) ->
+    initParams = {}
+    initParams[@get('association.foreignKey')] = @get('foreignKeyValue')
+    options = @get('association.options')
+    if options.inverseOf?
+      initParams[options.inverseOf] = @get('parentRecord')
+    associatedClass = options.namespace[options.name]
+    mixedAttrs = Batman.extend(attrs, initParams)
+    newObj = new associatedClass(mixedAttrs)
+    @add(newObj)
+    newObj
