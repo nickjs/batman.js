@@ -1,22 +1,20 @@
-oldOffset = Batman.Encoders.railsDate.defaultTimezoneOffset
-QUnit.module "Batman.Rails: date encoding",
-  teardown: ->
-    Batman.Encoders.railsDate.defaultTimezoneOffset = oldOffset
+QUnit.module "Batman.Rails: date encoding"
 
 dateEqual = (a, b, args...) ->
   equal a.getTime(), b.getTime(), args...
 
-test "it should parse ISO 8601 dates", ->
-  # Date not during DST
-  Batman.Encoders.railsDate.defaultTimezoneOffset = 300
-  dateEqual Batman.Encoders.railsDate.decode("2012-01-03T13:35:06"), new Date("Tues, 03 Jan 2012 13:35:06 EST")
-  # Date during DST
-  Batman.Encoders.railsDate.defaultTimezoneOffset = 240
-  dateEqual Batman.Encoders.railsDate.decode("2012-04-13T13:35:06"), new Date("Sun, 13 Apr 2012 13:35:06 EDT")
+test "it parses ISO 8601 dates without a timezone offset in the local timezone", ->
+  dateEqual Batman.Encoders.railsDate.decode("2012-01-03T13:35:06"), new Date(2012, 0, 3, 13, 35, 6)
 
-test "it should parse ISO 8601 dates with timezones", ->
-  dateEqual Batman.Encoders.railsDate.decode("2012-01-03T13:35:06-05:00"), new Date(1325615706000)
-  dateEqual Batman.Encoders.railsDate.decode("2012-01-03T13:35:06-07:00"), new Date(1325622906000)
+test "it correctly parses ISO 8601 dates with a timezone offset", ->
+  dateEqual Batman.Encoders.railsDate.decode("2012-01-03T13:35:06-05:00"), new Date(Date.UTC(2012, 0, 3, 18, 35, 6))
+  dateEqual Batman.Encoders.railsDate.decode("2012-01-03T13:35:06-07:00"), new Date(Date.UTC(2012, 0, 3, 20, 35, 6))
+
+test "it uses the appropriate offset for the given timestamp", ->
+  sinon.stub Date.prototype, "getTimezoneOffset", -> if this.getFullYear() > 2000 then -660 else -600
+
+  dateEqual Batman.Encoders.railsDate.decode("2012-08-09T09:00:00"), new Date(Date.UTC(2012, 7, 8, 22))
+  dateEqual Batman.Encoders.railsDate.decode("1988-08-09T09:00:00"), new Date(Date.UTC(1988, 7, 8, 23))
 
 QUnit.module "encodeTimestamps",
   setup: ->
