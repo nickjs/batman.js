@@ -86,6 +86,25 @@ test 'nested models get their own transaction in a hasMany', ->
   ok @base.get('testNested') == @nested
   ok @transaction.get('apples').first != @apple1
 
+test 'removing nested models doesnt affect the base until applyChanges', ->
+  firstTransactionApple = @transaction.get('apples.first')
+  @transaction.get('apples').remove(firstTransactionApple)
+  ok @base.get('apples.length') == 2, 'the item isnt removed from the base'
+  ok @transaction.get('apples.length') == 1, 'the item is removed from the transaction'
+
+  @transaction.applyChanges()
+  ok @base.get('apples.length') == 1, 'the item is removed'
+  ok @transaction.get('apples.length') == 1, 'the item is still gone from the transaction'
+
+test 'adding nested models doesnt affect the base until applyChanges', ->
+  @transaction.get('apples').add(new @TestModel(name: 'apple3'))
+  ok @base.get('apples.length') == 2
+  ok @transaction.get('apples.length') == 3
+
+  @transaction.applyChanges()
+  ok @base.get('apples.length') == 3, 'the item is added'
+  ok @transaction.get('apples.length') == 3, 'the item is still in the transaction'
+
 test 'nested model transactions get properly applied', ->
   @transaction.get('testNested').set('name', 'jim')
   @transaction.set('banana', 'rama')

@@ -543,13 +543,13 @@ class Batman.Model extends Batman.Object
 
     attributes = @get('attributes').toObject()
     for own key, value of attributes
-      if value instanceof Batman.Model && !value.isTransaction
-        attributes[key] = value._transaction(visited, stack)
+      do (key, value) ->
+        if value instanceof Batman.Model && !value.isTransaction
+          attributes[key] = value._transaction(visited, stack)
 
-      else if value instanceof Batman.AssociationSet && !value.isTransaction
-        newValues = new Batman.AssociationSet()
-        value.forEach (v) -> newValues.add(v._transaction(visited, stack))
-        attributes[key] = newValues
+        else if value instanceof Batman.AssociationSet && !value.isTransaction
+          newValues = new Batman.TransactionAssociationSet(value, visited, stack)
+          attributes[key] = newValues
 
     transaction._withoutDirtyTracking -> transaction.updateAttributes(attributes)
     transaction._batman.base = this
@@ -560,4 +560,3 @@ class Batman.Model extends Batman.Object
     transaction.accessor 'isTransaction', -> @isTransaction
     transaction.accessor 'base', -> @base()
     transaction
-
