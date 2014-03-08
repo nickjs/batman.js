@@ -1,18 +1,20 @@
-class Batman.TransactionAssociationSet extends Batman.Proxy
+class Batman.TransactionAssociationSet extends Batman.Set
   constructor: (associationSet, visited, stack) ->
-    super(associationSet)
+    @set('associationSet', associationSet)
     @_visited = visited
     @_stack = stack
-    @_transactionStorage = []
+    @_storage = []
     @_originalStorage = []
     @_loadOriginals(associationSet.toArray())
+
+  @delegate 'association', 'foreignKeyValue', to: 'associationSet'
 
   add: @mutation (items...) ->
     addedTransactions = []
     for i in items
       if i instanceof Batman.Model && !i.isTransaction
         t = i._transaction(@_visited, @_stack)
-        @_transactionStorage.push(t)
+        @_storage.push(t)
         addedTransactions.push(t)
       @_originalStorage.push(i)
     @fire 'itemsWereAdded', addedTransactions if addedTransactions.length
@@ -27,9 +29,9 @@ class Batman.TransactionAssociationSet extends Batman.Proxy
     removedTransactions = []
     for t in transactions
       if t.isTransaction
-        transactionIndex = @_transactionStorage.indexOf(t)
+        transactionIndex = @_storage.indexOf(t)
         if transactionIndex > -1
-          @_transactionStorage.splice(transactionIndex, 1)
+          @_storage.splice(transactionIndex, 1)
           removedTransactions.push(t)
         i = t.base()
         originalIndex = @_originalStorage.indexOf(i)
@@ -41,28 +43,15 @@ class Batman.TransactionAssociationSet extends Batman.Proxy
     removedTransactions
 
   applyChanges: (visited) ->
-    for t in @_transactionStorage
+    for t in @_storage
       t.applyChanges(visited)
     originals = new Batman.Set(@_originalStorage...)
-    target = @get('target')
+    target = @get('associationSet')
     target.replace(originals)
     target
 
-  toArray: -> @_transactionStorage.slice()
-
-  @accessor 'toArray', ->
-    @registerAsMutableSource?()
-    @toArray()
-
   @accessor 'length', ->
-    @registerAsMutableSource?()
-    @_transactionStorage.length
-
-  @accessor 'first', -> @toArray()[0]
-
-  forEach: (iterator, ctx) ->
-    @get('target').registerAsMutableSource?()
-    iterator.call(ctx, e, i, this) for e, i in @_transactionStorage
-    return
+    @registerAsMutableSource()
+    @_storage.length
 
   build: Batman.AssociationSet::build
