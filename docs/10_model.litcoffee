@@ -230,6 +230,8 @@ The built in validation options are listed below:
  + `exclusion : in : [list, of, unacceptable, values]`: Assert that the value is not equal to any of the values in an array.
  + `regexp : /regexp/` : Assert that the value is matching the provided regular expression.
  + `email : true` : Assert that the value is an email address, per the [W3C HTML5 definition](http://www.w3.org/TR/html5/forms.html#valid-e-mail-address).
+ + `associated : true` : Assert that associated record is also valid. If invalid the message will be "#{associationName} is not valid".
+ + `associatedFields : true` : Like `associated`, but adds error messages with the names of the fields on associated records, eg "Username must be at least 10 characters" or "Favorite flavor is not included in the list".
 
 Custom validators should have the signature `(errors, record, key, callback)`. The arguments are as follows:
 
