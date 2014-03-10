@@ -1,16 +1,13 @@
 # batman.js
 
-[batman.js](http://batmanjs.org/) is a framework for building rich single-page browser applications. It is written in [CoffeeScript](http://jashkenas.github.com/coffee-script/) and its API is developed with CoffeeScript in mind, but of course you can use regular JavaScript too.
+[batman.js](http://batmanjs.org/) is a framework for building rich single-page browser applications.
 
 #### It's got:
 
-* a stateful MVC architecture
-* a powerful 2-way data binding system
-* routable controller actions
-* pure HTML views
-* toolchain support built on [Node.js](http://nodejs.org) and [cake](http://jashkenas.github.com/coffee-script/#cake)
-
-The APIs are heavily inspired by [Rails](http://rubyonrails.org/) and are designed to make Rails devs feel right at home.
+* __A stateful MVC architecture__ that emphasizes object-oriented design, convention over configuration, and communication via HTTP REST.
+* __A human-friendly API__ inspired by [Ruby on Rails](http://rubyonrails.org/) and written in [CoffeeScript](http://coffeescript.org/). Spend less time fixing curly braces and more time building your app!
+* __Powerful 2-way data binding__. Every property tracks its sources and updates automatically when its sources change.
+* __Pure HTML templates__ so you can use whatever templating engine you like. [Liquid](http://liquidmarkup.org/)-style filters make designers & developers feel right at home.
 
 To find out more or get started with batman.js, check out the website: **[http://batmanjs.org](http://batmanjs.org)**.
 
