@@ -6,8 +6,9 @@
 
 * __A stateful MVC architecture__ that emphasizes object-oriented design, convention over configuration, and communication via HTTP REST.
 * __A human-friendly API__ inspired by [Ruby on Rails](http://rubyonrails.org/) and written in [CoffeeScript](http://coffeescript.org/). Spend less time fixing curly braces and more time building your app!
-* __Powerful 2-way data binding__. Every property tracks its sources and updates automatically when its sources change.
+* __Powerful 2-way data binding__. [Every property](http://batmanjs.org/docs/api/batman.object_accessors.html) tracks its sources and updates automatically when its sources change.
 * __Pure HTML templates__ so you can use whatever templating engine you like. [Liquid](http://liquidmarkup.org/)-style filters make designers & developers feel right at home.
+* __Lots More:__ [expressive routing](http://batmanjs.org/docs/api/batman.app_routing.html), [model validations](http://batmanjs.org/docs/api/batman.model.html#class_function_validate), [model associations](http://batmanjs.org/docs/api/batman.model_associations.html), [I18n](http://batmanjs.org/docs/api/batman.i18n.html), [`localStorage` persistence](http://batmanjs.org/docs/api/batman.storageadapter.html)...
 
 To find out more or get started with batman.js, check out the website: **[http://batmanjs.org](http://batmanjs.org)**.
 
