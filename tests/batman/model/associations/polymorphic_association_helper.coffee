@@ -45,9 +45,27 @@ ex.baseSetup = ->
         id: 30
         key: "SEO Title"
 
+  namespace.StringyMetafield = class @StringyMetafield extends Batman.Model
+    @belongsTo 'stringySubject', {polymorphic: true, namespace}
+    @encode 'id' # ids are integer-y strings, eg "1", "2", "3"...
+    @encode 'key'
+
+  @stringyMetafieldAdapter = createStorageAdapter @StringyMetafield, AsyncTestStorageAdapter,
+    stringyMetafields1:
+      id: "1"
+      stringySubject_id: 1
+      stringySubject_type: 'store'
+      key: 'Stringy store metafield'
+    stringyMetafields2:
+      id: "2"
+      stringySubject_id: 1
+      stringySubject_type: 'store'
+      key: 'Another Stringy store metafield'
+
   namespace.Store = class @Store extends Batman.Model
     @encode 'id', 'name'
     @hasMany 'metafields', {as: 'subject', namespace}
+    @hasMany 'stringyMetafields', {as: 'stringySubject', namespace}
 
   @storeAdapter = createStorageAdapter @Store, AsyncTestStorageAdapter,
     'stores1':

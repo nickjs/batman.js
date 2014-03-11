@@ -42,9 +42,9 @@ test "primary key is 'id' by default", ->
   product = new @Product(id: 10)
   equal product.get('id'), 10
 
-test "integer string ids should be coerced into integers", 1, ->
+test "integer string ids should not be coerced into integers", 1, ->
   product = new @Product(id: "1234")
-  strictEqual product.get('id'), 1234
+  strictEqual product.get('id'), "1234"
 
 test "non-integer string ids should not be coerced", 1, ->
   product = new @Product(id: "123d")

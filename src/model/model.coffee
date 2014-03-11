@@ -297,10 +297,6 @@ class Batman.Model extends Batman.Object
       else
         @get(primaryKey)
     set: (key, value) ->
-      # naively coerce string ids into integers
-      if (typeof value is "string") and (value.match(/[^0-9]/) is null) and ("#{parsedValue = parseInt(value, 10)}" is value)
-        value = parsedValue
-
       primaryKey = @constructor.primaryKey
       if primaryKey == 'id'
         @_willSet(key)
