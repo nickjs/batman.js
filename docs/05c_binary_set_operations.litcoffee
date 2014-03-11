@@ -29,11 +29,28 @@ Returns the second `Batman.Set` passed to the constructor.
 
 Since `Batman.SetUnion` is a subclass of `Batman.Set`, you can use it just like a `Batman.Set`.
 
+    test 'SetUnion contains the union of two sets', ->
+      left = new Batman.Set(1, 2, 3)
+      right = new Batman.Set(3, 4, 5)
+      operation = new Batman.SetUnion(left, right)
+      ok operation.has(1), 'has items from the left set'
+      ok operation.has(4), 'has items from the right set'
+      ok operation.has(3), 'has items from both sets'
+
+
 # /api/Data Structures/Batman.BinarySetOperation/Batman.SetIntersection
 
 `Batman.SetIntersection` extends `Batman.BinarySetOperation`. It implements an [intersection operation](http://en.wikipedia.org/wiki/Intersection_%28set_theory%29): it contains members of _both sets_ passed to its constructor without duplicates.
 
 Since `Batman.SetIntersection` is a subclass of `Batman.Set`, you can use it just like a `Batman.Set`.
+
+    test 'SetIntersection contains the intersection of two sets', ->
+      left = new Batman.Set(1, 2, 3)
+      right = new Batman.Set(3, 4, 5)
+      operation = new Batman.SetIntersection(left, right)
+      ok !operation.has(1), 'doesnt have items from the left set only'
+      ok !operation.has(4), 'doesnt have items from the right set only'
+      ok operation.has(3), 'has items from both sets'
 
 # /api/Data Structures/Batman.BinarySetOperation/Batman.SetComplement
 
@@ -41,3 +58,10 @@ Since `Batman.SetIntersection` is a subclass of `Batman.Set`, you can use it jus
 
 Since `Batman.SetComplement` is a subclass of `Batman.Set`, you can use it just like a `Batman.Set`.
 
+    test 'SetComplement contains the complement of two sets', ->
+      left = new Batman.Set(1, 2, 3)
+      right = new Batman.Set(3, 4, 5)
+      operation = new Batman.SetComplement(left, right)
+      ok operation.has(1), 'has items from the left set only'
+      ok !operation.has(4), 'doesnt have items from the right set only'
+      ok !operation.has(3), 'doesnt have items from both sets'
