@@ -6,6 +6,8 @@ usage examples.
 
 The current version is readable [here](http://batmanjs.org/docs/api/).
 
+__Links:__ Markdown like ``Batman.SomeClass`` will automatically be converted to a link to the API page for `Batman.SomeClass` if the page exists.
+
 ## Heading Format
 
 Second-level headings (i.e. `##` in markdown) must follow a certain format to
@@ -13,7 +15,7 @@ allow for parsing metadata. If the heading is intended to document a function,
 property, or accessor, it should follow this specification:
 
 ```
-## XYname(args)[= default] : type
+## XYname(args)[= default] : Type
 ```
 
 - `X` is `@` for a class-level member, and `::` for a prototype-level member
@@ -23,15 +25,15 @@ property, or accessor, it should follow this specification:
   - e.g. `## ::remove(index, offset)`
 - `[= default]` is optional, and documents the default value of a property
   - e.g. `## ::.disabled[= false]`
-- ` : type` is optional, and documents the return type if a function/accessor, or the type if a property
+- ` : Type` is optional, and documents the return type if a function/accessor, or the type if a property
   - e.g. `## ::add(x) : number`
 
 
 For documenting method signatures, follow these guidelines:
 
 - Add the expected type of arguments separated by a colon if they're not obvious
-  - e.g. `## @filter(filter : string)`
-  - e.g. `## ::filter(filter : [string|Function|RegExp])`
+  - e.g. `## @filter(filter : String)`
+  - e.g. `## ::filter(filter : [String|Function|RegExp])`
 - When documenting multiple accepted signatures, use the square-brackety way:
   - e.g. `## ::forEach(iterator : Function[, context: Object])`
   - e.g. `## @encode(keys...[, encoder : [Object|Function]])`
@@ -60,28 +62,28 @@ class X extends Batman.Object
 
 ## Regular second-level headings are still OK
 
-## @.someClassProperty : boolean
+## @.someClassProperty : Boolean
 You'll set this in the class declaration and access it by `X.someProperty`.
 
-## @%classAccess : boolean
+## @%classAccess : Boolean
 This is a class accessor. It will be defined in the class declaration and accessed by `X.get("classAccess")`.
 
 ## ::%instanceAccess : String
 This is also defined in the class declaration, but will be accessed from an instance of the class, like:
-   
+
    instance = new X
    instance.get('instanceAccess')
 
-## ::method(a : String[, b : Function]) : boolean
+## ::method(a : String[, b : Function]) : Boolean
 This is an instance method. It's defined in the class declaration and called on the instance directly, like:
-   
+
    instance = new X
    instance.method "some string", (arg) ->
    console.log("instance method was called!", arg)
-   
+
 ```
 
 If you're (rightfully) confused, look to the existing API docs for further examples.
 
-The parsing code is [here](https://github.com/batmanjs/batmanjs.github.io/blob/master/bin/generate_docs#L22-L45) if you'd like to take a look.
+The parsing code is [here](https://github.com/batmanjs/batmanjs.github.io/blob/master/bin/generate_docs) if you'd like to take a look.
 

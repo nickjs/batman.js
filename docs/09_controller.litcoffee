@@ -4,7 +4,7 @@ All controllers in a batman.js app extend `Batman.Controller`. `Batman.Controlle
 
 ## Controller Directory
 
-`Batman.Controller`s are singletons and each controller's instance is available at `@sharedController`. Controller instances are also available at `MyApp.get('controllers')`. You can get the controller instance by the part of its name before "Controller", downcased. For example:
+`Batman.Controller`s are singletons and each controller's instance is available at [`@sharedController`](/docs/api/batman.controller.html#class_accessor_sharedcontroller). Controller instances are also available at `MyApp.get('controllers')`( the app's [`ControllerDirectory`](/docs/api/controllerdirectory.html)). You can get the controller instance by the part of its name before "Controller", downcased. For example:
 
 ```
 Alfred.TodosController.get('sharedController') # => TodosController instance
@@ -112,9 +112,11 @@ Declares that a function should be executed should be executed before this contr
 
 The `options` argument can take three forms:
 
- 1. `undefined`: this filter should be executed before all actions.
- 2. `String`: this filter should be executed before the action named by the string.
- 3. `Object`: this filter should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.
+1. `undefined`: this filter should be executed before all actions.
+2. `String`: this filter should be executed before the action named by the string.
+3. `Object`: this filter should be executed before the actions named by an Array at the `only` key in the options object, or before all actions excluding those named by an Array at the `except` key in the options object.
+
+<!-- tests -->
 
     test "@beforeAction allows declaration of filters to execute before an action", ->
       results = []
@@ -272,6 +274,10 @@ Specifies if the controller should automatically scroll to the element with ID e
 ## ::.defaultRenderYield[= 'main'] : string
 
 `defaultRenderYield` specifies which yield (see [`data-yield`](/docs/api/batman.view_bindings.html#data-yield)) a controller should automatically render into if no yield is declared.
+
+## @%sharedController : Controller
+
+The singleton instance of the `Controller`.
 
 ## @catchError(errorClasses..., {with : [String|Array]})
 
