@@ -129,7 +129,7 @@ class Batman.Controller extends Batman.Object
         @_afterFilterRedirect = url
     else
       if Batman.typeOf(url) is 'Object'
-        url.controller = this if not url.controller
+        url.controller ||= @get('routingKey')
 
       Batman.redirect(url)
 
