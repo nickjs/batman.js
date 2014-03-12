@@ -35,7 +35,7 @@
     "connect-assets": "~2.4.1",
     "liquor": "~0.0.0",
     "snockets": "git://github.com/batmanjs/snockets.git#master",
-    "karma": "0.10.9",
+    "karma": "~0.10.9",
     "karma-qunit": "~0.1.0",
     "karma-script-launcher": "~0.1.0",
     "karma-chrome-launcher": "~0.1.0",
@@ -43,8 +43,9 @@
     "karma-html2js-preprocessor": "~0.1.0",
     "karma-coffee-preprocessor": "~0.1.0",
     "karma-jasmine": "~0.1.0",
-    "karma-requirejs": "~0.1.0",
-    "karma-phantomjs-launcher": "~0.1.1"
+    "karma-requirejs": "~0.2.1",
+    "karma-phantomjs-launcher": "~0.1.1",
+    "requirejs": "~2.1.11"
   },
   "engines": {
     "node": "~0.8.0 || ~0.10.0"
