@@ -78,6 +78,12 @@ test 'errors on the base object are applied to the transaction on save', ->
   @transaction.save()
   equal @transaction.get('errors.length'), 1
 
+test 'empty hasManys still get a transaction', ->
+  newTransaction = (new @TestModel).transaction()
+  transactionApples = newTransaction.get('apples')
+  ok transactionApples.get('length') == 0, "its empty"
+  ok transactionApples.isTransaction, "its a transaction"
+
 test 'nested models get their own transaction in a hasOne', ->
   ok @base.get('testNested') == @nested
   ok @transaction.get('testNested') != @nested

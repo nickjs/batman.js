@@ -533,6 +533,17 @@ class Batman.Model extends Batman.Object
   for functionName in ['load', 'save', 'validate', 'destroy']
    @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])
 
+  @accessor 'associations', -> @constructor._batman.get('associations')
+
+  reflectOnAllAssociations: (associationType) ->
+    if associationType?
+      @get('associations')?.getByType(associationType)
+    else
+      throw "All associations not implemented ... yet..."
+
+  reflectOnAssociation: (associationLabel) -> @get('associations').getByLabel(associationLabel)
+
+
   transaction: -> @_transaction([], [])
 
   _transaction: (visited, stack) ->
@@ -540,6 +551,10 @@ class Batman.Model extends Batman.Object
     return stack[index] if index != -1
     visited.push(this)
     stack.push(transaction = new @constructor)
+
+    hasManyLabels = @reflectOnAllAssociations('hasMany')?.mapToProperty('label') || []
+    for label in hasManyLabels
+      @get(label) # load empty association sets
 
     attributes = @get('attributes').toObject()
     for own key, value of attributes

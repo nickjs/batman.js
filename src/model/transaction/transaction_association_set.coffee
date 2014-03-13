@@ -1,4 +1,5 @@
 class Batman.TransactionAssociationSet extends Batman.Set
+  isTransaction: true
   constructor: (associationSet, visited, stack) ->
     @set('associationSet', associationSet)
     @_visited = visited
