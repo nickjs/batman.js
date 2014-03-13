@@ -18,6 +18,7 @@ class Batman.TransactionAssociationSet extends Batman.Set
         @_storage.push(t)
         addedTransactions.push(t)
       @_originalStorage.push(i)
+    @length = @_storage.length
     @fire 'itemsWereAdded', addedTransactions if addedTransactions.length
     addedTransactions
 
@@ -40,6 +41,7 @@ class Batman.TransactionAssociationSet extends Batman.Set
           @_originalStorage.splice(originalIndex, 1)
       else
         throw "Tried to remove real item from transaction set: #{t.toJSON()}"
+    @length = @_storage.length
     @fire 'itemsWereRemoved', removedTransactions if removedTransactions.length
     removedTransactions
 
@@ -53,6 +55,6 @@ class Batman.TransactionAssociationSet extends Batman.Set
 
   @accessor 'length', ->
     @registerAsMutableSource()
-    @_storage.length
+    @length
 
   build: Batman.AssociationSet::build

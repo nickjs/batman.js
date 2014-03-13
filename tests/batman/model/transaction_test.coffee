@@ -82,6 +82,7 @@ test 'empty hasManys still get a transaction', ->
   newTransaction = (new @TestModel).transaction()
   transactionApples = newTransaction.get('apples')
   ok transactionApples.get('length') == 0, "its empty"
+  ok transactionApples.length == 0, "it also responds to JS .length"
   ok transactionApples.isTransaction, "its a transaction"
 
 test 'nested models get their own transaction in a hasOne', ->
