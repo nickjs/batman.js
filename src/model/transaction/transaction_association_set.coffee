@@ -6,6 +6,7 @@ class Batman.TransactionAssociationSet extends Batman.Set
     @_stack = stack
     @_storage = []
     @_originalStorage = []
+    @_removedStorage = []
     @_loadOriginals(associationSet.toArray())
 
   @delegate 'association', 'foreignKeyValue', to: 'associationSet'
@@ -17,7 +18,15 @@ class Batman.TransactionAssociationSet extends Batman.Set
         t = i._transaction(@_visited, @_stack)
         @_storage.push(t)
         addedTransactions.push(t)
-      @_originalStorage.push(i)
+      # just in case:
+      originalIndex = @_originalStorage.indexOf(i)
+      if originalIndex is -1
+        @_originalStorage.push(i)
+      # if was previously removed, it's not removed anymore!
+      removedIndex = @_removedStorage.indexOf(i)
+      if removedIndex > -1
+        @_removedStorage.splice(removedIndex, 1)
+
     @length = @_storage.length
     @fire 'itemsWereAdded', addedTransactions if addedTransactions.length
     addedTransactions
@@ -35,12 +44,15 @@ class Batman.TransactionAssociationSet extends Batman.Set
         if transactionIndex > -1
           @_storage.splice(transactionIndex, 1)
           removedTransactions.push(t)
+
         i = t.base()
         originalIndex = @_originalStorage.indexOf(i)
         if originalIndex > -1
+          @_removedStorage.push(i)
           @_originalStorage.splice(originalIndex, 1)
       else
         throw "Tried to remove real item from transaction set: #{t.toJSON()}"
+
     @length = @_storage.length
     @fire 'itemsWereRemoved', removedTransactions if removedTransactions.length
     removedTransactions
@@ -51,6 +63,7 @@ class Batman.TransactionAssociationSet extends Batman.Set
     originals = new Batman.Set(@_originalStorage...)
     target = @get('associationSet')
     target.replace(originals)
+    target.set('removedItems', new Batman.Set(@_removedStorage...))
     target
 
   @accessor 'length', ->

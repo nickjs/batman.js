@@ -103,6 +103,19 @@ test 'removing nested models doesnt affect the base until applyChanges', ->
   ok @base.get('apples.length') == 1, 'the item is removed'
   ok @transaction.get('apples.length') == 1, 'the item is still gone from the transaction'
 
+test 'removed items are tracked and attached to the original associationSet', ->
+  firstApple = @base.get('apples.first')
+  firstTransactionApple = @transaction.get('apples.first')
+  @transaction.get('apples').remove(firstTransactionApple)
+  @transaction.applyChanges()
+  ok @base.get('apples.removedItems.length') == 1
+  ok @base.get('apples.removedItems.first') == firstApple, 'the removed original is in removedItems'
+
+  @transaction.get('apples').add(firstApple)
+  @transaction.applyChanges()
+  ok @base.get('apples.removedItems.length') == 0, 'returning an item makes it not removed anymore'
+
+
 test 'adding nested models doesnt affect the base until applyChanges', ->
   @transaction.get('apples').add(new @TestModel(name: 'apple3'))
   ok @base.get('apples.length') == 2
