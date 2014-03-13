@@ -2,15 +2,20 @@ class Batman.TransactionAssociationSet extends Batman.Set
   isTransaction: true
   constructor: (associationSet, visited, stack) ->
     @set('associationSet', associationSet)
+    # in case they're being loaded:
+    @_loader = @_addFromAssociationSet.bind(@)
+    associationSet.on 'itemsWereAdded', @_loader
     @_visited = visited
     @_stack = stack
     @_storage = []
     @_originalStorage = []
     @_removedStorage = []
-    @_loadOriginals(associationSet.toArray())
+    @add(associationSet.toArray()...)
+
 
   @delegate 'association', 'foreignKeyValue', to: 'associationSet'
 
+  _addFromAssociationSet: (items, indexes) -> @add(items...)
   add: @mutation (items...) ->
     addedTransactions = []
     for i in items
@@ -30,11 +35,6 @@ class Batman.TransactionAssociationSet extends Batman.Set
     @length = @_storage.length
     @fire 'itemsWereAdded', addedTransactions if addedTransactions.length
     addedTransactions
-
-  _loadOriginals: (itemArray) ->
-    @_loadingOriginals = true
-    @add(itemArray...)
-    @_loadingOriginals = false
 
   remove: @mutation (transactions...) ->
     removedTransactions = []
@@ -62,6 +62,7 @@ class Batman.TransactionAssociationSet extends Batman.Set
       t.applyChanges(visited)
     originals = new Batman.Set(@_originalStorage...)
     target = @get('associationSet')
+    target.off 'itemsWereAdded', @_loader
     target.replace(originals)
     target.set('removedItems', new Batman.Set(@_removedStorage...))
     target

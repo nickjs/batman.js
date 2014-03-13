@@ -115,6 +115,13 @@ test 'removed items are tracked and attached to the original associationSet', ->
   @transaction.applyChanges()
   ok @base.get('apples.removedItems.length') == 0, 'returning an item makes it not removed anymore'
 
+test 'items loaded after `transaction()` are still in the transaction set', ->
+  newBase = new @TestModel(id: 51)
+  newTransaction = newBase.transaction()
+  ok newTransaction.get('apples.length') == 0
+  newBase.get('apples').add new @TestNested(id: 9, test_model_id: 51)
+  ok newTransaction.get('apples.length') == 1, 'the item was loaded'
+  ok newTransaction.get('apples.first.id') == 9, 'its the right item'
 
 test 'adding nested models doesnt affect the base until applyChanges', ->
   @transaction.get('apples').add(new @TestModel(name: 'apple3'))
