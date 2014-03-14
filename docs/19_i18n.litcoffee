@@ -111,3 +111,7 @@ Turns on `Batman.I18N` by:
 ## @disable()
 
 Turns off `Batman.I18N` by restoring previous functionality to `Batman.translate`.
+
+## @%useFallback[=false] : Boolean
+
+If set to `true`, `translate` will use translations from `defaultLocale` when a translation from the current locale isn't available.
