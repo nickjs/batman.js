@@ -1,7 +1,39 @@
 QUnit.module "Batman.Object delegation",
   setup: ->
+    scope = @
     class @MyObject extends Batman.Object
       @accessor 'address', -> Batman(number: '123', zip: '90210', country: Batman(country_code: 'CA'))
+      @firstClassFunction: -> "classFunction 1"
+      @secondClassFunction: -> "classFunction 2"
+      @classAccessor 'classAccessor1', -> 'classAccessor 1'
+      @classAccessor 'classAccessor2', -> 'classAccessor 2'
+
+    class @OtherObject extends Batman.Object
+      @set 'myObjectClass', scope.MyObject
+      @classDelegate 'classAccessor1', 'classAccessor2', to: 'myObjectClass'
+      @classDelegateFunctions 'firstClassFunction', 'secondClassFunction', to: 'myObjectClass'
+      @delegateFunctions 'delegatedFunction', "otherDelegatedFunction", to: 'delegatedObject'
+
+      constructor: ->
+        super
+        @set 'delegatedObject', new scope.DelegatedObject
+
+    class @DelegatedObject extends Batman.Object
+      delegatedFunction: -> "called on #{@constructor.name} with #{arguments.length} arguments"
+      otherDelegatedFunction: -> "other called on #{@constructor.name} with #{arguments.length} arguments"
+
+test 'classDelegate delegates from the class', ->
+  equal @OtherObject.get('classAccessor1'), "classAccessor 1"
+  equal @OtherObject.get('classAccessor2'), "classAccessor 2", 'works with multiple properties'
+
+test 'classDelegateFunction delegates function to property', ->
+  equal @OtherObject.firstClassFunction(), "classFunction 1"
+  equal @OtherObject.secondClassFunction(), "classFunction 2", 'works with multiple functions'
+
+test 'delegateFunction calls the function with arguments on the property', ->
+  otherObject = new @OtherObject
+  equal otherObject.delegatedFunction(1,2,3), "called on DelegatedObject with 3 arguments", "called on the delegated object with the given arguments"
+  equal otherObject.otherDelegatedFunction(4,5), "other called on DelegatedObject with 2 arguments"
 
 test 'delegate without to option raises developer warning', ->
   spy = spyOn(Batman.developer, 'warn')

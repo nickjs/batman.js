@@ -114,6 +114,24 @@ class BatmanObject extends Object
         set: (key, value) -> @get(options.to)?.set(property, value)
         unset: -> @get(options.to)?.unset(property)
 
+  @classDelegate: (properties..., options = {}) ->
+    Batman.developer.warn 'delegate must include to option', @, properties if !options.to
+    properties.forEach (property) =>
+      @classAccessor property,
+        get: -> @get(options.to)?.get(property)
+        set: (key, value) -> @get(options.to)?.set(property, value)
+        unset: -> @get(options.to)?.unset(property)
+
+  @delegateFunctions = (properties..., options = {}) ->
+    Batman.developer.warn 'delegate must include to option', @, properties if !options.to
+    properties.forEach (property) =>
+      @::[property] = -> @get(options.to)[property](arguments...)
+
+  @classDelegateFunctions = (properties..., options = {}) ->
+    Batman.developer.warn 'delegate must include to option', @, properties if !options.to
+    properties.forEach (property) =>
+      @[property] = -> @get(options.to)[property](arguments...)
+
   constructor: (mixins...) ->
     @_batman = new Batman._Batman(this)
     @mixin mixins...
