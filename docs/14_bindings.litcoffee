@@ -684,7 +684,7 @@ Returns the first value from an `array`:
 Allows you to use string interpolation:
 
 ```html
-<span data-bind="'The page title is %{title}%' | interpolate {'title': 'page.title'}"></span>
+<span data-bind="'The page title is %{title}' | interpolate {'title': 'page.title'}"></span>
 ```
 
 ## withArguments(function, curriedArguments...) : function
