@@ -1,4 +1,4 @@
-# /api/App Components/Batman.Navigator
+# /api/App Internals/Batman.Navigator
 
 `Batman.Navigator` is an abstract class which maps URLs and `Batman.Dispatcher` actions. Batman.js provides two implementations out of the box: `Batman.PushStateNavigator` (default) and `Batman.HashbangNavigator` (enabled by a [configuration setting](/docs/configuration.html)).
 

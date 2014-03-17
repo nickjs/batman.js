@@ -1,4 +1,4 @@
-# /api/App Components/Batman.Navigator/Batman.PushStateNavigator
+# /api/App Internals/Batman.Navigator/Batman.PushStateNavigator
 
 `Batman.PushStateNavigator` extends `Batman.Navigator` to use `pushState`. Batman.js uses `PushStateNavigator` by default, but it degrades gracefully to `Batman.HashbangNavigator` if it isn't supported. `PushStateNavigator` can be completely disabled through [configuration settings](/docs/configuration.html).
 

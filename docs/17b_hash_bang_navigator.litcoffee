@@ -1,4 +1,4 @@
-# /api/App Components/Batman.Navigator/Batman.HashbangNavigator
+# /api/App Internals/Batman.Navigator/Batman.HashbangNavigator
 
 `Batman.HashbangNavigator` extends `Batman.Navigator` to use hashbang routing. Batman.js uses `PushStateNavigator` by default, but it degrades gracefully to `Batman.HashbangNavigator` if it isn't supported. `PushStateNavigator` can be completely disabled through [configuration settings](/docs/configuration.html).
 
