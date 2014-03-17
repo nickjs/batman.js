@@ -1,6 +1,9 @@
+#= require associations/polymorphic_association_helper
+
 QUnit.module "Batman.Model::transaction",
   setup: ->
     scope = this
+    window.PolymorphicAssociationHelpers.baseSetup.apply(scope)
     class @TestNested extends Batman.Model
       @resourceName: 'testNested'
       @persist Batman.RestStorage
@@ -204,3 +207,24 @@ test 'recursive nested hasMany model transactions block sets from modifying the 
   equal @base.get('banana'), undefined
   equal @nested.get('name'), 'bob'
   equal @apple1.get('name'), 'apple1'
+
+asyncTest 'polymorphic association sets get transactions', 8, ->
+  @Store.find 1, (err, store) =>
+    throw err if err
+    store.get('metafields')
+    delay =>
+      transaction = store.transaction()
+      metafieldsTransaction = transaction.get('metafields')
+      ok metafieldsTransaction.get('association').constructor == Batman.PolymorphicHasManyAssociation, 'its actually polymorphic'
+      ok metafieldsTransaction.isTransaction, 'Its actually a transaction'
+      metafieldsTransaction.add(new @Metafield)
+      ok metafieldsTransaction.get('length'), 3
+      ok store.get('metafields.length'), 2, 'New items arent added'
+
+      metafieldsTransaction.get('first').set('key', 'Transaction metafield')
+      ok metafieldsTransaction.get('first.key') == 'Transaction metafield'
+      ok store.get('metafields.first.key') != "Transaction metafield", 'item changes arent made'
+
+      metafieldsTransaction.applyChanges()
+      ok store.get('metafields.length'), 3, 'new items are added'
+      ok store.get('metafields.first.key') == "Transaction metafield", 'item changes are applied'
