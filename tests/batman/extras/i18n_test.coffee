@@ -124,7 +124,7 @@ asyncTest "it should apply keypath value after get translation", ->
     QUnit.start()
 
 asyncTest "it should look up keys in the translations under t", ->
-  viewHelpers.render '<div data-bind="t.grapefruit | translate"></div>', false, {}, (node) ->
+  viewHelpers.render '<div data-bind="t.grapefruit"></div>', false, {}, (node) ->
     equal node.childNodes[0].innerHTML, "pamplemouse", 't has been added to the default render stack'
     QUnit.start()
 
