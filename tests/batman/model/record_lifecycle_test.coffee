@@ -95,9 +95,7 @@ QUnit.module "Batman.Model record lifecycle prototype listeners",
       # destroy callback 13
 
 asyncTest "new record lifecycle prototype callbacks fire in order", ->
-
   product = new @Product()
-
   product.set('foo', 'bar')
 
   product.save (err) =>
@@ -125,13 +123,12 @@ asyncTest "existing record lifecycle callbacks fire in order", ->
         deepEqual(product.callOrder, @Product.loadingCallOrder.concat(@Product.expectedCallOrder))
         QUnit.start()
 
-asyncTest "throwing an error stops the storage operation", ->
+asyncTest "throwing an error stops a storage operation for an existing record", ->
 
   @Product.find 10, (err, product) =>
     product._push(105)
     product.set('foo', 'bar')
-    product.on 'before saving', ->
-      throw "Stop saving!"
+    product.on 'before saving', -> throw "Stop saving!"
 
     try
       product.save (err) =>
@@ -141,3 +138,13 @@ asyncTest "throwing an error stops the storage operation", ->
       equal "#{err}", "Stop saving!"
       deepEqual product.callOrder, @Product.loadingCallOrder.concat([0,1])
       QUnit.start()
+
+test "throwing an error stops a storage operation for an existing record", ->
+  product = new @Product()
+  product.on 'before creating', -> throw "Stop saving!"
+  try
+    product.save (err) =>
+      throw "Failed!"
+  catch err
+    ok product.isNew()
+    equal "#{err}", "Stop saving!"
