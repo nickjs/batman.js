@@ -124,3 +124,20 @@ asyncTest "existing record lifecycle callbacks fire in order", ->
         product._push(13)
         deepEqual(product.callOrder, @Product.loadingCallOrder.concat(@Product.expectedCallOrder))
         QUnit.start()
+
+asyncTest "throwing an error stops the storage operation", ->
+
+  @Product.find 10, (err, product) =>
+    product._push(105)
+    product.set('foo', 'bar')
+    product.on 'before saving', ->
+      throw "Stop saving!"
+
+    try
+      product.save (err) =>
+        throw err if err
+        product._push(7)
+    catch err
+      equal "#{err}", "Stop saving!"
+      deepEqual product.callOrder, @Product.loadingCallOrder.concat([0,1])
+      QUnit.start()
