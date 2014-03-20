@@ -1,1 +1,1 @@
-#= require ./object/delegate_test
+#= require_tree .
