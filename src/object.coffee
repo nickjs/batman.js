@@ -113,7 +113,6 @@ class BatmanObject extends Object
         get: -> @get(options.to)?.get(property)
         set: (key, value) -> @get(options.to)?.set(property, value)
         unset: -> @get(options.to)?.unset(property)
-      @::[property] = -> @get(options.to)?[property]?(arguments...)
 
   @classDelegate: (properties..., options = {}) ->
     Batman.developer.warn 'delegate must include to option', @, properties if !options.to
@@ -122,7 +121,6 @@ class BatmanObject extends Object
         get: -> @get(options.to)?.get(property)
         set: (key, value) -> @get(options.to)?.set(property, value)
         unset: -> @get(options.to)?.unset(property)
-      @[property] = -> @get(options.to)?[property]?(arguments...)
 
   constructor: (mixins...) ->
     @_batman = new Batman._Batman(this)
