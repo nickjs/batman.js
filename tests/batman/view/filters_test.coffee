@@ -290,6 +290,129 @@ asyncTest 'and', 4, ->
     equal node[3].checked, false
     QUnit.start()
 
+asyncTest 'or', 6, ->
+  context = Batman
+    hotdog: true
+    mushroom: false
+    empty: ''
+    zero: 0
+
+  source =  """
+    <input type="checkbox" data-bind="hotdog | or hotdog"/>
+    <input type="checkbox" data-bind="hotdog | or mushroom"/>
+    <input type="checkbox" data-bind="mushroom | or hotdog"/>
+    <input type="checkbox" data-bind="mushroom | or mushroom"/>
+    <input type="checkbox" data-bind="empty | or hotdog"/>
+    <input type="checkbox" data-bind="zero | or hotdog"/>
+  """
+
+  helpers.render source, context, (node) ->
+    equal node[0].checked, true
+    equal node[1].checked, true
+    equal node[2].checked, true
+    equal node[3].checked, false
+    equal node[4].checked, true
+    equal node[5].checked, true
+    QUnit.start()
+
+operation_test_context = Batman
+  one: 1
+  two: 2
+
+  a: 'a'
+  b: 'b'
+
+operations_tests_source = (operation) ->
+  source =
+    "<input type=\"checkbox\" data-bind=\"one | #{operation} one\"/>" +
+    "<input type=\"checkbox\" data-bind=\"one | #{operation} two\"/>" +
+    "<input type=\"checkbox\" data-bind=\"two | #{operation} one\"/>" +
+    "<input type=\"checkbox\" data-bind=\"two | #{operation} two\"/>" +
+
+    "<input type=\"checkbox\" data-bind=\"a | #{operation} a\"/>" +
+    "<input type=\"checkbox\" data-bind=\"a | #{operation} b\"/>" +
+    "<input type=\"checkbox\" data-bind=\"b | #{operation} a\"/>" +
+    "<input type=\"checkbox\" data-bind=\"b | #{operation} b\"/>"
+
+
+asyncTest 'lt', 8, ->
+  helpers.render operations_tests_source('lt'), operation_test_context, (node) ->
+    equal node[0].checked, false
+    equal node[1].checked, true
+    equal node[2].checked, false
+    equal node[3].checked, false
+
+    equal node[4].checked, false
+    equal node[5].checked, true
+    equal node[6].checked, false
+    equal node[7].checked, false
+    QUnit.start()
+
+asyncTest 'gt', 8, ->
+  helpers.render operations_tests_source('gt'), operation_test_context, (node) ->
+    equal node[0].checked, false
+    equal node[1].checked, false
+    equal node[2].checked, true
+    equal node[3].checked, false
+
+    equal node[4].checked, false
+    equal node[5].checked, false
+    equal node[6].checked, true
+    equal node[7].checked, false
+    QUnit.start()
+
+asyncTest 'lteq', 8, ->
+  helpers.render operations_tests_source('lteq'), operation_test_context, (node) ->
+    equal node[0].checked, true
+    equal node[1].checked, true
+    equal node[2].checked, false
+    equal node[3].checked, true
+
+    equal node[4].checked, true
+    equal node[5].checked, true
+    equal node[6].checked, false
+    equal node[7].checked, true
+    QUnit.start()
+
+asyncTest 'gteq', 8, ->
+  helpers.render operations_tests_source('gteq'), operation_test_context, (node) ->
+    equal node[0].checked, true
+    equal node[1].checked, false
+    equal node[2].checked, true
+    equal node[3].checked, true
+
+    equal node[4].checked, true
+    equal node[5].checked, false
+    equal node[6].checked, true
+    equal node[7].checked, true
+    QUnit.start()
+
+asyncTest 'eq', 8, ->
+  helpers.render operations_tests_source('eq'), operation_test_context, (node) ->
+    equal node[0].checked, true
+    equal node[1].checked, false
+    equal node[2].checked, false
+    equal node[3].checked, true
+
+    equal node[4].checked, true
+    equal node[5].checked, false
+    equal node[6].checked, false
+    equal node[7].checked, true
+    QUnit.start()
+
+asyncTest 'neq', 8, ->
+  helpers.render operations_tests_source('neq'), operation_test_context, (node) ->
+    equal node[0].checked, false
+    equal node[1].checked, true
+    equal node[2].checked, true
+    equal node[3].checked, false
+
+    equal node[4].checked, false
+    equal node[5].checked, true
+    equal node[6].checked, true
+    equal node[7].checked, false
+    QUnit.start()
+
 asyncTest 'ceil', ->
   context = Batman
     thing1: 1.234
@@ -398,31 +521,6 @@ asyncTest 'delimitNumber', ->
     equal node[3].innerHTML, "1,000"
     equal node[4].innerHTML, "1,000,000"
     equal node[5].innerHTML, "1,000,000"
-    QUnit.start()
-
-asyncTest 'or', 6, ->
-  context = Batman
-    hotdog: true
-    mushroom: false
-    empty: ''
-    zero: 0
-
-  source =  """
-    <input type="checkbox" data-bind="hotdog | or hotdog"/>
-    <input type="checkbox" data-bind="hotdog | or mushroom"/>
-    <input type="checkbox" data-bind="mushroom | or hotdog"/>
-    <input type="checkbox" data-bind="mushroom | or mushroom"/>
-    <input type="checkbox" data-bind="empty | or hotdog"/>
-    <input type="checkbox" data-bind="zero | or hotdog"/>
-  """
-
-  helpers.render source, context, (node) ->
-    equal node[0].checked, true
-    equal node[1].checked, true
-    equal node[2].checked, true
-    equal node[3].checked, false
-    equal node[4].checked, true
-    equal node[5].checked, true
     QUnit.start()
 
 asyncTest 'default', ->

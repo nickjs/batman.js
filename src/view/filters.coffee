@@ -27,6 +27,24 @@ Batman.Filters =
   equals: buntUndefined (lhs, rhs, binding) ->
     lhs is rhs
 
+  eq: ( lhs, rhs ) ->
+    lhs == rhs
+
+  neq: ( lhs, rhs ) ->
+    lhs != rhs
+
+  lt: ( lhs, rhs ) ->
+    lhs < rhs
+
+  gt: ( lhs, rhs ) ->
+    lhs > rhs
+
+  lteq: ( lhs, rhs ) ->
+    lhs <= rhs
+
+  gteq: ( lhs, rhs ) ->
+    lhs >= rhs
+
   and: (lhs, rhs) ->
     lhs && rhs
 

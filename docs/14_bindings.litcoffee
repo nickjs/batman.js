@@ -89,6 +89,12 @@ The `<input>`'s value can be updated when the `post.body` property changes but i
 #### Available Keypath Filters
 
 The following is a list of available keypaths that can be used with bindings. For a more complete description with accompanying examples see `Batman.View Filters`
+ + `lt` : Checks if left content is `less than` the right content.
+ + `gt` : Checks if left content is `greater than` the right content.
+ + `lteq` : Checks if left content is `less than or equal to` the right content.
+ + `gteq` : Checks if left content is `greater than or equal to` the right content.
+ + `equal` or `eq` : Checks if left content is `is equal to` the right content.
+ + `neq` : Checks if left content is `is NOT equal to` the right content.
  + `ceil` : Runs `Math.ceil` on input value.
  + `floor` : Runs `Math.floor` on input value.
  + `round` : Runs `Math.round` on input value.
@@ -438,6 +444,64 @@ You can also specify a render target inside your HTML using `data-contentfor`.
 
 Batman filters are evaluated from left to right, with the output of each filter being injected into the next. This allows you to form filter chains for display purposes. Accessor caching does not apply to filter chains. If any component of the chain changes, the entire chain will be recalculated for each binding in the template.
 
+## equals(left, right) : [boolean]
+
+Checks if left content is equal to right content:
+
+```html
+<span data-showif="title | equals 'Batman Views'"></span>
+```
+
+## eq(left, right) : [boolean, string, integer]
+
+Checks if left content is equal to right content:
+
+```html
+<span data-showif="title | eq 'Batman Views'"></span>
+<span data-showif="title | eq 10"></span>
+<span data-showif="title | eq true"></span>
+```
+
+## lt(left, right) : [boolean, string, integer]
+
+Checks if left content is `less than` the right content.
+
+```html
+<span data-showif="posts.length | lt 10"></span>
+```
+
+## gt(left, right) : [boolean, string, integer]
+
+Checks if left content is `greater than` the right content.
+
+```html
+<span data-showif="posts.length | gt 10"></span>
+```
+
+## lteq(left, right) : [boolean, string, integer]
+
+Checks if left content is `less than or equal to` the right content.
+
+```html
+<span data-showif="posts.length | lteq 10"></span>
+```
+
+## gteq(left, right) : [boolean, string, integer]
+
+Checks if left content is `greater than or equal to` the right content.
+
+```html
+<span data-showif="posts.length | gteq 10"></span>
+```
+
+## neq(left, right) : [boolean, string, integer]
+
+Checks if left content is `is NOT equal to` the right content.
+
+```html
+<span data-showif="posts.length | neq 10"></span>
+```
+
 ## ceil(value) : string
 
 The `ceil` filter will run `Math.ceil` on the input value. Value can be either a `string` or `integer`
@@ -507,14 +571,6 @@ Calls the get function on the input value with the specified key. Can be used wi
 ## value[key] : value
 
 Shorthand for the `get` filter.
-
-## equals(left, right) : boolean
-
-Checks if left content is equal to right content:
-
-```html
-<span data-showif="title | equals 'Batman Views'"></span>
-```
 
 ## not(value) : boolean
 
