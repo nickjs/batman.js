@@ -1,7 +1,18 @@
 QUnit.module "Batman.Object delegation",
   setup: ->
+    scope = @
     class @MyObject extends Batman.Object
       @accessor 'address', -> Batman(number: '123', zip: '90210', country: Batman(country_code: 'CA'))
+      @classAccessor 'classAccessor1', -> 'classAccessor 1'
+      @classAccessor 'classAccessor2', -> 'classAccessor 2'
+
+    class @OtherObject extends Batman.Object
+      @set 'myObjectClass', scope.MyObject
+      @classDelegate 'classAccessor1', 'classAccessor2', to: 'myObjectClass'
+
+test 'classDelegate delegates from the class', ->
+  equal @OtherObject.get('classAccessor1'), "classAccessor 1"
+  equal @OtherObject.get('classAccessor2'), "classAccessor 2", 'works with multiple properties'
 
 test 'delegate without to option raises developer warning', ->
   spy = spyOn(Batman.developer, 'warn')
