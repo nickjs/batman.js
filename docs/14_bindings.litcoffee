@@ -89,12 +89,12 @@ The `<input>`'s value can be updated when the `post.body` property changes but i
 #### Available Keypath Filters
 
 The following is a list of available keypaths that can be used with bindings. For a more complete description with accompanying examples see `Batman.View Filters`
- + `lt` : Checks if left content is `less than` the right content.
- + `gt` : Checks if left content is `greater than` the right content.
- + `lteq` : Checks if left content is `less than or equal to` the right content.
- + `gteq` : Checks if left content is `greater than or equal to` the right content.
- + `equal` or `eq` : Checks if left content is `is equal to` the right content.
- + `neq` : Checks if left content is `is NOT equal to` the right content.
+ + `lt` : Checks if left content is _less than_ the right content.
+ + `gt` : Checks if left content is _greater than_ the right content.
+ + `lteq` : Checks if left content is _less than or equal to_ the right content.
+ + `gteq` : Checks if left content is _greater than or equal to_ the right content.
+ + `equal` or `eq` : Checks if left content is _is equal to_ the right content.
+ + `neq` : Checks if left content is _is NOT equal to_ the right content.
  + `ceil` : Runs `Math.ceil` on input value.
  + `floor` : Runs `Math.floor` on input value.
  + `round` : Runs `Math.round` on input value.
@@ -243,7 +243,7 @@ _Note_: `data-foreach` expects the passed enumerable to be unique. It creates a 
 
 `data-formfor` creates a special addition to the context stack to represent an object under edit within a form. Usually this object is a model. Using the double dash syntax, the name for the model to reside under can be specified.
 
-==== Automatic Validation Display
+__Automatic Validation Display__
 
 `data-formfor` also has some handy functionality for displaying the result of validating the object under edit in the form. This will only be enabled if the object has an `errors` Set, like `Batman.Models` do.
 
@@ -444,7 +444,7 @@ You can also specify a render target inside your HTML using `data-contentfor`.
 
 Batman filters are evaluated from left to right, with the output of each filter being injected into the next. This allows you to form filter chains for display purposes. Accessor caching does not apply to filter chains. If any component of the chain changes, the entire chain will be recalculated for each binding in the template.
 
-## equals(left, right) `or` eq(left, right): Boolean
+## equals(left, right) _or_ eq(left, right): Boolean
 
 Checks if left content is equal to right content:
 
@@ -453,6 +453,8 @@ Checks if left content is equal to right content:
 <span data-showif="value | eq 10"></span>
 <span data-showif="value | eq true"></span>
 ```
+
+__Note__: there is actually _one_ difference between `eq` and `equals`: `equals` rejects undefined values, but `eq` allows them.
 
 ## lt(left, right) : Boolean
 
