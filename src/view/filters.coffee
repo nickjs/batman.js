@@ -28,21 +28,21 @@ Batman.Filters =
     lhs is rhs
 
   eq: ( lhs, rhs ) ->
-    lhs == rhs
+    lhs is rhs
 
   neq: ( lhs, rhs ) ->
     lhs != rhs
 
-  lt: ( lhs, rhs ) ->
+  lt: buntUndefined ( lhs, rhs ) ->
     lhs < rhs
 
-  gt: ( lhs, rhs ) ->
+  gt: buntUndefined ( lhs, rhs ) ->
     lhs > rhs
 
-  lteq: ( lhs, rhs ) ->
+  lteq: buntUndefined ( lhs, rhs ) ->
     lhs <= rhs
 
-  gteq: ( lhs, rhs ) ->
+  gteq: buntUndefined ( lhs, rhs ) ->
     lhs >= rhs
 
   and: (lhs, rhs) ->
