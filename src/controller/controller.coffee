@@ -61,7 +61,9 @@ class Batman.Controller extends Batman.Object
       hash.forEach (key, value) =>
         if error instanceof key
           handled = true
-          handler.call(this, error) for handler in value
+          for handler in value
+            handler = @[handler] if typeof handler is 'string'
+            handler.call(this, error)
     handled
 
   constructor: ->
