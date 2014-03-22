@@ -18,6 +18,10 @@ class Batman.AssociationCurator extends Batman.SimpleHash
   getByType: (type) -> @_byTypeStorage.get(type)
   getByLabel: (label) -> @get(label)
 
+  getAll: ->
+    typeSets = @_byTypeStorage.map (label, typeSet) -> typeSet
+    allAssociations = (new Batman.SimpleSet).merge(typeSets...)
+
   reset: ->
     @forEach (label, association) -> association.reset()
     true

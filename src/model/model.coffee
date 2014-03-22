@@ -539,7 +539,7 @@ class Batman.Model extends Batman.Object
     if associationType?
       @get('associations')?.getByType(associationType)
     else
-      throw "All associations not implemented ... yet..."
+      @get('associations')?.getAll()
 
   reflectOnAssociation: (associationLabel) -> @get('associations').getByLabel(associationLabel)
 
