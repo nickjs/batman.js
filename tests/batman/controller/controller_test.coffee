@@ -155,6 +155,11 @@ test '@redirect-ing after a dispatch fires no warnings', ->
   @controller.redirect '/'
   ok Batman.navigator.redirect.called
 
+test 'redirecting with an object should add the current controller if not present', ->
+  Batman.navigator = {redirect: createSpy()}
+  @controller.redirect(action: 'show')
+  ok Batman.navigator.redirect.lastCallArguments = [{action: "show", controller: "test_controller"}]
+
 test 'filters specifying no restrictions should be called on all actions', ->
   spy = createSpy()
   class FilterController extends Batman.Controller
