@@ -19,6 +19,7 @@ QUnit.module "Batman.Model::transaction",
       @validate 'money', numeric: true, allowBlank: true
       @hasOne 'testNested', namespace: scope
       @hasMany 'apples', name: 'TestNested', namespace: scope
+      @hasMany 'oranges', name: 'TestNested', namespace: scope, includeInTransaction: false
 
     @nested = new @TestNested(name: 'bob')
     @apple1 = new @TestNested(name: 'apple1')
@@ -33,6 +34,10 @@ QUnit.module "Batman.Model::transaction",
     @apple2.set 'testModel', @base
 
     @transaction = @base.transaction()
+
+test 'properties can be excluded from transactions', ->
+  ok @transaction.get('attributes.apples.length'), "included associations are present"
+  ok @transaction.get('attributes.oranges') is undefined, "excluded associations are undefined"
 
 test 'changes made to the base object do not affect the transaction', ->
   @base.set('banana', 'rama')
