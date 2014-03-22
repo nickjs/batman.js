@@ -566,6 +566,9 @@ class Batman.Model extends Batman.Object
         newValues = new Batman.TransactionAssociationSet(value, visited, stack)
         attributes[key] = newValues
 
+      else if typeof value is 'object'
+        Batman.developer.warn "You're passing a mutable object (#{key}, #{value.constructor.name}) in a #{@constructor.name} transaction:", value
+
     transaction._withoutDirtyTracking -> transaction.updateAttributes(attributes)
     transaction._batman.base = this
 
