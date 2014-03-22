@@ -691,3 +691,39 @@ test 'Calling handlerError directly with an error should result in the handlers 
   equal handlerSpy.callCount, 1
   equal handlerSpy2.callCount, 0
   deepEqual handlerSpy.lastCallArguments, [@error]
+
+test "catchError's with option should accept a string with the name of the handler", ->
+
+  handlerSpy = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController.catchError @CustomError, with: "_customErrorHandler"
+
+  namespace = @
+  controller = new @TestController
+  controller.index = ->
+    namespace.Model.load @errorHandler ->
+    @render false
+  controller.dispatch('index')
+
+  equal handlerSpy.callCount, 1
+ 
+test "catchError's with option should accept an array of strings with the names of the handlers", ->
+
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customError2Handler = handlerSpy2
+  
+  @TestController.catchError @CustomError, with: ["_customErrorHandler", "_customError2Handler"]
+
+  namespace = @
+  controller = new @TestController
+  controller.index = ->
+    namespace.Model.load @errorHandler ->
+    @render false
+  controller.dispatch('index')
+
+  equal handlerSpy.callCount, 1
+  equal handlerSpy2.callCount, 1
