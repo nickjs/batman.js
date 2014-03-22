@@ -62,7 +62,7 @@ class Batman.Controller extends Batman.Object
         if error instanceof key
           handled = true
           for handler in value
-            handler = @[handler] if typeof handler is "string"
+            handler = @[handler] if typeof handler is 'string'
             handler.call(this, error)
     handled
 

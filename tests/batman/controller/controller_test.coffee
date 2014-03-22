@@ -697,7 +697,7 @@ test "catchError's with option should accept a string with the name of the handl
   handlerSpy = createSpy()
 
   @TestController::_customErrorHandler = handlerSpy
-  @TestController.catchError @CustomError, with: "_customErrorHandler"
+  @TestController.catchError @CustomError, with: '_customErrorHandler'
 
   namespace = @
   controller = new @TestController
@@ -716,7 +716,7 @@ test "catchError's with option should accept an array of strings with the names 
   @TestController::_customErrorHandler = handlerSpy
   @TestController::_customError2Handler = handlerSpy2
   
-  @TestController.catchError @CustomError, with: ["_customErrorHandler", "_customError2Handler"]
+  @TestController.catchError @CustomError, with: ['_customErrorHandler', '_customError2Handler']
 
   namespace = @
   controller = new @TestController
