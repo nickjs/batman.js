@@ -240,6 +240,25 @@ Custom validators should have the signature `(errors, record, key, callback)`. T
 
 See [`Model::validate`](/docs/api/batman.model.html#prototype_function_validate) for information on how to get a particular record's validity.
 
+Validations can be skipped by including a conditional check:
+
+    test '@validate accepts an if or unless option to determine whether the validation should be performed or not', ->
+      QUnit.expect(0)
+      class Invoice extends Batman.Model
+        @resourceName: 'invoice'
+        @validate 'tax_1_rate', {presence: true, if: (errors, record, key) -> record.get('tax_1_enabled')} # tax 1 rate must be present if tax 1 is enabled
+        @validate 'tax_2_rate', {presence: true, if: 'tax_2_rate'} # passing a string will look for an attribute or accessor with that name on the record
+        @validate 'discount_rate', {presence: true, unless: 'discount_disabled'} # discount rate must be present unless discount is disabled
+
+ + `if`: Specifies a function or string to determine whether the validation should occur. Should return either true or false.
+ + `unless`: Specifies a function or string to determine whether the validation should not occur. Should return either true or false.
+
+If you specify the if or unless option as a string, it will do a `@get(string)` on the record being validated. Functions should have the signature `(errors, record, key)`. The arguments are as follows:
+
+ + `errors`: the ErrorsSet instance
+ + `record`: the record being validated
+ + `key`: the key to which the validation has been attached
+
 ## @loaded : Set
 
 The `loaded` set is available on every model class and holds every model instance seen by the system in order to function as an identity map. Successfully loading or saving individual records or batches of records will result in those records being added to the `loaded` set. Destroying instances will remove records from the identity set.

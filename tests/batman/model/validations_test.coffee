@@ -349,7 +349,7 @@ validationsTestSuite = ->
           equal errors.length, 1
           QUnit.start()
 
-  asyncTest "valdiation skipped with unless option", ->
+  asyncTest "validation skipped with unless option as a function", ->
     class Product extends Batman.Model
       @validate 'state', presence: true, unless: (errors, record, key) -> record.get('country') == 'CA'
 
@@ -368,7 +368,7 @@ validationsTestSuite = ->
           equal errors.length, 0
           QUnit.start()
 
-  asyncTest "validation skipped with if option", ->
+  asyncTest "validation skipped with if option as a function", ->
     class Product extends Batman.Model
       @validate 'state', presence: true, if: (errors, record, key) -> record.get('country') == 'US'
 
@@ -382,6 +382,44 @@ validationsTestSuite = ->
         equal errors.length, 0
         p.set 'country', 'US'
         p.set 'state', 'OH'
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
+  asyncTest "validation skipped with if option as a string", ->
+    class CompanyProfile extends Batman.Model
+      @validate 'vat_number', presence: true, if: "country_in_eu"
+
+    p = new CompanyProfile country_in_eu: true
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      p.set 'country_in_eu', false
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        p.set 'country_in_eu', true
+        p.set 'vat_number', 'SE000000000000' 
+        p.validate (err, errors) ->
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
+  asyncTest "validation skipped with unless option as a string", ->
+    class CompanyProfile extends Batman.Model
+      @validate 'vat_number', presence: true, unless: "country_outside_eu"
+
+    p = new CompanyProfile country_outside_eu: false
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      p.set 'country_outside_eu', true
+      p.validate (err, errors) ->
+        throw err if err
+        equal errors.length, 0
+        p.set 'country_outside_eu', false
+        p.set 'vat_number', 'SE0000000000000'
         p.validate (err, errors) ->
           throw err if err
           equal errors.length, 0
