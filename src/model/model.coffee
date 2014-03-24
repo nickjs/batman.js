@@ -477,9 +477,24 @@ class Batman.Model extends Batman.Object
         callback?(undefined, errors)
 
     for validator in validators
-      if (validator.if && !validator.if.call(this, errors, @, key)) || (validator.unless && validator.unless.call(this, errors, @, key))
-        finishedValidation()
-        continue
+
+      if validator.if
+        condition = if typeof validator.if is 'string'
+          @get(validator.if)
+        else
+          validator.if.call(this, errors, this, key)
+        unless condition
+          finishedValidation()
+          continue
+
+      if validator.unless
+        condition = if typeof validator.unless is 'string'
+          @get(validator.unless)
+        else
+          validator.unless.call(this, errors, this, key)
+        if condition
+          finishedValidation()
+          continue
 
       for key in validator.keys
         args = [errors, @, key, finishedValidation]
