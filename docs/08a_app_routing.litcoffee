@@ -1,6 +1,39 @@
 # /api/App Components/Batman.App/Batman.App Routing
 
-The batman.js routing DSL is similar to the [Rails routing DSL](http://guides.rubyonrails.org/routing.html). It is oriented around the notion of a resource:
+The batman.js routing DSL is similar to the [Rails routing DSL](http://guides.rubyonrails.org/routing.html). It is oriented around the notion of a resource.
+
+## Handling unknown routes
+
+When batman.js doesn't have a way to handle a route, it:
+
+- fires `"error"` on the running app, passing an object like:
+  ```javascript
+  {
+    type: "404"
+    isPrevented: false
+    preventDefault: -> @isPrevented = true
+  }
+  ```
+- if `error.isPrevented` isn't set to `true` by a handler, redirects to `/404`
+
+So, you can handle these in your App routing:
+
+```coffeescript
+class MyApp extends Batman.App
+  # handle the event:
+  @on 'error', ->
+    if error.type is "404"
+      alert('Not Found!')
+      error.preventDefault()
+```
+
+__or:__
+
+```coffeescript
+class MyApp extends Batman.App
+  # handle the redirect:
+  @route '/404', (params) -> alert("Not found!")
+```
 
 ## @route
 
