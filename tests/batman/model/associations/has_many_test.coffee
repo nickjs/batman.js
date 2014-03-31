@@ -111,6 +111,30 @@ QUnit.module "Batman.Model hasMany Associations",
         price:60
         product_id:3
 
+asyncTest "::build returns a new child with foreignKey set and attrs mixed in ", 3 , ->
+  @Store.find 1, (err, store) ->
+    store.get('products')
+    delay =>
+      newProduct = store.get('products').build(name: "Product X")
+      equal newProduct.constructor.name, "Product"
+      equal newProduct.get('store_id'), 1
+      equal newProduct.get('name'), "Product X"
+
+asyncTest "::build adds the child to the set", 2, ->
+  @Store.find 1, (err, store) ->
+    store.get('products')
+    delay =>
+      equal store.get('products.length'), 3
+      store.get('products').build(name: "Product Y")
+      equal store.get('products.length'), 4
+
+asyncTest "::%parentRecord returns the parent record", 1, ->
+  @Store.find 1, (err, store) ->
+    products = store.get('products')
+    delay =>
+      parent = products.get('parentRecord')
+      ok parent is store
+
 asyncTest "hasMany associations are loaded and custom url is used", 2, ->
   @Store._batman.get('associations').get('products').options.url = "/stores/1/products"
   associationSpy = spyOn(@productAdapter, 'perform')
@@ -688,6 +712,15 @@ QUnit.module "Batman.Model hasMany Associations with inverse of",
       product_variants6:
         id:6
         price:60
+
+asyncTest "::build sets the inverse relation", 1 , ->
+  @ProductVariant.load (err, variants) =>
+    @Product.find 1, (err, product) =>
+      throw err if err
+      product.get('productVariants')
+      delay ->
+        newProductVariant = product.get('productVariants').build()
+        ok newProductVariant.get('product') is product
 
 asyncTest "hasMany sets the foreign key on the inverse relation if the children haven't been loaded", 3, ->
   @Product.find 1, (err, product) =>
