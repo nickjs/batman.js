@@ -80,6 +80,10 @@ class Batman.SimpleSet
       set.forEach (v) -> merged.add v
     merged
 
+  mappedTo: (key) ->
+    @_mappings ||= new Batman.SimpleHash
+    @_mappings.getOrSet key, => new Batman.SetMapping(@, key)
+
   indexedBy: (key) ->
     @_indexes ||= new Batman.SimpleHash
     @_indexes.get(key) or @_indexes.set(key, new Batman.SetIndex(this, key))

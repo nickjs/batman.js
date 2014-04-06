@@ -38,7 +38,6 @@ Returns a new `SetProxy` tracking `base`.
 - `sortedBy`
 - `sortedByDescending`
 
-
 # /api/Data Structures/Batman.Set/Batman.SetSort
 
 `Batman.SetSort` is a [`Batman.SetProxy`](/docs/api/batman.setproxy.html) which sorts the members of its `base` by provided `key` and `order`. Through `SetProxy`, `SetSort` extends [`Batman.Object`](/docs/api/batman.object.html) and [`Batman.Enumerable`](/docs/api/batman.enumerable.html). `SetSort`s are generally derived from `Set`s. For example:
@@ -128,4 +127,45 @@ Used by `SetSort` to compare its elements when sorting. Like `::compare`, it ret
 
 By following this process, it provides sort values for `Batman.Object`s `a` and `b` according to `@key`.
 
+# /api/Data Structures/Batman.Set/Batman.SetMapping
+
+`Batman.SetMapping` extends `Batman.Set`. A `Batman.SetMapping` is a `Batman.Set`-like object which tracks a base Set and contains the _unique_ values for a given property for each member of the base Set. It can be created with `Batman.Set::mappedTo`:
+
+    test "mappedTo creates a new Batman.SetMapping", ->
+      batmobile = new Batman.Object(name: "Batmobile", wheelCount: 4)
+      batcycle = new Batman.Object(name: "Batcycle", wheelCount: 2)
+      vehicles = new Batman.Set(batmobile, batcycle)
+
+      vehicleNames = vehicles.mappedTo("name")
+      ok vehicleNames.constructor is Batman.SetMapping
+
+It contains the values for the `key` passed to `mappedTo`:
+
+      ok vehicleNames.has('Batmobile')
+      ok vehicleNames.has('Batcycle')
+
+When an item is added or removed from the base `Batman.Set`, its corresponding value is added or removed from the `Batman.SetMapping`:
+
+      batwing = new Batman.Object(name: "Batwing", wheelcount: 0)
+      vehicles.add(batwing)
+      ok vehicleNames.has("Batwing")
+      vehicles.remove(batmobile)
+      ok !vehicleNames.has("Batmobile")
+
+Like a `Batman.SetSort`, it tracks the properties of objects in the base set. So, when one of the values changes, the set mapping is updated:
+
+      batwing.set('name', 'Batcopter')
+      ok vehicleNames.has('Batcopter')
+
+A `Batman.SetMapping` can't have duplicates:
+
+      equal vehicleNames.get('length'), 2
+      batwing.set('name', 'Batcycle')
+      equal vehicleNames.get('length'), 1
+
+`Batman.SetMapping` extends `Batman.Set`, so see the `Batman.Set` API docs for more information.
+
+## ::constructor(base : Set, key : String) : SetMapping
+
+Returns a new `Batman.SetMapping` tracking `key` on the members of `base`.
 
