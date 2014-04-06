@@ -1,6 +1,5 @@
 #= require ./set
 #= require ./set_observer
-#= require ./set_proxy
 
 class Batman.SetMapping extends Batman.Set
   constructor: (@base, @key) ->
@@ -11,8 +10,8 @@ class Batman.SetMapping extends Batman.Set
     @_setObserver = new Batman.SetObserver(@base)
     @_setObserver.observedItemKeys = [@key]
     @_setObserver.observerForItemAndKey = (item) => (newValue, oldValue) => @_handleItemModified(item, newValue, oldValue)
-    @_setObserver.on 'itemsWereAdded', @_handleItemsAdded.bind(this)
-    @_setObserver.on 'itemsWereRemoved', @_handleItemsRemoved.bind(this)
+    @_setObserver.on 'itemsWereAdded', @_handleItemsAdded.bind(@)
+    @_setObserver.on 'itemsWereRemoved', @_handleItemsRemoved.bind(@)
     @_setObserver.startObserving()
 
   _handleItemsAdded: (items, indexes) ->
