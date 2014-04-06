@@ -3,14 +3,12 @@
 #= require ./set_proxy
 
 class Batman.SetMapping extends Batman.Set
-  constructor: (@baseSet, @key) ->
-    @base = new Batman.Set
-    @_storage = @base._storage
-    @base.on 'itemsWereAdded', => @fire 'itemsWereAdded', arguments...
-    @base.on 'itemsWereRemoved', => @fire 'itemsWereRemoved', arguments...
-    @base.add(@baseSet.mapToProperty(@key)...)
+  constructor: (@base, @key) ->
+    # Set's constructor ignores null/undefined (via SimpleSet), hence adding later.
+    super()
+    @add(@base.mapToProperty(@key)...)
 
-    @_setObserver = new Batman.SetObserver(@baseSet)
+    @_setObserver = new Batman.SetObserver(@base)
     @_setObserver.observedItemKeys = [@key]
     @_setObserver.observerForItemAndKey = (item) => (newValue, oldValue) => @_handleItemModified(item, newValue, oldValue)
     @_setObserver.on 'itemsWereAdded', @_handleItemsAdded.bind(this)
@@ -18,16 +16,11 @@ class Batman.SetMapping extends Batman.Set
     @_setObserver.startObserving()
 
   _handleItemsAdded: (items, indexes) ->
-    @base.add(item.get(@key)) for item in items
+    @add(item.get(@key)) for item in items
 
   _handleItemsRemoved: (items, indexes) ->
-    @base.remove(item.get(@key)) for item in items
+    @remove(item.get(@key)) for item in items
 
   _handleItemModified: (item, newValue, oldValue) ->
-    @base.remove(oldValue)
-    @base.add(newValue)
-
-  @accessor 'length', ->
-    @registerAsMutableSource()
-    @base.get('length')
-
+    @remove(oldValue)
+    @add(newValue)

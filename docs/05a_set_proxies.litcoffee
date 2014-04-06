@@ -129,7 +129,7 @@ By following this process, it provides sort values for `Batman.Object`s `a` and 
 
 # /api/Data Structures/Batman.Set/Batman.SetMapping
 
-`Batman.SetMapping` extends `Batman.Set`. A `Batman.SetMapping` is a `Batman.Set`-like object which tracks a base Set and contains the _unique_ values for a given property for each member of the base Set. It can be created with `Batman.Set::mappedTo`:
+`Batman.SetMapping` extends `Batman.Set`. A `Batman.SetMapping` tracks a base Set and contains the _unique_ values for a given property for each member of the base Set. It can be created with `Batman.Set::mappedTo`:
 
     test "mappedTo creates a new Batman.SetMapping", ->
       batmobile = new Batman.Object(name: "Batmobile", wheelCount: 4)
@@ -144,7 +144,7 @@ It contains the values for the `key` passed to `mappedTo`:
       ok vehicleNames.has('Batmobile')
       ok vehicleNames.has('Batcycle')
 
-When an item is added or removed from the base `Batman.Set`, its corresponding value is added or removed from the `Batman.SetMapping`:
+When an item is added to or removed from the base `Batman.Set`, its corresponding value is added to or removed from the `Batman.SetMapping`:
 
       batwing = new Batman.Object(name: "Batwing", wheelcount: 0)
       vehicles.add(batwing)
@@ -169,3 +169,10 @@ A `Batman.SetMapping` can't have duplicates:
 
 Returns a new `Batman.SetMapping` tracking `key` on the members of `base`.
 
+## ::.base : Set
+
+The `Batman.Set` being tracked by the `SetMapping`.
+
+## ::.key : String
+
+The property being observed on members of `base`.
