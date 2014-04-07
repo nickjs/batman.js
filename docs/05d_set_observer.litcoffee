@@ -20,7 +20,7 @@ The set being tracked by the observer.
 
 If you set `observedItemKeys` to an array of strings, those keys will be observed on the members of `base`. When those keys change, the provided observer (see `observerForItemAndKey`) will be called.
 
-## ::.observerForItemAndKey(item : Batman.Object, key : String) : Function
+## ::observerForItemAndKey(item : Batman.Object, key : String) : Function
 
 When you instantiate a `SetObserver`, you should override this function. When the observer starts observing an item, this function will be called for each `key` in `observedItemKeys`. It should return an observer function for `key`. The observer function will be passed `newValue, oldValue`.
 
