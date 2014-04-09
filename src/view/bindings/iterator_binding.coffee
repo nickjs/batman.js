@@ -21,7 +21,7 @@ class Batman.DOM.IteratorBinding extends Batman.DOM.AbstractCollectionBinding
     @view.prevent('ready')
     @_handle = Batman.setImmediate =>
       if @backingView.isDead
-        Batman.developer.warn "IteratorBinding trying to insert dead backing view into DOM"
+        Batman.developer.warn "IteratorBinding (data-foreach-#{@iteratorName}='#{@keyPath}') trying to insert dead backing view into DOM (#{@view.constructor.name})"
         return
 
       parentNode = @prototypeNode.parentNode
