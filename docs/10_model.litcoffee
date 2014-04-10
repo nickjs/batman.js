@@ -6,7 +6,7 @@ _Note_: This documentation uses the term _model_ to refer to the class `Model`
 or a `Model` subclass, and the term _record_ to refer to one instance of a
 model.
 
-## @primaryKey[= "id"] : string
+## @.primaryKey[= "id"] : String
 
 Defines the `Model`'s primary key. This attribute will be used for determining:
 
@@ -22,12 +22,17 @@ Change the option using `set`, like so:
         @set 'primaryKey', 'shop_id'
       equal Shop.get('primaryKey'), 'shop_id'
 
+## @.resourceName[= null] : String
 
-## @storageKey : string
+`resourceName` is a minification-safe identifier for the `Model`. It is usually an underscore-cased version of the `Model`'s class name (for example, `App.BlogPost => "blog_post"`) . It is used by:
 
-`storageKey` is a class level option which gives the storage adapters something to interpolate into their specific key generation schemes. In the case of `LocalStorage` or `SessionStorage` adapters, the `storageKey` defines what namespace to store this record under in the `localStorage` or `sessionStorage` host objects, and with the case of the `RestStorage` family of adapters, the `storageKey` assists in URL generation. See the documentation for the storage adapter of your choice for more information.
+- Model assocations (for providing default `primaryKey`s and `foreignKey`s and for `urlNestsUnder`)
+- Storage adapters (unless overriden by `storageKey`)
+- `data-route` bindings (eg, `routes.items[item]`)
 
-The default `storageKey` is `null`.
+## @.storageKey : String
+
+`storageKey` is used as a namespace by the model's storage adapter. `Batman.LocalStorage` and `Batman.SessionStorage` use it as a JSON namespace and `Batman.RestStorage` uses it as a URL segment. If `storageKey` isn't set, `resourceName` may be used.
 
 ## @persist(mechanism : StorageAdapter) : StorageAdapter
 
@@ -259,7 +264,7 @@ If you specify the if or unless option as a string, it will do a `@get(string)` 
  + `record`: the record being validated
  + `key`: the key to which the validation has been attached
 
-## @loaded : Set
+## @%loaded : Set
 
 The `loaded` set is available on every model class and holds every model instance seen by the system in order to function as an identity map. Successfully loading or saving individual records or batches of records will result in those records being added to the `loaded` set. Destroying instances will remove records from the identity set.
 
@@ -293,7 +298,7 @@ The `loaded` set is available on every model class and holds every model instanc
       post.destroy()
       equal Post.get('loaded.length'), 1
 
-## @all : Set
+## @%all : Set
 
 The `all` set is an alias to the `loaded` set but with an added implicit `load` on the model. `Model.get('all')` will synchronously return the `loaded` set and asynchronously call `Model.load()` without options to load a batch of records and populate the set originally returned (the `loaded` set) with the records returned by the server.
 
@@ -506,6 +511,8 @@ A bindable accessor on [`isNew`](/docs/api/batman.model.html#prototype_function_
 
 ## updateAttributes(attributes) : Model
 
+Mixes in `attributes` into the record (using `set`). Doesn't save the record.
+
 ## toString() : string
 
 Returns a string representation suitable for debugging. By default this just contains the model's `resourceName` and `id`
@@ -522,7 +529,6 @@ Returns a JavaScript object containing the attributes of the record, using any s
       criminal_json = criminal.toJSON()
       equal criminal_json.name, "Talia al Ghul"
       equal criminal_json.notorious, true
-
 
 ## ::fromJSON() : Model
 
