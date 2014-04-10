@@ -30,7 +30,7 @@ Change the option using `set`, like so:
 - Storage adapters (unless overriden by `storageKey`)
 - `data-route` bindings (eg, `routes.items[item]`)
 
-## @.storageKey : String
+## @.storageKey[= null] : String
 
 `storageKey` is used as a namespace by the model's storage adapter. `Batman.LocalStorage` and `Batman.SessionStorage` use it as a JSON namespace and `Batman.RestStorage` uses it as a URL segment. If `storageKey` isn't set, `resourceName` may be used.
 
