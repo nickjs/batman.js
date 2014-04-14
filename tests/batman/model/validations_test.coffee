@@ -528,6 +528,59 @@ validationsTestSuite = ->
           equal errors.length, 0
           QUnit.start()
 
+  asyncTest "associatedFields for hasMany", ->
+    namespace = @
+    class @Product extends Batman.Model
+      @validate 'id', presence: true
+      @validate 'name', presence: true
+
+    class @Collection extends Batman.Model
+      @hasMany 'products', {namespace, autoload: false}
+      @validate 'products', associatedFields: true
+
+    @collection = new @Collection
+    @collection.get('products').add new @Product
+    @collection.validate (err, errors) =>
+      throw err if err
+      equal errors.length, 2
+      equal errors.get('name.first.message'), "can't be blank", "name error bubbles up"
+      equal errors.get('id.first.message'), "can't be blank", "id error bubbles up"
+      firstProduct = @collection.get('products.first')
+      firstProduct.set('id', 1)
+      firstProduct.set('name', "Snuggie")
+      @collection.validate (err, errors) =>
+        throw err if err
+        equal errors.length, 0
+        QUnit.start()
+
+  asyncTest "associatedFields for belongsTo", ->
+    namespace = @
+    class @Product extends Batman.Model
+      @belongsTo 'collection', {namespace, autoload: false}
+      @validate 'collection', associatedFields: true
+
+    class @Collection extends Batman.Model
+      @validate 'id', presence: true
+      @validate 'name', presence: true
+
+    @product = new @Product
+    @collection = new @Collection
+    @product.validate (err, errors) =>
+      throw err if err
+      equal errors.length, 0
+      @product.set 'collection', @collection
+      @product.validate (err, errors) =>
+        throw err if err
+        equal errors.length, 2
+        equal errors.get('id.first.message'), "can't be blank"
+        equal errors.get('name.first.message'), "can't be blank"
+        @collection.set('id', 2)
+        @collection.set('name', 'As Seen on TV')
+        @product.validate (err, errors) =>
+          throw err if err
+          equal errors.length, 0
+          QUnit.start()
+
 QUnit.module "Batman.Model: Validations"
 validationsTestSuite()
 
