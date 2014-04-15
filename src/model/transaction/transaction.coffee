@@ -6,7 +6,7 @@ Batman.Transaction =
     @_batman.base
 
   applyChanges: (visited = []) ->
-    return @base if visited.indexOf(this) != -1
+    return @base() if visited.indexOf(this) != -1
     visited.push(this)
 
     attributes = @get('attributes').toObject()
