@@ -94,14 +94,14 @@ asyncTest "hasMany associations should take record type into consideration when 
     throw err if err
     equal product.get('metafields').get('length'), 1
     metafield = new @Metafield(subject_id: 4, subject_type: 'store', key: "Test Store Metafield")
-    metafield.save (err) ->
-    @Store.find 4, (err, store) =>
-      throw err if err
-      equal product.get('metafields.length'), 1
-      equal product.get('metafields.first.key'), "SEO Title"
-      equal store.get('metafields.length'), 1
-      equal store.get('metafields.first.key'), "Test Store Metafield"
-      QUnit.start()
+    metafield.save (err) =>
+      @Store.find 4, (err, store) =>
+        throw err if err
+        equal product.get('metafields.length'), 1
+        equal product.get('metafields.first.key'), "SEO Title"
+        equal store.get('metafields.length'), 1
+        equal store.get('metafields.first.key'), "Test Store Metafield"
+        QUnit.start()
 
 asyncTest "hasMany child models are added to the identity map", 2, ->
   equal @Metafield.get('loaded').length, 0
