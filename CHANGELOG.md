@@ -1,3 +1,55 @@
+
+Besides lots of bug fixes, documentation updates, etc, here some major changes:
+
+- batman.js node package was removed
+- added `cake build` and `cake build:dist` for compiling batman.js https://github.com/batmanjs/batman/pull/864
+
+### Batman.Object
+- `Batman.Object.delegate` was added https://github.com/batmanjs/batman/pull/830
+- `@delegate` handles `set` and `unset` too https://github.com/batmanjs/batman/pull/982
+- `@classDelegate` to delegate `classAccessor` https://github.com/batmanjs/batman/pull/1001
+
+### Batman.Set
+- `::toJSON` iterates over members and calls `toJSON` on them https://github.com/batmanjs/batman/pull/905
+
+### Batman.Hash
+- `::toJSON` iterates over members and calls `toJSON` on them https://github.com/batmanjs/batman/pull/905
+
+### Batman.Model
+- `AssociationSet::load` takes options and passes env https://github.com/batmanjs/batman/pull/825
+- Added 401 Error to StorageAdapter https://github.com/batmanjs/batman/pull/860
+- Added `onlyInteger` to Numeric Validator https://github.com/batmanjs/batman/pull/867
+- `@belongsTo` keys always return `BelongsToProxy` https://github.com/batmanjs/batman/pull/891
+- `@encode`'s `as` option can be a function https://github.com/batmanjs/batman/pull/863
+- `::validate` fires `validated` if validation was successful https://github.com/batmanjs/batman/pull/943
+- `@validate` allows `if` https://github.com/batmanjs/batman/pull/883
+- `@validate` accepts `email: true` with EmailValidator https://github.com/batmanjs/batman/pull/940
+- `::save` accepts `only` or `except` with keys https://github.com/batmanjs/batman/pull/951
+- Added `@createMultipleFromJSON` https://github.com/batmanjs/batman/pull/981
+- `@hasMany` doesn't coerce primary key integer-like strings to integers https://github.com/batmanjs/batman/pull/866
+
+### Batman.Controller
+- default to current controller when redirecting https://github.com/batmanjs/batman/pull/999
+
+### Batman.View
+- `@filter` was added https://github.com/batmanjs/batman/pull/804
+- Filters are available in subviews https://github.com/batmanjs/batman/pull/870
+- `data-track` binding was added https://github.com/batmanjs/batman/pull/835
+- Added `data-route="routes.root"` for routing to "/" https://github.com/batmanjs/batman/pull/865
+- Views rendered from controllers will use `::source` unless overridden in `@render()` https://github.com/batmanjs/batman/pull/909
+- InsertionBinding and ShowHideBinding use `fireAndCall` for lifecycle events https://github.com/batmanjs/batman/pull/931
+- Added `data-deferif` https://github.com/batmanjs/batman/pull/925
+- `data-bind-class` doesn't overwrite existing classes https://github.com/batmanjs/batman/pull/958
+- Added filters `ceil`, `floor`, `round`, `precision`, `fixed` and `delimitNumber` https://github.com/batmanjs/batman/pull/954
+- Added filters `lt`, `gt`, `lteq`, `gteq`, `eq`, and `neq` https://github.com/batmanjs/batman/pull/1009
+- added `primaryInteractionEvent` & `primaryInteractionEventName` to allow use with touch https://github.com/batmanjs/batman/pull/880
+- `@validate` `if` & `unless` take strings which are looked up on the record https://github.com/batmanjs/batman/pull/1012
+- `AssociationSet::build` adds a child record with passed attributes https://github.com/batmanjs/batman/pull/994
+- `@validate 'key', associatedFields: true` pushes messages from associated records to this record https://github.com/batmanjs/batman/pull/995
+
+### Batman.I18N
+- Translation filters fixed, `@useFallback` for cases of missing translations https://github.com/batmanjs/batman/pull/988
+
 ## 0.15.0 (September 4th, 2013)
 
 Major changes:
