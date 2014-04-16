@@ -114,9 +114,15 @@ class Batman.Model extends Batman.Object
 
   @findWithOptions: (id, options = {}, callback) ->
     Batman.developer.assert callback, "Must call find with a callback!"
-    record = new this
-    record._withoutDirtyTracking -> @set 'id', id
-    record.loadWithOptions options, callback
+    @_pending ||= {}
+    record = @_loadIdentity(id) || @_pending[id]
+    if !record?
+      record = new this
+      record._withoutDirtyTracking -> @set 'id', id
+      @_pending[id] = record
+    record.loadWithOptions options, =>
+      delete @_pending[id]
+      callback.apply(@, arguments)
     return record
 
   @load: (options, callback) ->

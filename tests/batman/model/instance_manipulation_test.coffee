@@ -59,6 +59,22 @@ asyncTest "loading instances which error should put the model in the error state
     equal product.get("lifecycle.state"), "error"
     QUnit.start()
 
+asyncTest "callbacks passed to find should be pipelined into the same request", ->
+  spyOn @adapter, 'read'
+  product = @Product.find 1, firstLoad = createSpy()
+  @Product.find 1, secondLoad = createSpy()
+  @Product.find 1, (err, passedProduct) =>
+    throw err if err
+    equal passedProduct, product
+    # Callback order is not guaranteed
+    setTimeout =>
+      for load in [firstLoad, secondLoad]
+        ok !load.lastCallArguments[0]
+        equal load.lastCallArguments[1], product
+      equal @adapter.read.callCount, 1
+      QUnit.start()
+    , 0
+
 asyncTest "callbacks passed to load should be pipelined into the same request", ->
   product = new @Product(1)
   spyOn @adapter, 'read'
