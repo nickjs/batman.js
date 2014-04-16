@@ -121,7 +121,7 @@ class Batman.Model extends Batman.Object
       record._withoutDirtyTracking -> @set 'id', id
       @_pending[id] = record
     record.loadWithOptions options, =>
-      @_pending[id] = null
+      delete @_pending[id]
       callback.apply(@, arguments)
     return record
 
