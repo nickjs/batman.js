@@ -1,5 +1,6 @@
 #= require ../object
 #= require ../utilities/state_machine
+#= require transaction
 
 class Batman.Model extends Batman.Object
   # Override this property to define the key which storage adapters will use to store instances of this model under.
@@ -547,3 +548,49 @@ class Batman.Model extends Batman.Object
 
   for functionName in ['load', 'save', 'validate', 'destroy']
    @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])
+
+
+  reflectOnAllAssociations: (associationType) ->
+    associations = @constructor._batman.get('associations')
+    if associationType?
+      associations?.getByType(associationType)
+    else
+      associations?.getAll()
+
+  reflectOnAssociation: (associationLabel) -> @constructor._batman.get('associations')?.getByLabel(associationLabel)
+
+
+  transaction: -> @_transaction([], [])
+
+  _transaction: (visited, stack) ->
+    index = visited.indexOf(this)
+    return stack[index] if index != -1
+    visited.push(this)
+    stack.push(transaction = new @constructor)
+
+    if hasManys = @reflectOnAllAssociations('hasMany')
+      hasManys = hasManys.filter (association) -> association.options.includeInTransaction
+      for label in hasManys.mapToProperty('label')
+        @get(label) # load empty association sets
+
+    attributes = @get('attributes').toObject()
+    for own key, value of attributes
+      if value instanceof Batman.Model && !value.isTransaction
+        attributes[key] = value._transaction(visited, stack)
+
+      else if value instanceof Batman.AssociationSet && !value.isTransaction
+        newValues = new Batman.TransactionAssociationSet(value, visited, stack)
+        attributes[key] = newValues
+
+      else if Batman.typeOf(value) is 'Object'
+        Batman.developer.warn "You're passing a mutable object (#{key}, #{value.constructor.name}) in a #{@constructor.name} transaction:", value
+
+    transaction._withoutDirtyTracking -> transaction.updateAttributes(attributes)
+    transaction._batman.base = this
+
+    for key, value of Batman.Transaction
+      transaction[key] = value
+
+    transaction.accessor 'isTransaction', -> @isTransaction
+    transaction.accessor 'base', -> @base()
+    transaction

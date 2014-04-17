@@ -5,6 +5,7 @@ class Batman.Association
     saveInline: true
     autoload: true
     nestUrl: false
+    includeInTransaction: true
 
   constructor: (@model, @label, options = {}) ->
     defaultOptions =
