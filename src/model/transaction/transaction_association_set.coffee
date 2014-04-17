@@ -12,23 +12,23 @@ class Batman.TransactionAssociationSet extends Batman.Set
     @_removedStorage = []
     @add(associationSet.toArray()...)
 
-
   @delegate 'association', 'foreignKeyValue', to: 'associationSet'
 
   _addFromAssociationSet: (items, indexes) -> @add(items...)
   add: @mutation (items...) ->
     addedTransactions = []
-    for i in items
-      if i instanceof Batman.Model && !i.isTransaction
-        t = i._transaction(@_visited, @_stack)
-        @_storage.push(t)
-        addedTransactions.push(t)
-      # just in case:
-      originalIndex = @_originalStorage.indexOf(i)
+    for item in items
+      unless item instanceof Batman.Model && !item.isTransaction
+        Batman.developer.warn("You tried to add a #{item.constructor.name} to a TransactionAssociationSet (#{@get('association.label')})", item)
+        continue
+      transactionItem = item._transaction(@_visited, @_stack)
+      @_storage.push(transactionItem)
+      addedTransactions.push(transactionItem)
+      originalIndex = @_originalStorage.indexOf(item)
       if originalIndex is -1
-        @_originalStorage.push(i)
+        @_originalStorage.push(item)
       # if was previously removed, it's not removed anymore!
-      removedIndex = @_removedStorage.indexOf(i)
+      removedIndex = @_removedStorage.indexOf(item)
       if removedIndex > -1
         @_removedStorage.splice(removedIndex, 1)
 
@@ -38,28 +38,27 @@ class Batman.TransactionAssociationSet extends Batman.Set
 
   remove: @mutation (transactions...) ->
     removedTransactions = []
-    for t in transactions
-      if t.isTransaction
-        transactionIndex = @_storage.indexOf(t)
-        if transactionIndex > -1
-          @_storage.splice(transactionIndex, 1)
-          removedTransactions.push(t)
-
-        i = t.base()
-        originalIndex = @_originalStorage.indexOf(i)
-        if originalIndex > -1
-          @_removedStorage.push(i)
-          @_originalStorage.splice(originalIndex, 1)
-      else
+    for transactionItem in transactions
+      if !transactionItem.isTransaction
         throw "Tried to remove real item from transaction set: #{t.toJSON()}"
+      transactionIndex = @_storage.indexOf(transactionItem)
+      if transactionIndex > -1
+        @_storage.splice(transactionIndex, 1)
+        removedTransactions.push(transactionItem)
+
+      item = transactionItem.base()
+      originalIndex = @_originalStorage.indexOf(item)
+      if originalIndex > -1
+        @_removedStorage.push(item)
+        @_originalStorage.splice(originalIndex, 1)
 
     @length = @_storage.length
     @fire 'itemsWereRemoved', removedTransactions if removedTransactions.length
     removedTransactions
 
   applyChanges: (visited) ->
-    for t in @_storage
-      t.applyChanges(visited)
+    for transactionItem in @_storage
+      transactionItem.applyChanges(visited)
     originals = new Batman.Set(@_originalStorage...)
     target = @get('associationSet')
     target.off 'itemsWereAdded', @_loader
