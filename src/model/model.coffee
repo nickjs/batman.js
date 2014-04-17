@@ -533,15 +533,15 @@ class Batman.Model extends Batman.Object
   for functionName in ['load', 'save', 'validate', 'destroy']
    @::[functionName] = Batman.Property.wrapTrackingPrevention(@::[functionName])
 
-  @accessor 'associations', -> @constructor._batman.get('associations')
 
   reflectOnAllAssociations: (associationType) ->
+    associations = @constructor._batman.get('associations')
     if associationType?
-      @get('associations')?.getByType(associationType)
+      associations?.getByType(associationType)
     else
-      @get('associations')?.getAll()
+      associations?.getAll()
 
-  reflectOnAssociation: (associationLabel) -> @get('associations').getByLabel(associationLabel)
+  reflectOnAssociation: (associationLabel) -> @constructor._batman.get('associations')?.getByLabel(associationLabel)
 
 
   transaction: -> @_transaction([], [])

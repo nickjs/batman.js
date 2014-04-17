@@ -612,4 +612,14 @@ To apply changes and save the record after running validations, call `save`.
       equal record.get('name'), 'Camouflage'
 
 
+## ::reflectOnAssociation(label : String)
+
+Returns the `Batman.Association` for the record's association named by `label`.
+Returns `null` if the association does not exist.
+
+## ::reflectOnAllAssociations([type: String])
+
+If `type` is passed (eg, `hasMany`), returns a `Batman.SimpleSet` of all associations of that type on the record.
+If no type is passed, all associations are returned.
+If the record has no associations, returns `null`.
 
