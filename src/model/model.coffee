@@ -552,10 +552,10 @@ class Batman.Model extends Batman.Object
     visited.push(this)
     stack.push(transaction = new @constructor)
 
-    hasManys = @reflectOnAllAssociations('hasMany')?.filter((association) -> association.options.includeInTransaction)
-    hasManyLabels = hasManys?.mapToProperty('label') || []
-    for label in hasManyLabels
-      @get(label) # load empty association sets
+    if hasManys = @reflectOnAllAssociations('hasMany')
+      hasManys = hasManys.filter (association) -> association.options.includeInTransaction
+      for label in hasManys.mapToProperty('label')
+        @get(label) # load empty association sets
 
     attributes = @get('attributes').toObject()
     for own key, value of attributes
