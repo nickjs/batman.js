@@ -75,7 +75,7 @@ The primary key for the association.
 ##### `foreignKey[= "#{label}_id"] : string`
 The foreign key for the association.
 
-##### `saveInline[= true] : boolean`
+##### `saveInline[= false] : boolean`
 If true, this model's attributes will be included in the associated model's JSON. This means that when an associated record is saved, this record's attributes will be included in the JSON.  (An alternative might be to include the associations' primary keys in the model's JSON with an [encoder](/docs/api/batman.model.html#class_function_encode).)
 
 ##### `autoload[= true] : boolean`
