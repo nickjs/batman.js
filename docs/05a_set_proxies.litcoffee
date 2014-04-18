@@ -159,9 +159,9 @@ Like a `Batman.SetSort`, it tracks the properties of objects in the base set. So
 
 A `Batman.SetMapping` can't have duplicates:
 
-      equal vehicleNames.get('length'), 2
+      deepEqual vehicleNames.toArray(), ["Batcycle", "Batcopter"]
       batwing.set('name', 'Batcycle')
-      equal vehicleNames.get('length'), 1
+      deepEqual vehicleNames.toArray(), ["Batcycle"]
 
 `Batman.SetMapping` extends `Batman.Set`, so see the `Batman.Set` API docs for more information.
 

@@ -10,8 +10,8 @@ QUnit.module 'Batman.SetMapping',
     @set = new Batman.Set(@letterA, @letterB, @letterNull, @number1)
     @mappedToValue = @set.mappedTo("value")
 
-test "setMapping contains the unique property values of the given key", ->
-  deepEqual @mappedToValue.toArray(), ["A", "B", null, 1]
+test "setMapping contains the unique, present property values of the given key", ->
+  deepEqual @mappedToValue.toArray(), ["A", "B", 1]
 
 test "setMapping is updated when values are changed", ->
   @letterNull.set('value', "Z")
@@ -20,9 +20,14 @@ test "setMapping is updated when values are changed", ->
 test "setMapping doesn't allow duplicates", ->
   @letterNull.set('value', "A")
   deepEqual @mappedToValue.toArray(), ["A", "B", 1]
-  @letterNull.set('value', null)
-  @letterA.set('value', null)
-  deepEqual @mappedToValue.toArray(), ["B", 1, null]
+  @letterNull.set('value', 'B')
+  deepEqual @mappedToValue.toArray(), ["A", "B", 1]
+
+test 'if two items map to the same value, removing one of them doesnt remove from the setMapping', ->
+  @letterNull.set('value', 1)
+  deepEqual @mappedToValue.toArray(), ["A", "B", 1]
+  @set.remove(@number1)
+  deepEqual @mappedToValue.toArray(), ["A", "B", 1]
 
 test "setMapping is updated when items are added to and removed from the base", ->
   letterC = new Batman.Object(type: "letter", value: "C")
@@ -40,13 +45,13 @@ test "setMapping is updated when items are added to and removed from the base", 
   equal eventsFired, 1
   equal itemsAdded, 1
   equal itemsRemoved, 0
-  equal @mappedToValue.get('length'), 5
+  equal @mappedToValue.get('length'), 4
 
   @set.remove(letterC)
   equal eventsFired, 2
   equal itemsAdded, 1
   equal itemsRemoved, 1
-  equal @mappedToValue.get('length'), 4
+  equal @mappedToValue.get('length'), 3
 
 test "setMapping takes nested keypath", ->
   mappedToSystemName = @set.mappedTo('system.name')
