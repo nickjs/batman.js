@@ -2,7 +2,7 @@ class Batman.Association
   associationType: ''
   isPolymorphic: false
   defaultOptions:
-    saveInline: true
+    saveInline: false
     autoload: true
     nestUrl: false
     includeInTransaction: true

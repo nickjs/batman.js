@@ -8,8 +8,8 @@ QUnit.module "Batman.Model hasMany Associations",
 
     namespace.Store = class @Store extends Batman.Model
       @encode 'id', 'name'
-      @hasMany 'products', namespace: namespace
-      @hasMany 'stringyProducts', namespace: namespace
+      @hasMany 'products', namespace: namespace, saveInline: true
+      @hasMany 'stringyProducts', namespace: namespace, saveInline: true
 
     @storeAdapter = createStorageAdapter @Store, AsyncTestStorageAdapter,
       stores1:
@@ -38,7 +38,7 @@ QUnit.module "Batman.Model hasMany Associations",
     namespace.Product = class @Product extends Batman.Model
       @encode 'id', 'name'
       @belongsTo 'store', namespace: namespace
-      @hasMany 'productVariants', namespace: namespace
+      @hasMany 'productVariants', namespace: namespace, saveInline: true
 
     @productAdapter = createStorageAdapter @Product, AsyncTestStorageAdapter,
       products1:
