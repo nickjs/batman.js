@@ -1,4 +1,3 @@
-
 Besides lots of bug fixes, documentation updates, etc, here some major changes:
 
 - batman.js node package was removed
@@ -27,6 +26,12 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 - `::save` accepts `only` or `except` with keys https://github.com/batmanjs/batman/pull/951
 - Added `@createMultipleFromJSON` https://github.com/batmanjs/batman/pull/981
 - `@hasMany` doesn't coerce primary key integer-like strings to integers https://github.com/batmanjs/batman/pull/866
+- Added `Model::transaction` and `Batman.TransactionAssociationSet` for editing records https://github.com/batmanjs/batman/pull/992
+- Added `::reflectOnAllAssociations` and `::reflectOnAssociation` https://github.com/batmanjs/batman/pull/992
+- Association `saveInline` defaults to false https://github.com/batmanjs/batman/pull/1028
+- Calls to `Model.find` for the same ID are pipelined like `Model.load` https://github.com/batmanjs/batman/pull/1026 
+- `validate associatedFields: true` pushes messages from associated records to this record https://github.com/batmanjs/batman/pull/995
+- `AssociationSet::build(attrs)` creates a child record with `attrs` and adds it to the set https://github.com/batmanjs/batman/pull/995
 
 ### Batman.Controller
 - default to current controller when redirecting https://github.com/batmanjs/batman/pull/999
