@@ -10,7 +10,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
     super
     @foreignTypeKey = @options.foreignTypeKey or "#{@label}_type"
     @model.encode @foreignTypeKey if @options.encodeForeignTypeKey
-    @typeIndicies = {}
+    @typeIndices = {}
 
   getRelatedModel: false
   setIndex: false
@@ -59,8 +59,8 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
     relatedModel
 
   setIndexForType: (type) ->
-    @typeIndicies[type] ||= new Batman.PolymorphicUniqueAssociationSetIndex(@, type, @primaryKey)
-    @typeIndicies[type]
+    @typeIndices[type] ||= new Batman.PolymorphicUniqueAssociationSetIndex(@, type, @primaryKey)
+    @typeIndices[type]
 
   inverseForType: (type) ->
     if relatedAssocs = @getRelatedModelForType(type)?._batman.get('associations')

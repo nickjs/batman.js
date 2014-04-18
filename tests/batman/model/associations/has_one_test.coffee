@@ -7,7 +7,7 @@ QUnit.module "Batman.Model hasOne Associations",
 
     class @Store extends Batman.Model
       @encode 'id', 'name'
-      @hasOne 'product', namespace: namespace
+      @hasOne 'product', namespace: namespace, saveInline: true
 
     @storeAdapter = createStorageAdapter @Store, AsyncTestStorageAdapter,
       'stores1': {name: "Store One", id: 1}
