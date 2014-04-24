@@ -36,7 +36,6 @@ This is analagous to the `$.ajax(options)` function. Options include:
 
 Each option is described in detail below.
 
-
 ## Lifecycle events
 
 Several lifecycle events are fired during `Batman.Request::send`:
@@ -67,6 +66,24 @@ For example, both of these `success` callbacks are fired:
       request.on 'success', -> ok true
 
       request.send()
+
+## Global Request Hooks
+
+`Batman.Request` exposes two class accessors:
+
+- [`pendingRequestCount`](/docs/api/batman.request.html#class_accessor_pendingrequestcount): the number of pending requests
+- [`requestIsPending`](/docs/api/batman.request.html#class_accessor_requestispending): true if any request is pending
+
+These global hooks can help display loading indicators, for example:
+
+```coffeescript
+Batman.Request.observe 'requestIsPending', (newValue, oldValue) ->
+  if newValue
+    # requestIsPending has become `true`
+    App.displayLoadingIndicator()
+  else
+    App.hideLoadingIndicator()
+```
 
 ## ::constructor(options) : Request
 
@@ -223,3 +240,11 @@ Fired when a successful request is completed. `response` is the body of the resp
         url: "http://batmanjs.org"
         success: (response) ->
           equal "foo", response
+
+## @%pendingRequestCount : Number
+
+The number of `Batman.Request`s that are pending (ie, instances that have fired `loading` but haven't fired `loaded` yet).
+
+## @%requestIsPending : Boolean
+
+Returns `true` if `pendingRequestCount` is greater than 0.
