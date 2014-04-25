@@ -64,12 +64,7 @@ _Note_: Batman's pluralization functions mirror those of Rails' exactly.
 
 ## @capitalize(string) : string
 
-`capitalize` capitalizes the first letter of the string.
-
-    test 'capitalize makes the first letter in the string uppercase', ->
-      equal Batman.helpers.capitalize("batmanObject"), "BatmanObject"
-      equal Batman.helpers.capitalize("batman object"), "Batman object"
-      equal Batman.helpers.capitalize("AlreadyCapitalized"), "AlreadyCapitalized"
+Deprecated alias of `titleize`.
 
 ## @trim(string) : string
 
