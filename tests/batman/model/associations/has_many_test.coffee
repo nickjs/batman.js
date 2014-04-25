@@ -128,6 +128,16 @@ asyncTest "::build adds the child to the set", 2, ->
       store.get('products').build(name: "Product Y")
       equal store.get('products.length'), 4
 
+asyncTest "::build uses currentApp if no namespace was passed", ->
+  Batman.currentApp = @
+  @Store.find 1, (err, store) ->
+    store.reflectOnAssociation("products").options.namespace = null
+    store.get('products')
+    delay =>
+      newProduct = store.get('products').build(name: "Product X")
+      equal newProduct.get('store_id'), 1
+      Batman.currentApp = null
+
 asyncTest "::%parentRecord returns the parent record", 1, ->
   @Store.find 1, (err, store) ->
     products = store.get('products')
