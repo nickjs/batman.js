@@ -1,7 +1,6 @@
 GIT_TAG=`git tag --points-at HEAD`
 
-# Temporary !=
-if [[ "$TRAVIS_BRANCH" != "master" ]]; then
+if [[ "$TRAVIS_BRANCH" = "master" ]]; then
 	cake build:dist
 
 	cd build
@@ -12,6 +11,6 @@ if [[ "$TRAVIS_BRANCH" != "master" ]]; then
 	if [[ -n "$GIT_TAG" ]]; then
 		NAME_WITH_TAG="batman-${GIT_TAG}.tar.gz"
 		mv batman-master.tar.gz "$NAME_WITH_TAG"
-		travis-artifacts upload --path "$NAME_WITH_TAG" --target-path '' --cache-control no-cache
+		travis-artifacts upload --path "$NAME_WITH_TAG" --target-path ''
 	fi
 fi
