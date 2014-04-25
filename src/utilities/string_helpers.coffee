@@ -30,7 +30,7 @@ Batman.helpers =
           .replace('-', '_').toLowerCase()
 
   titleize: (string) ->
-    string.replace titleize_rx, (m,p1,p2) -> p1 + p2.toUpperCase()
+    string.replace titleize_rx, (m, p1, p2) -> p1 + p2.toUpperCase()
 
   capitalize: (string) ->
     Batman.developer.deprecated('capitalize', 'Renamed to titleize.')

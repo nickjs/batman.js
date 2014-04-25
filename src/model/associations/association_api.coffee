@@ -6,5 +6,5 @@ for k in Batman.AssociationCurator.availableAssociations
     Batman.Model[k] = (label, scope) ->
       Batman.initializeObject(this)
       collection = @_batman.associations ||= new Batman.AssociationCurator(this)
-      collection.add new Batman["#{Batman.helpers.capitalize(k)}Association"](this, label, scope)
+      collection.add new Batman["#{Batman.helpers.titleize(k)}Association"](this, label, scope)
 

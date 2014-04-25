@@ -58,7 +58,7 @@ For example, a `data-permission` binding:
 class Batman.DOM.PermissionBinding extends Batman.DOM.ShowHideBinding
   constructor: (definition) ->
     permissionName = definition.keyPath
-    permissionKeyPath = "is#{Batman.helpers.capitalize(permissionName)}"
+    permissionKeyPath = "is#{Batman.helpers.titleize(permissionName)}"
     definition.keyPath = permissionKeyPath
     super(definition)
 

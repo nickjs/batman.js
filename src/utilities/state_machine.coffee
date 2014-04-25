@@ -20,7 +20,7 @@ class Batman.StateMachine extends Batman.Object
 
     predicateKeys = []
     definePredicate = (state) =>
-      key = "is#{Batman.helpers.capitalize(state)}"
+      key = "is#{Batman.helpers.titleize(state)}"
       return if @::[key]?
       predicateKeys.push key
       @::[key] = -> @get('state') == state

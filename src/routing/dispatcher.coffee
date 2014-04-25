@@ -32,7 +32,7 @@ class Batman.Dispatcher extends Batman.Object
 
   class ControllerDirectory extends Batman.Object
     @accessor '__app', Batman.Property.defaultAccessor
-    @accessor (key) -> @get("__app.#{Batman.helpers.capitalize(key)}Controller.sharedController")
+    @accessor (key) -> @get("__app.#{Batman.helpers.titleize(key)}Controller.sharedController")
 
   @accessor 'controllers', -> new ControllerDirectory(__app: @get('app'))
 
