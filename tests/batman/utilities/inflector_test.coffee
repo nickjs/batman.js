@@ -217,16 +217,6 @@ test "helpers humanize", ->
   for underscored, human of UnderscoreToHuman
     equal Batman.helpers.humanize(underscored), human
 
-UncaptializedToCapitalized =
-  "congratulations" : 'Congratulations'
-  "you're the big winner" : "You're the big winner"
-  "you win one US dollar" : "You win one US dollar"
-
-QUnit.module 'Batman.helpers capitalization',
-test 'capitalizes the first letter of the first word', ->
-  for lowercased, capitalized of UncaptializedToCapitalized
-    equal Batman.helpers.capitalize(lowercased), capitalized
-
 UncapitalizedToTitleized =
   "congratulations" : 'Congratulations'
   "you're the big winner" : "You're The Big Winner"
