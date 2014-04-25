@@ -4,13 +4,7 @@ node_js:
 before_script:
   - gem install travis-artifacts
 after_success:
-  - >
-      test "$TRAVIS_BRANCH" = "master" &&
-      cake build:dist &&
-      cd build &&
-      mv dist batman.js &&
-      tar cvzf batman-master.tar.gz batman.js &&
-      travis-artifacts upload --path batman-master.tar.gz --target-path '' --cache-control no-cache
+  - bash .travis_upload.bash
 env:
   global:
     - ARTIFACTS_S3_BUCKET=batman.js
