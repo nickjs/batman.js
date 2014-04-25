@@ -6,6 +6,8 @@ QUnit.module 'Batman.Request',
     @sendSpy = createSpy()
     Batman.Request::send = @sendSpy
     Batman.container.File = class File
+    Batman.Request.set('pendingRequestCount', 0)
+
   teardown: ->
     Batman.container.File = oldFile
     Batman.Request::send = oldSend
@@ -93,6 +95,71 @@ asyncTest 'should set headers', 2, ->
     req = @sendSpy.lastCallContext
     notEqual req.headers.test_header, undefined
     equal req.headers.test_header, 'test-value'
+
+test "when pendingRequestCount > 0, requestIsPending is true", ->
+  ok !Batman.Request.get('requestIsPending')
+  Batman.Request.set('pendingRequestCount', 1)
+  ok Batman.Request.get('requestIsPending')
+  Batman.Request.set('pendingRequestCount', 0)
+  ok !Batman.Request.get('requestIsPending')
+
+test "when any request fires loading, pendingRequestCount goes up", ->
+  req1 = new Batman.Request(autosend: false)
+  req2 = new Batman.Request(autosend: false)
+
+  req1.fire 'loading'
+  equal Batman.Request.get('pendingRequestCount'), 1
+  ok Batman.Request.get('requestIsPending')
+
+  req2.fire 'loading'
+  equal Batman.Request.get('pendingRequestCount'), 2
+
+test "when any request fires loaded, pendingRequestCount goes down", ->
+  req1 = new Batman.Request(autosend: false)
+  req2 = new Batman.Request(autosend: false)
+
+  req1.fire 'loading'
+  req2.fire 'loading'
+  ok Batman.Request.get('requestIsPending')
+  equal Batman.Request.get('pendingRequestCount'), 2
+
+  req1.fire 'loaded'
+  equal Batman.Request.get('pendingRequestCount'), 1
+  ok Batman.Request.get('requestIsPending')
+  req2.fire 'loaded'
+  equal Batman.Request.get('pendingRequestCount'), 0
+  ok !Batman.Request.get('requestIsPending')
+
+test 'observing requestIsPending works', ->
+  displays = 0
+  hides = 0
+  Batman.Request.observe 'requestIsPending', (newValue, oldValue) ->
+    if newValue
+      displays += 1
+    else
+      hides += 1
+
+  req1 = new Batman.Request(autosend: false)
+  req2 = new Batman.Request(autosend: false)
+  req3 = new Batman.Request(autosend: false)
+
+  req1.fire 'loading'
+  equal hides, 0
+  equal displays, 1
+  req1.fire 'loaded'
+  equal hides, 1
+  equal displays, 1
+
+  req2.fire 'loading'
+  req3.fire 'loading'
+  equal hides, 1
+  equal displays, 2
+  req2.fire 'loaded'
+  equal hides, 1
+  equal displays, 2
+  req3.fire 'loaded'
+  equal hides, 2
+  equal displays, 2
 
 old = {}
 for key in ['FormData', 'File']

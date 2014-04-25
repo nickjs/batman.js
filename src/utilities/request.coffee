@@ -65,3 +65,8 @@ class Batman.Request extends Batman.Object
   # `send` is implemented in the platform layer files. One of those must be required for
   # `Batman.Request` to be useful.
   send: (data) -> Batman.developer.error "You must add a platform library to implement Batman.Request (for example, batman.jquery)"
+
+  @set('pendingRequestCount', 0)
+  @classAccessor 'requestIsPending', -> @get('pendingRequestCount') > 0
+  @::on 'loading', ->  Batman.Request.set('pendingRequestCount', Batman.Request.get('pendingRequestCount') + 1)
+  @::on 'loaded', -> Batman.Request.set('pendingRequestCount', Batman.Request.get('pendingRequestCount') - 1)
