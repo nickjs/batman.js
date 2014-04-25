@@ -48,7 +48,8 @@ class Batman.AssociationSet extends Batman.SetSort
     options = @get('association.options')
     if options.inverseOf?
       initParams[options.inverseOf] = @get('parentRecord')
-    associatedClass = options.namespace[options.name]
+    scope = options.namespace or Batman.currentApp
+    associatedClass = scope[options.name]
     mixedAttrs = Batman.extend(attrs, initParams)
     newObj = new associatedClass(mixedAttrs)
     @add(newObj)
