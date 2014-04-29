@@ -17,11 +17,20 @@ test "setMapping is updated when values are changed", ->
   @letterNull.set('value', "Z")
   deepEqual @mappedToValue.toArray(), ["A", "B", 1, "Z"]
 
-test "setMapping doesn't allow duplicates", ->
+test "setMapping doesn't allow duplicates by adding to the base", ->
+  @set.add(new Batman.Object({type: "letter", value: "A", system: @alphabet}))
+  deepEqual @mappedToValue.toArray(), ["A", "B", 1]
+
+  @set.add(@letterA)
+  deepEqual @mappedToValue.toArray(), ["A", "B", 1]
+
+test "setMapping doesn't allow duplicates by changing", ->
   @letterNull.set('value', "A")
   deepEqual @mappedToValue.toArray(), ["A", "B", 1]
+
   @letterNull.set('value', 'B')
   deepEqual @mappedToValue.toArray(), ["A", "B", 1]
+
 
 test 'if two items map to the same value, removing one of them doesnt remove from the setMapping', ->
   @letterNull.set('value', 1)
