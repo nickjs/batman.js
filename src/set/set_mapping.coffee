@@ -36,16 +36,17 @@ class Batman.SetMapping extends Batman.Set
 
 class Batman.SetMapping.PresenceCounter
   constructor: (initialValues) ->
-    @_storage = {}
+    @_storage = new Batman.SimpleHash
     for value in initialValues
       @increment(value)
 
   increment: (value) ->
-    count = @_storage[value]
+    count = @_storage.get(value)
     if !count
-      @_storage[value] = 1
+      @_storage.set value, 1
     else
-      @_storage[value] += 1
+      @_storage.set value, count + 1
 
   decrement: (value) ->
-    @_storage[value] -= 1
+    count = @_storage.get(value)
+    @_storage.set value, count - 1

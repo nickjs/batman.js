@@ -69,6 +69,16 @@ test "setMapping takes nested keypath", ->
   @alphabet.set('name', 'romaji')
   deepEqual mappedToSystemName.toArray(), ["digits", "romaji"]
 
+test 'setMapping works with objects', ->
+  mappedToSystem = @set.mappedTo('system')
+  deepEqual mappedToSystem.mapToProperty('name'), ['alphabet', 'digits']
+
+  @set.remove(@number1)
+  deepEqual mappedToSystem.mapToProperty('name'), ['alphabet']
+
+  @set.add(@number1)
+  deepEqual mappedToSystem.mapToProperty('name'), ['alphabet', 'digits']
+
 test "setMapping does normal set stuff", ->
   equal @mappedToValue.get('first'), "A"
   ok @mappedToValue.has(1)
