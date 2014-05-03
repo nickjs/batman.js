@@ -7,7 +7,7 @@ QUnit.module 'Batman.SetMapping',
     @letterB = new Batman.Object({type: "letter", value: "B", system: @alphabet})
     @letterNull = new Batman.Object({type: "letter", value: null, system: @alphabet})
     @number1 = new Batman.Object({type: "number", value: 1, system: @digits})
-    @set = new Batman.Set(@letterA, @letterB, @letterNull, @number1)
+    @set = new Batman.Set([@letterA, @letterB, @letterNull, @number1])
     @mappedToValue = @set.mappedTo("value")
 
 test "setMapping contains the unique, present property values of the given key", ->

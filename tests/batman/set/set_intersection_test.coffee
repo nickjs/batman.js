@@ -1,7 +1,7 @@
 QUnit.module "Batman.SetIntersection",
   setup: ->
-    @left = new Batman.Set("a", "b", "c")
-    @right = new Batman.Set("c", "d", "e")
+    @left = new Batman.Set(["a", "b", "c"])
+    @right = new Batman.Set(["c", "d", "e"])
     @intersection = new Batman.SetIntersection(@left, @right)
 
 membersEqual = (set, members) ->
@@ -59,7 +59,7 @@ test "intersections should emit addition and removal events", ->
   deepEqual removedSpy.lastCallArguments[0], ['d']
 
 test "intersections should be chainable", ->
-  @middle = new Batman.Set "b", "c"
+  @middle = new Batman.Set ["b", "c"]
 
   subIntersection = new Batman.SetIntersection(@middle, @intersection)
   membersEqual subIntersection, ["c"]

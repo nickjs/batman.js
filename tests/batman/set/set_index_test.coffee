@@ -10,7 +10,7 @@ QUnit.module 'Batman.SetIndex',
     @byFred = Batman author: @fred
     @anotherByFred = Batman author: @fred
 
-    @base = new Batman.Set(@byMary, @byFred, @byZeke, @anotherByFred)
+    @base = new Batman.Set([@byMary, @byFred, @byZeke, @anotherByFred])
     @authorNameIndex = new Batman.SetIndex(@base, 'author.name')
 
     # not yet in the set:
@@ -22,7 +22,7 @@ test "new Batman.SetIndex(set, key) constructs an index on the set for that keyp
   equal @authorNameIndex.key, 'author.name'
 
 test "new Batman.SetIndex(set, key) with unobservable items will observe the set but not the items", ->
-  set = new Batman.Set("foo", "bar", "ba")
+  set = new Batman.Set(["foo", "bar", "ba"])
   itemsAddedSpy = spyOn(set.event('itemsWereAdded'), 'addHandler')
   itemsRemovedSpy = spyOn(set.event('itemsWereRemoved'), 'addHandler')
   fooSpy = spyOn(@zeke, 'observe')
@@ -38,7 +38,7 @@ test "new Batman.SetIndex(set, key) with unobservable items will observe the set
   ok !baSpy.called, "the items should not be observed"
 
 test "new Batman.SetIndex(set, key) with a Batman.SimpleSet indexes the items but doesn't observe anything", ->
-  set = new Batman.SimpleSet(@zeke, @mary)
+  set = new Batman.SimpleSet([@zeke, @mary])
   setSpy = spyOn(set, 'observe')
   zekeSpy = spyOn(@zeke, 'observe')
   marySpy = spyOn(@mary, 'observe')

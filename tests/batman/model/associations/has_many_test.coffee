@@ -324,7 +324,7 @@ asyncTest "hasMany associations are saved via the parent model", 5, ->
   store = new @Store name: 'Zellers'
   product1 = new @Product name: 'Gizmo'
   product2 = new @Product name: 'Gadget'
-  store.set 'products', new Batman.Set(product1, product2)
+  store.set 'products', new Batman.Set([product1, product2])
 
   storeSaveSpy = spyOn store, 'save'
   store.save (err, record) =>

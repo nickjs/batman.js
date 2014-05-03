@@ -86,7 +86,7 @@ class Batman.SetSort extends Batman.SetProxy
 
   merge: (other) ->
     @base.registerAsMutableSource()
-    new Batman.Set(@_storage...).merge(other).sortedBy(@key, @order)
+    new Batman.Set(@_storage).merge(other).sortedBy(@key, @order)
 
   compare: (a, b) ->
     return 0 if a is b

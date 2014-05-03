@@ -5,7 +5,7 @@ class Batman.SetMapping extends Batman.Set
   constructor: (@base, @key) ->
     initialValues = @base.mapToProperty(@key)
     @_counter = new @constructor.PresenceCounter(initialValues)
-    super(initialValues...)
+    super(initialValues)
     @_setObserver = new Batman.SetObserver(@base)
     @_setObserver.observedItemKeys = [@key]
     @_setObserver.observerForItemAndKey = (item) => (newValue, oldValue) => @_handleItemModified(item, newValue, oldValue)

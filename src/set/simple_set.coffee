@@ -2,10 +2,10 @@
 #= require ../hash/simple_hash
 
 class Batman.SimpleSet
-  constructor: ->
+  constructor: (items=[]) ->
     @_storage = []
     @length = 0
-    itemsToAdd = (item for item in arguments when item?)
+    itemsToAdd = (item for item in items when item?)
     @add(itemsToAdd...) if itemsToAdd.length > 0
 
   Batman.extend @prototype, Batman.Enumerable
@@ -23,7 +23,7 @@ class Batman.SimpleSet
 
   insert: -> @insertWithIndexes(arguments...).addedItems
 
-  insertWithIndexes: (items, indexes) -> 
+  insertWithIndexes: (items, indexes) ->
     addedIndexes = []
     addedItems = []
     for item, i in items when @_indexOfItem(item) == -1

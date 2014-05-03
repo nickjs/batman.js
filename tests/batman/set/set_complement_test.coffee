@@ -1,7 +1,7 @@
 QUnit.module "Batman.SetComplement",
   setup: ->
-    @left = new Batman.Set("a", "b", "c")
-    @right = new Batman.Set("c", "d", "e")
+    @left = new Batman.Set(["a", "b", "c"])
+    @right = new Batman.Set(["c", "d", "e"])
     @complement = new Batman.SetComplement(@left, @right)
 
 membersEqual = (set, members) ->
@@ -52,7 +52,7 @@ test "complements should emit addition and removal events", ->
   deepEqual addedSpy.lastCallArguments[0], ['b']
 
 test "complements should be chainable", ->
-  @middle = new Batman.Set "b", "c"
+  @middle = new Batman.Set ["b", "c"]
 
   subcomplement = new Batman.SetComplement(@complement, @middle)
   membersEqual subcomplement, ["a"]

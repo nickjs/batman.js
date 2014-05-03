@@ -407,5 +407,3 @@ Under the hood, batman.js will instantiate `MyApp.EventTracker` once, storing it
 ## data-debug
 
 Calls `debugger` when instantiating the binding. `DebuggerBinding` is removed from production builds of batman.js.
-
-

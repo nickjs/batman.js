@@ -397,7 +397,7 @@ test "JSON.stringify(hash) returns the correct object representation for Batman.
   Batman.developer.suppress =>
     objectKey = new Batman.Object
     obj = new Batman.Object
-      set: new Batman.Set 1, 2, 3
+      set: new Batman.Set [1, 2, 3]
     obj.hashKey()
     @hash = new Batman.Hash
     @hash.set(objectKey, obj)

@@ -181,7 +181,7 @@ Some more handy examples:
       class Post extends Batman.Model
         @resourceName: 'post'
         @encode 'tags',
-          decode: (array) -> new Batman.Set(array...)
+          decode: (array) -> new Batman.Set(array)
           encode: (set) -> set.toArray()
 
       record = new Post()

@@ -5,7 +5,7 @@
 class Batman.Set extends Batman.Object
   isCollectionEventEmitter: true
 
-  constructor: -> Batman.SimpleSet.apply @, arguments
+  constructor: (items=[])-> Batman.SimpleSet.call(@, items)
 
   Batman.extend @prototype, Batman.Enumerable
 

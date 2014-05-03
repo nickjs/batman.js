@@ -20,7 +20,7 @@ Returns a new `Batman.Set` containing `items`.
       deepEqual set.toArray(), []
 
     test 'new Set constructor can be passed items to add to the set.', ->
-      set = new Batman.Set('a', 'b', 'c')
+      set = new Batman.Set(['a', 'b', 'c'])
       deepEqual set.toArray().sort(), ['a', 'b', 'c']
 
 ## ::%length : Number
@@ -38,7 +38,7 @@ Returns true if `item` is in the `Set`.
 _Note_: Using `has(item)` in an accessor body will register base `Set` as a source of the property being calculated. @henever the `Set` changes, the property will be recalculated.
 
     test 'Set::has indicates if an item is a member of the set or not.', ->
-      set = new Batman.Set('a', 'b', 'c')
+      set = new Batman.Set(['a', 'b', 'c'])
       ok set.has('a')
       equal set.has('d'), false
 
@@ -70,20 +70,20 @@ If any items are added, `add` also fires the `itemsWereAdded` event with an arra
       equal set.has('a'), true
 
     test 'Set::add returns only the new items that weren\'t previously in the set', ->
-      set = new Batman.Set('a', 'b')
+      set = new Batman.Set(['a', 'b'])
       deepEqual set.add('b','c','d').sort(), ['c', 'd']
       deepEqual set.toArray().sort(), ['a', 'b', 'c', 'd']
 
     test 'Set::add fires the itemsWereAdded event with the items newly added to the set', ->
       results = null
-      set = new Batman.Set('a', 'b')
+      set = new Batman.Set(['a', 'b'])
       set.on('itemsWereAdded', (item) -> results = item)
       set.add('b','c','d')
       deepEqual results.sort(), ['c','d']
 
     test 'Set::add does not fire the itemsWereAdded event if the added items were already in the set.', ->
       results = undefined
-      set = new Batman.Set('a', 'b')
+      set = new Batman.Set(['a', 'b'])
       set.on('itemsWereAdded', (items) -> results = items)
       set.add('a', 'b')
       equal typeof results, 'undefined'
@@ -95,26 +95,26 @@ Removes `items` from the `Set` if they are present. Returns any items _actually 
 If any items were removed, the `Set` fires the `itemsWereRemoved` event with an array of removed items.
 
     test 'Set::remove removes an item from the set', ->
-      set = new Batman.Set('a')
+      set = new Batman.Set(['a'])
       equal set.has('a'), true
       deepEqual set.remove('a'), ['a']
       equal set.has('a'), false
 
     test 'Set::remove returns only the new items that were previously in the set', ->
-      set = new Batman.Set('a', 'b')
+      set = new Batman.Set(['a', 'b'])
       deepEqual set.remove('b','c','d').sort(), ['b']
       deepEqual set.toArray(), ['a']
 
     test 'Set::remove fires the itemsWereRemoved event with the items removed to the set', ->
       results = null
-      set = new Batman.Set('a', 'b', 'c')
+      set = new Batman.Set(['a', 'b', 'c'])
       set.on('itemsWereRemoved', (items) -> results = items)
       set.remove('b','c')
       deepEqual results.sort(), ['b','c']
 
     test 'Set::remove does not fire the itemsWereRemoved event if the removed items were not already members of the set.', ->
       results = undefined
-      set = new Batman.Set('a', 'b')
+      set = new Batman.Set(['a', 'b'])
       set.on('itemsWereRemoved', (items) -> results = items)
       set.remove('c', 'd')
       equal typeof results, 'undefined'
@@ -126,11 +126,11 @@ Returns the first item for which `testFunction` returns a truthy value. It retur
 _Note_: `find` returns the _first_ matching item, but a `Set` does not have a specified order. If two items would pass `testFunction`, either one may be returned.
 
     test 'Set::find returns the first item for which the test function passes', ->
-      set = new Batman.Set(1, 2, 3)
+      set = new Batman.Set([1, 2, 3])
       equal set.find((x) -> x % 2 == 0), 2
 
     test 'Set::find returns undefined if no items pass the test function', ->
-      set = new Batman.Set(1, 2, 3)
+      set = new Batman.Set([1, 2, 3])
       equal typeof set.find((x) -> x > 5), 'undefined'
 
 ## ::forEach(iteratorFunction : Function[, context: Object]) : undefined
@@ -143,13 +143,13 @@ _Note_: `Set::forEach` registers the `Set` as a source of the property being cal
 
     test 'Set::forEach iterates over each item in the set', ->
       sum = 0
-      set = new Batman.Set(1,2,3)
+      set = new Batman.Set([1,2,3])
       set.forEach (x) -> sum += x
       equal sum, 6
 
     test 'Set::forEach iterates over each item in the set optionally in the provided context', ->
       context = {sum: 0}
-      set = new Batman.Set(1,2,3)
+      set = new Batman.Set([1,2,3])
       set.forEach((x) ->
         @sum += x
       , context)
@@ -208,14 +208,14 @@ Removes all items from the `Set`, returning an array of all removed items. If an
 _Note_: Set order is not defined, so the array of removed items is unordered.
 
     test 'Set::clear empties the set', ->
-      set = new Batman.Set('a', 'b', 'c')
+      set = new Batman.Set(['a', 'b', 'c'])
       equal set.isEmpty(), false
       deepEqual set.clear().sort(), ['a', 'b', 'c']
       ok set.isEmpty()
 
     test 'Set::clear fires the itemsWereRemoved event with all the items in the set', ->
       result = null
-      set = new Batman.Set('a', 'b', 'c')
+      set = new Batman.Set(['a', 'b', 'c'])
       set.on('itemsWereRemoved', (items) -> result = items)
       set.clear()
       deepEqual result.sort(), ['a', 'b', 'c']
@@ -227,14 +227,14 @@ Removes all items from `Set`, then adds all the items found in `collection`. The
 `replace` will fire the `itemsWereRemoved` event once with all the items in the set, and then the `itemsWereAdded` event once with the items from the incoming collection.
 
     test 'Set::replace empties the set and then adds items from a different collection', ->
-      set = new Batman.Set('a', 'b', 'c')
-      secondSet = new Batman.Set('d', 'e', 'f')
+      set = new Batman.Set(['a', 'b', 'c'])
+      secondSet = new Batman.Set(['d', 'e', 'f'])
       set.replace(secondSet)
       deepEqual set.toArray().sort(), ['d', 'e', 'f']
 
     test 'Set::replace fires the itemsWereRemoved event with all the items in the set', ->
       result = null
-      set = new Batman.Set('a', 'b', 'c')
+      set = new Batman.Set(['a', 'b', 'c'])
       set.on('itemsWereRemoved', (items) -> result = items)
       set.replace(new Batman.SimpleSet())
       deepEqual result.sort(), ['a', 'b', 'c']
@@ -243,7 +243,7 @@ Removes all items from `Set`, then adds all the items found in `collection`. The
       result = null
       set = new Batman.Set()
       set.on('itemsWereAdded', (items) -> result = items)
-      set.replace(new Batman.SimpleSet('a', 'b', 'c'))
+      set.replace(new Batman.SimpleSet(['a', 'b', 'c']))
       deepEqual result.sort(), ['a', 'b', 'c']
 
 ## ::toArray() : Array
@@ -281,8 +281,8 @@ Combines the `Set` and `collections` into a new `Set` and returns it. `collectio
 _Note_: Be careful about using `merge` within accessors. It registers the `Set` as a source, meaning the O(n * m) merge will occur again each time, and return an entirely new `Set` instance. If the previously returned `Set` instance is retained after recalculation, this is a __big memory leak__. Instead of merging in accessors, try to use a `Batman.SetUnion` or a `Batman.SetIntersection`.
 
     test 'Set::merge returns a new set with the items of the original set and the passed set', ->
-      abc = new Batman.Set('a', 'b', 'c')
-      def = new Batman.Set('d', 'e', 'f')
+      abc = new Batman.Set(['a', 'b', 'c'])
+      def = new Batman.Set(['d', 'e', 'f'])
       equal Batman.typeOf(set = abc.merge(def)), 'Object'
       deepEqual set.toArray().sort(), ['a', 'b', 'c', 'd', 'e', 'f']
 
@@ -293,15 +293,17 @@ Returns a `Batman.SetIndex` based on the `Set`, grouping by `key`. This is batma
 The `Batman.SetIndex` tracks the `Set` and its members (in case their value for `key` changes).
 
     test 'Set::indexedBy returns a new SetIndex with the items bucketed by the value of the key', ->
-      set = new Batman.Set(Batman(colour: 'blue'), Batman(colour: 'green'), Batman(colour: 'blue'))
+      set = new Batman.Set([Batman(colour: 'blue'), Batman(colour: 'green'), Batman(colour: 'blue')])
       index = set.indexedBy('colour')
       ok index.get('blue') instanceof Batman.Set
       equal index.get('blue').get('length'), 2
       equal index.get('green').get('length'), 1
 
+
 ## ::%indexedBy
 
 Accessor for `Set::indexedBy`. `mySet.get('indexedBy.myKey')` returns the same result as  `mySet.indexedBy('myKey')`. This is convenient in view bindings:
+
 
 ```html
 <ul>
@@ -312,7 +314,7 @@ Accessor for `Set::indexedBy`. `mySet.get('indexedBy.myKey')` returns the same r
 ```
 
     test "Set::get('indexedBy.someKey') returns a new SetIndex for 'someKey'", ->
-      set = new Batman.Set(Batman(colour: 'blue'), Batman(colour: 'green'))
+      set = new Batman.Set([Batman(colour: 'blue'), Batman(colour: 'green')])
       index = set.get('indexedBy.colour')
       equal index.get('blue').get('length'), 1
 
@@ -325,7 +327,7 @@ The `Batman.UniqueSetIndex` tracks the `Set` and its members (in case their valu
     test 'Set::indexedByUnique returns a new UniqueSetIndex with the items hashed by the value of the key', ->
       greenItem = Batman(colour: 'green')
       blueItem = Batman(colour: 'blue')
-      set = new Batman.Set(greenItem, blueItem)
+      set = new Batman.Set([greenItem, blueItem])
       index = set.indexedByUnique('colour')
       ok blueItem == index.get('blue')
       ok greenItem == index.get('green')
@@ -336,7 +338,7 @@ The `Batman.UniqueSetIndex` tracks the `Set` and its members (in case their valu
 Accessor for `Set::indexedByUnique`. `mySet.get('indexedByUnique.myUniqueKey')` returns the same result as  `mySet.indexedByUnique('myUniqueKey')`.
 
     test "Set::get('indexedByUnique.someKey') returns a new UniqueSetIndex for 'someKey'", ->
-      set = new Batman.Set(Batman(colour: 'blue'), Batman(colour: 'green'))
+      set = new Batman.Set([Batman(colour: 'blue'), Batman(colour: 'green')])
       index = set.get('indexedByUnique.colour')
       equal 'blue', index.get('blue').get('colour')
 
@@ -349,7 +351,7 @@ Returns a `Batman.SetSort` based on the `Set`, sorted by `key` in `order`. This 
 The `Batman.SetSort` tracks the `Set` and its members (in case their value for `key` changes).
 
     test 'Set::sortedBy returns a new SetSort who can be iterated in the sorted order of the value of the key on each item', ->
-      set = new Batman.Set(Batman(place: 3, name: 'Harry'), Batman(place: 1, name: 'Tom'), Batman(place: 2, name: 'Camilo'))
+      set = new Batman.Set([Batman(place: 3, name: 'Harry'), Batman(place: 1, name: 'Tom'), Batman(place: 2, name: 'Camilo')])
       sort = set.sortedBy('place')
       deepEqual sort.toArray().map((item) -> item.get('name')), ['Tom', 'Camilo', 'Harry']
 
@@ -367,7 +369,8 @@ Accessor for `Set::sortedBy`. `mySet.get('sortedBy.myKey')` returns the same res
 ```
 
     test "Set::get('sortedBy.someKey') returns a new SetSort on 'someKey'", ->
-      set = new Batman.Set(Batman(place: 3, name: 'Harry'), Batman(place: 1, name: 'Tom'), Batman(place: 2, name: 'Camilo'))
+      set = new Batman.Set([Batman(place: 3, name: 'Harry'), Batman(place: 1, name: 'Tom'), Batman(place: 2, name: 'Camilo')])
+
       sort = set.get('sortedBy.place')
       equal 'Harry', sort.get('toArray')[2].get('name')
 

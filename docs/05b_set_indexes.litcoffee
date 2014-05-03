@@ -6,7 +6,7 @@
       batarang = new Batman.Object(name: "Batarang", type: "ranged")
       fists = new Batman.Object(name: "Fists", type: "melee")
 
-      weapons = new Batman.Set(batarang, fists)
+      weapons = new Batman.Set([batarang, fists])
       # Three ways to create a SetIndex:
       weaponsByType1 = weapons.indexedBy('type')
       weaponsByType2 = weapons.get('indexedBy.type')
@@ -79,7 +79,7 @@ Calls `func(key, group)` for each group in the SetIndex.
       batarang = new Batman.Object(name: "Batarang", type: "ranged")
       fists = new Batman.Object(name: "Fists", type: "melee")
 
-      weapons = new Batman.Set(batarang,  fists)
+      weapons = new Batman.Set([batarang,  fists])
 
       # Three ways to make a UniqueSetIndex:
       weaponsByUniqueType1 = weapons.indexedByUnique('type')
