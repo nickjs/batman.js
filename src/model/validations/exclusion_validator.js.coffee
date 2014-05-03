@@ -9,7 +9,7 @@ class Batman.ExclusionValidator extends Batman.Validator
 
   validateEach: (errors, record, key, callback) ->
     if @unacceptableValues.indexOf(record.get(key)) >= 0
-      errors.add key, @format(key, 'included_in_list')
+      errors.add key, @format(key, 'included_in_list', {}, record)
 
     callback()
 

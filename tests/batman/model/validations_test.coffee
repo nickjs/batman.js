@@ -64,6 +64,7 @@ validationsTestSuite = ->
       p.validate (error, errors) ->
         throw error if error
         equal errors.length, 1
+        equal errors.get('first.fullMessage'), "Min must be at least 4 characters"
         QUnit.start()
 
   asyncTest "presence", 3, ->
@@ -400,7 +401,7 @@ validationsTestSuite = ->
         throw err if err
         equal errors.length, 0
         p.set 'country_in_eu', true
-        p.set 'vat_number', 'SE000000000000' 
+        p.set 'vat_number', 'SE000000000000'
         p.validate (err, errors) ->
           throw err if err
           equal errors.length, 0
@@ -455,6 +456,7 @@ validationsTestSuite = ->
       p.validate (err, errors) ->
         throw err if err
         equal errors.length, 1
+        equal errors.get('first.fullMessage'), "Password and confirmation do not match"
         p.set 'password_confirmation', 'test'
         p.validate (err, errors) ->
           throw err if err
@@ -581,6 +583,27 @@ validationsTestSuite = ->
           equal errors.length, 0
           QUnit.start()
 
+  asyncTest "Validation takes a custom message", ->
+    class Product extends Batman.Model
+      @validate 'name', presence: true, message: "really should be present"
+
+    p = new Product(name: null)
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      equal errors.get('first.fullMessage'), "Name really should be present"
+      QUnit.start()
+
+  asyncTest "Validation takes a custom message which can be a function", ->
+    class Product extends Batman.Model
+      @validate 'name', presence: true, message: -> "must be there for product ##{@get('id')}"
+    p = new Product(name: null, id: 50)
+    p.validate (err, errors) ->
+      throw err if err
+      equal errors.length, 1
+      equal errors.get('first.fullMessage'), "Name must be there for product #50"
+      QUnit.start()
+
 QUnit.module "Batman.Model: Validations"
 validationsTestSuite()
 
@@ -661,6 +684,11 @@ asyncTest "errors set contents should be bindable", 4, ->
     equal errors.length, 1, 'the validation shouldn\'t succeed'
     equal @someObject.get('productNameErrorsLength'), 1, 'the foreign key should have updated'
     QUnit.start()
+
+QUnit.module "Batman.ValidationError",
+  setup: ->
+    class Product extends Batman.Model
+    @record = new Product
 
 test "ValidationError should get full message", ->
   error = new Batman.ValidationError("foo", "isn't valid")

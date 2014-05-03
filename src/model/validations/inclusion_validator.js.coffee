@@ -11,7 +11,7 @@ class Batman.InclusionValidator extends Batman.Validator
   validateEach: (errors, record, key, callback) ->
     value = record.get(key)
     if !@handleBlank(value) && @acceptableValues.indexOf(value) == -1
-      errors.add key, @format(key, 'not_included_in_list')
+      errors.add key, @format(key, 'not_included_in_list', {}, record)
 
     callback()
 
