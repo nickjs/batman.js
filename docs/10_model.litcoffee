@@ -202,69 +202,11 @@ Some more handy examples:
 
 ## @validate(keys...[, options : [Object|Function]])
 
-Validations allow a model to be marked as `valid` or `invalid` based on a set of programmatic rules. By validating a model's data before it gets to the server we can provide immediate feedback to the user about what they have entered and forgo waiting on a round trip to the server. `validate` allows the attachment of validations to the model on particular keys, where the validation is either a built in one (invoked by use of options to pass to them) or a custom one (invoked by use of a custom function as the second argument).
+Assigns validators to `keys` based on `options`. All instances of the defined model will be validated according to these keys.
 
-_Note_: Validation in batman.js is always asynchronous, despite the fact that none of the validations may use an asynchronous operation to check for validity. This is so that the API is consistent regardless of the validations used.
-
-Built in validators are attached by calling `@validate` with options designating how to calculate the validity of the key:
-
-    test '@validate accepts options to check for validity', ->
-      QUnit.expect(0)
-      class Post extends Batman.Model
-        @resourceName: 'post'
-
-        @validate 'title', 'body', {presence: true} # title and body must be present (not undefined nor '')
-        @validate 'body', {minLength: 10}           # body must be 10 characters long at least
-        @validate 'title', {pattern: /^[A-Z]/}      # Title must start with an uppercase letter
-        @validate 'author', {email: true}           # the author field must contain a valid email address
-
-The built in validation options are listed below:
-
- + `presence : boolean`: Assert that the string value is existent (not undefined or null) and has length greater than 0.
- + `numeric : true`: Assert that the value is or can be coerced into a number using `parseFloat`.
- + `greaterThan : number`: Assert that the value is greater than the given number.
- + `greaterThanOrEqualTo : number`: Assert that the value is greater than or equal to the given number.
- + `equalTo : number`: Assert that the value is equal to the given number.
- + `lessThan : number`: Assert that the value is less than the given number.
- + `lessThanOrEqualTo : number`: Assert that the value is less than or equal to the given number.
- + `minLength : number`: Assert that the value's `length` property is greater than the given number.
- + `maxLength : number`: Assert that the value's `length` property is less than the given number.
- + `length : number`: Assert that the value's `length` property is exactly the given number.
- + `lengthWithin : [number, number]` or `lengthIn : [number, number]`: Assert that the value's `length` property is within the ranger specified by the given array of two numbers, where the first number is the lower bound and the second number is the upper bound.
- + `inclusion : in : [list, of, acceptable, values]`: Assert that the value is equal to one of the values in an array.
- + `exclusion : in : [list, of, unacceptable, values]`: Assert that the value is not equal to any of the values in an array.
- + `regexp : /regexp/` : Assert that the value is matching the provided regular expression.
- + `email : true` : Assert that the value is an email address, per the [W3C HTML5 definition](http://www.w3.org/TR/html5/forms.html#valid-e-mail-address).
- + `associated : true` : Assert that associated record is also valid. If invalid the message will be "#{associationName} is not valid".
- + `associatedFields : true` : Like `associated`, but adds error messages with the names of the fields on associated records, eg "Username must be at least 10 characters" or "Favorite flavor is not included in the list".
-
-Custom validators should have the signature `(errors, record, key, callback)`. The arguments are as follows:
-
- + `errors`: an `ErrorsSet` instance which expects to have `add` called on it to add errors to the model
- + `record`: the record being validated
- + `key`: the key to which the validation has been attached
- + `callback`: a function to call once validation has been completed. Calling this function is __mandatory__.
+See [Model Validations](/docs/api/batman.model_validations.html) for a detailed description of validation options.
 
 See [`Model::validate`](/docs/api/batman.model.html#prototype_function_validate) for information on how to get a particular record's validity.
-
-Validations can be skipped by including a conditional check:
-
-    test '@validate accepts an if or unless option to determine whether the validation should be performed or not', ->
-      QUnit.expect(0)
-      class Invoice extends Batman.Model
-        @resourceName: 'invoice'
-        @validate 'tax_1_rate', {presence: true, if: (errors, record, key) -> record.get('tax_1_enabled')} # tax 1 rate must be present if tax 1 is enabled
-        @validate 'tax_2_rate', {presence: true, if: 'tax_2_rate'} # passing a string will look for an attribute or accessor with that name on the record
-        @validate 'discount_rate', {presence: true, unless: 'discount_disabled'} # discount rate must be present unless discount is disabled
-
- + `if`: Specifies a function or string to determine whether the validation should occur. Should return either true or false.
- + `unless`: Specifies a function or string to determine whether the validation should not occur. Should return either true or false.
-
-If you specify the if or unless option as a string, it will do a `@get(string)` on the record being validated. Functions should have the signature `(errors, record, key)`. The arguments are as follows:
-
- + `errors`: the ErrorsSet instance
- + `record`: the record being validated
- + `key`: the key to which the validation has been attached
 
 ## @%loaded : Set
 

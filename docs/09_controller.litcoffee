@@ -74,7 +74,7 @@ class Alfred.TodosController extends Alfred.ApplicationController
 
 For a full list of storage errors, see [`Batman.StorageAdapter` Errors](/docs/api/batman.storageadapter_errors.html).
 
-## ::render([options : [Object|Boolean]]) : View
+## ::render([options : [Object|boolean]])
 
 `render` is used to control the rendering of the current action. Unless specified otherwise, `Batman.Controller` actions render automatically.
 
@@ -100,14 +100,6 @@ class Alfred.TodosController extends Batman.Controller
   actionWithCustomYield: ->
     @render(into: 'not-main')
 ```
-
-`render` options include:
-
-- `view`: a view instance to render
-- `viewClass`: a class to instantiate and render
-- `source`: An HTML source path to use for the rendered view
-- `into`: The yield where the view should be rendered
-- Other options are passed to the `viewClass` constructor, if provided.
 
 For more information on yield blocks, see [`Controller::.defaultRenderYield`](/docs/api/batman.controller.html#prototype_property_defaultrenderyield).
 
