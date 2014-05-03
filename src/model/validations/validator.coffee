@@ -20,9 +20,10 @@ class Batman.Validator extends Batman.Object
     super mixins...
 
   validateEach: (record) -> Batman.developer.error "You must override validateEach in Batman.Validator subclasses."
+
   format: (attr, messageKey, interpolations, record) ->
     if @options.message
-      if @options.message.call?
+      if typeof @options.message is 'function'
         @options.message.call(record, attr, messageKey)
       else
         @options.message

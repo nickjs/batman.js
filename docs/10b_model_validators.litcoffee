@@ -37,7 +37,7 @@ class App.Pyramid extends Batman.Model
   @validate 'top', lessThanProperty: 'base'
 ```
 
-## ::constructor(options : Object[, mixins...])
+## ::constructor(options : Object[, mixins...]) : Validator
 
 The first argument becomes the validator's `@options`. Subsequent arguments are mixed in to the validator with `Batman.Object::mixin`. You can override this method to alter the options object before it's assigned to `@options`. (Make sure to call `super` afterwards!)
 
@@ -91,17 +91,24 @@ When the validator is finished, it must call `callback` to continue the validati
 
 Returns `true` if `options.allowBlank` is `true` _and_ `value` is `null`, `undefined` or `""`
 
+## ::format(attr, messageKey, interpolations, record) : String
+
+Generates a human-readable message for `messageKey` by:
+
+- Using the `message` option passed to `@validate`, if present
+- Looking up `messageKey` in the current locale's `errors.messages`
+
 # /api/App Internals/Batman.Model/Batman.ValidationError
 
 `Batman.ValidationError`s represent a failure for a record's field to to pass validation.
 They are usually accessed by getting a record's [errors](/docs/api/batman.model.html#prototype_accessor_errors).
 
-## ::constructor(record : Model, attribute: String, messageOrKey: String, options={}) : ValidationError
+## ::constructor(attribute: String, messageOrKey: String, options={}) : ValidationError
 
-Returns a new validation error for `attribute` on `record`. `messageOrKey` and `options` are used to create the error message:
+Returns a new validation error for `attribute`. `messageOrKey` and `options` are used to create the error message:
 
 - if `options.message` is a string, it is used as the error's message
-- if `options.message` is a function, it is called with the record as `this`
+- if `options.message` is a function, it is called on the `record` with `(attribute, messageKey)`
 - if `messageOrKey` is underscore-cased, it is used to lookup an error message
 - otherwise, `messageOrKey` is used as the error's message
 
@@ -114,12 +121,8 @@ Returns the human-readable attribute name and the validation message:
     test "ValidationError should humanize attribute in the full message", ->
       class Product extends Batman.Model
       product = new Product
-      error = new Batman.ValidationError(product, "fooBarBaz", "isn't valid")
+      error = new Batman.ValidationError("fooBarBaz", "isn't valid")
       equal error.get('fullMessage'), "Foo bar baz isn't valid"
-
-## ::.record : Model
-
-The `Batman.Model` instance that this error belongs to.
 
 # /api/App Internals/Batman.Model/Batman.ErrorsSet
 
@@ -142,14 +145,7 @@ record.get('errors.emailAddress.first.fullMessage')
 # => "Email address is not valid"
 ```
 
-## ::constructor(record : Model) : ErrorsSet
+## ::add(attribute : String, message: String)
 
-Returns a new `Batman.ErrorsSet` for errors on `record`.
+Adds a new `Batman.ValidationError` on `attribute` with `message`.
 
-## ::add(field : String, messageOrKey : String, options : Object)
-
-Adds a new `Batman.ValidationError` on the record's attribute `field`, deriving name from `messageOrKey` and `options` as described in `Batman.ValidationError`.
-
-## ::.record : Model
-
-The record whose errors are stored in the `ErrorsSet`

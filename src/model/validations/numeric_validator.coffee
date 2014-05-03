@@ -9,7 +9,7 @@ class Batman.NumericValidator extends Batman.Validator
     value = record.get(key)
     return callback() if @handleBlank(value)
     if !value? || !(@isNumeric(value) || @canCoerceToNumeric(value))
-      errors.add key, @format(key, 'not_numeric' {}, record)
+      errors.add key, @format(key, 'not_numeric', {}, record)
     else if options.onlyInteger and !@isInteger(value)
       errors.add key, @format(key, 'not_an_integer', {}, record)
     else

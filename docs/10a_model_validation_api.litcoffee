@@ -86,7 +86,7 @@ Batman.js ships with straightforward messages for the built-in validators. Howev
 1. __Pass a `message` option__. It may be a string or function. for example:
   ```
     @validate 'name', presence: true, message: "must be provided" # => "Name must be provided"
-    @validate 'amount', in: [1,2,3], message: (attribute, messageKey, record) -> "can't be #{record.get('amount}!"
+    @validate 'amount', in: [1,2,3], message: (attribute, messageKey, record) -> "can't be #{record.get('amount')}!"
   ```
 1. __Use a custom validation__. In your custom validation, add the error with your custom message, for example:
   ```coffeescript
