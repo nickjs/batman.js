@@ -685,10 +685,7 @@ asyncTest "errors set contents should be bindable", 4, ->
     equal @someObject.get('productNameErrorsLength'), 1, 'the foreign key should have updated'
     QUnit.start()
 
-QUnit.module "Batman.ValidationError",
-  setup: ->
-    class Product extends Batman.Model
-    @record = new Product
+QUnit.module "Batman.ValidationError"
 
 test "ValidationError should get full message", ->
   error = new Batman.ValidationError("foo", "isn't valid")
