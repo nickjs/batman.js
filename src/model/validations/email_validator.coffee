@@ -12,7 +12,7 @@ class Batman.EmailValidator extends Batman.Validator
   validateEach: (errors, record, key, callback) ->
     value = record.get(key)
     if !value? || value == '' || !@emailRegexp.test(value)
-      errors.add key, @format(key, 'not_an_email')
+      errors.add key, @format(key, 'not_an_email', {}, record)
     callback()
 
 Batman.Validators.push Batman.EmailValidator

@@ -19,8 +19,16 @@ class Batman.Validator extends Batman.Object
   constructor: (@options, mixins...) ->
     super mixins...
 
-  validate: (record) -> Batman.developer.error "You must override validate in Batman.Validator subclasses."
-  format: (key, messageKey, interpolations) -> Batman.t("errors.messages.#{messageKey}", interpolations)
+  validateEach: (record) -> Batman.developer.error "You must override validateEach in Batman.Validator subclasses."
+
+  format: (attr, messageKey, interpolations, record) ->
+    if @options.message
+      if typeof @options.message is 'function'
+        @options.message.call(record, attr, messageKey)
+      else
+        @options.message
+    else
+      Batman.t("errors.messages.#{messageKey}", interpolations)
 
   handleBlank: (value) ->
     if @options.allowBlank && !Batman.PresenceValidator::isPresent(value)

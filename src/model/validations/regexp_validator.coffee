@@ -12,7 +12,7 @@ class Batman.RegExpValidator extends Batman.Validator
       value = record.get(key)
       return callback() if @handleBlank(value)
       if !value? || value == '' || !@regexp.test(value)
-        errors.add key, @format(key, 'not_matching')
+        errors.add key, @format(key, 'not_matching', {}, record)
       callback()
 
 Batman.Validators.push Batman.RegExpValidator
