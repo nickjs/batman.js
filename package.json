@@ -34,7 +34,7 @@
     "temp": "~0.5.0",
     "connect-assets": "~2.4.1",
     "liquor": "~0.0.0",
-    "snockets": "git://github.com/batmanjs/snockets.git#01e8e9dc1ace38de0a8f1ef020961e68caa2db28",
+    "snockets": "git://github.com/batmanjs/snockets.git#2cb7529491add5795953c7b8c7924f02a2b34c34",
     "karma": "~0.10.9",
     "karma-qunit": "~0.1.0",
     "karma-script-launcher": "~0.1.0",
