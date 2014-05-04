@@ -25,7 +25,7 @@ class Batman.Set extends Batman.Object
 
   @_applySetAccessors(@)
 
-  for k in ['indexedBy', 'indexedByUnique', 'sortedBy', 'equality', '_indexOfItem']
+  for k in ['indexedBy', 'indexedByUnique', 'sortedBy', 'equality', '_indexOfItem', 'mappedTo']
     @::[k] = Batman.SimpleSet::[k]
 
   for k in ['at', 'find', 'merge', 'forEach', 'toArray', 'isEmpty', 'has']

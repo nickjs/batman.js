@@ -33,7 +33,7 @@ class Batman.SetObserver extends Batman.Object
     return
 
   _manageObserversForItem: (item, method) ->
-    if item.isObservable
+    if item?.isObservable
       for key in @observedItemKeys
         item[method] key, @_getOrSetObserverForItemAndKey(item, key)
       @_itemObservers.unset(item) if method is "forget"
