@@ -428,3 +428,31 @@ asyncTest 'should bind to things under window only when the keypath specifies it
     helpers.render '<div data-bind="window.foo"></div>', {}, (node) ->
       equal node.html(), "bar"
       QUnit.start()
+
+asyncTest 'withArguments passes arguments to specified function and returns result', 2, ->
+  context = foo: spy = createSpy()
+
+  helpers.render '<a data-event-click="foo | withArguments 2">', context, (node) ->
+    helpers.triggerClick(node[0])
+    ok spy.called
+    equal spy.lastCallArguments[0], 2
+    QUnit.start()
+
+asyncTest 'Pass arguments to accessor with Batman.TerminalAccessible', ->
+  context = Batman test: new class extends Batman.Object
+    @accessor 'accessible', ->
+      new Batman.TerminalAccessible (x) -> x + 1
+
+  helpers.render '<div data-bind="test.accessible[1]"></div>', context, (node) ->
+    equal node[0].innerHTML, "2"
+    QUnit.start()
+
+asyncTest 'withArguments with Batman.TerminalAccessible', ->
+  context = Batman test: new class extends Batman.Object
+    @accessor 'accessible', ->
+      new Batman.TerminalAccessible (x) -> x + 1
+
+  helpers.render '<div data-bind="test.accessible | withArguments 1"></div>', context, (node) ->
+    equal node[0].innerHTML, "2"
+    QUnit.start()
+

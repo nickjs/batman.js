@@ -172,8 +172,11 @@ Batman.Filters =
 
   # allows you to curry arguments to a function via a filter
   withArguments: (block, curryArgs..., binding) ->
-    return if not block
-    return (regularArgs...) -> block.call @, curryArgs..., regularArgs...
+    return unless block
+    if typeof block is "function"
+      -> block.call @, curryArgs..., arguments...
+    else if typeof block.get is "function"
+      block.get(curryArgs...)
 
   escape: buntUndefined(Batman.escapeHTML)
 
