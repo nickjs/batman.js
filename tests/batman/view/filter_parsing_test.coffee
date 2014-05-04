@@ -430,8 +430,7 @@ asyncTest 'should bind to things under window only when the keypath specifies it
       QUnit.start()
 
 asyncTest 'withArguments passes arguments to specified function and returns result', 2, ->
-  context =
-    foo: spy = createSpy()
+  context = foo: spy = createSpy()
 
   helpers.render '<a data-event-click="foo | withArguments 2">', context, (node) ->
     helpers.triggerClick(node[0])
@@ -440,34 +439,20 @@ asyncTest 'withArguments passes arguments to specified function and returns resu
     QUnit.start()
 
 asyncTest 'Pass arguments to accessor with Batman.TerminalAccessible', ->
-  class TestClass extends Batman.Object
-
-    @::col = ["a", "b", "c"]
-
+  context = Batman test: new class extends Batman.Object
     @accessor 'accessible', ->
-      new Batman.TerminalAccessible (id) =>
-        return @col[id]
-
-  context = Batman
-    test: new TestClass
+      new Batman.TerminalAccessible (x) -> x + 1
 
   helpers.render '<div data-bind="test.accessible[1]"></div>', context, (node) ->
-    equal node[0].innerHTML, "b"
+    equal node[0].innerHTML, "2"
     QUnit.start()
 
 asyncTest 'withArguments with Batman.TerminalAccessible', ->
-  class TestClass extends Batman.Object
-
-    @::col = ["a", "b", "c"]
-
+  context = Batman test: new class extends Batman.Object
     @accessor 'accessible', ->
-      new Batman.TerminalAccessible (id) =>
-        return @col[id]
-
-  context = Batman
-    test: new TestClass
+      new Batman.TerminalAccessible (x) -> x + 1
 
   helpers.render '<div data-bind="test.accessible | withArguments 1"></div>', context, (node) ->
-    equal node[0].innerHTML, "b"
+    equal node[0].innerHTML, "2"
     QUnit.start()
 
