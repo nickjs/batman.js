@@ -1,7 +1,12 @@
 Besides lots of bug fixes, documentation updates, etc, here some major changes:
 
 - batman.js node package was removed
+- Travis uploads successful, tagged builds to `http://batman.js.s3.amazonaws.com/batman-#{tag}.tar.gz`. Also, `master` is available at http://batman.js.s3.amazonaws.com/batman-master.tar.gz.
 - added `cake build` and `cake build:dist` for compiling batman.js https://github.com/batmanjs/batman/pull/864
+
+### Batman helpers 
+- `toSentence` added 
+- `capitalize` became `titlize`, `capitalize` gets a deprecation warning
 
 ### Batman.Object
 - `Batman.Object.delegate` was added https://github.com/batmanjs/batman/pull/830
@@ -10,9 +15,11 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 
 ### Batman.Set
 - `::toJSON` iterates over members and calls `toJSON` on them https://github.com/batmanjs/batman/pull/905
-
-### Batman.Hash
+- `::mappedTo` returns a `Batman.SetMapping` 
 - `::toJSON` iterates over members and calls `toJSON` on them https://github.com/batmanjs/batman/pull/905
+
+### Batman.Request 
+- Class accessors `pendingRequestCount` and `requestIsPending` added https://github.com/batmanjs/batman/pull/1032
 
 ### Batman.Model
 - `AssociationSet::load` takes options and passes env https://github.com/batmanjs/batman/pull/825
@@ -32,6 +39,7 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 - Calls to `Model.find` for the same ID are pipelined like `Model.load` https://github.com/batmanjs/batman/pull/1026 
 - `validate associatedFields: true` pushes messages from associated records to this record https://github.com/batmanjs/batman/pull/995
 - `AssociationSet::build(attrs)` creates a child record with `attrs` and adds it to the set https://github.com/batmanjs/batman/pull/995
+- `@validate`s `message:` option may be a string or function https://github.com/batmanjs/batman/pull/1040
 
 ### Batman.Controller
 - default to current controller when redirecting https://github.com/batmanjs/batman/pull/999
@@ -51,6 +59,7 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 - `@validate` `if` & `unless` take strings which are looked up on the record https://github.com/batmanjs/batman/pull/1012
 - `AssociationSet::build` adds a child record with passed attributes https://github.com/batmanjs/batman/pull/994
 - `@validate 'key', associatedFields: true` pushes messages from associated records to this record https://github.com/batmanjs/batman/pull/995
+- `withArguments` filter works with `TerminalAccessible` https://github.com/batmanjs/batman/pull/923
 
 ### Batman.I18N
 - Translation filters fixed, `@useFallback` for cases of missing translations https://github.com/batmanjs/batman/pull/988
