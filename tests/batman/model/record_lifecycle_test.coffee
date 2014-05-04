@@ -55,3 +55,96 @@ asyncTest "existing record lifecycle callbacks fire in order", ->
         throw err if err
         deepEqual(callOrder, [0,1,2,3,4,5,6,7,8])
         QUnit.start()
+
+
+QUnit.module "Batman.Model record lifecycle prototype listeners",
+  setup: ->
+    class @Product extends Batman.Model
+      @encode 'name'
+      @persist TestStorageAdapter
+      @loadingCallOrder = [101, 102, 103, 5, 104, 105]
+      @expectedCallOrder = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
+      _push: (i) ->
+        @callOrder ?= []
+        @callOrder.push(i)
+
+      @::on 'enter loading', -> @_push(101)
+      @::on 'load', -> @_push(102)
+      @::on 'exit loading', -> @_push(103)
+      # enter clean 5
+      @::on 'loaded', -> @_push(104)
+      # loaded callback 105
+
+      @::on 'enter dirty', -> @_push(0)
+      @::on 'set', -> @_push(1)
+      @::on 'enter creating', -> @_push(2)
+      @::on 'enter saving', -> @_push(2)
+      @::on 'create', -> @_push(3)
+      @::on 'save', -> @_push(3)
+      @::on 'exit creating', -> @_push(4)
+      @::on 'exit saving', -> @_push(4)
+      @::on 'enter clean', -> @_push(5)
+      @::on 'created', -> @_push(6)
+      @::on 'saved', -> @_push(6)
+      # save callback
+      @::on 'enter destroying', -> @_push(8)
+      @::on 'destroy', -> @_push(9)
+      @::on 'exit destroying', -> @_push(10)
+      @::on 'enter destroyed', -> @_push(11)
+      @::on 'destroyed', -> @_push(12)
+      # destroy callback 13
+
+asyncTest "new record lifecycle prototype callbacks fire in order", ->
+  product = new @Product()
+  product.set('foo', 'bar')
+
+  product.save (err) =>
+    throw err if err
+    product._push(7)
+
+    product.destroy (err) =>
+      throw err if err
+      product._push(13)
+      deepEqual(product.callOrder, @Product.expectedCallOrder)
+      QUnit.start()
+
+asyncTest "existing record lifecycle callbacks fire in order", ->
+  @Product.find 10, (err, product) =>
+    product._push(105)
+    product.set('foo', 'bar')
+
+    product.save (err) =>
+      throw err if err
+      product._push(7)
+
+      product.destroy (err) =>
+        throw err if err
+        product._push(13)
+        deepEqual(product.callOrder, @Product.loadingCallOrder.concat(@Product.expectedCallOrder))
+        QUnit.start()
+
+asyncTest "throwing an error stops a storage operation for an existing record", ->
+
+  @Product.find 10, (err, product) =>
+    product._push(105)
+    product.set('foo', 'bar')
+    product.on 'before saving', -> throw "Stop saving!"
+
+    try
+      product.save (err) =>
+        throw err if err
+        product._push(7)
+    catch err
+      equal "#{err}", "Stop saving!"
+      deepEqual product.callOrder, @Product.loadingCallOrder.concat([0,1])
+      QUnit.start()
+
+test "throwing an error stops a storage operation for an existing record", ->
+  product = new @Product()
+  product.on 'before creating', -> throw "Stop saving!"
+  try
+    product.save (err) =>
+      throw "Failed!"
+  catch err
+    ok product.isNew()
+    equal "#{err}", "Stop saving!"
