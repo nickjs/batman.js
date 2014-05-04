@@ -174,7 +174,7 @@ Batman.Filters =
   withArguments: (block, curryArgs..., binding) ->
     return unless block
     if typeof block is "function"
-      (regularArgs...) -> block.call @, curryArgs..., regularArgs...
+      -> block.call @, curryArgs..., arguments...
     else if typeof block.get is "function"
       block.get(curryArgs...)
 
