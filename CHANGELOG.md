@@ -16,6 +16,8 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 ### Batman.Set
 - `::toJSON` iterates over members and calls `toJSON` on them https://github.com/batmanjs/batman/pull/905
 - `::mappedTo` returns a `Batman.SetMapping` 
+
+### Batman.Hash
 - `::toJSON` iterates over members and calls `toJSON` on them https://github.com/batmanjs/batman/pull/905
 
 ### Batman.Request 
@@ -29,6 +31,7 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 - `@encode`'s `as` option can be a function https://github.com/batmanjs/batman/pull/863
 - `::validate` fires `validated` if validation was successful https://github.com/batmanjs/batman/pull/943
 - `@validate` allows `if` https://github.com/batmanjs/batman/pull/883
+- `@validate` `if` & `unless` take strings which are looked up on the record https://github.com/batmanjs/batman/pull/1012
 - `@validate` accepts `email: true` with EmailValidator https://github.com/batmanjs/batman/pull/940
 - `::save` accepts `only` or `except` with keys https://github.com/batmanjs/batman/pull/951
 - Added `@createMultipleFromJSON` https://github.com/batmanjs/batman/pull/981
@@ -38,8 +41,8 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 - Association `saveInline` defaults to false https://github.com/batmanjs/batman/pull/1028
 - Calls to `Model.find` for the same ID are pipelined like `Model.load` https://github.com/batmanjs/batman/pull/1026 
 - `validate associatedFields: true` pushes messages from associated records to this record https://github.com/batmanjs/batman/pull/995
-- `AssociationSet::build(attrs)` creates a child record with `attrs` and adds it to the set https://github.com/batmanjs/batman/pull/995
 - `@validate`s `message:` option may be a string or function https://github.com/batmanjs/batman/pull/1040
+- `AssociationSet::build` adds a child record with passed attributes https://github.com/batmanjs/batman/pull/994
 
 ### Batman.Controller
 - default to current controller when redirecting https://github.com/batmanjs/batman/pull/999
@@ -56,9 +59,6 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 - Added filters `ceil`, `floor`, `round`, `precision`, `fixed` and `delimitNumber` https://github.com/batmanjs/batman/pull/954
 - Added filters `lt`, `gt`, `lteq`, `gteq`, `eq`, and `neq` https://github.com/batmanjs/batman/pull/1009
 - added `primaryInteractionEvent` & `primaryInteractionEventName` to allow use with touch https://github.com/batmanjs/batman/pull/880
-- `@validate` `if` & `unless` take strings which are looked up on the record https://github.com/batmanjs/batman/pull/1012
-- `AssociationSet::build` adds a child record with passed attributes https://github.com/batmanjs/batman/pull/994
-- `@validate 'key', associatedFields: true` pushes messages from associated records to this record https://github.com/batmanjs/batman/pull/995
 - `withArguments` filter works with `TerminalAccessible` https://github.com/batmanjs/batman/pull/923
 
 ### Batman.I18N
