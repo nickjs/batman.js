@@ -1,0 +1,1 @@
+#= require ../../extras/batman.i18n
