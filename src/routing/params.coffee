@@ -2,7 +2,7 @@
 
 class Batman.Params extends Batman.Hash
   constructor: (@hash, @navigator) ->
-    super
+    super(@hash)
 
     @url = new Batman.UrlParams({}, @navigator, this)
 
@@ -10,9 +10,10 @@ class Batman.Params extends Batman.Hash
 
 class Batman.UrlParams extends Batman.Hash
   constructor: (@hash, @navigator, @params) ->
-    super
+    super(@hash)
 
     @replace(@paramsFromUri())
+    @updateParams()
 
     @on 'change', (obj) =>
       obj.updateUrl()
