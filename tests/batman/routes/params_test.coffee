@@ -3,14 +3,13 @@ QUnit.module "Batman.Params",
     @params = new Batman.Params
 
 test "@url is set", ->
-  ok @params.url() instanceof Batman.UrlParams
-  equal @params.url(), @params.get('url')
+  ok @params.url instanceof Batman.UrlParams
+  equal @params.url, @params.get('url')
 
 QUnit.module "Batman.UrlParams",
-  window.location.pathname = '/'
-  window.location.search = '?page=5&limit=10'
-
   setup: ->
+    Batman.UrlParams::currentPath = -> '/?page=5&limit=10'
+
     @navigator =
       setPath: createSpy()
     @params = new Batman.Params({
@@ -18,12 +17,15 @@ QUnit.module "Batman.UrlParams",
       bar: 'barVal'
       }, @navigator)
 
-    @urlParams = @params.url()
+    @urlParams = @params.url
 
 test "it sets params from URL", ->
+  console.log @urlParams.toJSON()
   equal @urlParams.get('page'), 5
   equal @urlParams.get('limit'), 10
 
 test "it sets URL from params", ->
-  @urlParams.set(page: 8)
-  equal window.location.search, '?page=8&limit=10'
+  @urlParams.set('page', 8)
+
+  equal @navigator.setPath.callCount, 1
+  deepEqual @navigator.setPath.lastCallArguments, ['/?page=8&limit=10']
