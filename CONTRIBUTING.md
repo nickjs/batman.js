@@ -9,9 +9,9 @@
 
 ## Building
 - Do not include built files with source change commits. It makes the commits hard to diff and revert.
-- After a branch or pull request has been completed and merged into master, build dist in a single "Build" commit.
+- You can get `batman/master` from http://batman.js.s3.amazonaws.com/batman-master.tar.gz
 
 ## Documentation
-- Anyone can help contribute to the percolate docs, even without contributing code! Percolate is a tool that makes it easy to write documentation in Markdown without looking at a bunch of source code and optionally including inline examples and tests.
-- If you're adding a new batman feature or changing an existing API or feature, it would be AWESOME if you could include percolate docs with the pull request.
+- Anyone can help contribute to the docs, even without contributing code!
+- If you're adding a new batman feature or changing an existing API or feature, it would be AWESOME if you could include docs with the pull request.
 - Docs are required for core team pull requests, but just highly appreciated for external contributors.

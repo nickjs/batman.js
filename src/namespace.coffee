@@ -3,7 +3,7 @@
 Batman = (mixins...) ->
   new Batman.Object(mixins...)
 
-Batman.version = '0.15.0'
+Batman.version = '0.16.0'
 
 Batman.config =
   pathToApp: '/'
