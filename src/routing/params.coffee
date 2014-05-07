@@ -30,10 +30,10 @@ class Batman.UrlParams extends Batman.Hash
 
   updateUrl: ->
     uri = @currentUri()
-    uri.queryParams = @toJSON()
+    uri.queryParams = @toObject()
     path = uri.toString()
 
     @navigator.setPath(path)
 
   updateParams: ->
-    @params.update(@toJSON())
+    @params.update(@toObject())

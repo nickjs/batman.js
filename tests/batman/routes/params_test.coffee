@@ -20,7 +20,6 @@ QUnit.module "Batman.UrlParams",
     @urlParams = @params.url
 
 test "it sets params from URL", ->
-  console.log @urlParams.toJSON()
   equal @urlParams.get('page'), 5
   equal @urlParams.get('limit'), 10
 
