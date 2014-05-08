@@ -60,12 +60,9 @@ class Batman.Navigator
     @cachedPath = @_lastRedirect if @_lastRedirect
 
     if !@_lastRedirect or @_lastRedirect is path
-      @setPath(path, replaceState)
+      @[if replaceState then 'replaceState' else 'pushState'](null, '', path)
 
     path
-
-  setPath: (path, replaceState=false) ->
-    @[if replaceState then 'replaceState' else 'pushState'](null, '', path)
 
   push: (params) ->
     Batman.developer.deprecated("Navigator::push", "Please use Batman.redirect({}) instead.")
