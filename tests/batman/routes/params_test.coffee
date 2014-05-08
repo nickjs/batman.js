@@ -9,9 +9,10 @@ test "@url is set", ->
 QUnit.module "Batman.UrlParams",
   setup: ->
     Batman.UrlParams::currentPath = -> '/?page=5&limit=10'
+    Batman.UrlParams::pathFromRoutes = -> null
 
     @navigator =
-      setPath: createSpy()
+      pushState: createSpy()
     @params = new Batman.Params({
       foo: 'fooVal'
       bar: 'barVal'
@@ -26,5 +27,5 @@ test "it sets params from URL", ->
 test "it sets URL from params", ->
   @urlParams.set('page', 8)
 
-  equal @navigator.setPath.callCount, 1
-  deepEqual @navigator.setPath.lastCallArguments, ['/?page=8&limit=10']
+  equal @navigator.pushState.callCount, 1
+  deepEqual @navigator.pushState.lastCallArguments, [null, '', '/?page=8&limit=10']

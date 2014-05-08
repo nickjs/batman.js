@@ -23,17 +23,31 @@ class Batman.UrlParams extends Batman.Hash
     @currentUri().queryParams
 
   currentPath: ->
-    window.location.pathname + window.location.search
+    @params.get('path')
 
   currentUri: ->
     new Batman.URI(@currentPath())
 
-  updateUrl: ->
+  pathFromRoutes: ->
+    route = @navigator.app.get('currentRoute')
+    params =
+      controller: route.controller
+      action: route.action
+
+    Batman.mixin(params, @toObject())
+
+    @navigator.app.get('dispatcher').pathFromParams(params)
+
+  pathFromParams: ->
+    if path = @pathFromRoutes()
+      return path
+
     uri = @currentUri()
     uri.queryParams = @toObject()
-    path = uri.toString()
+    uri.toString()
 
-    @navigator.setPath(path)
+  updateUrl: ->
+    @navigator.pushState(null, '', @pathFromParams())
 
   updateParams: ->
     @params.update(@toObject())
