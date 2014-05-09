@@ -8,8 +8,8 @@ test "@url is set", ->
 
 QUnit.module "Batman.UrlParams",
   setup: ->
-    Batman.UrlParams::currentPath = -> '/?page=5&limit=10'
-    Batman.UrlParams::pathFromRoutes = -> null
+    Batman.UrlParams::_currentPath = -> '/?page=5&limit=10'
+    Batman.UrlParams::_pathFromRoutes = -> null
 
     @navigator =
       pushState: createSpy()

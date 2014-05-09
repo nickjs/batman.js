@@ -1,4 +1,4 @@
-#= require_tree ../hash
+#= require ../hash/hash
 
 class Batman.Params extends Batman.Hash
   constructor: (@hash, @navigator) ->
@@ -12,23 +12,29 @@ class Batman.UrlParams extends Batman.Hash
   constructor: (@hash, @navigator, @params) ->
     super(@hash)
 
-    @replace(@paramsFromUri())
+    @replace(@_paramsFromUri())
     @updateParams()
 
     @on 'change', (obj) =>
       obj.updateUrl()
       obj.updateParams()
 
-  paramsFromUri: ->
-    @currentUri().queryParams
+  updateUrl: ->
+    @navigator.pushState(null, '', @_pathFromParams())
 
-  currentPath: ->
+  updateParams: ->
+    @params.update(@toObject())
+
+  _paramsFromUri: ->
+    @_currentUri().queryParams
+
+  _currentPath: ->
     @params.get('path')
 
-  currentUri: ->
-    new Batman.URI(@currentPath())
+  _currentUri: ->
+    new Batman.URI(@_currentPath())
 
-  pathFromRoutes: ->
+  _pathFromRoutes: ->
     route = @navigator.app.get('currentRoute')
     params =
       controller: route.controller
@@ -38,16 +44,10 @@ class Batman.UrlParams extends Batman.Hash
 
     @navigator.app.get('dispatcher').pathFromParams(params)
 
-  pathFromParams: ->
-    if path = @pathFromRoutes()
+  _pathFromParams: ->
+    if path = @_pathFromRoutes()
       return path
 
-    uri = @currentUri()
+    uri = @_currentUri()
     uri.queryParams = @toObject()
     uri.toString()
-
-  updateUrl: ->
-    @navigator.pushState(null, '', @pathFromParams())
-
-  updateParams: ->
-    @params.update(@toObject())
