@@ -63,6 +63,6 @@ class Batman.RenderCache extends Batman.Hash
       currentKeys = @keyQueue.slice(0)
       for i in [@maximumLength...currentKeys.length]
         key = currentKeys[i]
-        if !@get(key).isInDOM()
+        if !@get(key).isInDOM
           @unset(key)
     return
