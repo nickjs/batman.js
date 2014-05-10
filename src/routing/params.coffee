@@ -13,16 +13,16 @@ class Batman.UrlParams extends Batman.Hash
     super(@hash)
 
     @replace(@_paramsFromUri())
-    @updateParams()
+    @_updateParams()
 
-    @on 'change', (obj) =>
-      obj.updateUrl()
-      obj.updateParams()
+    @on 'change', (obj) ->
+      obj._updateUrl()
+      obj._updateParams()
 
-  updateUrl: ->
+  _updateUrl: ->
     @navigator.pushState(null, '', @_pathFromParams())
 
-  updateParams: ->
+  _updateParams: ->
     @params.update(@toObject())
 
   _paramsFromUri: ->
