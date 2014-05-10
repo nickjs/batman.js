@@ -85,12 +85,16 @@ Returns the URL parameters for the current request, including the path relative 
 
 `currentParams` also offers a way to change the current request URL's parameters without refreshing or reloading anything on the page. This way you can influence data on the page and allow your users to get the same data on hard refreshes. Here's an example:
 
-    Batman.currentApp.get('currentParams.url').update(page: 5)
+```coffeescript
+Batman.currentApp.get('currentParams.url').update(page: 5)
+```
 
 It will even update the URL match a defined route if found:
 
-    Batman.currentApp.get('currentParams.url').update(action: show, id: 6) # /items/6
-    Batman.currentApp.get('currentParams.url').update(page: 5) # /items/page/5
+```coffeescript
+Batman.currentApp.get('currentParams.url').update(action: show, id: 6) # /items/6
+Batman.currentApp.get('currentParams.url').update(page: 5) # /items/page/5
+```
 
 ## @%currentRoute : ControllerActionRoute
 
