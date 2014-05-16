@@ -25,6 +25,7 @@ Returns a new `SetProxy` tracking `base`.
 - `indexedBy`
 - `indexedByUnique`
 - `sortedBy`
+- `mappedTo`
 
 ## Accessors delegated to base
 
@@ -37,6 +38,7 @@ Returns a new `SetProxy` tracking `base`.
 - `indexedByUnique`
 - `sortedBy`
 - `sortedByDescending`
+- `mappedTo`
 
 # /api/Data Structures/Batman.Set/Batman.SetSort
 
@@ -56,6 +58,31 @@ Returns a new `SetProxy` tracking `base`.
 
       for setSort in [vehiclesByWheelCount1, vehiclesByWheelCount2, vehiclesByWheelCount3]
         deepEqual setSort.mapToProperty('wheelCount'), [0, 2, 4]
+
+### Using a Batman.SetSort
+
+`Batman.SetSort` is batman.js's ordered collection data structure. `Batman.Set` _does not_ have a specific order, but a `Batman.SetSort` does.
+
+Since a `SetSort` is a proxy of a `Set`, the easiest way to make one is to use [`Set::sortedBy`](/docs/api/batman.set.html#prototype_function_sortedby):
+
+```coffeescript
+sortedVehicles = vehicles.sortedBy('wheelcount')
+```
+
+You can also make `SetSort`s in view bindings:
+
+```html
+<ul>
+  <li data-foreach-vehicle='vehicles.sortedBy.wheelcount'>
+    <!-- will render vehicles ordered by wheelcount -->
+  </li>
+</ul>
+```
+
+`SetSort`s are __observable__ proxies of their underlying `Set`s. So, when the `Set` is changed (ie, items are added, removed, or modified):
+
+- The `SetSort` is automatically updated by batman.js
+- Any view bindings or accessors depending on the `SetSort` are updated
 
 
 ## ::constructor(base : Set, key : String, order : ["asc"|"desc", default "asc"]) : SetSort
@@ -164,6 +191,31 @@ A `Batman.SetMapping` can't have duplicates:
       deepEqual vehicleNames.toArray(), ["Batcycle"]
 
 `Batman.SetMapping` extends `Batman.Set`, so see the `Batman.Set` API docs for more information.
+
+### Using a Batman.SetMapping
+
+`Batman.SetMapping` is like an observable version of [`Enumerable.mapToProperty`](/docs/api/batman.enumerable.html#prototype_function_maptoproperty). It performs a `get` on each member of the base `Set` and holds _unique_ resulting values.
+
+Since a `SetMapping` is a proxy of a `Set`, the easiest way to make one is to use [`Set::mappedTo`](/docs/api/batman.set.html#prototype_function_mappedto):
+
+```coffeescript
+vehicleNames = vehicles.mappedTo('wheelcount')
+```
+
+You can also make `SetMapping`s in view bindings:
+
+```html
+<ul>
+  <li data-foreach-vehiclename='vehicles.mappedTo.name'>
+    <!-- will render unique vehicle names -->
+  </li>
+</ul>
+```
+
+`SetMappings`s are __observable__ proxies of their underlying `Set`s. So, when the `Set` is changed (ie, items are added, removed, or modified):
+
+- The `SetMapping` is automatically updated by batman.js
+- Any view bindings or accessors depending on the `SetMapping` are updated
 
 ## ::constructor(base : Set, key : String) : SetMapping
 
