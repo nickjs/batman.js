@@ -1,5 +1,8 @@
 GIT_TAG=`git tag --points-at HEAD`
 
+npm uninstall snockets
+npm install snockets
+
 if [[ "$TRAVIS_BRANCH" = "master" ]]; then
 	cake build:dist
 
