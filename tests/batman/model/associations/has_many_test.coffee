@@ -220,6 +220,14 @@ asyncTest "AssociationSet does not become loaded when an existing record is save
       equal store.get('products').get('loaded'), false
       QUnit.start()
 
+asyncTest "AssociationSet:mappedTo returns a SetMapping", ->
+  @Store.find 1, (err, store) =>
+    throw err if err
+    products = store.get 'products'
+    delay =>
+      productIds = products.get('mappedTo.id')
+      deepEqual productIds.toArray(), [1,2,3]
+
 asyncTest "hasMany associations are loaded using encoders", 1, ->
   @Product.encode 'name',
     encode: (x) -> x
