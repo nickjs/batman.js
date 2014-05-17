@@ -1,10 +1,12 @@
 GIT_TAG=`git tag --points-at HEAD`
 
-npm uninstall snockets
-npm install snockets
 echo ">> Branch: $TRAVIS_BRANCH, Pull Request: $TRAVIS_PULL_REQUEST, Tag: $TRAVIS_TAG ($GIT_TAG)"
 
-if [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then
+if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]
+then
+	npm uninstall snockets
+	npm install snockets
+
 	cake build:dist
 
 	cd build
