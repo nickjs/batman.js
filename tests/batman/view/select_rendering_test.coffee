@@ -7,7 +7,7 @@ QUnit.module 'Batman.View select bindings'
 
 asyncTest 'it should bind the value of a select box and update when the javascript land value changes', 2, ->
   context =
-    heros: new Batman.Set('mario', 'crono', 'link')
+    heros: new Batman.Set(['mario', 'crono', 'link'])
     selected: new Batman.Object(name: 'crono')
   helpers.render '<select data-bind="selected.name"><option data-foreach-hero="heros" data-bind-value="hero"></option></select>', context, (node, view) ->
     equal node[0].value, 'crono'
@@ -33,7 +33,7 @@ asyncTest 'it should bind the value of a select box and update when options chan
 
 asyncTest 'it should bind the value of a select box and update the javascript land value with the selected option', 3, ->
   context =
-    heros: new Batman.SimpleSet('mario', 'crono', 'link')
+    heros: new Batman.SimpleSet(['mario', 'crono', 'link'])
     selected: 'crono'
   helpers.render '<select data-bind="selected"><option data-foreach-hero="heros" data-bind-value="hero"></option></select>', context, (node, view) ->
     equal node[0].value, 'crono'
@@ -68,7 +68,7 @@ asyncTest 'it binds options created by a foreach and remains consistent when the
   mikey = Batman name: 'mikey', id: 2
 
   context =
-    heroes: new Batman.Set(leo, mikey).sortedBy('id')
+    heroes: new Batman.Set([leo, mikey]).sortedBy('id')
     selected: 1
 
   helpers.render  '<select data-bind="selected">' +
@@ -78,14 +78,14 @@ asyncTest 'it binds options created by a foreach and remains consistent when the
       deepEqual getContents(node), ['leo', 'mikey']
       equal node[0].value, "1"
 
-      view.set('heroes', new Batman.Set(leo, mikey).sortedBy('id'))
+      view.set('heroes', new Batman.Set([leo, mikey]).sortedBy('id'))
       delay ->
         deepEqual getContents(node), ['leo', 'mikey']
         equal node[0].value, "1"
 
 asyncTest 'it binds the value of a multi-select box and updates the options when the bound value changes', ->
   context =
-    heros: new Batman.Set('mario', 'crono', 'link', 'kirby')
+    heros: new Batman.Set(['mario', 'crono', 'link', 'kirby'])
     selected: new Batman.Object(name: ['crono', 'link'])
   helpers.render '<select multiple="multiple" size="2" data-bind="selected.name"><option data-foreach-hero="heros" data-bind-value="hero" data-bind="hero | capitalize"></option></select>', context, (node, view) ->
     deepEqual getSelections(node), [no, yes, yes, no]
@@ -151,7 +151,7 @@ asyncTest 'it binds multiple select options created by a foreach and remains con
   context =
     mario: mario = new Batman.Object(selected: false, name: 'mario')
     crono: crono = new Batman.Object(selected: true, name: 'crono')
-    heros: new Batman.Set(mario, crono).sortedBy('name')
+    heros: new Batman.Set([mario, crono]).sortedBy('name')
 
   source = '''
     <select multiple="multiple">
@@ -162,7 +162,7 @@ asyncTest 'it binds multiple select options created by a foreach and remains con
   helpers.render source, context, (node, view) ->
     deepEqual getContents(node), ['crono', 'mario']
     deepEqual getSelections(node), [true, false]
-    view.set('heros', new Batman.Set(view.get('crono'), view.get('mario')).sortedBy('name'))
+    view.set('heros', new Batman.Set([view.get('crono'), view.get('mario')]).sortedBy('name'))
     delay ->
       deepEqual getContents(node), ['crono', 'mario']
       deepEqual getSelections(node), [true, false]

@@ -87,7 +87,7 @@ asyncTest 'it should not remove an already present similar class name', 6, ->
 asyncTest 'it should allow multiple class names to be bound and updated via set', ->
   source = '<div data-bind-class="classes"></div>'
   context = Batman
-    classes: new Batman.Set('foo', 'bar', 'baz')
+    classes: new Batman.Set(['foo', 'bar', 'baz'])
 
   helpers.render source, context, (node, view) ->
     ok node.hasClass('foo')
@@ -172,7 +172,7 @@ asyncTest 'it should not remove already existing classes when binding new (multi
   helpers.render source, { fish: false }, (node, view) ->
     ok node.hasClass('onefish')
     ok node.hasClass('twofish')
-    view.set 'fish', new Batman.Set('redfish', 'blufish')
+    view.set 'fish', new Batman.Set(['redfish', 'blufish'])
     ok node.hasClass('onefish')
     ok node.hasClass('twofish')
     ok node.hasClass('redfish')
@@ -208,7 +208,7 @@ asyncTest 'it should not add already existing classes when binding new (multiple
   source = '<div data-bind-class="fish" class="onefish twofish"></div>'
   helpers.render source, { fish: false }, (node, view) ->
     equal node[0].className.split(" ").length, 2
-    view.set 'fish', new Batman.Set('redfish', 'blufish')
+    view.set 'fish', new Batman.Set(['redfish', 'blufish'])
     equal node[0].className.split(" ").length, 4
     view.set 'fish',
       new Batman.Hash

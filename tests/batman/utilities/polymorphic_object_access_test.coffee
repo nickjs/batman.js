@@ -10,7 +10,7 @@ QUnit.module 'Polymorphic object access',
     @hash.set('bar', 'barVal')
 
     @array = ['foo', 'bar']
-    @set = new Batman.Set('foo', 'bar')
+    @set = new Batman.Set(['foo', 'bar'])
     @setSort = @set.sortedBy(0)
     @spy = createSpy()
     @emptyContext = {}

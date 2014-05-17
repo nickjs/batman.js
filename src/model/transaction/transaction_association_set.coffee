@@ -59,11 +59,11 @@ class Batman.TransactionAssociationSet extends Batman.Set
   applyChanges: (visited) ->
     for transactionItem in @_storage
       transactionItem.applyChanges(visited)
-    originals = new Batman.Set(@_originalStorage...)
+    originals = new Batman.Set(@_originalStorage)
     target = @get('associationSet')
     target.off 'itemsWereAdded', @_loader
     target.replace(originals)
-    target.set('removedItems', new Batman.Set(@_removedStorage...))
+    target.set('removedItems', new Batman.Set(@_removedStorage))
     target
 
   @accessor 'length', ->

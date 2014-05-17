@@ -576,14 +576,14 @@ asyncTest 'map with a numeric key', 1, ->
 
 asyncTest 'map over a set', 1, ->
   helpers.render '<div data-bind="posts | map \'name\' | join \', \'"></div>',
-    posts: new Batman.Set(
+    posts: new Batman.Set([
       Batman
         name: 'one'
         comments: 10
     , Batman
         name: 'two'
         comments: 20
-    )
+    ])
   , (node) ->
     helpers.splitAndSortedEquals node.html(), "one, two", ", "
     QUnit.start()
@@ -593,20 +593,20 @@ asyncTest 'map over batman objects', 1, ->
     @accessor 'foo', -> 'bar'
 
   helpers.render '<div data-bind="posts | map \'foo\' | join \', \'"></div>',
-    {posts: new Batman.Set(new Silly, new Silly)}
+    {posts: new Batman.Set([new Silly, new Silly])}
   , (node) ->
     equal node.html(), "bar, bar"
     QUnit.start()
 
 asyncTest 'has in a set', 3, ->
-  posts = new Batman.Set(
+  posts = new Batman.Set([
     Batman
       name: 'one'
       comments: 10
   , Batman
       name: 'two'
       comments: 20
-  )
+  ])
 
   context = Batman
     posts: posts

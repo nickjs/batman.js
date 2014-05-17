@@ -6,7 +6,7 @@ QUnit.module "Batman.View rendering nested loops",
       posts: new Batman.Set()
       tagColor: "green"
 
-    @context.posts.add Batman(tags:new Batman.Set("funny", "satire", "nsfw"), name: "post-#{i}") for i in [0..2]
+    @context.posts.add Batman(tags:new Batman.Set(["funny", "satire", "nsfw"]), name: "post-#{i}") for i in [0..2]
 
     @source = '''
       <div>
