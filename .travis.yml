@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - 0.10
 before_script:
-  - gem install travis-artifacts
+  - gem install travis-artifacts --version "0.2.2"
 after_success:
   - bash .travis_upload.bash
 env:
