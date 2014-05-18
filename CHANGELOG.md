@@ -1,12 +1,15 @@
+
+## 0.16.0
+
 Besides lots of bug fixes, documentation updates, etc, here some major changes:
 
 - batman.js node package was removed
 - Travis uploads successful, tagged builds to `http://batman.js.s3.amazonaws.com/batman-#{tag}.tar.gz`. Also, `master` is available at http://batman.js.s3.amazonaws.com/batman-master.tar.gz.
 - added `cake build` and `cake build:dist` for compiling batman.js https://github.com/batmanjs/batman/pull/864
 
-### Batman helpers 
-- `toSentence` added 
-- `capitalize` became `titlize`, `capitalize` gets a deprecation warning
+### Batman helpers
+- `toSentence` added https://github.com/batmanjs/batman/pull/1035
+- `capitalize` became `titlize`, `capitalize` gets a deprecation warning https://github.com/batmanjs/batman/pull/1035
 
 ### Batman.Object
 - `Batman.Object.delegate` was added https://github.com/batmanjs/batman/pull/830
@@ -15,12 +18,12 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 
 ### Batman.Set
 - `::toJSON` iterates over members and calls `toJSON` on them https://github.com/batmanjs/batman/pull/905
-- `::mappedTo` returns a `Batman.SetMapping` 
+- `::mappedTo` returns a `Batman.SetMapping` https://github.com/batmanjs/batman/pull/1018
 
 ### Batman.Hash
 - `::toJSON` iterates over members and calls `toJSON` on them https://github.com/batmanjs/batman/pull/905
 
-### Batman.Request 
+### Batman.Request
 - Class accessors `pendingRequestCount` and `requestIsPending` added https://github.com/batmanjs/batman/pull/1032
 
 ### Batman.Model
@@ -39,7 +42,7 @@ Besides lots of bug fixes, documentation updates, etc, here some major changes:
 - Added `Model::transaction` and `Batman.TransactionAssociationSet` for editing records https://github.com/batmanjs/batman/pull/992
 - Added `::reflectOnAllAssociations` and `::reflectOnAssociation` https://github.com/batmanjs/batman/pull/992
 - Association `saveInline` defaults to false https://github.com/batmanjs/batman/pull/1028
-- Calls to `Model.find` for the same ID are pipelined like `Model.load` https://github.com/batmanjs/batman/pull/1026 
+- Calls to `Model.find` for the same ID are pipelined like `Model.load` https://github.com/batmanjs/batman/pull/1026
 - `validate associatedFields: true` pushes messages from associated records to this record https://github.com/batmanjs/batman/pull/995
 - `@validate`s `message:` option may be a string or function https://github.com/batmanjs/batman/pull/1040
 - `AssociationSet::build` adds a child record with passed attributes https://github.com/batmanjs/batman/pull/994

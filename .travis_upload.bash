@@ -1,6 +1,12 @@
 GIT_TAG=`git tag --points-at HEAD`
 
-if [[ "$TRAVIS_BRANCH" = "master" ]]; then
+echo ">> Branch: $TRAVIS_BRANCH, Pull Request: $TRAVIS_PULL_REQUEST, Tag: $TRAVIS_TAG ($GIT_TAG)"
+
+if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]
+then
+	npm uninstall snockets
+	npm install snockets
+
 	cake build:dist
 
 	cd build
@@ -13,4 +19,6 @@ if [[ "$TRAVIS_BRANCH" = "master" ]]; then
 		mv batman-master.tar.gz "$NAME_WITH_TAG"
 		travis-artifacts upload --path "$NAME_WITH_TAG" --target-path ''
 	fi
+else
+	echo ">> Not pushing artifacts to S3"
 fi

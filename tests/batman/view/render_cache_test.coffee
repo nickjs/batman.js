@@ -1,8 +1,8 @@
 {putInDOM, removeFromDOM} = do ->
   dom = document.createElement 'div'
   {
-    putInDOM:      (view) -> view.isInDOM = -> true
-    removeFromDOM: (view) -> view.isInDOM = -> false
+    putInDOM:      (view) -> view.isInDOM = true
+    removeFromDOM: (view) -> view.isInDOM = false
   }
 
 equalCacheLength = (cache, length) ->
@@ -15,7 +15,7 @@ QUnit.module "Batman.RenderCache",
     class @MockView extends MockClass
       get: ->
       set: ->
-      isInDOM: -> false
+      isInDOM: false
       cache: true
     @context = {}
     @exampleOptions = {source: "products/show", viewClass: @MockView, context: @context}
