@@ -61,6 +61,7 @@ Batman.helpers =
     if array.length < 3
       return array.join ' and '
     else
+      array = array.slice()
       last = array.pop()
       itemString = array.join(', ')
       itemString += ", and #{last}"
