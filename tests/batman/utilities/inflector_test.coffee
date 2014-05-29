@@ -237,4 +237,6 @@ ArrayToSentence = [
 QUnit.module 'Batman.helpers toSentence',
 test 'joins the words with commas/"and"', ->
  for {array, sentence} in ArrayToSentence
+  startingLength = array.length
   equal Batman.helpers.toSentence(array), sentence
+  equal array.length, startingLength
