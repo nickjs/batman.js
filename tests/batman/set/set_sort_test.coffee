@@ -177,6 +177,19 @@ setSortOnObservableSetSuite = ->
     @byFred.set('author', @mary)
     deepEqual @authorNameSort.toArray(), expected
 
+  test 'mappedTo returns a SetMapping', ->
+    expected = ["Fred", "Mary", "Zeke"]
+    mapping = @authorNameSort.mappedTo('author.name')
+    equal mapping.get('length'), 3
+    for name in expected
+      ok mapping.has(name)
+    @base.remove(@byMary)
+    ok !mapping.has('Mary')
+    @base.remove(@byFred, @anotherByFred)
+    ok !mapping.has('Fred')
+    @base.add(@byMary)
+    ok mapping.has('Mary')
+
 fixtureSetup = ->
   @zeke = Batman name: 'Zeke'
   @mary = Batman name: 'Mary'
