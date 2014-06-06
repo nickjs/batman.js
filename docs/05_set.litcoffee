@@ -11,7 +11,7 @@ A `Batman.Set` is an observable collection of _unique_ items. `Set` extends `Bat
 
 If you want an observable object, choose `Batman.Set`. Use a `Batman.SimpleSet` only when you don't need observers. In fact, if you don't need observers, consider using a native array, as iteration and membership checks will be faster!
 
-## ::constructor(items...) : Set
+## ::constructor(items: Array) : Set
 
 Returns a new `Batman.Set` containing `items`.
 
@@ -19,7 +19,7 @@ Returns a new `Batman.Set` containing `items`.
       set = new Batman.Set
       deepEqual set.toArray(), []
 
-    test 'new Set constructor can be passed items to add to the set.', ->
+    test 'new Set constructor can be passed an Array of items to add to the set.', ->
       set = new Batman.Set(['a', 'b', 'c'])
       deepEqual set.toArray().sort(), ['a', 'b', 'c']
 
@@ -88,6 +88,10 @@ If any items are added, `add` also fires the `itemsWereAdded` event with an arra
       set.add('a', 'b')
       equal typeof results, 'undefined'
 
+## ::addArray(items: Array) : Array
+
+Just like `Batman.Set::add`, but takes an array of items.
+
 ## ::remove(items...) : Array
 
 Removes `items` from the `Set` if they are present. Returns any items _actually removed_ from the `Set`. (If any of `items` weren't in the `Set`, they won't be returned.)
@@ -118,6 +122,10 @@ If any items were removed, the `Set` fires the `itemsWereRemoved` event with an 
       set.on('itemsWereRemoved', (items) -> results = items)
       set.remove('c', 'd')
       equal typeof results, 'undefined'
+
+## ::removeArray(items: Array) : Array
+
+Just like `Batman.Set::remove`, but takes an array of items.
 
 ## ::find(testFunction : Function) : Object
 
@@ -265,7 +273,7 @@ Accessor for `Set::toArray`. Whenever items are added or removed on the set, the
 
     test 'observers on the toArray property fire when the set changes', ->
       results = null
-      set = new Batman.Set('a', 'b', 'c')
+      set = new Batman.Set(['a', 'b', 'c'])
       set.observe('toArray', (newArray) -> results = newArray.sort())
       deepEqual set.add('d'), ['d']
       deepEqual results, ['a', 'b', 'c', 'd']
@@ -383,11 +391,11 @@ Like `Set::%sortedBy`, but returns a descending `Batman.SetSort`. `mySet.get('so
 Returns a `Batman.SetMapping` on the `Set`, for values of `key`. A `Batman.SetMapping` is an observable `map` result. See the documentation for `Batman.SetMapping` for more information.
 
     test 'Set::mappedTo(key) returns SetMapping on `key`', ->
-      set = new Batman.Set(
+      set = new Batman.Set([
         Batman(place: 3, name: 'Harry'),
         Batman(place: 1, name: 'Tom'),
         Batman(place: 2, name: 'Camilo')
-      )
+      ])
       mapping = set.mappedTo('place')
       deepEqual mapping.toArray(), [3,1,2]
 
@@ -396,10 +404,10 @@ Returns a `Batman.SetMapping` on the `Set`, for values of `key`. A `Batman.SetMa
 Accessor for `Set::mappedTo`. `mySet.get('mappedTo.myKey')` returns the same result as  `mySet.mappedTo('myKey')`.
 
     test 'set.get("mappedTo.key") returns SetMapping on `key`', ->
-      set = new Batman.Set(
+      set = new Batman.Set([
         Batman(place: 3, name: 'Harry'),
         Batman(place: 1, name: 'Tom'),
         Batman(place: 2, name: 'Camilo')
-      )
+      ])
       mapping = set.get('mappedTo.place')
       deepEqual mapping.toArray(), [3,1,2]

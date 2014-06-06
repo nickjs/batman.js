@@ -9,9 +9,11 @@ Returns a new `SetProxy` tracking `base`.
 ## Methods delegated to base
 
 - `add`
+- `addArray`
 - `insert`
 - `insertWithIndexes`
 - `remove`
+= `removeArray`
 - `removeWithIndexes`
 - `at`
 - `find`
