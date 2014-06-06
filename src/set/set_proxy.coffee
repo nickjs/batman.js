@@ -42,7 +42,7 @@ class Batman.SetProxy extends Batman.Object
 
   Batman.Set._applySetAccessors(@)
 
-  for k in ['add', 'addArray', 'insert', 'insertWithIndexes', 'remove', 'removeWithIndexes', 'at', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy', 'mappedTo']
+  for k in ['add', 'addArray', 'insert', 'insertWithIndexes', 'remove', 'removeArray', 'removeWithIndexes', 'at', 'find', 'clear', 'has', 'merge', 'toArray', 'isEmpty', 'indexedBy', 'indexedByUnique', 'sortedBy', 'mappedTo']
     do (k) =>
       @::[k] = -> @base[k].apply(@base, arguments)
 

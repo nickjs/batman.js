@@ -40,10 +40,8 @@ class Batman.Set extends Batman.Object
 
   toJSON: -> @map (value) -> value.toJSON?() || value
 
-  add: @mutation ->
-    addedItems = Batman.SimpleSet::add.apply(this, arguments)
-    @fire('itemsWereAdded', addedItems) if addedItems.length
-    addedItems
+  add: (items...) ->
+    @addArray(items)
 
   addArray: @mutation ->
     addedItems = Batman.SimpleSet::addArray.apply(this, arguments)
@@ -58,11 +56,17 @@ class Batman.Set extends Batman.Object
     @fire('itemsWereAdded', addedItems, addedIndexes) if addedItems.length
     {addedItems, addedIndexes}
 
-  remove: ->
-    @removeWithIndexes(arguments...).removedItems
+  remove: (items...) ->
+    @removeArrayWithIndexes(items).removedItems
 
-  removeWithIndexes: @mutation ->
-    {removedItems, removedIndexes} = Batman.SimpleSet::removeWithIndexes.apply(this, arguments)
+  removeArray: (items) ->
+    @removeArrayWithIndexes(items).removedItems
+
+  removeWithIndexes: (items...) ->
+    @removeArrayWithIndexes(items)
+
+  removeArrayWithIndexes: @mutation (items) ->
+    {removedItems, removedIndexes} = Batman.SimpleSet::removeArrayWithIndexes.call(this, items)
     @fire('itemsWereRemoved', removedItems, removedIndexes) if removedItems.length
     {removedItems, removedIndexes}
 

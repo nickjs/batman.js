@@ -41,9 +41,16 @@ class Batman.SimpleSet
     @length = @_storage.length
     {addedItems, addedIndexes}
 
-  remove: -> @removeWithIndexes(arguments...).removedItems
+  remove: (items...) ->
+    Batman.SimpleSet::removeArrayWithIndexes.call(this, items).removedItems
+
+  removeArray: (items) ->
+    Batman.SimpleSet::removeArrayWithIndexes.call(this, items).removedItems
 
   removeWithIndexes: (items...) ->
+    Batman.SimpleSet::removeArrayWithIndexes.call(this, items)
+
+  removeArrayWithIndexes: (items) ->
     removedIndexes = []
     removedItems = []
     for item in items when (index = @_indexOfItem(item)) != -1

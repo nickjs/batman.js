@@ -46,14 +46,19 @@ basicSetTestSuite = ->
     equal @set.length, 3
 
 
-  test "addArray only adds, returns and fires items that weren't already there", ->
+  test "addArray only adds, returns, and increments the length and fires items that weren't already there", ->
     @set.on 'itemsWereAdded', spy = createSpy()
     deepEqual @set.addArray(['foo']), ['foo']
     deepEqual spy.lastCallArguments[0], ['foo']
+    deepEqual @set.get('length'), 1
+
     deepEqual @set.addArray(['foo', 'bar']), ['bar']
     deepEqual spy.lastCallArguments[0], ['bar']
+    deepEqual @set.get('length'), 2
+
     deepEqual @set.addArray(['foo', 'bar', 'baz', 'qux']), ['baz', 'qux']
     deepEqual spy.lastCallArguments[0], ['baz', 'qux']
+    deepEqual @set.get('length'), 4
 
 
   test "remove(items...) removes the items from the set, returning the item and not touching any others", ->
@@ -81,6 +86,22 @@ basicSetTestSuite = ->
     @set.remove('bar', 'bar')
 
     equal @set.length, 1
+
+  test "removeArray(items) only returns, fires and decrements length for items that were in the set", ->
+    @set.add('foo', 'bar', 'baz', 'qux')
+    @set.on 'itemsWereRemoved', spy = createSpy()
+
+    deepEqual @set.removeArray(['foo']), ['foo']
+    deepEqual spy.lastCallArguments[0], ['foo']
+    deepEqual @set.get('length'), 3
+
+    deepEqual @set.removeArray(['foo', 'bar']), ['bar']
+    deepEqual spy.lastCallArguments[0], ['bar']
+    deepEqual @set.get('length'), 2
+
+    deepEqual @set.removeArray(['foo', 'bar', 'baz', 'qux']), ['baz', 'qux']
+    deepEqual spy.lastCallArguments[0], ['baz', 'qux']
+    deepEqual @set.get('length'), 0
 
   test "find(f) returns the first item for which f is true", 1, ->
     @set.add(1, 2, 3, 5)
