@@ -15,6 +15,10 @@ class Batman.SimpleSet
   at: (index) -> @_storage[index]
 
   add: (items...) ->
+    # @ can be a SetSort, so have to specify SimpleSet
+    Batman.SimpleSet::addArray.call(this, items)
+
+  addArray: (items) ->
     addedItems = []
     for item in items when @_indexOfItem(item) == -1
       @_storage.push(item)

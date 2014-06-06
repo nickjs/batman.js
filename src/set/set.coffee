@@ -45,6 +45,11 @@ class Batman.Set extends Batman.Object
     @fire('itemsWereAdded', addedItems) if addedItems.length
     addedItems
 
+  addArray: @mutation ->
+    addedItems = Batman.SimpleSet::addArray.apply(this, arguments)
+    @fire('itemsWereAdded', addedItems) if addedItems.length
+    addedItems
+
   insert: ->
     @insertWithIndexes(arguments...).addedItems
 

@@ -43,8 +43,18 @@ basicSetTestSuite = ->
     deepEqual @set.add('foo'), ['foo']
     deepEqual @set.add('foo', 'bar'), ['bar']
     deepEqual @set.add('baz', 'baz'), ['baz']
-
     equal @set.length, 3
+
+
+  test "addArray only adds, returns and fires items that weren't already there", ->
+    @set.on 'itemsWereAdded', spy = createSpy()
+    deepEqual @set.addArray(['foo']), ['foo']
+    deepEqual spy.lastCallArguments[0], ['foo']
+    deepEqual @set.addArray(['foo', 'bar']), ['bar']
+    deepEqual spy.lastCallArguments[0], ['bar']
+    deepEqual @set.addArray(['foo', 'bar', 'baz', 'qux']), ['baz', 'qux']
+    deepEqual spy.lastCallArguments[0], ['baz', 'qux']
+
 
   test "remove(items...) removes the items from the set, returning the item and not touching any others", ->
     @set.add('foo', o1={}, o2={}, o3={})
