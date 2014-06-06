@@ -6,8 +6,8 @@ class Batman.Set extends Batman.Object
   isCollectionEventEmitter: true
 
   constructor: (items=[]) ->
-    if arguments.length > 1
-      Batman.developer.error('Batman.Set constructor takes an array of items! Try `new Batman.Set([item1, item2])` instead.')
+    if arguments.length > 1 or !(Batman.typeOf(items) is 'Array')
+      Batman.developer.warn("Batman.Set constructor takes an array of items! Try `new Batman.Set([item1, item2])` instead.")
     Batman.SimpleSet.call(@, items)
 
   Batman.extend @prototype, Batman.Enumerable
