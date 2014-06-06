@@ -5,6 +5,10 @@ class Batman.SimpleSet
   constructor: (items=[]) ->
     if arguments.length > 1
       Batman.developer.error('Batman.SimpleSet constructor takes an array of items! Try `new Batman.Set([item1, item2])` instead.')
+
+    unless Batman.typeOf(items) is 'Array'
+      throw new TypeError("Batman.SimpleSet contents must be an array")
+
     @_storage = []
     @length = 0
     itemsToAdd = (item for item in items when item?)
