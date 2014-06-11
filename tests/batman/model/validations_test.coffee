@@ -390,12 +390,13 @@ validationsTestSuite = ->
 
   asyncTest "validation skipped with if option as a string", ->
     class CompanyProfile extends Batman.Model
-      @validate 'vat_number', presence: true, if: "country_in_eu"
+      @validate 'vat_number', 'other_vat_number', presence: true, if: "country_in_eu"
+      @accessor 'other_vat_number', -> @get('vat_number')
 
     p = new CompanyProfile country_in_eu: true
     p.validate (err, errors) ->
       throw err if err
-      equal errors.length, 1
+      equal errors.length, 2
       p.set 'country_in_eu', false
       p.validate (err, errors) ->
         throw err if err
