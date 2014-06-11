@@ -512,7 +512,7 @@ test 'when wrapping a call with the errorHandler callback, any exception that is
     namespace.Model.load @errorHandler callbackSpy
     @render false
 
-  raises ->
+  throws ->
     controller.dispatch('index')
   , Error
 
