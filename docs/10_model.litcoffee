@@ -66,23 +66,22 @@ Change the option using `set`, like so:
 
 ## @encode(keys...[, encoderObject : [Object|Function]])
 
-`@encode` specifies a list of `keys` a model should expect from and send back to a storage adapter, and any transforms to apply to those attributes as they enter and exit the world of batman.js in the optional `encoderObject`.
+Specifies that `keys` will be persisted with the `Batman.StorageAdapter` passed to `@persist`. Use it to white-list fields that should be loaded from JSON and sent back as JSON.
 
-The `encoderObject` should have an `encode` and/or a `decode` key which point to functions. The functions accept the "raw" data (the batman.js land value in the case of `encode`, and the backend land value in the case of `decode`), and should return the data suitable for the other side of the link. The functions should have the following signatures:
+If no `encoderObject` is provided, the identity function (`(x) -> x`) will be used to encode and decode values.
 
-    encoderObject = {
-      encode: (value, key, builtJSON, record) ->
-      decode: (value, key, incomingJSON, outgoingObject, record) ->
-    }
+If `encoderObject` is provided, it may have `encode`, `decode` and `as` properties, for example:
 
-By default these functions are the identity functions. They apply no transformation. The arguments for `encode` functions are as follows:
+```coffeescript
+@encode 'myProperty',
+  decode: (value, key, incomingJSON, outgoingObject, record) -> # returns a value to set on the record
+  encode: (value, key, builtJSON, record) ->                    # returns a value to put into the JSON
+  as: "my_property"                                             # overrides "myProperty" as the JSON key
+```
 
- + `value` is the client side value of the `key` on the `record`
- + `key` is the key that `value` is stored under on the `record`. This is useful when passing the same `encoderObject` which needs to pivot on what key is being encoded to different calls to `encode`.
- + `builtJSON` is the object passed to and modified by each encoder, and eventually becomes the return value of the `toJSON` call.
- + `record` is the record on which `toJSON` has been called.
+__`decode`__ is applied to _incoming JSON values_ before they're set on the record. It may be `false` to prevent receiving data from the storage adapter.
 
-For `decode` functions:
+The `decode` function's arguments are:
 
  + `value` is the raw value received from the storage adapter.
  + `key` is the key that `value` is stored under on the incoming data.
@@ -90,18 +89,25 @@ For `decode` functions:
  + `outgoingObject` is the object built up by the decoders and mixed into the record.
  + `record` is the record on which `fromJSON` has been called.
 
-The `encode` and `decode` keys can also be false to avoid using the default identity function encoder or decoder.
+__`encode`__ is applied to _outgoing record values_ before they're added to the JSON. It may be set to `false` to prevent sending data to the storage adapter.
 
-To encode a `key` under a name which differs from that in the raw data, you can specify the `as` option with the raw key name. The `as` option can be either a string or function.
+The `encode` function's arguments are:
 
-If you specify the `as` option as a function it will receive the following arguments:
+ + `value` is the client side value of the `key` on the `record`
+ + `key` is the key that `value` is stored under on the `record`. This is useful when passing the same `encoderObject` which needs to pivot on what key is being encoded to different calls to `encode`.
+ + `builtJSON` is the object passed to and modified by each encoder, and eventually becomes the return value of the `toJSON` call.
+ + `record` is the record on which `toJSON` has been called.
+
+__`as`__ will override the `encode` key when getting and setting values from JSON. It may be a string or a function.
+
+If `as` is a function, it will receive the following arguments:
 
  + `key` is the name which the `value` is stored under in the raw data.
  + `value` is the `value` of the `key` which will end up on the `record`.
  + `data` is the object which is modified by each encoder or decoder.
  + `record` is the record on which `toJSON` or `fromJSON` has been called.
 
-_Note_: `Batman.Model` subclasses have no encoders by default, except for one which automatically decodes the `primaryKey` of the model, which is usually `id`. To get any data into or out of your model, you must white-list the keys you expect from the server or storage attribute.
+_Note_: `Batman.Model` subclasses have no encoders by default, except for the model's `primaryKey`.
 
     test '@encode accepts a list of keys which are used during decoding', ->
       class Shop extends Batman.Model
