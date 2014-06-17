@@ -3,7 +3,9 @@
 
 class Batman.App extends Batman.Object
   @classAccessor 'currentParams',
-    get: -> new Batman.Hash
+    get: ->
+      return unless nav = @get('navigator')
+      new Batman.Params({}, nav)
     'final': true
 
   @classAccessor 'paramsManager',
