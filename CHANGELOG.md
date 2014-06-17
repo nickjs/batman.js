@@ -1,4 +1,22 @@
 
+### Batman helpers 
+- `toSentence` doesnt the array passed to it https://github.com/batmanjs/batman/pull/1055
+
+
+### Batman.Set
+- `Set::mappedTo` passed to `SetProxy`, too https://github.com/batmanjs/batman/pull/1052
+
+
+### Batman.App
+- Can update params without redirecting: https://github.com/batmanjs/batman/pull/1048
+
+### Batman.Model 
+- `if`/`unless` handles multiple keys: https://github.com/batmanjs/batman/pull/1058
+
+
+### Batman.View
+- Fix `View.isInDOM` throws `undefined method` from the render cache https://github.com/batmanjs/batman/pull/1050
+
 ## 0.16.0
 
 Besides lots of bug fixes, documentation updates, etc, here some major changes:
