@@ -479,19 +479,20 @@ class Batman.Model extends Batman.Object
       return true
 
     count = validators.reduce ((acc, validator) -> acc + validator.keys.length), 0
-    finishedValidation = ->
-      if --count == 0
+    finishedValidation = (decrementBy = 1)->
+      count -= decrementBy
+      if count is 0
         callback?(undefined, errors)
 
     for validator in validators
-
       if validator.if
         condition = if typeof validator.if is 'string'
           @get(validator.if)
         else
           validator.if.call(this, errors, this, key)
-        unless condition
-          finishedValidation()
+
+        if !condition
+          finishedValidation(validator.keys.length)
           continue
 
       if validator.unless
@@ -499,8 +500,9 @@ class Batman.Model extends Batman.Object
           @get(validator.unless)
         else
           validator.unless.call(this, errors, this, key)
+
         if condition
-          finishedValidation()
+          finishedValidation(validator.keys.length)
           continue
 
       for key in validator.keys

@@ -12,11 +12,11 @@ QUnit.module "Batman.Model",
 
 test "constructors should always be called with new", ->
   Product = @Product
-  raises (-> product = Product()),
+  throws (-> product = Product()),
     (message) -> ok message; true
 
   Namespace = Product: Product
-  raises (-> product = Namespace.Product()),
+  throws (-> product = Namespace.Product()),
     (message) -> ok message; true
 
   product = new Namespace.Product()

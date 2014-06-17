@@ -82,7 +82,7 @@ test ".store should pull absolutely path'd data-defineview'd views from the DOM"
 
 test ".store should raise if remote fetching is disabled", ->
   Batman.config.fetchRemoteHTML = false
-  QUnit.raises ->
+  QUnit.throws ->
     Batman.View.store.get('remote')
   Batman.config.fetchRemoteHTML = true
 

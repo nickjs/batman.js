@@ -268,15 +268,15 @@ test ".paramsFromQuery(query) parses nested query strings", ->
   deepEqual Batman.URI.paramsFromQuery("x[y][][z]=1&x[y][][w]=a&x[y][][z]=2&x[y][][w]=3"),
     x: {y: [{z: "1", w: "a"}, {z: "2", w: "3"}]}
 
-  raises (-> Batman.URI.paramsFromQuery("x[y]=1&x[y]z=2")), (error) ->
+  throws (-> Batman.URI.paramsFromQuery("x[y]=1&x[y]z=2")), (error) ->
     equal error.message, 'expected Object (got String) for param "y"'
     true
 
-  raises (-> Batman.URI.paramsFromQuery("x[y]=1&x[]=1")), (error) ->
+  throws (-> Batman.URI.paramsFromQuery("x[y]=1&x[]=1")), (error) ->
     equal error.message, 'expected Array (got Object) for param "x"'
     true
 
-  raises (-> Batman.URI.paramsFromQuery("x[y]=1&x[y][][w]=2")), (error) ->
+  throws (-> Batman.URI.paramsFromQuery("x[y]=1&x[y][][w]=2")), (error) ->
     equal error.message, 'expected Array (got String) for param "y"'
     true
 
@@ -324,5 +324,5 @@ test ".queryFromParams(params) builds nested query strings correctly", ->
     query = Batman.URI.queryFromParams(params)
     deepEqual Batman.URI.paramsFromQuery(query), params
 
-  raises ->
+  throws ->
     Batman.URI.queryFromParams("foo=bar")

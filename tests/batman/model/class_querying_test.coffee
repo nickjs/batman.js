@@ -13,7 +13,7 @@ QUnit.module "Batman.Model class finding",
     @Product.persist @adapter
 
 test "will error unless a callback is provided", ->
-  raises => @Product.find 1
+  throws => @Product.find 1
 
 asyncTest "models will find an instance in the store", ->
   @Product.find 1, (err, product, env) ->
@@ -207,7 +207,7 @@ asyncTest "loading the same models will return the same instances", ->
 
 test "models without storage adapters should throw errors when trying to be loaded", 1, ->
   class Silly extends Batman.Model
-  raises ->
+  throws ->
     Silly.load()
 
 asyncTest "load calls in an accessor will have no sources", ->

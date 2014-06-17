@@ -85,7 +85,7 @@ class Batman.TestCase extends Batman.Object
     @assertDifference expressions, 0, message, callback
 
   assertRaises: (expected, callback, message) ->
-    QUnit.raises callback, expected, message
+    QUnit.throws callback, expected, message
 
   stubAccessor: (object, keypath, fn) ->
     stub = sinon.sandbox.stub(object.property(keypath), 'getValue', fn)

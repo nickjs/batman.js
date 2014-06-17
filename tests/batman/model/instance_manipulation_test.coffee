@@ -115,8 +115,8 @@ test "callbacks passed to load with options should not be pipelined into the sam
   product = new @Product(1)
   spyOn @adapter, 'read'
   product.load {id: 1}, firstLoad = createSpy()
-  QUnit.raises (-> product.load({id: 2}, (err, product) -> throw err if err))
-  QUnit.raises (-> product.load({id: 1}, (err, product )-> throw err if err))
+  QUnit.throws (-> product.load({id: 2}, (err, product) -> throw err if err))
+  QUnit.throws (-> product.load({id: 1}, (err, product )-> throw err if err))
 
 asyncTest "load calls in an accessor will have no sources", ->
   obj = Batman()
