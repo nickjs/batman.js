@@ -66,7 +66,7 @@ Change the option using `set`, like so:
 
 ## @encode(keys...[, encoderObject : [Object|Function]])
 
-Specifies that `keys` will be persisted with the `Batman.StorageAdapter` passed to `@persist`. Use it to white-list fields that should be loaded from JSON and sent back as JSON.
+Specifies that `keys` will be persisted. Use it to white-list fields that should be loaded from JSON and sent back as JSON.
 
 If no `encoderObject` is provided, the identity function (`(x) -> x`) will be used to encode and decode values.
 
