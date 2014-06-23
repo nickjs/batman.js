@@ -56,11 +56,14 @@ class Batman.TransactionAssociationSet extends Batman.Set
     @fire 'itemsWereRemoved', removedTransactions if removedTransactions.length
     removedTransactions
 
-  applyChanges: (visited) ->
+  applyChanges: (visited=[]) ->
+    target = this.get('associationSet');
+    return target if visited.indexOf(@) isnt -1
+    visited.push(@)
+
     for transactionItem in @_storage
       transactionItem.applyChanges(visited)
     originals = new Batman.Set(@_originalStorage...)
-    target = @get('associationSet')
     target.off 'itemsWereAdded', @_loader
     target.replace(originals)
     target.set('removedItems', new Batman.Set(@_removedStorage...))
