@@ -9,8 +9,8 @@ Type | Filters
 __Logical Operators__ |  `and`, `or`, `not`
 __Comparison Operators__ | `equals`, `eq`, `neq`, `lt`, `gt`, `lteq`, `gteq`
 __General Utilities__ | `get`, `[]`, `meta`, `withArguments`, `default`
-__Number Helpers__ | `ceil`, `floor`, `round`, `precision`, `fixed`, `delimitNumber`
-__Set Helpers__ |  `join`, `sort`, `map`, `has`, `first`
+__Number Helpers__ | `ceil`, `floor`, `round`, `precision`, `fixed`, `delimitNumber`, `ordinalize`
+__Set Helpers__ |  `join`, `sort`, `map`, `has`, `first`, `toSentence`
 __String Helpers__ | `interpolate`, `escape`, `capitalize`, `titleize`, `singularize`, `underscore`, `camelize`, `trim`, `raw`, `matches`, `truncate`, `prepend`, `append`, `replace`, `downcase`, `upcase`, `pluralize`, `humanize`
 __Debuggers__ | `log`, `logStack`
 
@@ -299,6 +299,10 @@ Converts `string` to underscore case.
 ## camelize(string, firstLetterLower[=false]) : string
 
 Converts `string` to camel case. if `firstLetterLower` is true, the first letter will be lowercase.
+
+## ordinalize(numberOrString) : string
+
+Turns `numberOrString` into an ordinalized number, for example, `4 | ordinalize` becomes `4th`.
 
 ## join(array, separator = '') : string
 
