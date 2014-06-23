@@ -11,7 +11,7 @@ __Comparison Operators__ | `equals`, `eq`, `neq`, `lt`, `gt`, `lteq`, `gteq`
 __General Utilities__ | `get`, `[]`, `meta`, `withArguments`, `default`
 __Number Helpers__ | `ceil`, `floor`, `round`, `precision`, `fixed`, `delimitNumber`
 __Set Helpers__ |  `join`, `sort`, `map`, `has`, `first`
-__String Helpers__ | `interpolate`, `escape`, `capitalize`, `singularize`, `underscore`, `camelize`, `trim`, `raw`, `matches`, `truncate`, `prepend`, `append`, `replace`, `downcase`, `upcase`, `pluralize`, `humanize`
+__String Helpers__ | `interpolate`, `escape`, `capitalize`, `titleize`, `singularize`, `underscore`, `camelize`, `trim`, `raw`, `matches`, `truncate`, `prepend`, `append`, `replace`, `downcase`, `upcase`, `pluralize`, `humanize`
 __Debuggers__ | `log`, `logStack`
 
 
@@ -149,6 +149,22 @@ Calls the get function on the input value with the specified key. Can be used wi
 
 Shorthand for the `get` filter.
 
+## and(inputValue, otherValue) : boolean
+
+Returns `true` if `inputValue` and `otherValue` are truthy:
+
+```html
+<p data-showif='post.published | and currentUser.loggedIn'></p>
+```
+
+## or(inputValue, otherValue) : boolean
+
+Returns `true` if either `inputValue` or `otherValue` are truthy:
+
+```html
+<p data-showif='post.published | or currentUser.isAdmin'></p>
+```
+
 ## not(value) : boolean
 
 Inverts the truthiness of the input value:
@@ -233,7 +249,7 @@ Upcases the input value:
 <span data-bind="page.title | upcase"></span>
 ```
 
-## pluralize(value, count) : string
+## pluralize(value, count, includeCount[=true]) : string
 
 Pluralizes the input value based on the patterns specified in `Batman.helpers.inflector` and the count provided:
 
@@ -247,6 +263,10 @@ Pluralizes the input value based on the patterns specified in `Batman.helpers.in
 ```html
 <span data-bind="'analysis' | pluralize page.comments.count"></span>
 ```
+
+## singularize(string) : string
+
+Returns the singular inflection of `string`.
 
 ## humanize(string) : string
 
