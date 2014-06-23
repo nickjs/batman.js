@@ -9,9 +9,9 @@ Type | Filters
 __Logical Operators__ |  `and`, `or`, `not`
 __Comparison Operators__ | `equals`, `eq`, `neq`, `lt`, `gt`, `lteq`, `gteq`
 __General Utilities__ | `get`, `[]`, `meta`, `withArguments`, `default`
-__Number Helpers__ | `ceil`, `floor`, `round`, `precision`, `fixed`, `delimitNumber`
-__Set Helpers__ |  `join`, `sort`, `map`, `has`, `first`
-__String Helpers__ | `interpolate`, `escape`, `capitalize`, `singularize`, `underscore`, `camelize`, `trim`, `raw`, `matches`, `truncate`, `prepend`, `append`, `replace`, `downcase`, `upcase`, `pluralize`, `humanize`
+__Number Helpers__ | `ceil`, `floor`, `round`, `precision`, `fixed`, `delimitNumber`, `ordinalize`
+__Set Helpers__ |  `join`, `sort`, `map`, `has`, `first`, `toSentence`
+__String Helpers__ | `interpolate`, `escape`, `capitalize`, `titleize`, `singularize`, `underscore`, `camelize`, `trim`, `raw`, `matches`, `truncate`, `prepend`, `append`, `replace`, `downcase`, `upcase`, `pluralize`, `humanize`
 __Debuggers__ | `log`, `logStack`
 
 
@@ -149,6 +149,22 @@ Calls the get function on the input value with the specified key. Can be used wi
 
 Shorthand for the `get` filter.
 
+## and(inputValue, otherValue) : boolean
+
+Returns `true` if `inputValue` and `otherValue` are truthy:
+
+```html
+<p data-showif='post.published | and currentUser.loggedIn'></p>
+```
+
+## or(inputValue, otherValue) : boolean
+
+Returns `true` if either `inputValue` or `otherValue` are truthy:
+
+```html
+<p data-showif='post.published | or currentUser.isAdmin'></p>
+```
+
 ## not(value) : boolean
 
 Inverts the truthiness of the input value:
@@ -233,7 +249,7 @@ Upcases the input value:
 <span data-bind="page.title | upcase"></span>
 ```
 
-## pluralize(value, count) : string
+## pluralize(value, count, includeCount[=true]) : string
 
 Pluralizes the input value based on the patterns specified in `Batman.helpers.inflector` and the count provided:
 
@@ -248,6 +264,10 @@ Pluralizes the input value based on the patterns specified in `Batman.helpers.in
 <span data-bind="'analysis' | pluralize page.comments.count"></span>
 ```
 
+## singularize(string) : string
+
+Returns the singular inflection of `string`.
+
 ## humanize(string) : string
 
 Takes a string and makes it human readable, for example 'an_underscored_string' would become 'An underscored string'.
@@ -260,13 +280,41 @@ Would result in:
 <span data-bind="'about_us_page' | humanize">About us page</span>
 ```
 
-## join(value, separator = '') : string
+## titleize(value) : string
 
-Joins an `array` of values into a single string:
+Humanizes `string` and capitalizes each word. For example,
+
+```html
+<span data-bind="'about_us_page' | titleize"></span>
+```
+Would result in:
+```html
+<span data-bind="'about_us_page' | titleize">About Us Page</span>
+```
+
+## underscore(string) : string
+
+Converts `string` to underscore case.
+
+## camelize(string, firstLetterLower[=false]) : string
+
+Converts `string` to camel case. if `firstLetterLower` is true, the first letter will be lowercase.
+
+## ordinalize(numberOrString) : string
+
+Turns `numberOrString` into an ordinalized number, for example, `4 | ordinalize` becomes `4th`.
+
+## join(array, separator = '') : string
+
+Joins `array` into a single string with `separator`:
 
 ```html
 <span data-bind="page.comments | map 'title' | join ', '"></span>
 ```
+
+## toSentence(array) : string
+
+Joins `array` with `, ` and ` and`, as appropriate. See [helpers.toSentence](/docs/api/batman.helpers.html#class_function_tosentence).
 
 ## sort(value) : value
 
