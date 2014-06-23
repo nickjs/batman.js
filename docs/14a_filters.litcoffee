@@ -260,13 +260,37 @@ Would result in:
 <span data-bind="'about_us_page' | humanize">About us page</span>
 ```
 
-## join(value, separator = '') : string
+## titleize(value) : string
 
-Joins an `array` of values into a single string:
+Humanizes `string` and capitalizes each word. For example,
+
+```html
+<span data-bind="'about_us_page' | titleize"></span>
+```
+Would result in:
+```html
+<span data-bind="'about_us_page' | titleize">About Us Page</span>
+```
+
+## underscore(string) : string
+
+Converts `string` to underscore case.
+
+## camelize(string, firstLetterLower[=false]) : string
+
+Converts `string` to camel case. if `firstLetterLower` is true, the first letter will be lowercase.
+
+## join(array, separator = '') : string
+
+Joins `array` into a single string with `separator`:
 
 ```html
 <span data-bind="page.comments | map 'title' | join ', '"></span>
 ```
+
+## toSentence(array) : string
+
+Joins `array` with `, ` and ` and`, as appropriate. See [helpers.toSentence](/docs/api/batman.helpers.html#class_function_tosentence).
 
 ## sort(value) : value
 

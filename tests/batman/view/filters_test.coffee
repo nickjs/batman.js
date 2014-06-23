@@ -259,6 +259,13 @@ asyncTest 'join', 2, ->
       equal node.html(), "a|b|c"
       QUnit.start()
 
+asyncTest 'toSentence', 1, ->
+  helpers.render '<div data-bind="foo | toSentence"></div>',
+    foo: ['a', 'b', 'c']
+  , (node) ->
+    equal node.html(), "a, b, and c"
+    QUnit.start()
+
 asyncTest 'sort', 1, ->
   helpers.render '<div data-bind="foo | sort | join"></div>',
     foo: ['b', 'c', 'a', '1']

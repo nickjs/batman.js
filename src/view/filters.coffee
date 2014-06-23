@@ -181,7 +181,7 @@ Batman.Filters =
   escape: buntUndefined(Batman.escapeHTML)
 
 do ->
-  for k in ['capitalize', 'singularize', 'underscore', 'camelize']
+  for k in ['capitalize', 'titlelize', 'singularize', 'underscore', 'camelize', 'toSentence']
     Batman.Filters[k] = buntUndefined Batman.helpers[k]
 
 Batman.developer.addFilters()
