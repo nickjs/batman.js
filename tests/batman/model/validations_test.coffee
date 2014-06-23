@@ -85,6 +85,23 @@ validationsTestSuite = ->
           equal errors.length, 1
           QUnit.start()
 
+  asyncTest "presence checks for a proxy's target", 3, ->
+    console.log "testing"
+    class @Product extends Batman.Model
+      @validate 'product', presence: yes
+    @Product.belongsTo('product', namespace: @)
+
+    p = new @Product
+    p.validate (error, errors) ->
+      throw error if error
+      equal errors.length, 1
+      equal p.get('product').isProxy, true
+      p.fromJSON({product: {name: "oxyclean"}})
+      p.validate (error, errors) ->
+        throw error if error
+        equal errors.length, 0
+        QUnit.start()
+
   asyncTest "presence and length", 2, ->
     class Product extends Batman.Model
       @validate 'name', {presence: yes, maxLength: 10, minLength: 3}

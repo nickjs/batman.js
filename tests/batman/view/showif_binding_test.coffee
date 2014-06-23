@@ -80,3 +80,23 @@ asyncTest "it should ignore an inline style of 'display:none' on inline elements
         helpers.withNodeInDom node, ->
           equal node.css('display'), 'none'
         QUnit.start()
+
+asyncTest 'it should show for a proxy with a target and hide if the value is a proxy with no target', 2, ->
+  testSpan = $('<span/>')
+  testSpan.appendTo($('body'))
+  inlineDefaultDisplay = testSpan.css('display')
+  testSpan.remove()
+  source = '<span data-showif="foo"></span>'
+  helpers.render source,
+    foo: new Batman.Proxy(new Batman.Object)
+  , (node) ->
+    # Must put the node in the DOM for the style to be calculated properly.
+    helpers.withNodeInDom node, ->
+      equal node.css('display'), inlineDefaultDisplay
+
+    helpers.render source,
+      foo: new Batman.Proxy
+    , (node) ->
+        helpers.withNodeInDom node, ->
+          equal node.css('display'), 'none'
+        QUnit.start()
