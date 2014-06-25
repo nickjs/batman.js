@@ -11,6 +11,31 @@ class MyApp.MyModel extends Batman.Model
 
 `Batman.RestStorage` requires a platform implementation library for `Batman.Request`.
 
+## ::.serializeAsForm[= true] : Boolean
+
+By default, `Batman.RestStorage` sends data as `'application/x-www-form-urlencoded'`. To send as `'application/json'`, pass `serializeAsForm: false` to `@persist`:
+
+```coffeescript
+class MyApp.MyModel extends Batman.Model
+  @persist Batman.RestStorage, serializeAsForm: false
+```
+
+## ::urlForCollection(model, env) : String
+
+Returns a collection URL for `model` by checking:
+
+- `env.options.collectionUrl`
+- `model.url` (can be defined as a string or function, see "Model Mixin" below)
+- `model.storageKey`
+- `model.resourceName`
+
+## ::urlForRecord(record, env) : String
+
+Returns a URL for `record` by checking:
+
+- `env.options.recordUrl`
+- `record.url` (can be defined as a string or function, see "Model Mixin" below)
+- `urlForCollection` plus `/:id`
 
 ## Model Mixin
 
@@ -38,3 +63,11 @@ The order of the nestings define the precedence, which means the __first__ nesti
       equal (new Product(shop_id: 1, order_id: 2, id: 3)).url(), 'orders/2/products/3'
       equal Product.url(data: shop_id: 1), 'products'
       equal (new Product(shop_id: 1, id: 2)).url(), 'products/2'
+
+## @url() : String
+
+Returns the URL for model.
+
+## ::url() : String
+
+Returns the URL for the record.
