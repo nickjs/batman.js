@@ -249,4 +249,12 @@ sharedStorageTestSuite = (hooks = {}) ->
       equal JSON.stringify(errJSON.subject), JSON.stringify(product)
       QUnit.start()
 
+  asyncTestWithHooks 'storageAdapter keeps track of last error', 2, ->
+    klass = @adapter.constructor
+    product = new @Product(name: "test 14")
+    @adapter.perform 'destroy', product, {}, (err, foundRecord) ->
+      ok err
+      equal klass.get('lastError'), err
+      QUnit.start()
+
 window.sharedStorageTestSuite = sharedStorageTestSuite

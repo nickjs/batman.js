@@ -169,4 +169,5 @@ class Batman.StorageAdapter extends Batman.Object
   @::after 'all', (env, next) ->
     if env.error?
       env.error.env = env
+      @constructor.set('lastError', env.error)
     next()
