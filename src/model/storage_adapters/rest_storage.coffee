@@ -23,10 +23,11 @@ class Batman.RestStorage extends Batman.StorageAdapter
     urlNestsUnder: (keys...) ->
       parents = {}
       for key in keys
-        if 'Array' == Batman.typeOf key
-          parents[key.join("-")] = {}
-          for deep_key in key
-            parents[key.join("-")][deep_key + '_id'] = Batman.helpers.pluralize(deep_key)
+        if Batman.typeOf(key) is 'Array'
+          combinedKey = key.join("-")
+          parents[combinedKey] = {}
+          for deepKey in key
+            parents[combinedKey][deepKey + '_id'] = Batman.helpers.pluralize(deepKey)
         else
           parents[key + '_id'] = Batman.helpers.pluralize(key)
 
@@ -34,17 +35,16 @@ class Batman.RestStorage extends Batman.StorageAdapter
         childSegment = @storageKey || Batman.helpers.pluralize(@get('resourceName').toLowerCase())
         url = ""
         for key, plural of parents
-          if 'Object' == Batman.typeOf plural
-            for deep_key, deep_plural of plural
-              parentID = options.data[deep_key]
+          if Batman.typeOf(plural) is 'Object'
+            for deepKey, deepPlural of plural
+              parentID = options.data[deepKey]
               if parentID
-                delete options.data[deep_key]
-                url = "#{url}#{deep_plural}/#{parentID}/"
+                delete options.data[deepKey]
+                url = "#{url}#{deepPlural}/#{parentID}/"
               else
                 url = ""
                 break
-            break unless "" == url
-
+            break unless url is ""
           else
             parentID = options.data[key]
             if parentID
@@ -54,16 +54,17 @@ class Batman.RestStorage extends Batman.StorageAdapter
         "#{url}#{childSegment}"
 
       @::url = ->
+        url = ""
         childSegment = @constructor.storageKey || Batman.helpers.pluralize(@constructor.get('resourceName').toLowerCase())
         url = ""
         for key, plural of parents
-          if 'Object' == Batman.typeOf plural
-            for deep_key, deep_plural of plural
-              parentID = @get('dirtyKeys').get(deep_key)
+          if Batman.typeOf(plural) is 'Object'
+            for deepKey, deepPlural of plural
+              parentID = @get('dirtyKeys').get(deepKey)
               if parentID is undefined
-                parentID = @get(deep_key)
+                parentID = @get(deepKey)
               if parentID
-                url = "#{url}#{deep_plural}/#{parentID}/"
+                url = "#{url}#{deepPlural}/#{parentID}/"
               else
                 url = ""
                 break
