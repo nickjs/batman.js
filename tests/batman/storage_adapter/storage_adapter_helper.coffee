@@ -239,4 +239,14 @@ sharedStorageTestSuite = (hooks = {}) ->
       ok err
       QUnit.start()
 
+  asyncTestWithHooks 'errors are serializeable', 4, ->
+    product = new @Product(name: "test 14")
+    @adapter.perform 'destroy', product, {}, (err, foundRecord) ->
+      errJSON = err.toJSON()
+      equal errJSON.name, "StorageError"
+      equal errJSON.message, "Couldn't get/set record primary key on destroy!"
+      equal errJSON.action, "destroy"
+      equal JSON.stringify(errJSON.subject), JSON.stringify(product)
+      QUnit.start()
+
 window.sharedStorageTestSuite = sharedStorageTestSuite
