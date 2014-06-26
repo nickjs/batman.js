@@ -8,6 +8,19 @@ class Batman.StorageAdapter extends Batman.Object
       super
       @message = message
 
+    toJSON: ->
+      action = @env.action
+      subject = if @env.subject.toJSON?
+          @env.subject.toJSON()
+        else
+         "resourceName: #{@env.subject.resourceName}"
+      json = {@name, @message, action, subject}
+      if request = @request?.toJSON()
+        delete request.xhr # would be a circular reference
+        json.request = request
+      json
+
+
   class @RecordExistsError extends @StorageError
     name: 'RecordExistsError'
     constructor: (message) ->
@@ -152,3 +165,9 @@ class Batman.StorageAdapter extends Batman.Object
       @[key](env, next)
 
     undefined
+
+  @::after 'all', (env, next) ->
+    if env.error?
+      env.error.env = env
+      @constructor.set('lastError', env.error)
+    next()
