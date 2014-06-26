@@ -50,8 +50,15 @@ test "overriding paramsForOffsetAndLimit, offsetFromParams, and limitFromParams 
   equal @thingPaginator.cache.limit, 30
   equal @thingPaginator.cache.items, things
   equal @thingPaginator.totalCount, 32
-  
 
+test "propagate totalCount to the paginator", ->
+  @thingPaginator.loadItemsForOffsetAndLimit(0, 10)
+
+  callback = @Thing.load.lastCallArguments?[1]
+  items = []
+  callback.call(null, null, items, {response: {totalCount: 888}})
+  equal @thingPaginator.cache.items, items
+  equal @thingPaginator.totalCount, 888
 
 
 
