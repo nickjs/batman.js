@@ -1,6 +1,7 @@
 #= require ./render_cache
 
 class Batman.Controller extends Batman.Object
+  coerceIntegerParams: true
   @singleton 'sharedController'
 
   @wrapAccessor 'routingKey', (core) ->
@@ -77,7 +78,7 @@ class Batman.Controller extends Batman.Object
   # You shouldn't call this method directly. It will be called by the dispatcher when a route is called.
   # If you need to call a route manually, use `Batman.redirect()`.
   dispatch: (action, params = {}) ->
-    if Batman.config.coerceIntegerParams
+    if @coerceIntegerParams
       for key, value of params
         params[key] = Batman.helpers.coerceInteger(value)
 

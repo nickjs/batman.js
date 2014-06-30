@@ -447,13 +447,12 @@ test 'integer-ish params are coerced to integers', ->
   equal params.name, 'Back to the Future 2'
 
 test 'integer coercion can be disabled', ->
-  Batman.config.coerceIntegerParams = false
+  @controller.coerceIntegerParams = false
   @controller.show = createSpy()
   @controller.dispatch 'show', {id: "215", name: "Back to the Future 2"}
   params = @controller.show.lastCallArguments[0]
   strictEqual params.id, '215'
   equal params.name, 'Back to the Future 2'
-  Batman.config.coerceIntegerParams = true
 
 QUnit.module 'Batman.Controller error handling',
   setup: ->
