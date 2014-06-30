@@ -15,6 +15,7 @@ Batman.config =
 
   minificationErrors: true
   protectFromCSRF: false
+  coerceIntegerParams: true
 
 (Batman.container = do -> this).Batman = Batman  # I am so, so sorry.
 

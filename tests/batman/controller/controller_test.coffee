@@ -439,6 +439,22 @@ test 'dispatching params with a hash does not scroll to that hash if autoScrollT
     @controller.dispatch 'show', {'#': 'foo'}
     ok !spy.called
 
+test 'integer-ish params are coerced to integers', ->
+  @controller.show = createSpy()
+  @controller.dispatch 'show', {id: "215", name: "Back to the Future 2"}
+  params = @controller.show.lastCallArguments[0]
+  strictEqual params.id, 215
+  equal params.name, 'Back to the Future 2'
+
+test 'integer coercion can be disabled', ->
+  Batman.config.coerceIntegerParams = false
+  @controller.show = createSpy()
+  @controller.dispatch 'show', {id: "215", name: "Back to the Future 2"}
+  params = @controller.show.lastCallArguments[0]
+  strictEqual params.id, '215'
+  equal params.name, 'Back to the Future 2'
+  Batman.config.coerceIntegerParams = true
+
 QUnit.module 'Batman.Controller error handling',
   setup: ->
     class @CustomError extends Batman.Object
