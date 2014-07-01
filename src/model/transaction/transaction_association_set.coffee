@@ -1,6 +1,14 @@
 class Batman.TransactionAssociationSet extends Batman.Set
   isTransaction: true
   constructor: (associationSet, visited, stack) ->
+    #If this association was already transacted, return the existing transaction
+    existingIndex = visited.indexOf(associationSet)
+    if existingIndex isnt -1
+      return stack[existingIndex]
+
+    visited.push(associationSet)
+    stack.push(this)
+
     @set('associationSet', associationSet)
     # in case they're being loaded:
     @_loader = @_addFromAssociationSet.bind(@)
@@ -56,11 +64,13 @@ class Batman.TransactionAssociationSet extends Batman.Set
     @fire 'itemsWereRemoved', removedTransactions if removedTransactions.length
     removedTransactions
 
-  applyChanges: (visited) ->
+  applyChanges: (visited=[]) ->
+    target = this.get('associationSet')
+    return target if visited.indexOf(this) isnt -1
+    visited.push(this)
     for transactionItem in @_storage
       transactionItem.applyChanges(visited)
     originals = new Batman.Set(@_originalStorage...)
-    target = @get('associationSet')
     target.off 'itemsWereAdded', @_loader
     target.replace(originals)
     target.set('removedItems', new Batman.Set(@_removedStorage...))
