@@ -80,10 +80,10 @@ class Batman.Model extends Batman.Object
       if @resourceName?
         @resourceName
       else if @::resourceName?
-        Batman.developer.error("Please define the resourceName property of the #{Batman.functionName(@)} on the constructor and not the prototype.") if Batman.config.minificationErrors
+        Batman.developer.error("Please define the resourceName property of the #{Batman.functionName(@)} on the constructor and not the prototype. (For example, `@resourceName: '#{Batman.helpers.underscore(Batman.functionName(@))}'`)") if Batman.config.minificationErrors
         @::resourceName
       else
-        Batman.developer.error("Please define #{Batman.functionName(@)}.resourceName in order for your model to be minification safe.") if Batman.config.minificationErrors
+        Batman.developer.error("Please define #{Batman.functionName(@)}.resourceName in order for your model to be minification safe. (For example, `@resourceName: '#{Batman.helpers.underscore(Batman.functionName(@))}'`)") if Batman.config.minificationErrors
         Batman.helpers.underscore(Batman.functionName(@))
 
   @classAccessor 'all',
@@ -585,7 +585,7 @@ class Batman.Model extends Batman.Object
         attributes[key] = newValues
 
       else if Batman.typeOf(value) is 'Object'
-        Batman.developer.warn "You're passing a mutable object (#{key}, #{value.constructor.name}) in a #{@constructor.name} transaction:", value
+        Batman.developer.warn "You're passing a mutable object (#{key}, #{Batman.functionName(value.constructor)}) in a #{@constructor.name} transaction:", value
 
     transaction._withoutDirtyTracking -> transaction.updateAttributes(attributes)
     transaction._batman.base = this
