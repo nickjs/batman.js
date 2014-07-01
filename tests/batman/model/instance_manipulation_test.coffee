@@ -252,8 +252,21 @@ asyncTest "create method returns an instance of a model while saving it", ->
     QUnit.start()
   ok result instanceof @Product
 
-asyncTest "string ids aren't coerced into integers", ->
+asyncTest "primary keys are coerced to integers", ->
   product = new @Product
+  product.save (err) =>
+    throw err if err
+    id = product.get('id')
+    @Product.find ""+id, (err, foundProduct) ->
+      throw err if err
+      equal foundProduct, product
+      equal Batman.typeOf(foundProduct.get("id")), "Number"
+      equal Batman.typeOf(product.get("id")), "Number"
+      QUnit.start()
+
+asyncTest "coercion can be disabled", ->
+  product = new @Product
+  @Product::coerceIntegerPrimaryKey = false
   product.save (err) =>
     throw err if err
     id = product.get('id')
