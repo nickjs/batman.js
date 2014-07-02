@@ -22,6 +22,8 @@ Change the option using `set`, like so:
         @set 'primaryKey', 'shop_id'
       equal Shop.get('primaryKey'), 'shop_id'
 
+_Note:_ `primaryKey` will be coerced to an integer if possible. You can disable this by setting `coerceIntegerPrimaryKey: false` in your model definition.
+
 ## @.resourceName[= null] : String
 
 `resourceName` is a minification-safe identifier for the `Model`. It is usually an underscore-cased version of the `Model`'s class name (for example, `App.BlogPost => "blog_post"`) . It is used by:
@@ -597,4 +599,13 @@ Returns `null` if the association does not exist.
 If `type` is passed (eg, `hasMany`), returns a `Batman.SimpleSet` of all associations of that type on the record.
 If no type is passed, all associations are returned.
 If the record has no associations, returns `null`.
+
+## ::coerceIntegerPrimaryKey[=true] : Boolean
+
+By default, primary keys that match `/\d+/` will be coerced to integers when set on the model. You can disable this with:
+
+```coffeescript
+class MyApp.MyModel
+  coerceIntegerPrimaryKey: false
+```
 

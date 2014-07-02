@@ -9,6 +9,7 @@ class Batman.Model extends Batman.Object
   @storageKey: null
 
   @primaryKey: 'id'
+  coerceIntegerPrimaryKey: true
 
   # Pick one or many mechanisms with which this model should be persisted. The mechanisms
   # can be already instantiated or just the class defining them.
@@ -169,6 +170,8 @@ class Batman.Model extends Batman.Object
     @_makeOrFindRecordsFromData(array)
 
   @_loadIdentity: (id) ->
+    if @coerceIntegerPrimaryKey
+      id = Batman.helpers.coerceInteger(id)
     @get('loaded.indexedByUnique.id').get(id)
 
   @_loadRecord: (attributes) ->
@@ -305,9 +308,11 @@ class Batman.Model extends Batman.Object
         @get(primaryKey)
     set: (key, value) ->
       primaryKey = @constructor.primaryKey
+      if @coerceIntegerPrimaryKey
+        value = Batman.helpers.coerceInteger(value)
       if primaryKey == 'id'
         @_willSet(key)
-        core.set.apply(@, arguments)
+        core.set.call(@, key, value)
       else
         @set(primaryKey, value)
 
