@@ -1,21 +1,32 @@
 
 ### Batman helpers 
 - `toSentence` doesnt the array passed to it https://github.com/batmanjs/batman/pull/1055
-
+- `toSentence`, `ordinalize` and `titleize` added as view filters https://github.com/batmanjs/batman/pull/1064
 
 ### Batman.Set
 - `Set::mappedTo` passed to `SetProxy`, too https://github.com/batmanjs/batman/pull/1052
-
 
 ### Batman.App
 - Can update params without redirecting: https://github.com/batmanjs/batman/pull/1048
 
 ### Batman.Model 
 - `if`/`unless` handles multiple keys: https://github.com/batmanjs/batman/pull/1058
+- primaryKeys that look like integers are coerced by default https://github.com/batmanjs/batman/pull/1071
+- _loadIdentity coerces its value to an integer if possible https://github.com/batmanjs/batman/pull/1071
+- more messages for association-related errors https://github.com/batmanjs/batman/pull/1072
+- association sets aren't `transaction`'d or `applyChanges`'d twice https://github.com/batmanjs/batman/pull/1062
+- `@validate presence: true` will check for `proxy.target` if the value is a proxy https://github.com/batmanjs/batman/pull/1063
 
+### Batman.StorageAdapter 
+- Storage errors respond to `toJSON` https://github.com/batmanjs/batman/pull/1066
+- Storage adapters keep the last storage error at `@lastError` https://github.com/batmanjs/batman/pull/1066
+
+### Batman.Controller 
+- params that look like integers are coerced to integers https://github.com/batmanjs/batman/pull/1071
 
 ### Batman.View
 - Fix `View.isInDOM` throws `undefined method` from the render cache https://github.com/batmanjs/batman/pull/1050
+- `data-showif`/`data-hideif` checks for `proxy.target` if the value is a proxy https://github.com/batmanjs/batman/pull/1063
 
 ## 0.16.0
 
