@@ -10,6 +10,7 @@ globalPreparation = ->
     oldRun.apply(@, arguments...)
   Batman.exportGlobals(container)
   Batman.config.minificationErrors = false
+  Batman.env = 'test'
 
 QUnit.moduleStart ->
   globalPreparation?()

@@ -14,7 +14,7 @@ class Batman.Association
     @options = Batman.extend defaultOptions, @defaultOptions, options
 
     if @options.nestUrl
-      Batman.developer.error "You must persist the the model #{@model.constructor.name} to use the url helpers on an association" if !@model.urlNestsUnder?
+      Batman.developer.error "You must persist the model #{Batman.functionName(@model)} to use the url helpers on an association" if !@model.urlNestsUnder?
       @model.urlNestsUnder Batman.helpers.underscore(@getRelatedModel().get('resourceName'))
 
     if @options.extend?
@@ -43,8 +43,12 @@ class Batman.Association
     className = @options.name
     relatedModel = scope?[className]
     Batman.developer.do ->
-      if Batman.currentApp? and not relatedModel
-        Batman.developer.warn "Related model #{className} hasn't loaded yet."
+      if !relatedModel and Batman.env isnt 'test'
+        namespaceMsg = if @options?.namespace
+            "#{@options.namespace}."
+          else
+            "Batman.currentApp. Is your app running with `MyApp.run()`?"
+        Batman.developer.warn "Related model #{className} wasn't found in namespace #{namespaceMsg}"
     relatedModel
 
   getFromAttributes: (record) -> record.get("attributes.#{@label}")

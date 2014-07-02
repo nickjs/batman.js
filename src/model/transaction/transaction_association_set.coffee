@@ -27,7 +27,7 @@ class Batman.TransactionAssociationSet extends Batman.Set
     addedTransactions = []
     for item in items
       unless item instanceof Batman.Model && !item.isTransaction
-        Batman.developer.warn("You tried to add a #{item.constructor.name} to a TransactionAssociationSet (#{@get('association.label')})", item)
+        Batman.developer.warn("You tried to add a #{Batman.functionName(item.constructor)} to a TransactionAssociationSet (#{@get('association.label')})", item)
         continue
       transactionItem = item._transaction(@_visited, @_stack)
       @_storage.push(transactionItem)
