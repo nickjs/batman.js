@@ -48,13 +48,19 @@ Batman.Encoders.railsDate =
         Batman.developer.warn "Unrecognized rails date #{value}!"
         return Date.parse(value)
 
-Batman.Model.encodeTimestamps = (attrs...) ->
-  if attrs.length == 0
-    attrs = ['created_at', 'updated_at']
+RailsModelMixin =
+  encodeTimestamps: (attrs...) ->
+    if attrs.length == 0
+      attrs = ['created_at', 'updated_at']
+    @encode(attrs..., encode: false, decode: Batman.Encoders.railsDate.decode)
 
-  @encode(attrs..., encode: false, decode: Batman.Encoders.railsDate.decode)
+  _encodesNestedAttributesForKeys: []
+
+  encodesNestedAttributesFor: (keys...)->
+    @_encodesNestedAttributesForKeys = @_encodesNestedAttributesForKeys.concat(keys)
 
 class Batman.RailsStorage extends Batman.RestStorage
+  @ModelMixin: Batman.mixin({}, Batman.RestStorage.ModelMixin, RailsModelMixin)
 
   urlForRecord: -> @_addJsonExtension(super)
   urlForCollection: -> @_addJsonExtension(super)
@@ -105,4 +111,37 @@ class Batman.RailsStorage extends Batman.RestStorage
         env.result = record
         env.error = record.get('errors')
         return next()
+    next()
+
+
+  @::before 'create', 'update', (env, next) ->
+    data = env.options.data
+    if namespace = @recordJsonNamespace(env.subject)
+      obj = data[namespace]
+    else
+      obj = data
+
+    for key in @model._encodesNestedAttributesForKeys
+      if obj[key]?
+        obj["#{key}_attributes"] = obj[key]
+        delete obj[key]
+    next()
+
+  @::after 'update', @skipIfError (env, next) ->
+    for key in @model._encodesNestedAttributesForKeys
+      association = env.subject.reflectOnAssociation(key)
+      if !association?
+        Batman.developer.error("No assocation was found for nested attribute #{key}")
+      else if association instanceof Batman.PluralAssociation
+        associationSet = env.subject.get(key)
+        associationSet.forEach (object) ->
+          if object.get('_destroy')
+            associationSet.remove(object)
+            object.constructor.get('loaded').remove(object)
+      else if association instanceof Batman.SingularAssociation and env.subject.get("#{key}._destroy")
+        associatedRecord = env.subject.get(key)
+        if associatedRecord.isProxy
+          associatedRecord = associatedRecord.get('target')
+        env.subject._withoutDirtyTracking -> @set(key, null)
+        association.getRelatedModel().get('loaded').remove(associatedRecord)
     next()
