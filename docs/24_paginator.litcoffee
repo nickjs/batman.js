@@ -3,7 +3,11 @@
 `Batman.Paginator` is an abstract class which is implemented by `Batman.ModelPaginator`. For information about paginating records, see `Batman.ModelPaginator`.
 
 
-Internally, `Batman.Paginator` prevents loading the same page twice.
+`Batman.Paginator` provides:
+
+- exposing pages of records (via `toArray`) and changing pages (`nextPage` / `previousPage`)
+- item caching and  prevention of reloading/concurrent loading of pages
+- calculation calucations for `page`, `offset`, `limit`, etc.
 
 ## ::constructor(options={}) : Paginator
 
@@ -75,7 +79,7 @@ A `Batman.ModelPaginator` provides pagination by:
 
 Add a paginator to your controller:
 
-```coffee
+```coffeescript
 class App.PostsController extends Batman.Controller
   index: -> # renders posts/index.html
     @set 'paginator, new Batman.ModelPaginator
@@ -97,6 +101,24 @@ Then, bind to it in your HTML:
 <button data-event-click='paginator.nextPage'>    Next</button>
 ```
 
+If you want your paginator to update from other properties, wrap it in `@accessor`. For example, to make a new paginator when `postsOrder` changes, you could:
+
+
+```coffeescript
+class App.PostsController extends Batman.Controller
+  index: ->
+    @set('postsOrder', 'created_at')
+    # renders posts/index.html
+
+  @accessor 'paginator,
+    new Batman.ModelPaginator
+      model: App.Post
+      limit: 10
+      page: 1
+      params: {order: @get('postsOrder')}
+```
+
+Now, if you set `postsOrder` to `length`, it would cause `paginator` to be reevaluated, and the new paginator would use `order=length` to load records. Also, `paginator.toArray` would be updated with the new records in the new order.
 
 ## ::constructor(options) : ModelPaginator
 
