@@ -11,6 +11,59 @@ class MyApp.MyModel extends Batman.Model
 
 `Batman.RestStorage` requires a platform implementation library for `Batman.Request`.
 
+## Using Custom URLs with Batman.RestStorage
+
+There are many ways to customize the URLs for records and collections that are persisted with `Batman.RestStorage`.
+
+For __collections__, you can define `@url` as a string _or_ function in the model definition:
+
+```coffeescript
+class MyApp.MyModel extends Batman.Model
+  @persist Batman.RestStorage
+  @url: "/api/v1/my_models"
+
+class MyApp.OtherModel extends Batman.Model
+  @persist Batman.RestStorage
+  @url: (options) ->  "/api/v1/other_models"
+```
+
+See also [`@urlNestsUnder`](/docs/api/batman.reststorage.html#class_function_urlnestsunder) for nested URL helpers.
+
+You can also specify a URL at load-time. For example:
+
+```coffeescript
+MyApp.MyModel.load {url: "/my_models/latest"}, (err, records) -> # ...
+```
+
+For __records__, you can also specify a prototype property `url` in the model definition:
+
+```coffeescript
+class MyApp.MyModel extends Batman.Model
+  @persist Batman.RestStorage
+  url: "/api/v1/my_models" # `/:id` will be added by Batman.RestStorage
+
+class MyApp.OtherModel extends Batman.Model
+  @persist Batman.RestStorage
+  url: ->  "/api/v1/other_models" # `/:id` will be added by Batman.RestStorage
+```
+
+You can also specify a URL on a record instance. For example:
+
+```coffeescript
+myRecord = new MyApp.MyModel
+myRecord.url = "/special/endpoint"
+myRecord.save() # will use `/special/endpoint`
+```
+
+You can also specify a URL at operation-time. For example:
+
+```coffeescript
+myRecord = new MyApp.MyModel
+myRecord.save {url: "/special/endpoint"}, (err, record) -> # ...
+```
+
+[`@urlNestsUnder`](/docs/api/batman.reststorage.html#class_function_urlnestsunder) also generates nested URLs for records.
+
 ## ::.serializeAsForm[= true] : Boolean
 
 By default, `Batman.RestStorage` sends data as `'application/x-www-form-urlencoded'`. To send as `'application/json'`, pass `serializeAsForm: false` to `@persist`:
@@ -64,10 +117,10 @@ The order of the nestings define the precedence, which means the __first__ nesti
       equal Product.url(data: shop_id: 1), 'products'
       equal (new Product(shop_id: 1, id: 2)).url(), 'products/2'
 
-## @url() : String
+## @url(options) : String
 
-Returns the URL for model.
+Returns the URL for model. `options` are the options passed to the storage operation which triggered the call. You can also override `@url` as a string.
 
 ## ::url() : String
 
-Returns the URL for the record.
+Returns the URL for the record. You can also override `::url` as a string on the prototype or on specific instances.
