@@ -33,6 +33,7 @@ class Batman.RestStorage extends Batman.StorageAdapter
 
       @url = (options) ->
         childSegment = @storageKey || Batman.helpers.pluralize(@get('resourceName').toLowerCase())
+        return childSegment unless options?
         url = ""
         for key, plural of parents
           if Batman.typeOf(plural) is 'Object'
@@ -52,7 +53,6 @@ class Batman.RestStorage extends Batman.StorageAdapter
               url = "#{plural}/#{parentID}/"
               break
         "#{url}#{childSegment}"
-
       @::url = ->
         url = ""
         childSegment = @constructor.storageKey || Batman.helpers.pluralize(@constructor.get('resourceName').toLowerCase())

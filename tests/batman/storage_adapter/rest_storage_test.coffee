@@ -38,3 +38,10 @@ test 'urlNestsUnder should deeply nest record URLs', 1, ->
 test 'urlNestsUnder should not deeply nest record URLs if one of the deep nesting parents is missing', 1, ->
   product = new @Product(id:1, shop_id: 1, order_id: 2)
   equal product.url(), 'orders/2/products/1'
+
+test 'urlNestsUnder allows no nesting for records', ->
+  product = new @Product(id: 6)
+  equal product.url(), 'products/6'
+
+test 'urlNestsUnder allows no nesting for collection', ->
+  equal @Product.url(), 'products'
