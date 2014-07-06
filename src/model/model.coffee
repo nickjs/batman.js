@@ -464,7 +464,8 @@ class Batman.Model extends Batman.Object
       [options, callback] = [{}, options]
 
     if @get('lifecycle').destroy()
-      @_doStorageOperation 'destroy', {data: options}, (err, record, env) =>
+      payload = Batman.mixin({}, options, {data: options})
+      @_doStorageOperation 'destroy', payload, (err, record, env) =>
         unless err
           @constructor.get('loaded').remove(@)
           @get('lifecycle').destroyed()
