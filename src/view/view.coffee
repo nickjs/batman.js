@@ -226,14 +226,14 @@ class Batman.View extends Batman.Object
 
   destroySubviews: ->
     if @isDead
-      Batman.developer.warn "Tried to destroy the subviews of a dead view."
+      Batman.developer.warn "Tried to destroy the subviews of a dead #{Batman.functionName(@constructor)}."
       return
     subview.die() for subview in @subviews.toArray()
     @subviews.clear()
 
   die: ->
     if @isDead
-      Batman.developer.warn "Tried to die() a view more than once."
+      Batman.developer.warn "Tried to die() a #{Batman.functionName(@constructor)} more than once."
       return
 
     @fireAndCall('destroy')

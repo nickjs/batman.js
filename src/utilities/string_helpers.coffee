@@ -67,6 +67,14 @@ Batman.helpers =
       itemString += ", and #{last}"
       return itemString
 
+  coerceInteger: (value, shouldThrow=false) ->
+    if (typeof value is "string") and (value.match(/[^0-9]/) is null) and ("#{coercedValue = parseInt(value, 10)}" is value)
+      coercedValue
+    else if shouldThrow
+      throw "#{value} was passed to Batman.helpers.coerceInteger but couldn't be coerced!"
+    else
+      value
+
 Inflector = new Batman.Inflector
 Batman.helpers.inflector = Inflector
 

@@ -115,8 +115,8 @@ test "callbacks passed to load with options should not be pipelined into the sam
   product = new @Product(1)
   spyOn @adapter, 'read'
   product.load {id: 1}, firstLoad = createSpy()
-  QUnit.raises (-> product.load({id: 2}, (err, product) -> throw err if err))
-  QUnit.raises (-> product.load({id: 1}, (err, product )-> throw err if err))
+  QUnit.throws (-> product.load({id: 2}, (err, product) -> throw err if err))
+  QUnit.throws (-> product.load({id: 1}, (err, product )-> throw err if err))
 
 asyncTest "load calls in an accessor will have no sources", ->
   obj = Batman()
@@ -252,8 +252,21 @@ asyncTest "create method returns an instance of a model while saving it", ->
     QUnit.start()
   ok result instanceof @Product
 
-asyncTest "string ids aren't coerced into integers", ->
+asyncTest "primary keys are coerced to integers", ->
   product = new @Product
+  product.save (err) =>
+    throw err if err
+    id = product.get('id')
+    @Product.find ""+id, (err, foundProduct) ->
+      throw err if err
+      equal foundProduct, product
+      equal Batman.typeOf(foundProduct.get("id")), "Number"
+      equal Batman.typeOf(product.get("id")), "Number"
+      QUnit.start()
+
+asyncTest "coercion can be disabled", ->
+  product = new @Product
+  @Product::coerceIntegerPrimaryKey = false
   product.save (err) =>
     throw err if err
     id = product.get('id')

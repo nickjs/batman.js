@@ -233,3 +233,26 @@ asyncTest 'polymorphic association sets get transactions', 8, ->
       metafieldsTransaction.applyChanges()
       ok store.get('metafields.length'), 3, 'new items are added'
       ok store.get('metafields.first.key') == "Transaction metafield", 'item changes are applied'
+
+test 'the same association set doesnt get applyChanges called twice', ->
+  oldApplyChanges = Batman.Transaction.applyChanges
+
+  changesSpy = Batman.Transaction.applyChanges = createSpy(Batman.Transaction.applyChanges)
+  @base.get('apples.first').set('ownerApples', @base.get('apples'))
+  equal @base.get('attributes.apples.first.ownerApples._batmanID'), @base.get('attributes.apples._batmanID'), "it's the same association set"
+
+  transaction = @base.transaction()
+  equal transaction.get('attributes.apples.first.ownerApples._batmanID'), transaction.get('attributes.apples._batmanID'), "it's the same transactionAssociationSet"
+  ###
+    altogether 7 objects should be found:
+    base -> --- apple1 --> base
+        \   \__ apple2 --> base
+         \______ bob   --> base
+
+    shouldn't find base.apple1.ownerApples (which would add 2 calls to applyChanges)
+  ###
+  desiredCalls = 7
+  transaction.applyChanges()
+  equal changesSpy.calls.length, desiredCalls
+
+  Batman.Transaction.applyChanges = oldApplyChanges

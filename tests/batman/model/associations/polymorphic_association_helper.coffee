@@ -46,6 +46,7 @@ ex.baseSetup = ->
         key: "SEO Title"
 
   namespace.StringyMetafield = class @StringyMetafield extends Batman.Model
+    coerceIntegerPrimaryKey: false
     @belongsTo 'stringySubject', {polymorphic: true, namespace}
     @encode 'id' # ids are integer-y strings, eg "1", "2", "3"...
     @encode 'key'

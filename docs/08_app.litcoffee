@@ -79,9 +79,22 @@ _Note:_ `@controllers` should not be observed, but it is very useful for debuggi
 
 The request path relative to `Batman.config.pathToApp`, including query string.
 
-## @%currentParams : Hash
+## @%currentParams : Batman.Params
 
 Returns the URL parameters for the current request, including the path relative to the app's base path (`Batman.config.pathToApp`). It includes named parameters (eg `id` from `/items/:id`), query string parameters (eg `key` of `?key=value`).
+
+`currentParams` also offers a way to change the current request URL's parameters without refreshing or reloading anything on the page. This way you can influence data on the page and allow your users to get the same data on hard refreshes. Here's an example:
+
+```coffeescript
+Batman.currentApp.get('currentParams.url').update(page: 5)
+```
+
+It will even update the URL match a defined route if found:
+
+```coffeescript
+Batman.currentApp.get('currentParams.url').update(action: show, id: 6) # /items/6
+Batman.currentApp.get('currentParams.url').update(page: 5) # /items/page/5
+```
 
 ## @%currentRoute : ControllerActionRoute
 

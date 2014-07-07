@@ -14,7 +14,7 @@ if typeof window.localStorage isnt 'undefined'
 
   sharedStorageTestSuite({})
 
-  asyncTest 'reading many from storage: should callback with only records matching the options', 4, ->
+  asyncTest 'reading many from storage: should callback with only records matching the options', 6, ->
     product1 = new @Product(name: "testA", cost: 20)
     product2 = new @Product(name: "testB", cost: 10)
     @adapter.perform 'create', product1, {}, (err, createdRecord1) =>
@@ -25,10 +25,13 @@ if typeof window.localStorage isnt 'undefined'
           throw err if err
           equal readProducts.length, 1
           deepEqual readProducts[0].get('name'), "testB"
+          strictEqual readProducts[0].get('id'), 2
           @adapter.perform 'readAll', product1.constructor, {data: {cost: 20}}, (err, readProducts) ->
             throw err if err
             equal readProducts.length, 1
             deepEqual readProducts[0].get('name'), "testA"
+            strictEqual readProducts[0].get('id'), 1
+
             QUnit.start()
 
   asyncTest 'create or update whitelists attributes when supplied `only`', ->

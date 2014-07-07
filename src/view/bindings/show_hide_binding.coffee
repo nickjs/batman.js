@@ -14,6 +14,9 @@ class Batman.DOM.ShowHideBinding extends Batman.DOM.AbstractBinding
   dataChange: (value) ->
     view = Batman.View.viewForNode(@node, false)
 
+    if value?.isProxy
+      value = value.get('target')
+
     if !!value is not @invert
       view?.fireAndCall('viewWillShow')
       @node.style.display = @originalDisplay

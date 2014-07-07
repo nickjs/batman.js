@@ -1,3 +1,5 @@
+set -e
+
 GIT_TAG=`git tag --points-at HEAD`
 
 echo ">> Branch: $TRAVIS_BRANCH, Pull Request: $TRAVIS_PULL_REQUEST, Tag: $TRAVIS_TAG ($GIT_TAG)"
@@ -9,8 +11,7 @@ then
 
 	cake build:dist
 
-	cd build
-	mv dist batman.js
+	mv build/dist batman.js
 	tar cvzf batman-master.tar.gz batman.js
 	travis-artifacts upload --path batman-master.tar.gz --target-path '' --cache-control no-cache
 

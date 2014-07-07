@@ -8,7 +8,7 @@ mockRoute = (props) ->
 test "should error if two routes with the same name are added", 2, ->
   route = mockRoute {isRoute: true}
   @routeMap.addRoute('foo', route)
-  raises (-> @routeMap.addRoute('foo', route)), (message) -> ok message; true
+  throws (-> @routeMap.addRoute('foo', route)), (message) -> ok message; true
 
 test "routeForParams should return undefined if no route's test passes", 1, ->
   routeA = mockRoute {isRoute: true, test: -> false}

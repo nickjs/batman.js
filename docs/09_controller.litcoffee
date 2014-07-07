@@ -283,6 +283,15 @@ Specifies if the controller should automatically scroll to the element with ID e
 
 `defaultRenderYield` specifies which yield (see [`data-yield`](/docs/api/batman.view_bindings.html#data-yield)) a controller should automatically render into if no yield is declared.
 
+## ::.coerceIntegerParams[=true] : boolean
+
+If true, strings like `"123"` will be coerced to integers when passed in controller params. This is good for `Batman.Model` IDs. To disable this, set it to false in your controller class definition:
+
+```coffeescript
+class MyApp.MyController extends MyApp.ApplicationController
+  coerceIntegerParams: false
+```
+
 ## @%sharedController : Controller
 
 The singleton instance of the `Controller`.

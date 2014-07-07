@@ -9,6 +9,7 @@ class Batman.Model extends Batman.Object
   @storageKey: null
 
   @primaryKey: 'id'
+  coerceIntegerPrimaryKey: true
 
   # Pick one or many mechanisms with which this model should be persisted. The mechanisms
   # can be already instantiated or just the class defining them.
@@ -80,10 +81,10 @@ class Batman.Model extends Batman.Object
       if @resourceName?
         @resourceName
       else if @::resourceName?
-        Batman.developer.error("Please define the resourceName property of the #{Batman.functionName(@)} on the constructor and not the prototype.") if Batman.config.minificationErrors
+        Batman.developer.error("Please define the resourceName property of the #{Batman.functionName(@)} on the constructor and not the prototype. (For example, `@resourceName: '#{Batman.helpers.underscore(Batman.functionName(@))}'`)") if Batman.config.minificationErrors
         @::resourceName
       else
-        Batman.developer.error("Please define #{Batman.functionName(@)}.resourceName in order for your model to be minification safe.") if Batman.config.minificationErrors
+        Batman.developer.error("Please define #{Batman.functionName(@)}.resourceName in order for your model to be minification safe. (For example, `@resourceName: '#{Batman.helpers.underscore(Batman.functionName(@))}'`)") if Batman.config.minificationErrors
         Batman.helpers.underscore(Batman.functionName(@))
 
   @classAccessor 'all',
@@ -169,6 +170,8 @@ class Batman.Model extends Batman.Object
     @_makeOrFindRecordsFromData(array)
 
   @_loadIdentity: (id) ->
+    if @coerceIntegerPrimaryKey
+      id = Batman.helpers.coerceInteger(id)
     @get('loaded.indexedByUnique.id').get(id)
 
   @_loadRecord: (attributes) ->
@@ -305,9 +308,11 @@ class Batman.Model extends Batman.Object
         @get(primaryKey)
     set: (key, value) ->
       primaryKey = @constructor.primaryKey
+      if @coerceIntegerPrimaryKey
+        value = Batman.helpers.coerceInteger(value)
       if primaryKey == 'id'
         @_willSet(key)
-        core.set.apply(@, arguments)
+        core.set.call(@, key, value)
       else
         @set(primaryKey, value)
 
@@ -459,7 +464,8 @@ class Batman.Model extends Batman.Object
       [options, callback] = [{}, options]
 
     if @get('lifecycle').destroy()
-      @_doStorageOperation 'destroy', {data: options}, (err, record, env) =>
+      payload = Batman.mixin({}, options, {data: options})
+      @_doStorageOperation 'destroy', payload, (err, record, env) =>
         unless err
           @constructor.get('loaded').remove(@)
           @get('lifecycle').destroyed()
@@ -479,19 +485,20 @@ class Batman.Model extends Batman.Object
       return true
 
     count = validators.reduce ((acc, validator) -> acc + validator.keys.length), 0
-    finishedValidation = ->
-      if --count == 0
+    finishedValidation = (decrementBy = 1)->
+      count -= decrementBy
+      if count is 0
         callback?(undefined, errors)
 
     for validator in validators
-
       if validator.if
         condition = if typeof validator.if is 'string'
           @get(validator.if)
         else
           validator.if.call(this, errors, this, key)
-        unless condition
-          finishedValidation()
+
+        if !condition
+          finishedValidation(validator.keys.length)
           continue
 
       if validator.unless
@@ -499,8 +506,9 @@ class Batman.Model extends Batman.Object
           @get(validator.unless)
         else
           validator.unless.call(this, errors, this, key)
+
         if condition
-          finishedValidation()
+          finishedValidation(validator.keys.length)
           continue
 
       for key in validator.keys
@@ -583,7 +591,7 @@ class Batman.Model extends Batman.Object
         attributes[key] = newValues
 
       else if Batman.typeOf(value) is 'Object'
-        Batman.developer.warn "You're passing a mutable object (#{key}, #{value.constructor.name}) in a #{@constructor.name} transaction:", value
+        Batman.developer.warn "You're passing a mutable object (#{key}, #{Batman.functionName(value.constructor)}) in a #{@constructor.name} transaction:", value
 
     transaction._withoutDirtyTracking -> transaction.updateAttributes(attributes)
     transaction._batman.base = this
