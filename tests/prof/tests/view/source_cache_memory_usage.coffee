@@ -22,7 +22,7 @@
 #   Batman.Renderer::deferEvery = false if Batman.Renderer::deferEvery
 
 #   Watson.trackMemory 'view memory usage: source cache', 20, {step: 1, async: true}, (i, next) ->
-#     context = Batman(objects: new Batman.Set([0...50]...))
+#     context = Batman(objects: new Batman.Set([0...50]))
 
 #     view = new Batman.View
 #       contexts: [context]
