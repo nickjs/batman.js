@@ -1,6 +1,6 @@
 # /api/Extras/Batman.jQuery
 
-The `batman.jquery` extra is an implementation library for `Batman.DOM` and `Batman.Request` that depends on [jQuery](http://jquery.com/). It is packaged with batman.js builds on the [downloads page](/downloads.html).
+The `batman.jquery` extra is an implementation library for `Batman.DOM` and `Batman.Request` that depends on [jQuery](http://jquery.com/). It is packaged with batman.js builds on the [downloads page](/download.html).
 
 Besides implementing `Batman.DOM` and `Batman.Request`, it adds a `"$node"` accessor to `Batman.View`, which returns the jQuery selection for the view's `node`. For example:
 
