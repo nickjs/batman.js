@@ -20,7 +20,7 @@ Batman.Renderer::deferEvery = false if Batman.Renderer::deferEvery
 Watson.trackMemory 'view memory usage: simple', 400, {step: 10, async: true}, (i, next) ->
   node = document.createElement 'div'
   node.innerHTML = loopSource
-  context = Batman(objects: new Batman.Set([0...50]...))
+  context = Batman(objects: new Batman.Set([0...50]))
 
   view = new Batman.View
     contexts: [context]

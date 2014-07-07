@@ -232,7 +232,7 @@ asyncTest "inline saving can be disabled", 1, ->
   @productAdapter = createStorageAdapter @Product, AsyncTestStorageAdapter
 
   @Store.find 1, (err, store) =>
-    store.set 'products', new Batman.Set(new @Product)
+    store.set 'products', new Batman.Set([new @Product])
     store.save (err, savedStore) =>
       equal @storeAdapter.storage.stores1["products"], undefined
       QUnit.start()

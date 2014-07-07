@@ -30,8 +30,8 @@ Returns the second `Batman.Set` passed to the constructor.
 Since `Batman.SetUnion` is a subclass of `Batman.Set`, you can use it just like a `Batman.Set`.
 
     test 'SetUnion contains the union of two sets', ->
-      left = new Batman.Set(1, 2, 3)
-      right = new Batman.Set(3, 4, 5)
+      left = new Batman.Set([1, 2, 3])
+      right = new Batman.Set([3, 4, 5])
       operation = new Batman.SetUnion(left, right)
       ok operation.has(1), 'has items from the left set'
       ok operation.has(4), 'has items from the right set'
@@ -45,8 +45,8 @@ Since `Batman.SetUnion` is a subclass of `Batman.Set`, you can use it just like 
 Since `Batman.SetIntersection` is a subclass of `Batman.Set`, you can use it just like a `Batman.Set`.
 
     test 'SetIntersection contains the intersection of two sets', ->
-      left = new Batman.Set(1, 2, 3)
-      right = new Batman.Set(3, 4, 5)
+      left = new Batman.Set([1, 2, 3])
+      right = new Batman.Set([3, 4, 5])
       operation = new Batman.SetIntersection(left, right)
       ok !operation.has(1), 'doesnt have items from the left set only'
       ok !operation.has(4), 'doesnt have items from the right set only'
@@ -59,8 +59,8 @@ Since `Batman.SetIntersection` is a subclass of `Batman.Set`, you can use it jus
 Since `Batman.SetComplement` is a subclass of `Batman.Set`, you can use it just like a `Batman.Set`.
 
     test 'SetComplement contains the complement of two sets', ->
-      left = new Batman.Set(1, 2, 3)
-      right = new Batman.Set(3, 4, 5)
+      left = new Batman.Set([1, 2, 3])
+      right = new Batman.Set([3, 4, 5])
       operation = new Batman.SetComplement(left, right)
       ok operation.has(1), 'has items from the left set only'
       ok !operation.has(4), 'doesnt have items from the right set only'

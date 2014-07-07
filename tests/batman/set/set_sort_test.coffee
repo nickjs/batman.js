@@ -210,7 +210,7 @@ QUnit.module 'Batman.SetSort on a Batman.Set',
   setup: ->
     fixtureSetup.call(@)
 
-    @base = new Batman.Set(@byMary, @byFred, @byZeke, @anotherByFred)
+    @base = new Batman.Set([@byMary, @byFred, @byZeke, @anotherByFred])
     @authorNameSort = new Batman.SetSort(@base, 'author.name')
 
 setSortSuite()
@@ -220,7 +220,7 @@ QUnit.module 'Batman.SetSort on a Batman.SimpleSet',
   setup: ->
     fixtureSetup.call(@)
 
-    @base = new Batman.SimpleSet(@byMary, @byFred, @byZeke, @anotherByFred)
+    @base = new Batman.SimpleSet([@byMary, @byFred, @byZeke, @anotherByFred])
     @authorNameSort = new Batman.SetSort(@base, 'author.name')
 
 setSortSuite()
@@ -236,18 +236,18 @@ test "toArray() returns the correct order when sorting on key which returns a fu
   b = new Test('b')
   c = new Test('c')
 
-  base = new Batman.Set(b, a, c)
+  base = new Batman.Set([b, a, c])
   sorted = base.sortedBy('getName')
   deepEqual sorted.toArray(), [a, b, c]
 
 test "toArray() returns the correct order when sorting on the 'valueOf' key to sort primitives", ->
-  @base = new Batman.Set('b', 'c', 'a')
+  @base = new Batman.Set(['b', 'c', 'a'])
   sorted = @base.sortedBy('valueOf')
   deepEqual sorted.toArray(), ['a', 'b', 'c']
 
 test "_indexOfItem returns the correct index", ->
   arr = [1, 3, 5, 6, 7, 8, 10]
-  set = new Batman.Set(arr...).sortedBy('')
+  set = new Batman.Set(arr).sortedBy('')
   equal set._indexOfItem(4), -1
   equal arr[set._indexOfItem(1)], 1
   equal arr[set._indexOfItem(3)], 3
@@ -256,13 +256,13 @@ test "_indexOfItem returns the correct index", ->
   equal arr[set._indexOfItem(7)], 7
 
   arr = [1, 2]
-  set = new Batman.Set(arr...).sortedBy('')
+  set = new Batman.Set(arr).sortedBy('')
   equal arr[set._indexOfItem(1)], 1
   equal arr[set._indexOfItem(2)], 2
 
 test "_indexOfItem returns the correct item for duplicate keys", ->
   arr = [a = {key: 1}, b = {key: 1}, c = {key: 1}, d = {key: 1}, e = {key: 1}]
-  set = new Batman.Set(arr...).sortedBy('key')
+  set = new Batman.Set(arr).sortedBy('key')
 
   equal arr[set._indexOfItem(a)], a
   equal arr[set._indexOfItem(b)], b
@@ -271,7 +271,7 @@ test "_indexOfItem returns the correct item for duplicate keys", ->
   equal arr[set._indexOfItem(e)], e
 
   arr = [a = {key: 0}, b = {key: 1}, c = {key: 1}, d = {key: 4}, e = {key: 5}]
-  set = new Batman.Set(arr...).sortedBy('key')
+  set = new Batman.Set(arr).sortedBy('key')
 
   equal arr[set._indexOfItem(a)], a
   equal arr[set._indexOfItem(b)], b

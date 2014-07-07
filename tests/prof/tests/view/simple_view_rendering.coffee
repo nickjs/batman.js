@@ -47,7 +47,7 @@ Watson.benchmark 'simple view rendering', (error, suite) ->
     suite.add('simple loop rendering', ((deferred) ->
       node = document.createElement 'div'
       node.innerHTML = loopSource
-      context = Batman(objects: new Batman.Set([0...100]...))
+      context = Batman(objects: new Batman.Set([0...100]))
 
       view = new Batman.View
         contexts: [context]
@@ -69,10 +69,10 @@ Watson.benchmark 'simple view rendering', (error, suite) ->
       context = Batman
         keys: ['foo', 'bar', 'baz', 'qux']
         sets: new Batman.Hash
-          foo: new Batman.Set([0...100]...)
-          bar: new Batman.Set([0...100]...)
-          baz: new Batman.Set([0...100]...)
-          qux: new Batman.Set([0...100]...)
+          foo: new Batman.Set([0...100])
+          bar: new Batman.Set([0...100])
+          baz: new Batman.Set([0...100])
+          qux: new Batman.Set([0...100])
 
       view = new Batman.View
         contexts: [context]

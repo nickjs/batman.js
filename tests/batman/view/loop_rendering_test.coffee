@@ -5,7 +5,7 @@ QUnit.module "Batman.View loop rendering"
 
 asyncTest 'it should allow simple loops', 1, ->
   source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
-  objects = new Batman.Set('foo', 'bar', 'baz')
+  objects = new Batman.Set(['foo', 'bar', 'baz'])
 
   helpers.render source, {objects}, (node, view) ->
     deepEqual getPs(view), ['foo', 'bar', 'baz']
@@ -24,7 +24,7 @@ asyncTest 'it should allow loops over undefined values', 3, ->
   Batman.developer.suppress()
   helpers.render source, {}, (node, view) ->
     deepEqual getPs(view), []
-    view.set('objects', new Batman.Set('foo', 'bar', 'baz'))
+    view.set('objects', new Batman.Set(['foo', 'bar', 'baz']))
     delay ->
       deepEqual getPs(view), ['foo', 'bar', 'baz']
       view.unset('objects')
@@ -34,7 +34,7 @@ asyncTest 'it should allow loops over undefined values', 3, ->
 
 asyncTest 'it should render new items as they are added', ->
   source = '<div><p data-foreach-object="objects" class="present" data-bind="object"></p></div>'
-  objects = new Batman.Set('foo', 'bar')
+  objects = new Batman.Set(['foo', 'bar'])
 
   helpers.render source, {objects}, (node, view) ->
     objects.add('foo', 'baz', 'qux')
@@ -43,7 +43,7 @@ asyncTest 'it should render new items as they are added', ->
 
 asyncTest 'it should remove items from the DOM as they are removed from the set', ->
   source = '<div><p data-foreach-object="objects" class="present" data-bind="object"></p></div>'
-  objects = new Batman.Set('foo', 'bar')
+  objects = new Batman.Set(['foo', 'bar'])
 
   helpers.render source, {objects}, (node, view) ->
     objects.remove('foo')
@@ -52,7 +52,7 @@ asyncTest 'it should remove items from the DOM as they are removed from the set'
 
 asyncTest 'it should atomically reorder DOM nodes when the set is reordered', ->
   source = '<div><p data-foreach-object="objects.sortedBy[currentSort]" class="present" data-bind="object.name"></p></div>'
-  objects = new Batman.Set({id: 1, name: 'foo'}, {id: 2, name: 'bar'})
+  objects = new Batman.Set([{id: 1, name: 'foo'}, {id: 2, name: 'bar'}])
   context = {objects, currentSort: 'id'}
 
   helpers.render source, context, (node, view) ->
@@ -68,7 +68,7 @@ asyncTest 'it should atomically reorder DOM nodes when the set is reordered', ->
 
 asyncTest 'it should add items in order', ->
   source = '<p data-foreach-object="objects.sortedBy.id" class="present" data-bind="object.name"></p>'
-  objects = new Batman.Set({id: 1, name: 'foo'}, {id: 2, name: 'bar'})
+  objects = new Batman.Set([{id: 1, name: 'foo'}, {id: 2, name: 'bar'}])
   helpers.render source, {objects}, (node, view) ->
     objects.add({id: 0, name: 'zero'})
     delay ->
@@ -77,7 +77,7 @@ asyncTest 'it should add items in order', ->
 
 asyncTest 'it should allow data-context definitions on inner nodes', ->
   source = '<p data-context-object="outer.foo.bar" data-foreach-outer="objects" data-bind="object.name"></p>'
-  objects = new Batman.Set({id: 1, name: 'foo'}, {id: 2, name: 'bar'})
+  objects = new Batman.Set([{id: 1, name: 'foo'}, {id: 2, name: 'bar'}])
   objects = objects.map (object) -> Batman(foo: Batman(bar: object))
 
   helpers.render source, {objects}, (node, view) ->
@@ -86,7 +86,7 @@ asyncTest 'it should allow data-context definitions on inner nodes', ->
 
 asyncTest 'prevents superview ready until first batch of children are rendered', 3, ->
   source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
-  objects = new Batman.Set('foo', 'bar', 'baz')
+  objects = new Batman.Set(['foo', 'bar', 'baz'])
 
   node = document.createElement 'div'
   node.innerHTML = source
@@ -105,7 +105,7 @@ asyncTest 'prevents superview ready until first batch of children are rendered',
 
 asyncTest 'it should continue to render nodes after the loop', 1, ->
   source = '<p data-foreach-object="bar" class="present" data-bind="object"></p><span data-bind="foo"/>'
-  objects = new Batman.Set('foo', 'bar', 'baz')
+  objects = new Batman.Set(['foo', 'bar', 'baz'])
 
   helpers.render source, false, {bar: objects, foo: "qux"}, (node) ->
     equal 'qux', $('span', node).html(), "Node after the loop is also rendered"
@@ -113,8 +113,8 @@ asyncTest 'it should continue to render nodes after the loop', 1, ->
 
 asyncTest 'it should render consecutive loops', 1, ->
   source = '<p data-foreach-object="objects1" data-bind="object"></p><p data-foreach-object="objects2" data-bind="object"></p>'
-  objects1 = new Batman.Set('foo', 'bar', 'baz')
-  objects2 = new Batman.Set('a', 'b', 'c')
+  objects1 = new Batman.Set(['foo', 'bar', 'baz'])
+  objects2 = new Batman.Set(['a', 'b', 'c'])
 
   helpers.render source, false, {objects1, objects2}, (node, view) ->
     deepEqual getPs(view), ['foo', 'bar', 'baz', 'a', 'b', 'c']
@@ -122,7 +122,7 @@ asyncTest 'it should render consecutive loops', 1, ->
 
 asyncTest 'it should render consecutive loops bound to the same collection', 4, ->
   source = '<p data-foreach-object="objects" data-bind="object"></p><p data-foreach-object="objects" data-bind="object"></p>'
-  objects = new Batman.Set('foo', 'bar', 'baz')
+  objects = new Batman.Set(['foo', 'bar', 'baz'])
 
   helpers.render source, false, {objects}, (node, view) ->
     deepEqual getPs(view), ['foo', 'bar', 'baz', 'foo', 'bar', 'baz']
@@ -152,25 +152,25 @@ asyncTest 'it should render consecutive loops bound to the same collection when 
 
 asyncTest 'it should update the whole set of nodes if the collection changes', ->
   source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
-  context = {objects: new Batman.Set('foo', 'bar', 'baz')}
+  context = {objects: new Batman.Set(['foo', 'bar', 'baz'])}
 
   Batman.developer.suppress()
   helpers.render source, false, context, (node, view) ->
     equal $('.present', node).length, 3
-    view.set('objects', new Batman.Set('qux', 'corge'))
+    view.set('objects', new Batman.Set(['qux', 'corge']))
     delay =>
       equal $('.present', node).length, 2
       view.set('objects', null)
       delay =>
         equal $('.present', node).length, 0
-        view.set('objects', new Batman.Set('mario'))
+        view.set('objects', new Batman.Set(['mario']))
         delay 60, =>
           equal $('.present', node).length, 1
           Batman.developer.unsuppress()
 
 asyncTest 'it should not fail if the collection is cleared', ->
   source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
-  context = {objects: new Batman.Set('foo', 'bar', 'baz')}
+  context = {objects: new Batman.Set(['foo', 'bar', 'baz'])}
 
   helpers.render source, false, context, (node, view) ->
     equal $('.present', node).length, 3
@@ -180,7 +180,7 @@ asyncTest 'it should not fail if the collection is cleared', ->
 
 asyncTest 'it should not fail if the iterator is killed', 1, ->
   source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
-  context = {objects: new Batman.Set([0...100]...)}
+  context = {objects: new Batman.Set([0...100])}
 
   oldIterator = Batman.DOM.IteratorBinding
   instance = false
@@ -201,18 +201,18 @@ asyncTest 'it should not fail if the iterator is killed', 1, ->
 
 asyncTest 'previously observed collections shouldn\'t have any effect if they are replaced', ->
   source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
-  oldObjects = new Batman.Set('foo', 'bar', 'baz')
+  oldObjects = new Batman.Set(['foo', 'bar', 'baz'])
   context = {objects: oldObjects}
 
   helpers.render source, false, context, (node, view) ->
-    view.set('objects', new Batman.Set('qux', 'corge'))
+    view.set('objects', new Batman.Set(['qux', 'corge']))
     oldObjects.add('no effect')
     delay =>
       equal $('.present', node).length, 2
 
 asyncTest 'it should order loops among their siblings properly', 5, ->
   source = '<div><span data-bind="baz"></span><p data-foreach-object="bar" class="present" data-bind="object"></p><span data-bind="foo"></span></div>'
-  objects = new Batman.Set('foo', 'bar', 'baz')
+  objects = new Batman.Set(['foo', 'bar', 'baz'])
 
   helpers.render source, false, {baz: "corn", bar: objects, foo: "qux"}, (node) ->
     div = node.childNodes[0]
@@ -233,7 +233,7 @@ asyncTest 'it should order consecutive loops among their siblings properly', 1, 
       <p data-foreach-object="objects" data-bind="object | times 4"></p>
     </div>
   '''
-  objects = new Batman.Set(1,2,3)
+  objects = new Batman.Set([1,2,3])
 
   helpers.render source, false, {objects}, (node) ->
     div = node.childNodes[0]
@@ -302,7 +302,7 @@ asyncTest 'it should loop over silly objects which return undefined for toArray'
 asyncTest 'it should prevent parent renders even if it has to defer (note: this test can take a while)', ->
   oldDeferEvery = Batman.DOM.IteratorBinding::deferEvery
   Batman.DOM.IteratorBinding::deferEvery = 0.5
-  x = new Batman.Set([0...500]...)
+  x = new Batman.Set([0...500])
   context = {x}
   source = '''<div data-foreach-obj="x">
     <p data-bind="obj"></p>
@@ -313,7 +313,7 @@ asyncTest 'it should prevent parent renders even if it has to defer (note: this 
     QUnit.start()
 
 asyncTest 'it shouldn\'t become desynchronized if the foreach collection observer fires with the same collection', ->
-  x = new Batman.Set("a", "b", "c", "d", "e")
+  x = new Batman.Set(["a", "b", "c", "d", "e"])
   context = {x}
   source = '<p data-foreach-obj="x" data-bind="obj"></p>'
   helpers.render source, context, (node, view) ->
@@ -325,7 +325,7 @@ asyncTest 'it shouldn\'t become desynchronized if the foreach collection observe
       deepEqual getPs(view), ['a', 'b', 'c', 'd', 'e']
 
 asyncTest 'it shouldn\'t become desynchronized if the collection removes successively', ->
-  x =  new Batman.Set("a", "b", "c", "d", "e")
+  x =  new Batman.Set(["a", "b", "c", "d", "e"])
   source = '<p data-foreach-obj="x" data-bind="obj"></p>'
   helpers.render source, {x}, (node, view) ->
     deepEqual getPs(view), ['a', 'b', 'c', 'd', 'e']
@@ -335,7 +335,7 @@ asyncTest 'it shouldn\'t become desynchronized if the collection removes success
       deepEqual getPs(view), ['a']
 
 asyncTest 'it shouldn\'t become desynchronized if the collection adds successively', ->
-  x =  new Batman.Set("a")
+  x =  new Batman.Set(["a"])
   source = '<p data-foreach-obj="x" data-bind="obj"></p>'
   helpers.render source, {x}, (node, view) ->
     deepEqual getPs(view), ['a']
@@ -345,7 +345,7 @@ asyncTest 'it shouldn\'t become desynchronized if the collection adds successive
       deepEqual getPs(view), ['a', 'b', 'c']
 
 asyncTest 'it shouldn\'t become desynchronized if the collection adds and removes successively', ->
-  x =  new Batman.Set("a", "b", "c", "d", "e")
+  x =  new Batman.Set(["a", "b", "c", "d", "e"])
   source = '<p data-foreach-obj="x" data-bind="obj"></p>'
   helpers.render source, {x}, (node, view) ->
     deepEqual getPs(view), ['a', 'b', 'c', 'd', 'e']
@@ -360,7 +360,7 @@ asyncTest 'it shouldn\'t become desynchronized if the collection adds and remove
     ), 80
 
 asyncTest 'it shouldn\'t become desynchronized with a fancy filtered style set', ->
-  x = Batman(all: new Batman.Set("a", "b", "c", "d", "e"))
+  x = Batman(all: new Batman.Set(["a", "b", "c", "d", "e"]))
   x.accessor 'filtered',
     get: ->
       unless @filtered?
@@ -391,7 +391,7 @@ getVals = (node) ->
   parseInt(child.innerHTML, 10) for child in $(node).children()
 
 asyncTest 'it should stop previous ongoing renders if items are removed', ->
-  getSet = (seed) -> new Batman.Set(seed, seed+1, seed+2)
+  getSet = (seed) -> new Batman.Set([seed, seed+1, seed+2])
   context = {all: getSet(1)}
 
   source = '<p data-foreach-obj="all" data-bind="obj"></p>'
@@ -403,7 +403,7 @@ asyncTest 'it should stop previous ongoing renders if items are removed', ->
       deepEqual getVals(node), [1,2,3]
 
 asyncTest 'it should stop previous ongoing renders if the collection is changed', ->
-  getSet = (seed) -> new Batman.Set(seed, seed+1, seed+2)
+  getSet = (seed) -> new Batman.Set([seed, seed+1, seed+2])
   context = {all: getSet(1)}
 
   source = '<p data-foreach-obj="all" data-bind="obj"></p>'
@@ -415,7 +415,7 @@ asyncTest 'it should stop previous ongoing renders if the collection is changed'
       deepEqual getVals(node), [10,11,12]
 
 asyncTest 'it should stop previous ongoing renders if collection changes, but intersects', ->
-  getSet = (seed) -> new Batman.Set(seed, seed+1, seed+2)
+  getSet = (seed) -> new Batman.Set([seed, seed+1, seed+2])
   context = {all: getSet(1)}
 
   source = '<p data-foreach-obj="all" data-bind="obj"></p>'
@@ -432,7 +432,7 @@ asyncTest 'it should stop previous ongoing renders if collection changes, but in
 asyncTest 'it shouldn\'t become desynchronized if the collection originates from a partial', ->
   context =
     parent: Batman
-      children: new Batman.Set("a", "b", "c", "d", "e")
+      children: new Batman.Set(["a", "b", "c", "d", "e"])
 
   source = '''
     <div data-defineview="objview">
@@ -463,14 +463,14 @@ asyncTest 'it should destroy nodes and their bindings if items have been removed
     dieVals.push [@key, @node.innerHTML] if @key is 'item.id'
 
   helpers.render source, {}, (node, view) ->
-    view.set 'items', new Batman.Set({id: 4}, {id: 5}, {id: 6})
-    view.set 'items', new Batman.Set({id: 7}, {id: 8}, {id: 9})
+    view.set 'items', new Batman.Set([{id: 4}, {id: 5}, {id: 6}])
+    view.set 'items', new Batman.Set([{id: 7}, {id: 8}, {id: 9}])
     delay ->
       deepEqual dieVals, [['item.id', '4'], ['item.id', '5'], ['item.id', '6']]
 
 asyncTest 'it shouldn\'t break state if bound to undefined', ->
   source = '<p data-foreach-object="objects" class="present" data-bind="object"></p>'
-  objects = new Batman.Set('a')
+  objects = new Batman.Set(['a'])
 
   helpers.render source, {objects}, (node, view) ->
     deepEqual getPs(view), ['a']
@@ -486,7 +486,7 @@ asyncTest 'it shouldn\'t break state if bound to undefined', ->
         deepEqual getPs(view), ['a']
 
 asyncTest 'using data-view on the prototype node should use that class for the iteration views', ->
-  context = objects: new Batman.Set('a', 'b')
+  context = objects: new Batman.Set(['a', 'b'])
   class context.SpecialIterationView extends Batman.View
     @accessor 'specialAccessor', ->
       "SPECIAL-#{@get('object')}"

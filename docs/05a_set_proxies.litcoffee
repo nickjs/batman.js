@@ -9,9 +9,11 @@ Returns a new `SetProxy` tracking `base`.
 ## Methods delegated to base
 
 - `add`
+- `addArray`
 - `insert`
 - `insertWithIndexes`
 - `remove`
+= `removeArray`
 - `removeWithIndexes`
 - `at`
 - `find`
@@ -47,7 +49,7 @@ Returns a new `SetProxy` tracking `base`.
     test "SetSorts are sorted proxies of their Sets", ->
       batmobile = new Batman.Object(name: "Batmobile", wheelCount: 4)
       batcycle = new Batman.Object(name: "Batcycle", wheelCount: 2)
-      vehicles = new Batman.Set(batmobile, batcycle)
+      vehicles = new Batman.Set([batmobile, batcycle])
 
       vehiclesByWheelCount1 = new Batman.SetSort(vehicles, 'wheelCount') # order defaults to 'asc'
       vehiclesByWheelCount2 = vehicles.sortedBy('wheelCount')
@@ -104,7 +106,7 @@ Returns the key used to sort members of the `SetSort`, as defined in the constru
     test "get sortedByDescending creates a descending SetSort", ->
       batmobile = new Batman.Object(name: "Batmobile", wheelCount: 4)
       batcycle = new Batman.Object(name: "Batcycle", wheelCount: 2)
-      vehicles = new Batman.Set(batmobile, batcycle)
+      vehicles = new Batman.Set([batmobile, batcycle])
 
       vehiclesByWheelCountDescending1 = new Batman.SetSort(vehicles, 'wheelCount', 'desc')
       vehiclesByWheelCountDescending2 = vehicles.get('sortedByDescending.wheelCount')
@@ -161,7 +163,7 @@ By following this process, it provides sort values for `Batman.Object`s `a` and 
     test "mappedTo creates a new Batman.SetMapping", ->
       batmobile = new Batman.Object(name: "Batmobile", wheelCount: 4)
       batcycle = new Batman.Object(name: "Batcycle", wheelCount: 2)
-      vehicles = new Batman.Set(batmobile, batcycle)
+      vehicles = new Batman.Set([batmobile, batcycle])
 
       vehicleNames = vehicles.mappedTo("name")
       ok vehicleNames.constructor is Batman.SetMapping

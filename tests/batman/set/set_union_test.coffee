@@ -1,7 +1,7 @@
 QUnit.module "Batman.SetUnion",
   setup: ->
-    @left = new Batman.Set("a", "b", "c")
-    @right = new Batman.Set("c", "d", "e")
+    @left = new Batman.Set(["a", "b", "c"])
+    @right = new Batman.Set(["c", "d", "e"])
     @union = new Batman.SetUnion(@left, @right)
 
 membersEqual = (set, members) ->
@@ -54,13 +54,13 @@ test "unions should emit addition and removal events", ->
   deepEqual removedSpy.lastCallArguments[0], ['a']
 
 test "merging a union should return a set which no longer updates", ->
-  @merged = @union.merge new Batman.Set("e", "f", "g")
+  @merged = @union.merge new Batman.Set(["e", "f", "g"])
   membersEqual @merged, ["a", "b", "c", "d", "e", "f", "g"]
   @left.add "h"
   membersEqual @merged, ["a", "b", "c", "d", "e", "f", "g"]
 
 test "unions should be chainable", ->
-  @middle = new Batman.Set "d", "f"
+  @middle = new Batman.Set ["d", "f"]
 
   subUnion = new Batman.SetUnion(@middle, @union)
   membersEqual subUnion, ["a", "b", "c", "d", "e", "f"]

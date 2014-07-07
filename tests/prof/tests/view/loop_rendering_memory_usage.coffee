@@ -27,7 +27,7 @@ Watson.ensureCommitted '7a418aea67be0b79ce11fd5616bd4627f4e576d9', ->
   node = document.createElement 'div'
   node.innerHTML = loopSource
 
-  objects = new Batman.Set([0...50]...)
+  objects = new Batman.Set([0...50])
   context = Batman({objects})
 
   view = new Batman.View

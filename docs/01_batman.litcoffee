@@ -95,7 +95,7 @@ The `forEach` helper is useful for iterating over objects when the type of those
 
     test 'forEach iterates over objects with forEach defined', ->
       results = []
-      set = new Batman.SimpleSet('a')
+      set = new Batman.SimpleSet ['a']
       Batman.forEach(set, (x) -> results.push(x))
       deepEqual results, ['a']
 

@@ -2,10 +2,16 @@
 #= require ../hash/simple_hash
 
 class Batman.SimpleSet
-  constructor: ->
+  constructor: (items=[]) ->
+    if arguments.length > 1
+      Batman.developer.error('Batman.SimpleSet constructor takes an array of items! Try `new Batman.Set([item1, item2])` instead.')
+
+    unless Batman.typeOf(items) is 'Array'
+      throw new TypeError("Batman.SimpleSet contents must be an array")
+
     @_storage = []
     @length = 0
-    itemsToAdd = (item for item in arguments when item?)
+    itemsToAdd = (item for item in items when item?)
     @add(itemsToAdd...) if itemsToAdd.length > 0
 
   Batman.extend @prototype, Batman.Enumerable
@@ -13,6 +19,10 @@ class Batman.SimpleSet
   at: (index) -> @_storage[index]
 
   add: (items...) ->
+    # @ can be a SetSort, so have to specify SimpleSet
+    Batman.SimpleSet::addArray.call(this, items)
+
+  addArray: (items) ->
     addedItems = []
     for item in items when @_indexOfItem(item) == -1
       @_storage.push(item)
@@ -23,7 +33,7 @@ class Batman.SimpleSet
 
   insert: -> @insertWithIndexes(arguments...).addedItems
 
-  insertWithIndexes: (items, indexes) -> 
+  insertWithIndexes: (items, indexes) ->
     addedIndexes = []
     addedItems = []
     for item, i in items when @_indexOfItem(item) == -1
@@ -35,9 +45,16 @@ class Batman.SimpleSet
     @length = @_storage.length
     {addedItems, addedIndexes}
 
-  remove: -> @removeWithIndexes(arguments...).removedItems
+  remove: (items...) ->
+    Batman.SimpleSet::removeArrayWithIndexes.call(this, items).removedItems
+
+  removeArray: (items) ->
+    Batman.SimpleSet::removeArrayWithIndexes.call(this, items).removedItems
 
   removeWithIndexes: (items...) ->
+    Batman.SimpleSet::removeArrayWithIndexes.call(this, items)
+
+  removeArrayWithIndexes: (items) ->
     removedIndexes = []
     removedItems = []
     for item in items when (index = @_indexOfItem(item)) != -1

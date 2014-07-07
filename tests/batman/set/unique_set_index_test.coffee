@@ -10,7 +10,7 @@ QUnit.module 'Batman.UniqueSetIndex',
     @byFred = Batman author: @fred
     @anotherByFred = Batman author: @fred
 
-    @base = new Batman.Set(@byMary, @byFred, @byZeke)
+    @base = new Batman.Set([@byMary, @byFred, @byZeke])
     @authorNameIndex = new Batman.UniqueSetIndex(@base, 'author.name')
 
     # not yet in the set:

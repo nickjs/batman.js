@@ -364,8 +364,8 @@ asyncTest 'should allow filtered keypaths as arguments to context', 1, ->
 asyncTest 'should allow filtered keypaths as arguments to context and filters to be performed in the context', 2, ->
   context = Batman
     foo: Batman
-      baz: new Batman.Set({foo: 'bar'}, {foo: 'baz'})
-      qux: new Batman.Set({foo: '1'}, {foo: '2'})
+      baz: new Batman.Set([{foo: 'bar'}, {foo: 'baz'}])
+      qux: new Batman.Set([{foo: '1'}, {foo: '2'}])
     bar: 'baz'
 
   helpers.render '<div data-context-corge="foo | get bar"><div id="test" data-bind="corge | map \'foo\' | join \', \'"></div></div>', context, (node, view) ->

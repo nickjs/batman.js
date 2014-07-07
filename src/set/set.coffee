@@ -5,7 +5,10 @@
 class Batman.Set extends Batman.Object
   isCollectionEventEmitter: true
 
-  constructor: -> Batman.SimpleSet.apply @, arguments
+  constructor: (items=[]) ->
+    if arguments.length > 1
+      Batman.developer.warn("Batman.Set constructor takes an array of items! Try `new Batman.Set([item1, item2])` instead.")
+    Batman.SimpleSet.call(@, items)
 
   Batman.extend @prototype, Batman.Enumerable
 
@@ -37,8 +40,11 @@ class Batman.Set extends Batman.Object
 
   toJSON: -> @map (value) -> value.toJSON?() || value
 
-  add: @mutation ->
-    addedItems = Batman.SimpleSet::add.apply(this, arguments)
+  add: (items...) ->
+    @addArray(items)
+
+  addArray: @mutation ->
+    addedItems = Batman.SimpleSet::addArray.apply(this, arguments)
     @fire('itemsWereAdded', addedItems) if addedItems.length
     addedItems
 
@@ -50,11 +56,17 @@ class Batman.Set extends Batman.Object
     @fire('itemsWereAdded', addedItems, addedIndexes) if addedItems.length
     {addedItems, addedIndexes}
 
-  remove: ->
-    @removeWithIndexes(arguments...).removedItems
+  remove: (items...) ->
+    @removeArrayWithIndexes(items).removedItems
 
-  removeWithIndexes: @mutation ->
-    {removedItems, removedIndexes} = Batman.SimpleSet::removeWithIndexes.apply(this, arguments)
+  removeArray: (items) ->
+    @removeArrayWithIndexes(items).removedItems
+
+  removeWithIndexes: (items...) ->
+    @removeArrayWithIndexes(items)
+
+  removeArrayWithIndexes: @mutation (items) ->
+    {removedItems, removedIndexes} = Batman.SimpleSet::removeArrayWithIndexes.call(this, items)
     @fire('itemsWereRemoved', removedItems, removedIndexes) if removedItems.length
     {removedItems, removedIndexes}
 

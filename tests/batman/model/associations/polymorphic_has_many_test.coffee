@@ -41,7 +41,7 @@ asyncTest "hasMany associations are saved via the parent model", 7, ->
   store = new @Store name: 'Zellers'
   metafield1 = new @Metafield key: 'Gizmo'
   metafield2 = new @Metafield key: 'Gadget'
-  store.set 'metafields', new Batman.Set(metafield1, metafield2)
+  store.set 'metafields', new Batman.Set([metafield1, metafield2])
 
   storeSaveSpy = spyOn store, 'save'
   store.save (err, record) =>
