@@ -21,10 +21,12 @@ test "loadItemsForOffsetAndLimit(offset, limit) calls .load on the model class w
     limit: 80
 
   callback = @Thing.load.lastCallArguments?[1]
-  callback.call(null, null, (things = [new @Thing(id:1), new @Thing(id:2)]))
+  things = [new @Thing(id: 1), new @Thing(id: 2)]
+  callback.call(null, null, things, {response: {totalCount: 39}})
   equal @thingPaginator.cache.offset, 70
   equal @thingPaginator.cache.limit, 80
   equal @thingPaginator.cache.items, things
+  equal @thingPaginator.totalCount, 39
 
 test "overriding paramsForOffsetAndLimit, offsetFromParams, and limitFromParams lets you construct params however you like", ->
   @thingPaginator.paramsForOffsetAndLimit = (offset, limit) ->
@@ -42,12 +44,31 @@ test "overriding paramsForOffsetAndLimit, offsetFromParams, and limitFromParams 
     page_size: 30
 
   callback = @Thing.load.lastCallArguments?[1]
-  callback.call(null, null, (things = [new @Thing(id:1), new @Thing(id:2)]))
+  things = [new @Thing(id: 1), new @Thing(id: 2)]
+  callback.call(null, null, things, {response: {totalCount: 32}})
   equal @thingPaginator.cache.offset, 90
   equal @thingPaginator.cache.limit, 30
   equal @thingPaginator.cache.items, things
-  
+  equal @thingPaginator.totalCount, 32
 
+test "propagate totalCount to the paginator", ->
+  @thingPaginator.loadItemsForOffsetAndLimit(0, 10)
+
+  callback = @Thing.load.lastCallArguments?[1]
+  items = []
+  callback.call(null, null, items, {response: {totalCount: 888}})
+  equal @thingPaginator.cache.items, items
+  equal @thingPaginator.totalCount, 888
+
+test "propagate totalCount to the paginator with a different key", ->
+  @thingPaginator.totalCountKey = 'totallyDifferentKey'
+  @thingPaginator.loadItemsForOffsetAndLimit(0, 10)
+
+  callback = @Thing.load.lastCallArguments?[1]
+  items = []
+  callback.call(null, null, items, {response: {totallyDifferentKey: 888}})
+  equal @thingPaginator.cache.items, items
+  equal @thingPaginator.totalCount, 888
 
 
 

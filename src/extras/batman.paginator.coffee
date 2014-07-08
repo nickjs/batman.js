@@ -24,6 +24,7 @@ class Batman.Paginator extends Batman.Object
   offset: 0
   limit: 10
   totalCount: 0
+  totalCountKey: 'totalCount'
 
   markAsLoadingOffsetAndLimit: (offset, limit) -> @loadingRange = new Batman.Paginator.Range(offset, limit)
   markAsFinishedLoading: -> delete @loadingRange
@@ -79,11 +80,12 @@ class Batman.ModelPaginator extends Batman.Paginator
   loadItemsForOffsetAndLimit: (offset, limit) ->
     params = @paramsForOffsetAndLimit(offset, limit)
     params[k] = v for k,v of @params
-    @model.load params, (err, records) =>
+    @model.load params, (err, records, env) =>
       if err?
         @markAsFinishedLoading()
         @fire('error', err)
       else
+        @set('totalCount', env.response[@totalCountKey]);
         @updateCache(@offsetFromParams(params), @limitFromParams(params), records)
 
   # override these to fetch records however you like:
