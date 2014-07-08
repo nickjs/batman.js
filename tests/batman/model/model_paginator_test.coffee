@@ -60,5 +60,15 @@ test "propagate totalCount to the paginator", ->
   equal @thingPaginator.cache.items, items
   equal @thingPaginator.totalCount, 888
 
+test "propagate totalCount to the paginator with a different key", ->
+  @thingPaginator.totalCountKey = 'totallyDifferentKey'
+  @thingPaginator.loadItemsForOffsetAndLimit(0, 10)
+
+  callback = @Thing.load.lastCallArguments?[1]
+  items = []
+  callback.call(null, null, items, {response: {totallyDifferentKey: 888}})
+  equal @thingPaginator.cache.items, items
+  equal @thingPaginator.totalCount, 888
+
 
 
