@@ -310,3 +310,4 @@ test 'urlNestsUnder should nest record URLs under secondary parents if present',
 test 'urlNestsUnder should nest record URLs under the first available parent', 1, ->
   product = new @Product(id:1, shop_id: 2, manufacturer_id: 3)
   equal product.url(), 'shops/2/products/1'
+

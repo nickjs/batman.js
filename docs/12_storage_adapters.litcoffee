@@ -59,6 +59,13 @@ class App.HeroicStorageAdapter extends Batman.LocalStorage
 class App.Superhero extends Batman.Model
   @persist App.HeroicStorageAdapter
 ```
+
+## ModelMixin and RecordMixin
+
+A storage adapter may also have a class property called `ModelMixin`. If that property exists, in will be mixed into model classes that are persisted with that adapter. `RecordMixin` works the same way: it will be mixed into the prototype of models that are persisted with this adapter.
+
+For example, this is how `Batman.RestStorage` provides URL-related functions to models that use it for persistence.
+
 ### `env` and `next`
 
 Storage operations and callbacks each take two arguments: `env` and `next`.
