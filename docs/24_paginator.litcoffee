@@ -54,6 +54,10 @@ Number of items skipped for the current `page`.
 
 Items per page.
 
+## ::.totalCountKey[="totalCount"]: String
+
+May be used to find `totalCount` in paginator data. (For example, `Batman.ModelPaginator` uses `totalCountKey` to get `totalCount` from response JSON.)
+
 ## ::%totalCount : Number
 
 Total number of records covered by the `Paginator`.
@@ -110,7 +114,7 @@ class App.PostsController extends Batman.Controller
     @set('postsOrder', 'created_at')
     # renders posts/index.html
 
-  @accessor 'paginator,
+  @accessor 'paginator, ->
     new Batman.ModelPaginator
       model: App.Post
       limit: 10
@@ -119,6 +123,25 @@ class App.PostsController extends Batman.Controller
 ```
 
 Now, if you set `postsOrder` to `length`, it would cause `paginator` to be reevaluated, and the new paginator would use `order=length` to load records. Also, `paginator.toArray` would be updated with the new records in the new order.
+
+Your response may include a `totalCount` value to update the `totalCount` value of the paginator. For example:
+
+```javascript
+{
+  posts: [{ /* ... */ }, { /* ... */}],
+  totalCount: 12
+}
+```
+
+You can use another key in your JSON by defining `totalCountKey`, for example:
+
+```coffeescript
+class MyApp.PostPaginator extends Batman.Paginator
+  limit: 10
+  totalCountKey: "posts_count"
+```
+
+Now, `posts_count` will be used to update `totalCount` from the JSON.
 
 ## ::constructor(options) : ModelPaginator
 
