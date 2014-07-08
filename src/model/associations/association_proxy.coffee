@@ -4,6 +4,7 @@ class Batman.AssociationProxy extends Batman.Proxy
   loaded: false
   constructor: (@association, @model) ->
     super()
+    @delegatesToTarget('destroy', 'save', 'validate')
 
   toJSON: ->
     target = @get('target')
@@ -44,3 +45,4 @@ class Batman.AssociationProxy extends Batman.Proxy
     @set 'target', target
     @set 'loaded', true
     @fire 'loaded', target
+
