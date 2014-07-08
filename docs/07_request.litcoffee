@@ -2,7 +2,7 @@
 
 `Batman.Request` is an abstraction around XHR requests. It is in abstract class and is implemented by a [platform library](https://github.com/batmanjs/batman/tree/master/src/platform):
 
-- [`batman.jquery`](https://github.com/batmanjs/batman/blob/master/src/platform/jquery.coffee): jQuery XHR
+- [`batman.jquery`](/docs/api/batman.jquery.html): jQuery XHR
 - [`batman.solo`](https://github.com/batmanjs/batman/blob/master/src/platform/solo.coffee): Reqwest.js
 
 (Platform libraries also implement `Batman.DOM` functions.)
@@ -87,7 +87,12 @@ Batman.Request.observe 'requestIsPending', (newValue, oldValue) ->
 
 ## ::constructor(options) : Request
 
-Returns a new `Batman.Request`, mixing in `options`. The request is sent immediately unless `autosend: false` is passed.
+Returns a new `Batman.Request`, mixing in `options`. The request is sent immediately unless `autosend: false` is passed. `options` may include:
+
+- `method`: HTTP method for the request
+- `url`: URL for the request
+- `data`: JS object, payload for the request
+- `loading`, `success`, `error`, `loaded`: callback functions for those events.
 
 ## ::%url : String
 
@@ -197,7 +202,7 @@ If `autosend` is `false`, this will initiate the request.  If `autosend` is `tru
 
 ## ::loading()
 
-If defined, this function is called before `send` is called.
+If defined, this function is called before `send` is called. The request will also fire `"loading"`.
 
     test "Demonstrate the loading event", 1, ->
       new Batman.Request
@@ -207,7 +212,7 @@ If defined, this function is called before `send` is called.
 
 ## ::loaded()
 
-If defined, this function is fired after the request is complete (whether success or error).
+If defined, this function is fired after the request is complete (whether success or error). The request will also fire `"loaded"`.
 
     test "Demo the loaded event", 1, ->
       Batman.Request.setupMockedResponse()
@@ -219,7 +224,7 @@ If defined, this function is fired after the request is complete (whether succes
 
 ## ::error(xhr)
 
-Fired when an error is detected.  `xhr` is the platform-defined XHR object with a property named `request` being the `Batman.Request` object.
+Fired when an error is detected.  `xhr` is the platform-defined XHR object with a property named `request` being the `Batman.Request` object. The request will also fire `"error"`.
 
     test "Demo the error event", 1, ->
       Batman.Request.setupMockedResponse()
@@ -231,7 +236,7 @@ Fired when an error is detected.  `xhr` is the platform-defined XHR object with 
 
 ## ::success(response)
 
-Fired when a successful request is completed. `response` is the body of the response.
+Fired when a successful request is completed. `response` is the body of the response. The request will also fire `"success"`.
 
     test "Demonstrate the success event", 1,  ->
       Batman.Request.setupMockedResponse()
