@@ -68,5 +68,5 @@ class Batman.Request extends Batman.Object
 
   @set('pendingRequestCount', 0)
   @classAccessor 'requestIsPending', -> @get('pendingRequestCount') > 0
-  @::on 'loading', ->  Batman.Request.set('pendingRequestCount', Batman.Request.get('pendingRequestCount') + 1)
-  @::on 'loaded', -> Batman.Request.set('pendingRequestCount', Batman.Request.get('pendingRequestCount') - 1)
+  @::on 'loading', ->  Batman.Request.increment('pendingRequestCount')
+  @::on 'loaded', -> Batman.Request.decrement('pendingRequestCount')
