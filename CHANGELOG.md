@@ -1,10 +1,24 @@
+__Breaking changes:__
+- Set constructor takes a single param -- an array of members https://github.com/batmanjs/batman/pull/1042
+- `hasMany` sets serialize to objects with index keys https://github.com/batmanjs/batman/pull/1065
 
+  This means form data gets sent like:
+
+  ```
+    parent[children][0][name]=firstChild
+    parent[children][1][name]=secondChild
+  ```
+  
+  This works with Rails out-of-the-box, but might break for other frameworks.
+  
 ### Batman helpers 
 - `toSentence` doesnt the array passed to it https://github.com/batmanjs/batman/pull/1055
 - `toSentence`, `ordinalize` and `titleize` added as view filters https://github.com/batmanjs/batman/pull/1064
 
 ### Batman.Set
 - `Set::mappedTo` passed to `SetProxy`, too https://github.com/batmanjs/batman/pull/1052
+- Set constructor takes a single param -- an array of members https://github.com/batmanjs/batman/pull/1042
+- `Set::addArray` and `Set::removeArray` for adding and removing arrays https://github.com/batmanjs/batman/pull/1042
 
 ### Batman.App
 - Can update params without redirecting: https://github.com/batmanjs/batman/pull/1048
@@ -12,10 +26,16 @@
 ### Batman.Model 
 - `if`/`unless` handles multiple keys: https://github.com/batmanjs/batman/pull/1058
 - primaryKeys that look like integers are coerced by default https://github.com/batmanjs/batman/pull/1071
-- _loadIdentity coerces its value to an integer if possible https://github.com/batmanjs/batman/pull/1071
+- `Model::_loadIdentity` coerces its value to an integer if possible https://github.com/batmanjs/batman/pull/1071
 - more messages for association-related errors https://github.com/batmanjs/batman/pull/1072
 - association sets aren't `transaction`'d or `applyChanges`'d twice https://github.com/batmanjs/batman/pull/1062
 - `@validate presence: true` will check for `proxy.target` if the value is a proxy https://github.com/batmanjs/batman/pull/1063
+- `@urlNestsUnder` accepts deeply nested routes https://github.com/batmanjs/batman/pull/1068
+- `Model::destroy` passes options to storage adapter https://github.com/batmanjs/batman/pull/1075
+- `hasMany` sets serialize to objects with index keys https://github.com/batmanjs/batman/pull/1065
+
+### Batman.Paginator 
+- ModelPaginator can get totalCount from the server response https://github.com/batmanjs/batman/pull/1067
 
 ### Batman.StorageAdapter 
 - Storage errors respond to `toJSON` https://github.com/batmanjs/batman/pull/1066
