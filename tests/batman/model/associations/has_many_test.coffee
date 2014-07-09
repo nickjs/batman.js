@@ -607,7 +607,7 @@ asyncTest "integer-ish, string `id` doesn't cause the same items to be loaded tw
     delay ->
       equal sp.length, 3
       storeJSON = store.toJSON() # get those stringyProduct ids as strings
-      stringIds = storeJSON.stringyProducts.map((p) -> p.id)
+      stringIds = (prod.id for idx, prod of storeJSON.stringyProducts)
       strictEqual stringIds[0] , "1"
       strictEqual stringIds[1] , "2"
       strictEqual stringIds[2] , "15"

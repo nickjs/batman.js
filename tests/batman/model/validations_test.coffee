@@ -86,7 +86,6 @@ validationsTestSuite = ->
           QUnit.start()
 
   asyncTest "presence checks for a proxy's target", 3, ->
-    console.log "testing"
     class @Product extends Batman.Model
       @validate 'product', presence: yes
     @Product.belongsTo('product', namespace: @)
