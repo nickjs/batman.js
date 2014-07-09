@@ -84,7 +84,13 @@ generateSorterOnProperty = (property) ->
   if typeof property is 'string'
     key = property
     property = (x) -> x[key]
-  return (array) ->
+  return (object) ->
+    unless object instanceof Array
+      hash = new Batman.Hash(object)
+      array = hash.map (key, value) -> value
+    else
+      array = object
+
     array.sort (a, b) ->
       a = property(a)
       b = property(b)

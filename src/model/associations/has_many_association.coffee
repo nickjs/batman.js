@@ -25,14 +25,18 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
     association = this
     (relationSet, _, __, record) ->
       if relationSet?
-        jsonArray = []
-        relationSet.forEach (relation) ->
+        json = {}
+
+        unless relationSet instanceof Array
+          relationSet = relationSet.toArray()
+
+        for i, relation of relationSet
           relationJSON = relation.toJSON()
           if !association.inverse() || association.inverse().options.encodeForeignKey
             relationJSON[association.foreignKey] = record.get(association.primaryKey)
-          jsonArray.push relationJSON
+          json[i] = relationJSON
 
-      jsonArray
+      json
 
   decoder: ->
     association = this
@@ -47,7 +51,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       recordsToMap = []
       recordsToAdd = []
 
-      for jsonObject in data
+      for i, jsonObject of data
         id = jsonObject[relatedModel.primaryKey]
         record = relatedModel._loadIdentity(id)
 

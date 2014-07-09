@@ -342,8 +342,8 @@ asyncTest "hasMany associations are saved via the parent model", 5, ->
       sorter = generateSorterOnProperty('name')
 
       deepEqual sorter(storedJSON.products), sorter([
-        {name: "Gizmo", store_id: record.get('id'), productVariants: []}
-        {name: "Gadget", store_id: record.get('id'), productVariants: []}
+        {name: "Gizmo", store_id: record.get('id'), productVariants: {}}
+        {name: "Gadget", store_id: record.get('id'), productVariants: {}}
       ])
       QUnit.start()
 
@@ -461,9 +461,9 @@ asyncTest "unsaved hasMany models should save their associated children", 4, ->
     deepEqual storedJSON,
       id: 11
       name: "Hello!"
-      productVariants:[
-        {price: 100, product_id: product.get('id')}
-      ]
+      productVariants:{
+        '0': {price: 100, product_id: product.get('id')}
+      }
 
     ok !product.isNew()
     ok !variant.isNew()
@@ -511,7 +511,7 @@ asyncTest "saved hasMany models who's related records have been removed should s
     equal product.get('productVariants').length, 0
     product.save (err) =>
       throw err if err
-      deepEqual @productAdapter.storage['products3'], {id: 3, name: "Product Three", store_id: 1, productVariants: []}
+      deepEqual @productAdapter.storage['products3'], {id: 3, name: "Product Three", store_id: 1, productVariants: {}}
       QUnit.start()
 
 asyncTest "unsaved hasMany models should decode their child records based on ID", ->
