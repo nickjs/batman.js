@@ -184,6 +184,25 @@ test "getOrSet(key, valueFunction) does conditional assignment with the return v
   equal "bar", @obj.get("foo2")
 
 ###
+# toggle(key)
+###
+test 'toggle(key) inverts a boolean value and returns the inverted value', ->
+  @obj.set('toggleKey', false)
+  equal @obj.toggle('toggleKey'), true, "it returns the inverted value"
+  equal @obj.get('toggleKey'), true, "it sets the value to the inverted value"
+  equal @obj.toggle('toggleKey'), false
+  equal @obj.get('toggleKey'), false
+
+test 'toggle(key) also coerces non-booleans to boolean', ->
+  @obj.set('toggleKey', 0)
+  equal @obj.toggle('toggleKey'), true, "it returns the inverted value"
+  equal @obj.get('toggleKey'), true, "it sets the value to the inverted value"
+
+  @obj.set('toggleKey', "abc")
+  equal @obj.toggle('toggleKey'), false, "it returns the inverted value"
+  equal @obj.get('toggleKey'), false, "it sets the value to the inverted value"
+
+###
 # observe(key, callback)
 ###
 test "observe(key, callback) stores the callback such that it is called with (value, oldValue, key) when the value of the key changes", ->

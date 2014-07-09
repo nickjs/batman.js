@@ -24,6 +24,8 @@ Batman.Observable =
 
   getOrSet: Batman.SimpleHash::getOrSet
 
+  toggle: (key) ->  @set(key, !@get(key))
+
   # `forget` removes an observer from an object. If the callback is passed in,
   # its removed. If no callback but a key is passed in, all the observers on
   # that key are removed. If no key is passed in, all observers are removed.
