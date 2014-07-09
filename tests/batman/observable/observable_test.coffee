@@ -203,6 +203,22 @@ test 'toggle(key) also coerces non-booleans to boolean', ->
   equal @obj.get('toggleKey'), false, "it sets the value to the inverted value"
 
 ###
+# increment(key)/decrement(key)
+###
+test 'increment/decrement update numeric values and return the new value', ->
+  @obj.set('numberKey', 15)
+  equal @obj.increment('numberKey'), 16
+  equal @obj.get('numberKey'), 16
+  equal @obj.decrement('numberKey'), 15
+  equal @obj.get('numberKey'), 15
+
+test 'increment/decrement handle undefined as 0', ->
+  equal @obj.increment('numberKey'), 1
+  equal @obj.get('numberKey'), 1
+
+  equal @obj.decrement('otherNumberKey'), -1
+  equal @obj.get('otherNumberKey'), -1
+###
 # observe(key, callback)
 ###
 test "observe(key, callback) stores the callback such that it is called with (value, oldValue, key) when the value of the key changes", ->
