@@ -14,6 +14,6 @@ class Batman.Proxy extends Batman.Object
     set: (key, value) -> @get('target')?.set(key, value)
     unset: (key) -> @get('target')?.unset(key)
 
-  delegatesToTarget: (functionNames...) ->
+  @delegatesToTarget: (functionNames...) ->
     functionNames.forEach (functionName) =>
-      @[functionName] = -> @get('target')?[functionName](arguments...)
+      @::[functionName] = -> @get('target')?[functionName](arguments...)
