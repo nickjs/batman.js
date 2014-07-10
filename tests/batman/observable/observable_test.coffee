@@ -130,8 +130,6 @@ test "set(key, val) with a deep keypath should use the existing value's assign()
   deepEqual @fooPropertyAccessor.set.lastCallArguments, ['someProperty', 'newVal']
   ok @fooPropertyAccessor.set.lastCallContext is @obj.foo
 
-
-
 ###
 # unset(key)
 ###
@@ -182,6 +180,47 @@ test "getOrSet(key, valueFunction) does conditional assignment with the return v
   equal @obj.foo, @obj.get("foo")
   equal "bar", @obj.getOrSet("foo2", -> "bar")
   equal "bar", @obj.get("foo2")
+
+###
+# toggle(key)
+###
+test 'toggle(key) inverts a boolean value and returns the inverted value', ->
+  @obj.set('toggleKey', false)
+  equal @obj.toggle('toggleKey'), true, "it returns the inverted value"
+  equal @obj.get('toggleKey'), true, "it sets the value to the inverted value"
+  equal @obj.toggle('toggleKey'), false
+  equal @obj.get('toggleKey'), false
+
+test 'toggle(key) also coerces non-booleans to boolean', ->
+  @obj.set('toggleKey', 0)
+  equal @obj.toggle('toggleKey'), true, "it returns the inverted value"
+  equal @obj.get('toggleKey'), true, "it sets the value to the inverted value"
+
+  @obj.set('toggleKey', "abc")
+  equal @obj.toggle('toggleKey'), false, "it returns the inverted value"
+  equal @obj.get('toggleKey'), false, "it sets the value to the inverted value"
+
+###
+# increment(key)/decrement(key)
+###
+test 'increment/decrement update numeric values and return the new value', ->
+  @obj.set('numberKey', 15)
+  equal @obj.increment('numberKey'), 16
+  equal @obj.get('numberKey'), 16
+  equal @obj.decrement('numberKey'), 15
+  equal @obj.get('numberKey'), 15
+
+test 'increment/decrement handle undefined as 0', ->
+  equal @obj.increment('numberKey'), 1
+  equal @obj.get('numberKey'), 1
+
+  equal @obj.decrement('otherNumberKey'), -1
+  equal @obj.get('otherNumberKey'), -1
+
+test 'increment/decrement can also take numbers', ->
+  equal @obj.increment('givenNumberKey', 5), 5
+  equal @obj.decrement('givenNumberKey', 20), -15
+  equal @obj.get('givenNumberKey'), -15
 
 ###
 # observe(key, callback)
