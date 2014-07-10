@@ -194,3 +194,14 @@ Like `Observable::observe`, except that after `observerCallback` has been called
       equal song.set("length", 300), 300
       deepEqual result, [200, 340], "The observer was not fired for the second update"
 
+## ::toggle(keypath) : Boolean
+
+Sets `keypath` to its opposite boolean value and returns that value.
+
+## ::increment(keypath, change[=1]) : Number
+
+Adds `change` to `keypath` and returns the new value. `null` and `undefined` are treated as 0.
+
+## ::decrement(keypath, change[=1]) : Number
+
+Subtracts `change` to `keypath` and returns the new value. `null` and `undefined` are treated as 0.

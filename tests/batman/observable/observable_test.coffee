@@ -130,8 +130,6 @@ test "set(key, val) with a deep keypath should use the existing value's assign()
   deepEqual @fooPropertyAccessor.set.lastCallArguments, ['someProperty', 'newVal']
   ok @fooPropertyAccessor.set.lastCallContext is @obj.foo
 
-
-
 ###
 # unset(key)
 ###
@@ -218,6 +216,12 @@ test 'increment/decrement handle undefined as 0', ->
 
   equal @obj.decrement('otherNumberKey'), -1
   equal @obj.get('otherNumberKey'), -1
+
+test 'increment/decrement can also take numbers', ->
+  equal @obj.increment('givenNumberKey', 5), 5
+  equal @obj.decrement('givenNumberKey', 20), -15
+  equal @obj.get('givenNumberKey'), -15
+
 ###
 # observe(key, callback)
 ###
