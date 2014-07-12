@@ -45,7 +45,7 @@ class Batman.I18N.LocalesStorage extends Batman.Object
           url: "/locales/#{k}.json"
           success: (data) => @set k, data[k]
           error: (xhr) ->
-            throw new Error("Couldn't load locale file #{k}!")
+            Batman.developer.warn("Couldn't load locale file #{k}!")
       @_storage[k]
     set: (k, v) -> @_storage[k] = v
     unset: (k) ->
