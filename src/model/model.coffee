@@ -226,7 +226,7 @@ class Batman.Model extends Batman.Object
     return records
 
   @_doStorageOperation: (operation, options, callback) ->
-    Batman.developer.assert @::hasStorage(), "Can't #{operation} model #{Batman.functionName(@constructor)} without any storage adapters!"
+    Batman.developer.assert @::hasStorage(), "Can't #{operation} model #{Batman.functionName(@)} without any storage adapters!"
     adapter = @::_batman.get('storage')
     adapter.perform(operation, this, options, callback)
 
