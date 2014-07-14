@@ -52,6 +52,23 @@ test 'applyChanges applies the changes in the transaction object to the base', -
   @transaction.applyChanges()
   equal @base.get('banana'), 'rama'
 
+test 'applyChanges filters changes with only', ->
+  @transaction.set('banana', 'rama')
+  @transaction.set('money', 1)
+
+  @transaction.applyChanges([], {only: "money"})
+
+  equal @base.get('money'), 1
+  equal @base.get('banana'), undefined
+
+test 'applyChanges filters changes with except', ->
+  @transaction.set('banana', 'orange')
+  @transaction.set('money', 42)
+
+  @transaction.applyChanges([], {except: ["money"]})
+  equal @base.get('money'), undefined
+  equal @base.get('banana'), "orange"
+
 test 'save applies the changes in the transaction object and saves the object', ->
   s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (callback) -> callback?(null, this))
   @transaction.set('banana', 'rama')
