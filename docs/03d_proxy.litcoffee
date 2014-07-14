@@ -26,13 +26,13 @@ Returns `true`. Shows that the object is a proxy.
 
 Returns the object which the `Proxy` is delegating to.
 
-## @delegatesFunctionsToTarget(names...)
+## @delegatesToTarget(functionNames...)
 
 Defines a whitelist of functions which the `Proxy` will delegate to its target object. Unlike accessors, functions are not automatically passed to the target. For example:
 
     class Batman.AssociationProxy
       ...
-      @delegatesFunctionsToTarget('save', 'validate', 'destroy')
+      @delegatesToTarget('save', 'validate', 'destroy')
       ...
 
 passes calls to `save`, `validate`, and `destroy` made on an `AssociationProxy` to the target `Batman.Model` where those functions are defined.
