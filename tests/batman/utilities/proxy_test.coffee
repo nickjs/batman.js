@@ -49,3 +49,12 @@ test "unsetting properties on the proxy should have no effect if no target is pr
 test "properties named target should be accessible at target.target", ->
   @object.set 'target', 1
   equal @proxy.get('target.target'), 1
+
+test 'proxies can delegate functions to their targets', ->
+  class DelegatingProxy extends Batman.Proxy
+    @delegatesToTarget 'functionName'
+
+  spyOn(@object, 'functionName')
+  proxy = new DelegatingProxy(@object)
+  proxy.functionName(1, 2, 3)
+  deepEqual @object.functionName.lastCallArguments, [1,2,3]
