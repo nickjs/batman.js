@@ -14,7 +14,7 @@ QUnit.module "Batman.Model::transaction",
       @resourceName: 'test'
       @persist Batman.RestStorage
 
-      @encode 'banana'
+      @encode 'banana', 'money'
       @validate 'banana', presence: true
       @validate 'money', numeric: true, allowBlank: true
       @hasOne 'testNested', namespace: scope
@@ -76,6 +76,26 @@ test 'save applies the changes in the transaction object and saves the object', 
   s.restore()
 
   equal @base.get('banana'), 'rama'
+
+test 'save {only} also filters applyChanges attributes', ->
+  s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (callback) -> callback?(null, this))
+  @transaction.set('banana', 'rama')
+  @transaction.set('money', 25)
+  @transaction.save({only: ["money"]}, ->)
+  s.restore()
+
+  equal @base.get('banana'), undefined
+  equal @base.get('money'), 25
+
+test 'save {except} also filters applyChanges attributes', ->
+  s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (callback) -> callback?(null, this))
+  @transaction.set('banana', 'rama')
+  @transaction.set('money', 25)
+  @transaction.save({except: "money"}, ->)
+  s.restore()
+
+  equal @base.get('banana'), "rama"
+  equal @base.get('money'), undefined
 
 test 'errors on the transaction object are not applied to the base object', ->
   @transaction.validate()

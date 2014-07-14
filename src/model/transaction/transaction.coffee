@@ -39,7 +39,10 @@ Batman.Transaction =
     if !callback
       [options, callback] = [{}, options]
 
-    @once 'validated', validated = => @applyChanges()
+    applyChangesOptions = {only: options.only, except: options.except}
+
+    @once 'validated', validated = =>
+      @applyChanges([], applyChangesOptions)
 
     finish = =>
       @off 'validated', validated
