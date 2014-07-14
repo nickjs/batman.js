@@ -2,7 +2,7 @@
 
 class Batman.AssociationProxy extends Batman.Proxy
   loaded: false
-  @delegatesToTarget 'destroy', 'save', 'validate'
+  @delegatesToTarget 'destroy', 'save', 'transaction', 'validate'
 
   constructor: (@association, @model) ->
     super()
