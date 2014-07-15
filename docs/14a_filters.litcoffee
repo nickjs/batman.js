@@ -8,10 +8,11 @@ Type | Filters
 ---|----
 __Logical Operators__ |  `and`, `or`, `not`
 __Comparison Operators__ | `equals`, `eq`, `neq`, `lt`, `gt`, `lteq`, `gteq`
-__General Utilities__ | `get`, `[]`, `meta`, `withArguments`, `default`
+__General Utilities__ | `get`, `[]`, `meta`, `default`
 __Number Helpers__ | `ceil`, `floor`, `round`, `precision`, `fixed`, `delimitNumber`, `ordinalize`
 __Set Helpers__ |  `join`, `sort`, `map`, `has`, `first`, `toSentence`
 __String Helpers__ | `interpolate`, `escape`, `capitalize`, `titleize`, `singularize`, `underscore`, `camelize`, `trim`, `raw`, `matches`, `truncate`, `prepend`, `append`, `replace`, `downcase`, `upcase`, `pluralize`, `humanize`
+__Event Helpers__ | `withArguments`, `toggle`, `increment`, `decrement`
 __Debuggers__ | `log`, `logStack`
 
 
@@ -392,4 +393,28 @@ Escapes HTML in the input value:
 
 ```html
 <textarea data-bind="page.body_html | escape"></textarea>
+```
+
+## toggle(keypath) : function 
+
+Returns a handler for toggling `keypath`. Clicking this button will toggle `showMeMore` between `true` and `false`:
+
+```html
+<button data-event-click='showMeMore | toggle'></button>
+```
+
+## increment(keypath, change[=1]) : function
+
+Returns a handler that increments `keypath` by `change`. If `keypath` 's value isn't set, it will be treated as 0.
+
+```html
+<button data-event-click='totalScore | increment'>Add 1</button>
+```
+
+## decrement(keypath, change[=1]) : function
+
+Returns a handler that decrements `keypath` by `change`. If `keypath` 's value isn't set, it will be treated as 0.
+
+```html
+<button data-event-click='totalScore | decrement 3'>Subtract 3</button>
 ```
