@@ -3,6 +3,13 @@
 class Batman.SingularAssociation extends Batman.Association
   isSingular: true
 
+  constructor: (@model, @label, options = {}) ->
+    defaultOptions =
+      namespace: Batman.currentApp
+      name: Batman.helpers.camelize(@label)
+    @options = Batman.extend defaultOptions, @defaultOptions, options
+    super
+
   getAccessor: (association, model, label) ->
     # Check whether the relation has already been set on this model
     if recordInAttributes = association.getFromAttributes(this)
@@ -23,4 +30,3 @@ class Batman.SingularAssociation extends Batman.Association
 
   setIndex: ->
     @index ||= new Batman.UniqueAssociationSetIndex(this, @[@indexRelatedModelOn])
-

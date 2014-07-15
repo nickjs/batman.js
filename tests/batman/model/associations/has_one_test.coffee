@@ -215,4 +215,3 @@ asyncTest "hasOne sets the foreign key on the inverse relation if the child has 
       product = store.get('product')
       delay ->
         ok product.get('store') == store
-
