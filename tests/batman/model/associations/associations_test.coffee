@@ -54,7 +54,7 @@ asyncTest "load can have options", 2, ->
 
   @storeAdapter = createStorageAdapter namespace.Store, AsyncTestStorageAdapter,
     stores1: {id: 1, name: "Store One"}
-  
+
   class namespace.Product extends Batman.Model
     @encode 'name', 'id'
     @belongsTo 'store', {namespace: namespace}
@@ -257,3 +257,21 @@ asyncTest "no encoder is added to the model if saveInline is false", 1, ->
     throw err if err
     equal typeof store._batman.get('encoders').get('products').encoder, 'undefined'
     QUnit.start()
+
+test "associations support names that end with ss", ->
+  app = Batman.currentApp = {}
+
+  class app.Address extends Batman.Model
+    @belongsTo 'location'
+  class app.Location extends Batman.Model
+    @hasOne 'address'
+  class app.Rolodex extends Batman.Model
+    @hasMany 'addresses'
+
+  loc = new app.Location()
+  associationName = loc.reflectOnAssociation('address').options.name
+  equal associationName, 'Address'
+
+  rol = new app.Rolodex()
+  associationName = rol.reflectOnAssociation('addresses').options.name
+  equal associationName, 'Address'

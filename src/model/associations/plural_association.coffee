@@ -4,7 +4,11 @@ class Batman.PluralAssociation extends Batman.Association
   proxyClass: Batman.AssociationSet
   isSingular: false
 
-  constructor: ->
+  constructor: (@model, @label, options = {}) ->
+    defaultOptions =
+      namespace: Batman.currentApp
+      name: Batman.helpers.camelize(Batman.helpers.singularize(@label))
+    @options = Batman.extend defaultOptions, @defaultOptions, options
     super
     @_resetSetHashes()
 

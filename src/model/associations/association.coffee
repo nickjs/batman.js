@@ -8,11 +8,6 @@ class Batman.Association
     includeInTransaction: true
 
   constructor: (@model, @label, options = {}) ->
-    defaultOptions =
-      namespace: Batman.currentApp
-      name: Batman.helpers.camelize(Batman.helpers.singularize(@label))
-    @options = Batman.extend defaultOptions, @defaultOptions, options
-
     if @options.nestUrl
       Batman.developer.error "You must persist the model #{Batman.functionName(@model)} to use the url helpers on an association" if !@model.urlNestsUnder?
       @model.urlNestsUnder Batman.helpers.underscore(@getRelatedModel().get('resourceName'))
