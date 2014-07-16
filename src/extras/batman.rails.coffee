@@ -119,6 +119,9 @@ class Batman.RailsStorage extends Batman.RestStorage
 
 
   @::before 'create', 'update', (env, next) ->
+    nestedAttributeKeys = @model._encodesNestedAttributesForKeys
+    return next() unless nestedAttributeKeys.length
+
     # if not serializing as form, the data has already been stringified
     if @serializeAsForm
       data = env.options.data
@@ -130,7 +133,7 @@ class Batman.RailsStorage extends Batman.RestStorage
     else
       recordJSON = data
 
-    for key in @model._encodesNestedAttributesForKeys
+    for key in nestedAttributeKeys
       if recordJSON[key]?
         attrs = recordJSON["#{key}_attributes"] = recordJSON[key]
         delete recordJSON[key]
