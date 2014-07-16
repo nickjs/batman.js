@@ -222,7 +222,7 @@ class Batman.Model extends Batman.Object
         records[index] = existing
       else
         newRecords.push record
-    @get('loaded').add(newRecords...) if newRecords.length
+    @get('loaded').addArray(newRecords) if newRecords.length
     return records
 
   @_doStorageOperation: (operation, options, callback) ->
@@ -448,7 +448,8 @@ class Batman.Model extends Batman.Object
               record._withoutDirtyTracking ->
                 associations.getByType('hasOne')?.forEach (association, label) -> association.apply(err, record)
                 associations.getByType('hasMany')?.forEach (association, label) -> association.apply(err, record)
-            record = @constructor._mapIdentity(record)
+            if !record.isTransaction # don't let the transaction polute the true instance
+              record = @constructor._mapIdentity(record)
             @get('lifecycle').startTransition endState
           else
             if err instanceof Batman.ErrorsSet

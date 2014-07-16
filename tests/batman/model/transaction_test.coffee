@@ -70,7 +70,7 @@ test 'applyChanges filters changes with except', ->
   equal @base.get('banana'), "orange"
 
 test 'save applies the changes in the transaction object and saves the object', ->
-  s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (callback) -> callback?(null, this))
+  s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (options, payload, callback) -> callback?(null, this))
   @transaction.set('banana', 'rama')
   @transaction.save()
   s.restore()
@@ -78,7 +78,12 @@ test 'save applies the changes in the transaction object and saves the object', 
   equal @base.get('banana'), 'rama'
 
 test 'save {only} also filters applyChanges attributes', ->
-  s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (callback) -> callback?(null, this))
+  s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (options, payload, callback) -> callback?(null, this))
+  # Simulate a loaded record
+  @base.set('id', 5)
+  @TestModel._mapIdentity(@base)
+  @transaction.set('id', 5)
+
   @transaction.set('banana', 'rama')
   @transaction.set('money', 25)
   @transaction.save({only: ["money"]}, ->)
@@ -88,7 +93,7 @@ test 'save {only} also filters applyChanges attributes', ->
   equal @base.get('money'), 25
 
 test 'save {except} also filters applyChanges attributes', ->
-  s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (callback) -> callback?(null, this))
+  s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (options, payload, callback) -> callback?(null, this))
   @transaction.set('banana', 'rama')
   @transaction.set('money', 25)
   @transaction.save({except: "money"}, ->)
