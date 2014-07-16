@@ -19,6 +19,7 @@ test "it uses the appropriate offset for the given timestamp", ->
 QUnit.module "encodeTimestamps",
   setup: ->
     class @Model extends Batman.Model
+      @persist Batman.RailsStorage
 
 test "it should be defined on models", ->
   ok Batman.Model.encodeTimestamps

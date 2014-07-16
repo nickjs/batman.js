@@ -59,6 +59,10 @@ RailsModelMixin =
   encodesNestedAttributesFor: (keys...)->
     @_encodesNestedAttributesForKeys = @_encodesNestedAttributesForKeys.concat(keys)
 
+Batman.Model.encodeTimestamps = ->
+  Batman.developer.warn("You must use Batman.RailsStorage to use encodeTimestamps. Use it with `@persist(Batman.RailsStorage)` in your model definition.")
+  RailsModelMixin.encodeTimestamps.apply(@, arguments)
+
 class Batman.RailsStorage extends Batman.RestStorage
   @ModelMixin: Batman.mixin({}, Batman.RestStorage.ModelMixin, RailsModelMixin)
 
