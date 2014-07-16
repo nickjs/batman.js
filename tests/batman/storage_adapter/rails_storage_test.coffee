@@ -133,3 +133,42 @@ asyncTest 'hasOne encodesNestedAttributesFor uses {key}_attributes and removes _
       throw e if e
       ok !store.get('product.target'), "_destroy items are removed"
       QUnit.start()
+
+asyncTest 'encodesNestedAttributesFor works with serializeAsForm is false', 4, ->
+  @Store.hasMany('products', saveInline: true, autoload: false, namespace: @)
+  @Store.encodesNestedAttributesFor('products')
+  @storeAdapter.serializeAsForm = false
+
+  store = new @Store(name: "Goodburger")
+  burger = store.get('products').build(name: "The Goodburger")
+  fries = store.get('products').build(name: "French Fries")
+
+
+  JSONResponse = store.toJSON()
+
+  helpers.MockRequest.expect
+    url: "/stores"
+    method: "POST"
+  , success: JSONResponse
+
+  helpers.MockRequest.expect
+    url: "/stores/1"
+    method: "PUT"
+  , success: JSONResponse
+
+  @storeAdapter.before 'create', (env, next) =>
+    storeJSON = JSON.parse(env.options.data).store
+    ok storeJSON.products_attributes, "The _attributes key is added"
+    ok !storeJSON.products, "The original key is removed"
+    # store_id is undefined, so JSON.stringify omits it
+    deepEqual storeJSON.products_attributes[0], {name: "The Goodburger"}, "the child is serialized"
+    next()
+
+  store.save (e, r) =>
+    throw e if e
+    store.set('id', 1)
+    fries.set("_destroy", 1)
+    store.save =>
+      throw e if e
+      ok !store.get('products').has(fries), "_destroy items are removed"
+      QUnit.start()

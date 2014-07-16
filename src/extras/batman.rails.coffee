@@ -119,16 +119,25 @@ class Batman.RailsStorage extends Batman.RestStorage
 
 
   @::before 'create', 'update', (env, next) ->
-    data = env.options.data
-    if namespace = @recordJsonNamespace(env.subject)
-      obj = data[namespace]
+    # if not serializing as form, the data has already been stringified
+    if @serializeAsForm
+      data = env.options.data
     else
-      obj = data
+      data = JSON.parse(env.options.data)
+
+    if namespace = @recordJsonNamespace(env.subject)
+      recordJSON = data[namespace]
+    else
+      recordJSON = data
 
     for key in @model._encodesNestedAttributesForKeys
-      if obj[key]?
-        obj["#{key}_attributes"] = obj[key]
-        delete obj[key]
+      if recordJSON[key]?
+        attrs = recordJSON["#{key}_attributes"] = recordJSON[key]
+        delete recordJSON[key]
+
+    if !@serializeAsForm
+      env.options.data = JSON.stringify(data)
+
     next()
 
   @::after 'update', @skipIfError (env, next) ->
