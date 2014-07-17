@@ -34,6 +34,7 @@ Binding | Description | Example
 `data-style-#{styleAttrName}`| Bind the node's style attribute `styleAttrName` to the keypath value| `data-style-float='leftOrRight'`
 `data-track-#{clickOrView}`| Track clicks or views on this node. | `data-track-view='logView'`
 
+**Note:** Since HTML is technically case insensitive, bindings using the double-dash syntax (e.g. `data-context-#{name}`) should use lowercase names as arguments. See [Issue #957](https://github.com/batmanjs/batman/issues/957) for more information.
 
 #### Keypath Filters
 
