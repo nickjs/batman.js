@@ -6,6 +6,7 @@ class Batman.Association
     autoload: true
     nestUrl: false
     includeInTransaction: true
+    encodeWithIndexes: false
 
   constructor: (@model, @label, options = {}) ->
     if @options.nestUrl

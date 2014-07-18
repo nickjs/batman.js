@@ -39,7 +39,7 @@ QUnit.module "Batman.Model hasMany Associations",
     namespace.Product = class @Product extends Batman.Model
       @encode 'id', 'name'
       @belongsTo 'store', namespace: namespace
-      @hasMany 'productVariants', namespace: namespace, saveInline: true
+      @hasMany 'productVariants', namespace: namespace, saveInline: true, encodeWithIndexes: true
 
     @productAdapter = createStorageAdapter @Product, AsyncTestStorageAdapter,
       products1:
@@ -321,7 +321,7 @@ asyncTest "hasMany associations can be reloaded", 8, ->
         QUnit.start()
     , ASYNC_TEST_DELAY
 
-asyncTest "hasMany associations are saved via the parent model", 5, ->
+asyncTest "hasMany associations are saved via the parent model", 6, ->
   store = new @Store name: 'Zellers'
   product1 = new @Product name: 'Gizmo'
   product2 = new @Product name: 'Gadget'
@@ -338,9 +338,9 @@ asyncTest "hasMany associations are saved via the parent model", 5, ->
       throw err if err
       storedJSON = @storeAdapter.storage["stores#{record.get('id')}"]
       deepEqual store2.toJSON(), storedJSON
-      # hasMany saves inline by default
       sorter = generateSorterOnProperty('name')
 
+      ok storedJSON.products instanceof Array, "hasMany serializes to Array by default"
       deepEqual sorter(storedJSON.products), sorter([
         {name: "Gizmo", store_id: record.get('id'), productVariants: {}}
         {name: "Gadget", store_id: record.get('id'), productVariants: {}}
