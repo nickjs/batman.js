@@ -172,3 +172,43 @@ asyncTest 'encodesNestedAttributesFor works with serializeAsForm is false', 4, -
       throw e if e
       ok !store.get('products').has(fries), "_destroy items are removed"
       QUnit.start()
+
+asyncTest 'encodesNestedAttributesFor works with serializeAsForm is false', 4, ->
+  class @Tag extends Batman.Model
+    @belongsTo 'taggable', polymorphic: true
+    @encode 'name'
+
+  @Store.hasMany('tags', as: 'taggable', polymorphic: true, saveInline: true, namespace: @)
+  @Store.encodesNestedAttributesFor('tags')
+
+  store = new @Store(name: "Goodburger")
+  yummy = store.get('tags').build(name: "Yummy")
+  greasy = store.get('tags').build(name: "Greasy")
+
+  JSONResponse = store.toJSON()
+
+  helpers.MockRequest.expect
+    url: "/stores"
+    method: "POST"
+  , success: JSONResponse
+
+  helpers.MockRequest.expect
+    url: "/stores/1"
+    method: "PUT"
+  , success: JSONResponse
+
+  @storeAdapter.before 'create', (env, next) =>
+    storeJSON = env.options.data.store
+    ok storeJSON.tags_attributes, "The _attributes key is added"
+    ok !storeJSON.tags, "The original key is removed"
+    deepEqual storeJSON.tags_attributes[0], {name: "Yummy", taggable_id: undefined, taggable_type: "store"}, "the child is serialized"
+    next()
+
+  store.save (e, r) =>
+    throw e if e
+    store.set('id', 1)
+    greasy.set("_destroy", 1)
+    store.save =>
+      throw e if e
+      ok !store.get('tags').has(greasy), "_destroy items are removed"
+      QUnit.start()
