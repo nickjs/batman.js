@@ -189,6 +189,12 @@ Batman.Filters =
   decrement: (rhs, change, binding) ->
     -> binding.decrement('unfilteredValue', change)
 
+  conditional: (value, truthyVal, falsyVal, binding) ->
+    if value
+      truthyVal
+    else
+      falsyVal
+
 do ->
   for k in ['capitalize', 'titlelize', 'singularize', 'underscore', 'camelize', 'toSentence', 'ordinalize']
     Batman.Filters[k] = buntUndefined Batman.helpers[k]

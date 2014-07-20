@@ -143,6 +143,14 @@ asyncTest 'truncate', 2, ->
       equal node.html(), "your "
       QUnit.start()
 
+asyncTest 'conditional renders differnt values depending on the bindings truthines', ->
+  context = Batman(record: true)
+  helpers.render '<div data-bind="record | conditional \'Yes\', \'No\'"></div>', context, (node, view) ->
+    equal node.html(), "Yes"
+    view.set('record', false)
+    equal node.html(), "No"
+    QUnit.start()
+
 asyncTest 'prepend', 2, ->
   context = Batman(foo: 'bar')
   helpers.render '<div data-bind="foo | prepend \'special-\'"></div>', context, (node, view) ->
