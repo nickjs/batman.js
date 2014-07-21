@@ -144,6 +144,20 @@ will correctly decode this JSON:
 
 It will also encode the `childItems` as `children` (unless `saveInline` is set to `false`).
 
+##### `encodeWithIndexes[= false] : boolean`
+
+If `true`, `@hasMany` associations will be encoded as a JSON object with index keys instead of arrays. For example: 
+
+```javascript 
+{ id: 1,
+  name: "As Seen on TV Warehouse",
+  products: {
+    "0": {id: 1, name: "Orange Glo"},
+    "1": {name: "Oxyclean"}
+  }
+}
+```
+
 ##### `namespace[= Batman.currentApp] : string`
 batman.js expects to find a model with the given `name` on `Batman.currentApp`. If your model is defined elsewhere, use `namespace` to specify where the model is defined.
 

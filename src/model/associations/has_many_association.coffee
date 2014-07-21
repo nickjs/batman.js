@@ -22,21 +22,34 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
         set.markAsLoaded()
 
   encoder: ->
-    association = this
-    (relationSet, _, __, record) ->
-      if relationSet?
-        json = {}
+    if @options.encodeWithIndexes
+      @_objectEncoder.bind(@)
+    else
+      @_arrayEncoder.bind(@)
 
-        unless relationSet instanceof Array
-          relationSet = relationSet.toArray()
+  _objectEncoder:  (relationSet, _, __, record) ->
+    if relationSet?
+      json = {}
 
-        for i, relation of relationSet
-          relationJSON = relation.toJSON()
-          if !association.inverse() || association.inverse().options.encodeForeignKey
-            relationJSON[association.foreignKey] = record.get(association.primaryKey)
-          json[i] = relationJSON
+      unless relationSet instanceof Array
+        relationSet = relationSet.toArray()
 
+      for i, relation of relationSet
+        relationJSON = relation.toJSON()
+        if !@inverse() || @inverse().options.encodeForeignKey
+          relationJSON[@foreignKey] = record.get(@primaryKey)
+        json[i] = relationJSON
       json
+
+  _arrayEncoder: (relationSet, _, __, record) ->
+    if relationSet?
+      jsonArray = []
+      relationSet.forEach (relation) =>
+        relationJSON = relation.toJSON()
+        if !@inverse() || @inverse().options.encodeForeignKey
+          relationJSON[@foreignKey] = record.get(@primaryKey)
+        jsonArray.push relationJSON
+      jsonArray
 
   decoder: ->
     association = this
