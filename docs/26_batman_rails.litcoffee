@@ -88,3 +88,11 @@ The following functions are mixed into models persisted with `Batman.RailsStorag
 
 Pulls `attrs` from JSON, but doesn't send them back to the server. It uses `Batman.Encoders.railsDate`, which is provided by `batman.rails`.
 
+## @encodesNestedAttributesFor(keys...)
+
+Associations named by `keys` will be encoded in the parent model's JSON so that they work with Rails' `accepts_nested_attributes_for`. These associations must have the `saveInline: true` option.
+
+This means:
+
+- data will be sent to the server with an `_attributes` suffix
+- after an update, any associated records where `record.get("_destroy")` is truthy will be counted as destroyed. (This assumes that Rails destroyed them on the backend, too.)
