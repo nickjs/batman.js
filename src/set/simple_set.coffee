@@ -73,7 +73,8 @@ class Batman.SimpleSet
 
   replace: (other) ->
     @clear()
-    @add(other.toArray()...)
+    array = other.toArray?() || other
+    @addArray(array)
 
   has: (item) -> @_indexOfItem(item) != -1
 

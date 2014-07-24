@@ -251,6 +251,13 @@ basicSetTestSuite = ->
     @set.replace(other)
     deepEqual @set.toArray(), other.toArray()
 
+  test "replace() accepts arrays", ->
+    spy = createSpy()
+    other = ['baz', 'cux']
+    @set.add('foo', 'bar')
+    @set.replace(other)
+    deepEqual @set.toArray(), other
+
   test "filter() returns a set", ->
     @set.add 'foo', 'bar', 'baz'
 

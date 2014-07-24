@@ -230,7 +230,7 @@ _Note_: Set order is not defined, so the array of removed items is unordered.
 
 ## ::replace(collection : Enumerable) : Array
 
-Removes all items from `Set`, then adds all the items found in `collection`. The `collection` must have a `toArray` function which returns an array representation of the collection. Returns the array of items added.
+Removes all items from `Set`, then adds all the items found in `collection`. The `collection` must be an `Array` or have a `toArray` function which returns an array representation of the collection. Returns the array of items added.
 
 `replace` will fire the `itemsWereRemoved` event once with all the items in the set, and then the `itemsWereAdded` event once with the items from the incoming collection.
 

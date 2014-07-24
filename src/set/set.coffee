@@ -78,6 +78,7 @@ class Batman.Set extends Batman.Object
 
   replace: @mutation (other) ->
     removedItems = Batman.SimpleSet::clear.call(this)
-    addedItems = Batman.SimpleSet::add.apply(this, other.toArray())
+    array = other.toArray?() || other
+    addedItems = Batman.SimpleSet::addArray.call(this, array)
     @fire('itemsWereRemoved', removedItems) if removedItems.length
     @fire('itemsWereAdded', addedItems) if addedItems.length
