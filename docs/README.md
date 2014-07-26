@@ -4,11 +4,55 @@ The API documentation is the primary reference for batman.js. It contains a
 listing and description of public functionality, along with tests to serve as
 usage examples.
 
+These files are processed by a [script](https://github.com/batmanjs/batmanjs.github.io/blob/master/bin/generate_docs) in the batmanjs.github.io repository.
+
 The current version is readable [here](http://batmanjs.org/docs/api/).
 
-__Links:__ Markdown like ``Batman.SomeClass`` will automatically be converted to a link to the API page for `Batman.SomeClass` if the page exists.
+You can contribute by improving existing entries or adding new entries!
 
-## Heading Format
+## Modifying a File
+
+To edit an existing entry, find the the first-level heading for the class you want to modify. For example, if you want to modify the `Batman.AbstractBinding` docs, you would search for:
+
+```
+# /api/App Internals/Batman.AbstractBinding
+```
+
+Then, you can find a specific function by looking for a second-level heading under that:
+
+```
+## ::%filteredValue
+```
+
+Then, you can modify the description for that function!
+
+## Adding a File
+
+If you want to document a new class, you can add a file for it. Here are some considerations:
+
+- First-level headings define where the page will be on the website. They should take the form:
+
+  ```
+  # /api/{Grouping Name}/{Class Name}/{Optional: Subclass Name}
+  ```
+
+  If `Subclass Name` is provided, that will be treated as the class name and `Class Name` will be treated as a "parent folder".
+
+  For example,
+
+  ```
+  # /api/App Components/Batman.View/Batman.View Filters
+  ```
+
+  Will create a `batman.view_filters.html` page which is nested under App Components > Batman.View.
+
+- Filenames have leading digits to ensure that they're parsed in the right order. Make sure your file comes after the existing files (unless it belongs somewhere higher).
+
+## Automatic Links
+
+Markdown like ``Batman.SomeClass`` will automatically be converted to a link to the API page for `Batman.SomeClass` if the page exists.
+
+## Function Heading Format
 
 Second-level headings (i.e. `##` in markdown) must follow a certain format to
 allow for parsing metadata. If the heading is intended to document a function,
