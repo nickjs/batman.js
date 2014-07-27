@@ -227,6 +227,16 @@ test 'capitalizes the first letter of each word', ->
   for lowercased, titleized of UncapitalizedToTitleized
     equal Batman.helpers.titleize(lowercased), titleized
 
+UncaptializedToCapitalized =
+  "congratulations" : 'Congratulations'
+  "you're the big winner" : "You're the big winner"
+  "you win one US dollar" : "You win one us dollar"
+
+QUnit.module 'Batman.helpers capitalization',
+test 'capitalizes the first letter of the first word', ->
+  for lowercased, capitalized of UncaptializedToCapitalized
+    equal Batman.helpers.capitalize(lowercased), capitalized
+
 ArrayToSentence = [
   {array: ["Paris"], sentence: "Paris"}
   {array: ["Paris", "New York"], sentence: "Paris and New York"}

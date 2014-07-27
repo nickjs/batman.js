@@ -32,9 +32,7 @@ Batman.helpers =
   titleize: (string) ->
     string.replace titleize_rx, (m, p1, p2) -> p1 + p2.toUpperCase()
 
-  capitalize: (string) ->
-    Batman.developer.deprecated('capitalize', 'Renamed to titleize.')
-    Batman.helpers.titleize(string)
+  capitalize: (string) -> string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
 
   trim: (string) -> if string then string.trim() else ""
 
