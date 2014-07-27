@@ -62,7 +62,7 @@ Creates a new function by wrapping `block` in _tracking prevention_ and returns 
 
 ## @withoutTracking(block: Function)
 
-Wraps `block` in tracking prevention and calls it.
+Wraps `block` in tracking prevention and calls it. This is useful if you _don't_ want some sources to be registered in an accessor.
 
 ## @registerSource(object)
 
