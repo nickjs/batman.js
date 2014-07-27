@@ -1,24 +1,21 @@
 __Breaking changes:__
 - Set constructor takes a single param -- an array of members https://github.com/batmanjs/batman/pull/1042
-- `hasMany` sets serialize to objects with index keys https://github.com/batmanjs/batman/pull/1065
 
-  This means form data gets sent like:
-
-  ```
-    parent[children][0][name]=firstChild
-    parent[children][1][name]=secondChild
-  ```
-  
-  This works with Rails out-of-the-box, but might break for other frameworks.
-  
 ### Batman helpers 
 - `toSentence` doesnt the array passed to it https://github.com/batmanjs/batman/pull/1055
 - `toSentence`, `ordinalize` and `titleize` added as view filters https://github.com/batmanjs/batman/pull/1064
+- `increment` `decrement` and `toggle` filters added https://github.com/batmanjs/batman/pull/1081 
+
+### Batman.Object
+- `increment`, `decrement` and `toggle` functions for operating on properties https://github.com/batmanjs/batman/pull/1080
 
 ### Batman.Set
 - `Set::mappedTo` passed to `SetProxy`, too https://github.com/batmanjs/batman/pull/1052
 - Set constructor takes a single param -- an array of members https://github.com/batmanjs/batman/pull/1042
 - `Set::addArray` and `Set::removeArray` for adding and removing arrays https://github.com/batmanjs/batman/pull/1042
+
+### Batman.Proxy 
+- `delegatesToTarget` creates functions that delegate to the target
 
 ### Batman.App
 - Can update params without redirecting: https://github.com/batmanjs/batman/pull/1048
@@ -33,6 +30,10 @@ __Breaking changes:__
 - `@urlNestsUnder` accepts deeply nested routes https://github.com/batmanjs/batman/pull/1068
 - `Model::destroy` passes options to storage adapter https://github.com/batmanjs/batman/pull/1075
 - `hasMany` sets serialize to objects with index keys https://github.com/batmanjs/batman/pull/1065
+- `@hasMany encodeWithIndexes: true` encodes children as an object instead of an array  https://github.com/batmanjs/batman/pull/1065
+- AssociationProxy delegates `destroy`, `save`, `transaction` and `validate` to their targets https://github.com/batmanjs/batman/pull/1078
+- `Transaction.save` and `Transaction.applyChanges` allow `only` and `except` options https://github.com/batmanjs/batman/pull/1089
+- Fix for associations like `@hasOne 'address'` which was wrongly singularized https://github.com/batmanjs/batman/pull/1090
 
 ### Batman.Paginator 
 - ModelPaginator can get totalCount from the server response https://github.com/batmanjs/batman/pull/1067
@@ -47,6 +48,9 @@ __Breaking changes:__
 ### Batman.View
 - Fix `View.isInDOM` throws `undefined method` from the render cache https://github.com/batmanjs/batman/pull/1050
 - `data-showif`/`data-hideif` checks for `proxy.target` if the value is a proxy https://github.com/batmanjs/batman/pull/1063
+
+### Batman Rails extra
+- `@encodesNestedAttributesFor` to help with nested attributes https://github.com/batmanjs/batman/pull/1074
 
 ## 0.16.0
 
