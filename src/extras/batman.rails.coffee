@@ -48,13 +48,23 @@ Batman.Encoders.railsDate =
         Batman.developer.warn "Unrecognized rails date #{value}!"
         return Date.parse(value)
 
-Batman.Model.encodeTimestamps = (attrs...) ->
-  if attrs.length == 0
-    attrs = ['created_at', 'updated_at']
+RailsModelMixin =
+  encodeTimestamps: (attrs...) ->
+    if attrs.length == 0
+      attrs = ['created_at', 'updated_at']
+    @encode(attrs..., encode: false, decode: Batman.Encoders.railsDate.decode)
 
-  @encode(attrs..., encode: false, decode: Batman.Encoders.railsDate.decode)
+  _encodesNestedAttributesForKeys: []
+
+  encodesNestedAttributesFor: (keys...)->
+    @_encodesNestedAttributesForKeys = @_encodesNestedAttributesForKeys.concat(keys)
+
+Batman.Model.encodeTimestamps = ->
+  Batman.developer.warn("You must use Batman.RailsStorage to use encodeTimestamps. Use it with `@persist(Batman.RailsStorage)` in your model definition.")
+  RailsModelMixin.encodeTimestamps.apply(@, arguments)
 
 class Batman.RailsStorage extends Batman.RestStorage
+  @ModelMixin: Batman.mixin({}, Batman.RestStorage.ModelMixin, RailsModelMixin)
 
   urlForRecord: -> @_addJsonExtension(super)
   urlForCollection: -> @_addJsonExtension(super)
@@ -105,4 +115,49 @@ class Batman.RailsStorage extends Batman.RestStorage
         env.result = record
         env.error = record.get('errors')
         return next()
+    next()
+
+
+  @::before 'create', 'update', (env, next) ->
+    nestedAttributeKeys = @model._encodesNestedAttributesForKeys
+    return next() unless nestedAttributeKeys.length
+
+    # if not serializing as form, the data has already been stringified
+    if @serializeAsForm
+      data = env.options.data
+    else
+      data = JSON.parse(env.options.data)
+
+    if namespace = @recordJsonNamespace(env.subject)
+      recordJSON = data[namespace]
+    else
+      recordJSON = data
+
+    for key in nestedAttributeKeys
+      if recordJSON[key]?
+        attrs = recordJSON["#{key}_attributes"] = recordJSON[key]
+        delete recordJSON[key]
+
+    if !@serializeAsForm
+      env.options.data = JSON.stringify(data)
+
+    next()
+
+  @::after 'update', @skipIfError (env, next) ->
+    for key in @model._encodesNestedAttributesForKeys
+      association = env.subject.reflectOnAssociation(key)
+      if !association?
+        Batman.developer.error("No assocation was found for nested attribute #{key}")
+      else if association instanceof Batman.PluralAssociation
+        associationSet = env.subject.get(key)
+        associationSet.forEach (object) ->
+          if object.get('_destroy')
+            associationSet.remove(object)
+            object.constructor.get('loaded').remove(object)
+      else if association instanceof Batman.SingularAssociation and env.subject.get("#{key}._destroy")
+        associatedRecord = env.subject.get(key)
+        if associatedRecord.isProxy
+          associatedRecord = associatedRecord.get('target')
+        env.subject._withoutDirtyTracking -> @set(key, null)
+        association.getRelatedModel().get('loaded').remove(associatedRecord)
     next()
