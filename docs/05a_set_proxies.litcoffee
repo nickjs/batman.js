@@ -127,6 +127,19 @@ Calls `func(item)` for each item in the `SetSort`.
 
 Returns a sorted array representation of the `SetSort`'s contents.
 
+## ::at(idx)
+
+Returns the item at `idx` in the `SetSort`.
+
+## ::%at
+
+An accessor for `::at`. You can use like:
+
+```coffeescript
+setSort.get('at.0')       # => first; OR
+setSort.get('at').get(1)  # => second
+```
+
 ## ::merge(other : Set) : SetSort
 
 Returns a new `SetSort` whose items are the union of this `SetSort` and `other`. It will have the same `key` and `order` as the starting `SetSort`.
