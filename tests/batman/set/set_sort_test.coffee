@@ -196,6 +196,13 @@ setSortOnObservableSetSuite = ->
     @base.add(Batman(author: @bobs))
     equal @authorNameSort.at(0).get('author.name'), "Bobs"
 
+  test 'at accessor returns the item according to the sort', ->
+    equal @authorNameSort.get('at.0.author.name'), "Fred"
+    equal @authorNameSort.get('at.3.author.name'), "Zeke"
+    @base.add(Batman(author: @bobs))
+    equal @authorNameSort.get('at.0.author.name'), "Bobs"
+    equal @authorNameSort.get('at.3.author.name'), "Mary"
+
 fixtureSetup = ->
   @zeke = Batman name: 'Zeke'
   @mary = Batman name: 'Mary'
