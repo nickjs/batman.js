@@ -190,6 +190,12 @@ setSortOnObservableSetSuite = ->
     @base.add(@byMary)
     ok mapping.has('Mary')
 
+  test 'at(i) returns the item according to the sort', ->
+    equal @authorNameSort.at(0).get('author.name'), "Fred"
+    equal @authorNameSort.at(3).get('author.name'), "Zeke"
+    @base.add(Batman(author: @bobs))
+    equal @authorNameSort.at(0).get('author.name'), "Bobs"
+
 fixtureSetup = ->
   @zeke = Batman name: 'Zeke'
   @mary = Batman name: 'Mary'
