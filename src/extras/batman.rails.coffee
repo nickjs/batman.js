@@ -119,7 +119,7 @@ class Batman.RailsStorage extends Batman.RestStorage
 
 
   @::before 'create', 'update', (env, next) ->
-    nestedAttributeKeys = @model._encodesNestedAttributesForKeys
+    nestedAttributeKeys = env.subject.constructor._encodesNestedAttributesForKeys
     return next() unless nestedAttributeKeys.length
 
     # if not serializing as form, the data has already been stringified
@@ -144,7 +144,7 @@ class Batman.RailsStorage extends Batman.RestStorage
     next()
 
   @::after 'update', @skipIfError (env, next) ->
-    for key in @model._encodesNestedAttributesForKeys
+    for key in env.subject.constructor._encodesNestedAttributesForKeys
       association = env.subject.reflectOnAssociation(key)
       if !association?
         Batman.developer.error("No assocation was found for nested attribute #{key}")
