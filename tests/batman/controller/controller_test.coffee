@@ -514,6 +514,34 @@ test 'when wrapping a call with the errorHandler callback, any exception tracked
   deepEqual handlerSpy.lastCallArguments, [@error]
   deepEqual handlerSpy2.lastCallArguments, [@error]
 
+asyncTest '@handleError can be used in Promise::catch', 5,  ->
+  callbackSpy = createSpy()
+  handlerSpy = createSpy()
+  handlerSpy2 = createSpy()
+
+  @TestController::_customErrorHandler = handlerSpy
+  @TestController::_customErrorHandler2 = handlerSpy2
+  @TestController.catchError @CustomError, with: [@TestController::_customErrorHandler, @TestController::_customErrorHandler2]
+
+  makeAssertions = =>
+    equal callbackSpy.callCount, 0
+    equal handlerSpy.callCount, 1
+    equal handlerSpy2.callCount, 1
+    deepEqual handlerSpy.lastCallArguments, [@error]
+    deepEqual handlerSpy2.lastCallArguments, [@error]
+
+  namespace = @
+  controller = new @TestController
+  controller.index = ->
+    namespace.Model.load()
+      .then(callbackSpy)
+      .catch(@handleError)
+      .then(makeAssertions)
+      .then(QUnit.start())
+    @render false
+
+  controller.dispatch('index')
+
 test 'when wrapping a call with the errorHandler callback, any exception that is not tracked with specific catchError will be re-thrown', ->
   callbackSpy = createSpy()
   handlerSpy = createSpy()
