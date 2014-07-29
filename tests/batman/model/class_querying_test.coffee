@@ -12,8 +12,11 @@ QUnit.module "Batman.Model class finding",
 
     @Product.persist @adapter
 
-test "will error unless a callback is provided", ->
-  throws => @Product.find 1
+asyncTest "returns a promise that resolves with the record", ->
+  promise = @Product.find(1)
+  promise.then (record) ->
+      equal record.get('name'), "One"
+      QUnit.start()
 
 asyncTest "models will find an instance in the store", ->
   @Product.find 1, (err, product, env) ->
@@ -23,10 +26,10 @@ asyncTest "models will find an instance in the store", ->
     QUnit.start()
 
 asyncTest "found models should end up in the loaded set", ->
-  @Product.find 1, (err, firstProduct) =>
-    throw err if err
-    equal @Product.get('loaded').length, 1
-    QUnit.start()
+  @Product.find(1)
+    .then (firstProduct) =>
+      equal @Product.get('loaded').length, 1
+      QUnit.start()
 
 asyncTest "not found models should not end up in the loaded set", ->
   equal @Product.get('loaded').length, 0
@@ -132,6 +135,15 @@ asyncTest "models will load all their records", ->
     ok env
     QUnit.start()
 
+asyncTest "Model.load returns a promise", 2, ->
+  @Product.load()
+    .then (products) =>
+        equal products.length, 2
+        equal @Product.get('all.length'), 2
+        QUnit.start()
+    .catch (err) ->
+        throw err if err?
+
 asyncTest "Model.all will load all records", ->
   set =  @Product.get('all')
   delay ->
@@ -205,10 +217,12 @@ asyncTest "loading the same models will return the same instances", ->
       equal @Product.get('loaded').length, 1
       QUnit.start()
 
-test "models without storage adapters should throw errors when trying to be loaded", 1, ->
+asyncTest "models without storage adapters should throw errors when trying to be loaded", 1, ->
   class Silly extends Batman.Model
-  throws ->
-    Silly.load()
+  Silly.load()
+    .catch (err) ->
+      ok err, "The error is thrown"
+      QUnit.start()
 
 asyncTest "load calls in an accessor will have no sources", ->
   obj = Batman()

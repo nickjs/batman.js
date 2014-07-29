@@ -20,6 +20,14 @@ asyncTest "instantiated instances can load their values", ->
     ok env
     QUnit.start()
 
+asyncTest "Model::load returns a promise", ->
+  product = new @Product(1)
+  product.load()
+    .then ->
+      equal product.get('name'), 'One'
+      equal product.get('id'), 1
+      QUnit.start()
+
 asyncTest "instantiated instances error upon load if they don't exist", ->
   product = new @Product(1110000) # Non existent primary key.
   equal @Product.get('loaded.length'), 0
@@ -61,7 +69,11 @@ asyncTest "loading instances which error should put the model in the error state
 
 asyncTest "callbacks passed to find should be pipelined into the same request", ->
   spyOn @adapter, 'read'
-  product = @Product.find 1, firstLoad = createSpy()
+  product = null
+  firstLoad = createSpy()
+  @Product.find 1, (err, record) ->
+    product = record
+    firstLoad(arguments...)
   @Product.find 1, secondLoad = createSpy()
   @Product.find 1, (err, passedProduct) =>
     throw err if err
@@ -148,6 +160,28 @@ asyncTest "model instances should save and fire validated", ->
     ok env
     equal validated.callCount, 1
     QUnit.start()
+
+asyncTest "save returns a promise that resolves to the record", ->
+  product = new @Product()
+  equal @Product.get('loaded.length'), 0
+  product.save()
+    .then (promiseProduct) =>
+      equal product, promiseProduct
+      equal @Product.get('loaded').length, 1
+      QUnit.start()
+
+asyncTest "save returns a promise that rejects with errors", ->
+  @Product.validate("name", presence: true)
+  product = new @Product()
+  equal @Product.get('loaded.length'), 0
+  product.save()
+    .then (promiseProduct) =>
+        ok false, "success hander shouldn't be called"
+      , (err) ->
+        ok err?, "error handler should be called"
+        ok err instanceof Batman.ErrorsSet, "the validation errors are passed in"
+    .then ->
+      QUnit.start()
 
 asyncTest "new instances should be added to the identity map", ->
   product = new @Product()
@@ -320,6 +354,33 @@ asyncTest "model instances should be destroyable", ->
       ok env
       equal @Product.get('all').length, 0, 'instances should be removed from the identity map upon destruction'
       QUnit.start()
+
+asyncTest "destroy returns a promise that resolves with the record", 3, ->
+  product = null
+  @Product.find(10)
+    .then (record) =>
+      product = record
+      equal @Product.get('all').length, 1
+      product.destroy()
+    .then (record) =>
+      equal record, product, "The record is passed in"
+      equal @Product.get('all').length, 0, 'instances should be removed from the identity map upon destruction'
+    .catch (err) ->
+      console.log "#{err}", err
+    .then ->
+      QUnit.start()
+
+asyncTest "destroy returns a promise that rejects with errors", 1, ->
+  p = new @Product(11000)
+  p.destroy()
+    .then ->
+        ok false, "success callback isn't called"
+      , (err) ->
+        ok err?, "error is passed to error handler"
+
+  setTimeout ->
+      QUnit.start()
+    , 30
 
 asyncTest "model instances should be accept options for destruction", 1, ->
   product = new @Product(10)

@@ -115,17 +115,16 @@ class Batman.Model extends Batman.Object
     @findWithOptions(id, undefined, callback)
 
   @findWithOptions: (id, options = {}, callback) ->
-    Batman.developer.assert callback, "Must call find with a callback!"
     @_pending ||= {}
     record = @_loadIdentity(id) || @_pending[id]
     if !record?
       record = new this
       record._withoutDirtyTracking -> @set 'id', id
       @_pending[id] = record
-    record.loadWithOptions options, =>
+    promise = record.loadWithOptions options, =>
       delete @_pending[id]
-      callback.apply(@, arguments)
-    return record
+      callback?.apply(@, arguments)
+    return promise
 
   @load: (options, callback) ->
     if typeof options in ['function', 'undefined']
@@ -417,28 +416,18 @@ class Batman.Model extends Batman.Object
           else
             fulfill(record)
 
->>>>>>> 96ec1db... use es6-promises polyfill
-
     if @get('lifecycle').load()
       callbackQueue = []
       callbackQueue.push callback if callback?
       if !hasOptions
         @_currentLoad = callbackQueue
-      @_doStorageOperation 'read', options, (err, record, env) =>
-        unless err
-          @get('lifecycle').loaded()
-          record = @constructor._mapIdentity(record)
-          record.get('errors').clear()
-        else
-          @get('lifecycle').error()
-        if !hasOptions
-          @_currentLoad = null
-        for callback in callbackQueue
-          callback(err, record, env)
-        return
+        return @_currentLoadPromise ||= _performLoad()
+      else
+        _performLoad()
     else
       if @get('lifecycle.state') is 'loading' && !hasOptions
         @_currentLoad.push callback if callback?
+        return @_currentLoadPromise
       else
         err = new Batman.StateMachine.InvalidTransitionError("Can't load while in state #{@get('lifecycle.state')}")
         callback?(err)
@@ -456,7 +445,6 @@ class Batman.Model extends Batman.Object
     else
       ['save', 'update', 'saved']
 
-
     if !@get('lifecycle').startTransition(startState)
       error = new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}")
       callback?(error)
@@ -466,7 +454,10 @@ class Batman.Model extends Batman.Object
       @validate (error, errors) =>
         if error || errors.length
           @get('lifecycle').failedValidation()
-          return callback?(error || errors, @)
+          rejectionReason = error || errors
+          callback?(rejectionReason, @)
+          return reject(rejectionReason)
+
 
         @fire 'validated'
         associations = @constructor._batman.get('associations')
@@ -477,7 +468,12 @@ class Batman.Model extends Batman.Object
         payload = Batman.extend {}, options, {data: options}
 
         @_doStorageOperation storageOperation, payload, (err, record, env) =>
-          unless err
+          if err?
+            if err instanceof Batman.ErrorsSet
+              @get('lifecycle').failedValidation()
+            else
+              @get('lifecycle').error()
+          else
             @get('dirtyKeys').clear()
             @get('_dirtiedKeys').clear()
             if associations
@@ -487,14 +483,12 @@ class Batman.Model extends Batman.Object
             if !record.isTransaction # don't let the transaction polute the true instance
               record = @constructor._mapIdentity(record)
             @get('lifecycle').startTransition endState
-          else
-            if err instanceof Batman.ErrorsSet
-              @get('lifecycle').failedValidation()
-            else
-              @get('lifecycle').error()
           callback?(err, record || @, env)
-    else
-      callback?(new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}"))
+          if err?
+            reject(err)
+          else
+            fulfill(record)
+
 
   destroy: (options, callback) ->
     if !callback
@@ -514,8 +508,10 @@ class Batman.Model extends Batman.Object
         else
           @get('lifecycle').error()
         callback?(err, record, env)
-    else
-      callback?(new Batman.StateMachine.InvalidTransitionError("Can't destroy while in state #{@get('lifecycle.state')}"))
+        if err?
+          reject(err)
+        else
+          fulfill(record)
 
   validate: (callback) ->
     errors = @get('errors')
