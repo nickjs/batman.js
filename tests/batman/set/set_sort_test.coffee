@@ -138,6 +138,19 @@ setSortOnObservableSetSuite = ->
     equal @authorNameSort.toArray().length, 2
     deepEqual @authorNameSort.toArray(), expected
 
+  test "toArray causes accessor to recalculate when order changes", ->
+    @authorNameSort.accessor 'firstTwoNames', ->
+      firstTwo = @toArray().slice(0,2)
+      firstTwo.map((x) -> x.get('author.name'))
+
+    deepEqual @authorNameSort.get('firstTwoNames'), ["Fred", "Fred"], "it starts with the first two"
+    @base.remove(@byFred)
+    deepEqual @authorNameSort.get('firstTwoNames'), ["Fred", "Mary"], "Removal causes an update"
+    @base.add(Batman(author: @bobs))
+    deepEqual @authorNameSort.get('firstTwoNames'), ["Bobs", "Fred"], "Addition causes an update"
+    @byZeke.set('author.name', "Aaron")
+    deepEqual @authorNameSort.get('firstTwoNames'), ["Aaron", "Bobs"], "Modification causes an update"
+
   test "setting a new value of the sorted property on one of the items triggers an update", ->
     switchedAuthorToBobs = @anotherByFred
     switchedAuthorToBobs.set('author', @bobs)
