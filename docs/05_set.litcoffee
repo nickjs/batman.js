@@ -411,16 +411,3 @@ Accessor for `Set::mappedTo`. `mySet.get('mappedTo.myKey')` returns the same res
       ])
       mapping = set.get('mappedTo.place')
       deepEqual mapping.toArray(), [3,1,2]
-
-## ::at(idx)
-
-Returns the item from the `Set` at `idx`. Note that sets have no specified order, so this may return a different value each time.
-
-## ::%at
-
-An accessor for `::at`. You can use like:
-
-```coffeescript
-mySet.get('at.0')       # => first; OR
-mySet.get('at').get(1)  # => second
-```
