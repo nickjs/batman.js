@@ -75,8 +75,7 @@ class Batman.SetSort extends Batman.SetProxy
     @_storage.slice()
 
   at: (idx) ->
-    @base.registerAsMutableSource?()
-    @_storage[idx]
+    @get('_storage')[idx]
 
   forEach: (iterator, ctx) ->
     @base.registerAsMutableSource?()

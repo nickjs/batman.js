@@ -200,8 +200,11 @@ setSortOnObservableSetSuite = ->
     equal @authorNameSort.get('at.0.author.name'), "Fred"
     equal @authorNameSort.get('at.3.author.name'), "Zeke"
     @base.add(Batman(author: @bobs))
-    equal @authorNameSort.get('at.0.author.name'), "Bobs"
-    equal @authorNameSort.get('at.3.author.name'), "Mary"
+    equal @authorNameSort.get('at.0.author.name'), "Bobs", "Adding causes update"
+    @byMary.set('author.name', "Aaron")
+    equal @authorNameSort.get('at.0.author.name'), "Aaron", "Update causes update"
+    @base.remove(@byMary)
+    equal @authorNameSort.get('at.0.author.name'), "Bobs", "Removal causes update"
 
 fixtureSetup = ->
   @zeke = Batman name: 'Zeke'
