@@ -8,8 +8,13 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
 
   constructor: ->
     super
-    @primaryKey = @options.primaryKey or "id"
-    @foreignKey = @options.foreignKey or "#{Batman.helpers.underscore(@model.get('resourceName'))}_id"
+    @primaryKey = @options.primaryKey
+    @foreignKey = @options.foreignKey
+
+  provideDefaults: ->
+    Batman.mixin super,
+      primaryKey: "id"
+      foreignKey: "#{Batman.helpers.underscore(@model.get('resourceName'))}_id"
 
   apply: (baseSaveError, base) ->
     unless baseSaveError

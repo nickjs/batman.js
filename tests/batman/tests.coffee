@@ -1,1 +1,1 @@
-#= require_tree .
+#= require ./model/associations/polymorphic_has_many_test

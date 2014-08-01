@@ -26,6 +26,7 @@ test "association macros without options", ->
   ok deck.get('player') instanceof Batman.BelongsToProxy
   ok deck.get('cards') instanceof Batman.AssociationSet
   ok card.get('deck') instanceof Batman.BelongsToProxy
+  equal card.reflectOnAssociation('deck').options.namespace, app, "Batman.currentApp is the default namespace"
 
 asyncTest "association load passes env", 1, ->
   app = Batman.currentApp = {}
@@ -125,7 +126,7 @@ asyncTest "support custom exensions which get applied before accessors or encode
 
   Product.find 2, (err, product) ->
     store = product.get('foo')
-    ok store instanceof namespace.Walmart
+    ok store instanceof namespace.Walmart, "The store is accessible as 'foo'"
     equal store.get('id'), 3
     QUnit.start()
 

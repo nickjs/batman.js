@@ -5,12 +5,12 @@ class Batman.PluralAssociation extends Batman.Association
   isSingular: false
 
   constructor: (@model, @label, options = {}) ->
-    defaultOptions =
-      namespace: Batman.currentApp
-      name: Batman.helpers.camelize(Batman.helpers.singularize(@label))
-    @options = Batman.extend defaultOptions, @defaultOptions, options
     super
     @_resetSetHashes()
+
+  provideDefaults:  ->
+    Batman.mixin super,
+      name: Batman.helpers.camelize(Batman.helpers.singularize(@label))
 
   setForRecord: (record) ->
     indexValue = @indexValueForRecord(record)
