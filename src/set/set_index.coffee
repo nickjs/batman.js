@@ -75,12 +75,12 @@ class Batman.SetIndex extends Batman.Object
 
   _addItemsToKey: (key, items) ->
     resultSet = @_resultSetForKey(key)
-    resultSet.add(items...)
+    resultSet.addArray(items)
     resultSet
 
   _removeItemsFromKey: (key, items) ->
     resultSet = @_resultSetForKey(key)
-    resultSet.remove(items...)
+    resultSet.removeArray(items)
     resultSet
 
   _resultSetForKey: (key) ->

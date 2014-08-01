@@ -14,8 +14,9 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
   apply: (baseSaveError, base) ->
     unless baseSaveError
       if relations = @getFromAttributes(base)
-        relations.forEach (model) =>
-          model.set(@foreignKey, base.get(@primaryKey))
+        primaryKeyValue = base.get(@primaryKey)
+        relations.forEach (childRecord) =>
+          childRecord.set(@foreignKey, primaryKeyValue)
 
       base.set @label, set = @setForRecord(base)
       if base.lifecycle.get('state') == 'creating'

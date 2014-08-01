@@ -2,14 +2,10 @@
 
 class Batman.AssociationProxy extends Batman.Proxy
   loaded: false
-  @delegatesToTarget 'destroy', 'save', 'transaction', 'validate'
+  @delegatesToTarget 'toJSON', 'destroy', 'save', 'transaction', 'validate'
 
   constructor: (@association, @model) ->
     super()
-
-  toJSON: ->
-    target = @get('target')
-    @get('target').toJSON() if target?
 
   load: (callback) ->
     @fetch (err, proxiedRecord) =>
