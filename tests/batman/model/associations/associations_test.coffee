@@ -26,7 +26,6 @@ test "association macros without options", ->
   ok deck.get('player') instanceof Batman.BelongsToProxy
   ok deck.get('cards') instanceof Batman.AssociationSet
   ok card.get('deck') instanceof Batman.BelongsToProxy
-  equal card.reflectOnAssociation('deck').options.namespace, app, "Batman.currentApp is the default namespace"
 
 asyncTest "association load passes env", 1, ->
   app = Batman.currentApp = {}

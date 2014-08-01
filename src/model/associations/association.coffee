@@ -32,7 +32,6 @@ class Batman.Association
 
   provideDefaults: ->
     {
-      namespace: Batman.currentApp
       encoderKey: @label
       saveInline: false
       autoload: true
@@ -41,8 +40,11 @@ class Batman.Association
       encodeWithIndexes: false
     }
 
+  scope: ->
+    @options.namespace || Batman.currentApp
+
   getRelatedModel: ->
-    scope = @options.namespace
+    scope = @scope()
     className = @options.name
     relatedModel = scope?[className]
     Batman.developer.do ->

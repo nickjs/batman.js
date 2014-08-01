@@ -53,7 +53,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
       return "/#{root}/#{id}/#{ending}"
 
   getRelatedModelForType: (type) ->
-    scope = @options.namespace
+    scope = @scope()
     if type
       relatedModel = scope?[type]
       relatedModel ||= scope?[Batman.helpers.camelize(type)]

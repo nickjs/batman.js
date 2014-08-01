@@ -28,7 +28,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
     new @proxyClass(indexValue, @modelType(), this)
 
   getRelatedModelForType: (type) ->
-    scope = @options.namespace
+    scope = @scope()
 
     if type
       relatedModel = scope?[type]
