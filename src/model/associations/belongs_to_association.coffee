@@ -9,7 +9,7 @@ class Batman.BelongsToAssociation extends Batman.SingularAssociation
   constructor: (model, label, options) ->
     if options?.polymorphic
       delete options.polymorphic
-      return new Batman.PolymorphicBelongsToAssociation(model, label, options)
+      return new Batman.PolymorphicBelongsToAssociation(arguments...)
     super
     @foreignKey = @options.foreignKey
     @primaryKey = @options.primaryKey
