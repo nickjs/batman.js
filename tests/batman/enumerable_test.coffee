@@ -18,6 +18,13 @@ test "classes mixing in enumerable should report as such", ->
 
   ok (new Test).isEnumerable
 
+test "find returns the first match", ->
+  array = [Batman(a:1), Batman(a:'2'), Batman(foo:null), Batman(a:null)]
+  enumerable = getEnumerable(array)
+  foundElement = enumerable.find (element, value) ->
+    element.get("a") is '2'
+  equal foundElement, array[1]
+
 test "map should return an array of the results", ->
   @array = [1,2,3]
   @enumerable = getEnumerable(@array)

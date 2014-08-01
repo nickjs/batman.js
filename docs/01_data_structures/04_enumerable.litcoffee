@@ -89,6 +89,15 @@ Creates a new instance of the current type, and adds every element for which
       set = new Batman.Set(['wheat', 'crud', 'grain'])
       deepEqual ['wheat', 'grain'], (set.filter (x) -> x != 'crud').toArray()
 
+## ::find(func, ctx[=Batman.container])
+
+Returns the first element of the `Enumberable` where `func` is true. `func` is called on `ctx` with `(element, value, this)`.
+
+    test "find gets the first match", ->
+      hash = new Batman.Hash(wheat: true, crud: false, grain: false)
+      foundKey = hash.find (key, value) -> !value
+      equal foundKey, "crud", "the found item is returned"
+
 ## ::count(func) : number
 
 Returns the number of elements for which `func` returns true, or the total

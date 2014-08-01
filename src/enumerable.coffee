@@ -54,6 +54,14 @@ Batman.Enumerable =
 
     @reduce wrap, result
 
+  find: (fn, ctx = Batman.container) ->
+    foundItem = undefined
+    @forEach (element, value) ->
+      return if foundItem?
+      if fn.call(ctx, element, value, @)
+        foundItem = element
+    foundItem
+
   count: (f, ctx = Batman.container) ->
     return @length unless f
     count = 0
