@@ -27,6 +27,24 @@ basicSetTestSuite = ->
     equal @set.at(2), 2
     equal @set.at(4), 4
 
+  test "get('at.{index}') returns the item at that index", ->
+    @set.add(0, 1, 2, 3, 4)
+    equal @set.get('at.0'), 0
+    equal @set.get('at.2'), 2
+    equal @set.get('at.4'), 4
+    @set.remove(2)
+    equal @set.get('at.2'), 3
+
+  test '::at and get("at") is safe inside accessors', ->
+    @set.add(0, 1, 2, 3, 4)
+    @set.accessor 'third', -> @get('at.2')
+    @set.accessor 'fourth', -> @at(3)
+    equal @set.get('third'), 2
+    equal @set.get('fourth'), 3
+    @set.remove(0)
+    equal @set.get('third'), 3
+    equal @set.get('fourth'), 4
+
   test "at(index) returns undefined when there is no item at that index", ->
     @set.add(true)
     equal @set.at(0), true

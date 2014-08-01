@@ -71,8 +71,10 @@ class Batman.SetSort extends Batman.SetProxy
     @fire('itemsWereRemoved', removedItems, removedIndexes)
 
   toArray: ->
-    @base.registerAsMutableSource?()
-    @_storage.slice()
+    @get('_storage').slice()
+
+  at: (idx) ->
+    @get('_storage')[idx]
 
   forEach: (iterator, ctx) ->
     @base.registerAsMutableSource?()
