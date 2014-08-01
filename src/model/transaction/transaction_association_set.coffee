@@ -23,7 +23,7 @@ class Batman.TransactionAssociationSet extends Batman.Set
   @delegate 'association', 'foreignKeyValue', to: 'associationSet'
 
   _addFromAssociationSet: (items, indexes) -> @add(items...)
-  add: @mutation (items...) ->
+  addArray: @mutation (items) ->
     addedTransactions = []
     for item in items
       unless item instanceof Batman.Model && !item.isTransaction

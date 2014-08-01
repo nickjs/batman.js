@@ -182,6 +182,15 @@ test 'adding nested models doesnt affect the base until applyChanges', ->
   ok @base.get('apples.length') == 3, 'the item is added'
   ok @transaction.get('apples.length') == 3, 'the item is still in the transaction'
 
+test 'adding hasMany children with addArray doesnt affect the base until applyChanges', ->
+  @transaction.get('apples').addArray([new @TestModel(name: 'apple3')])
+  ok @base.get('apples.length') == 2
+  ok @transaction.get('apples.length') == 3
+
+  @transaction.applyChanges()
+  ok @base.get('apples.length') == 3, 'the item is added'
+  ok @transaction.get('apples.length') == 3, 'the item is still in the transaction'
+
 test 'nested model transactions get properly applied', ->
   @transaction.get('testNested').set('name', 'jim')
   @transaction.set('banana', 'rama')
