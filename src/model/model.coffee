@@ -138,13 +138,16 @@ class Batman.Model extends Batman.Object
 
   @loadWithOptions: (options, callback) ->
     @fire 'loading', options
-    @_doStorageOperation 'readAll', options, (err, records, env) =>
-      if err?
-        @fire 'error', err
-        callback?(err, [])
-      else
-        @fire 'loaded', records, env
-        callback?(err, records, env)
+    new Promise (fulfill, reject) =>
+      @_doStorageOperation 'readAll', options, (err, records, env) =>
+        if err?
+          @fire 'error', err
+          callback?(err, [])
+          reject(err)
+        else
+          @fire 'loaded', records, env
+          callback?(err, records, env)
+          fulfill(records)
 
   @create: (attrs, callback) ->
     if !callback
@@ -388,8 +391,33 @@ class Batman.Model extends Batman.Object
   loadWithOptions: (options, callback) ->
     hasOptions = Object.keys(options).length != 0
     if @get('lifecycle.state') in ['destroying', 'destroyed']
-      callback?(new Error("Can't load a destroyed record!"))
-      return
+      err = new Error("Can't load a destroyed record!")
+      callback?(err)
+      return Promise.reject(err)
+
+    _performLoad = =>
+      new Promise (fulfill, reject) =>
+        @_doStorageOperation 'read', options, (err, record, env) =>
+          if !err
+            @get('lifecycle').loaded()
+            record = @constructor._mapIdentity(record)
+            record.get('errors').clear()
+          else
+            @get('lifecycle').error()
+
+          if !hasOptions
+            @_currentLoad = null
+            @_currentLoadPromise = null
+
+          for callback in callbackQueue
+            callback(err, record, env)
+
+          if err?
+            reject(err)
+          else
+            fulfill(record)
+
+>>>>>>> 96ec1db... use es6-promises polyfill
 
     if @get('lifecycle').load()
       callbackQueue = []
@@ -412,7 +440,9 @@ class Batman.Model extends Batman.Object
       if @get('lifecycle.state') is 'loading' && !hasOptions
         @_currentLoad.push callback if callback?
       else
-        callback?(new Batman.StateMachine.InvalidTransitionError("Can't load while in state #{@get('lifecycle.state')}"))
+        err = new Batman.StateMachine.InvalidTransitionError("Can't load while in state #{@get('lifecycle.state')}")
+        callback?(err)
+        return Promise.reject(err)
 
   # `save` persists a record to all the storage mechanisms added using `@persist`. `save` will only save
   # a model if it is valid.
@@ -426,7 +456,13 @@ class Batman.Model extends Batman.Object
     else
       ['save', 'update', 'saved']
 
-    if @get('lifecycle').startTransition startState
+
+    if !@get('lifecycle').startTransition(startState)
+      error = new Batman.StateMachine.InvalidTransitionError("Can't save while in state #{@get('lifecycle.state')}")
+      callback?(error)
+      return Promise.reject(error)
+
+    new Promise (fulfill, reject) =>
       @validate (error, errors) =>
         if error || errors.length
           @get('lifecycle').failedValidation()
@@ -464,7 +500,12 @@ class Batman.Model extends Batman.Object
     if !callback
       [options, callback] = [{}, options]
 
-    if @get('lifecycle').destroy()
+    if !@get('lifecycle').destroy()
+      error = new Batman.StateMachine.InvalidTransitionError("Can't destroy while in state #{@get('lifecycle.state')}")
+      callback?(error)
+      return Promise.reject(error)
+
+    new Promise (fulfill, reject) =>
       payload = Batman.mixin({}, options, {data: options})
       @_doStorageOperation 'destroy', payload, (err, record, env) =>
         unless err

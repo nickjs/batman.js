@@ -96,9 +96,9 @@ test 'it should render views if given in the options', ->
 
 test 'it should load the HTML from the default location', ->
   class TestShowView extends Batman.View
-    
+
   Batman.currentApp["TestShowView"] = TestShowView
-  
+
   @controller.dispatch('show')
   equal @controller.currentView.source, 'test/show'
 
@@ -106,7 +106,7 @@ test 'it should load the HTML from the override location on the view prototype',
   class TestShowView extends Batman.View
     source: 'override/source'
   Batman.currentApp["TestShowView"] = TestShowView
-  
+
   @controller.dispatch('show')
   equal @controller.currentView.source, 'override/source'
 
@@ -464,9 +464,11 @@ QUnit.module 'Batman.Controller error handling',
 
     class @Model extends Batman.Object
       @load: (callback) ->
-        callback(error, undefined)
+        callback?(error, undefined)
+        Promise.reject(error)
       @load2: (callback) ->
-        callback(error2, undefined)
+        callback?(error2, undefined)
+        Promise.reject(error2)
 
     class @TestController extends Batman.Controller
       _customErrorHandler: (err) ->
@@ -722,7 +724,7 @@ test "catchError's with option should accept a string with the name of the handl
   controller.dispatch('index')
 
   equal handlerSpy.callCount, 1
- 
+
 test "catchError's with option should accept an array of strings with the names of the handlers", ->
 
   handlerSpy = createSpy()
@@ -730,7 +732,7 @@ test "catchError's with option should accept an array of strings with the names 
 
   @TestController::_customErrorHandler = handlerSpy
   @TestController::_customError2Handler = handlerSpy2
-  
+
   @TestController.catchError @CustomError, with: ['_customErrorHandler', '_customError2Handler']
 
   namespace = @
