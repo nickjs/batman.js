@@ -153,6 +153,16 @@ test 'removing nested models doesnt affect the base until applyChanges', ->
   ok @base.get('apples.length') == 1, 'the item is removed'
   ok @transaction.get('apples.length') == 1, 'the item is still gone from the transaction'
 
+test 'removing nested models with removeArray doesnt affect the base until applyChanges', ->
+  firstTransactionApple = @transaction.get('apples.first')
+  @transaction.get('apples').removeArray([firstTransactionApple])
+  ok @base.get('apples.length') == 2, 'the item isnt removed from the base'
+  ok @transaction.get('apples.length') == 1, 'the item is removed from the transaction'
+
+  @transaction.applyChanges()
+  ok @base.get('apples.length') == 1, 'the item is removed'
+  ok @transaction.get('apples.length') == 1, 'the item is still gone from the transaction'
+
 test 'removed items are tracked and attached to the original associationSet', ->
   firstApple = @base.get('apples.first')
   firstTransactionApple = @transaction.get('apples.first')
@@ -175,6 +185,15 @@ test 'items loaded after `transaction()` are still in the transaction set', ->
 
 test 'adding nested models doesnt affect the base until applyChanges', ->
   @transaction.get('apples').add(new @TestModel(name: 'apple3'))
+  ok @base.get('apples.length') == 2
+  ok @transaction.get('apples.length') == 3
+
+  @transaction.applyChanges()
+  ok @base.get('apples.length') == 3, 'the item is added'
+  ok @transaction.get('apples.length') == 3, 'the item is still in the transaction'
+
+test 'adding hasMany children with addArray doesnt affect the base until applyChanges', ->
+  @transaction.get('apples').addArray([new @TestModel(name: 'apple3')])
   ok @base.get('apples.length') == 2
   ok @transaction.get('apples.length') == 3
 

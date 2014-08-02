@@ -23,7 +23,7 @@ class Batman.TransactionAssociationSet extends Batman.Set
   @delegate 'association', 'foreignKeyValue', to: 'associationSet'
 
   _addFromAssociationSet: (items, indexes) -> @add(items...)
-  add: @mutation (items...) ->
+  addArray: @mutation (items) ->
     addedTransactions = []
     for item in items
       unless item instanceof Batman.Model && !item.isTransaction
@@ -44,8 +44,9 @@ class Batman.TransactionAssociationSet extends Batman.Set
     @fire 'itemsWereAdded', addedTransactions if addedTransactions.length
     addedTransactions
 
-  remove: @mutation (transactions...) ->
+  removeArrayWithIndexes: @mutation (transactions) ->
     removedTransactions = []
+    removedIndexes = []
     for transactionItem in transactions
       if !transactionItem.isTransaction
         throw "Tried to remove real item from transaction set: #{t.toJSON()}"
@@ -53,6 +54,7 @@ class Batman.TransactionAssociationSet extends Batman.Set
       if transactionIndex > -1
         @_storage.splice(transactionIndex, 1)
         removedTransactions.push(transactionItem)
+        removedIndexes.push(transactionIndex)
 
       item = transactionItem.base()
       originalIndex = @_originalStorage.indexOf(item)
@@ -61,8 +63,11 @@ class Batman.TransactionAssociationSet extends Batman.Set
         @_originalStorage.splice(originalIndex, 1)
 
     @length = @_storage.length
-    @fire 'itemsWereRemoved', removedTransactions if removedTransactions.length
-    removedTransactions
+    @fire('itemsWereRemoved', removedTransactions, removedIndexes) if removedTransactions.length
+    {
+      removedItems: removedTransactions,
+      removedIndexes
+    }
 
   applyChanges: (visited=[]) ->
     target = this.get('associationSet')
