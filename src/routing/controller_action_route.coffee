@@ -16,5 +16,9 @@ class Batman.ControllerActionRoute extends Batman.Route
     super(templatePath, options)
 
   callback: (params) =>
-    controller = @get("app.dispatcher.controllers.#{@get('controller')}")
-    controller.dispatch(@get('action'), params)
+    controllerShortName = @get('controller')
+    controller = @get("app.dispatcher.controllers.#{controllerShortName}")
+    if !controller?
+      throw new Error("Couldn't find #{Batman.helpers.titleize(controllerShortName)}Controller when dispatching #{controllerShortName}##{@get('action')}!")
+    else
+      controller.dispatch(@get('action'), params)
