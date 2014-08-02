@@ -377,10 +377,8 @@ asyncTest "destroy returns a promise that rejects with errors", 1, ->
         ok false, "success callback isn't called"
       , (err) ->
         ok err?, "error is passed to error handler"
-
-  setTimeout ->
+    .then ->
       QUnit.start()
-    , 30
 
 asyncTest "model instances should be accept options for destruction", 1, ->
   product = new @Product(10)
