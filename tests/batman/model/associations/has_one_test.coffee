@@ -37,6 +37,14 @@ asyncTest "hasOne associations are loaded via ID", 2, ->
       equal product.get('id'), 1
       equal product.get('name'), 'Product One'
 
+asyncTest "::load returns a promise that resolves with the record", 2, ->
+  @Store.find 1, (err, store) =>
+    store.get('product').load()
+      .then (product) ->
+        equal product.get('id'), 1
+        equal product.get('name'), 'Product One'
+        QUnit.start()
+
 asyncTest "hasOne associations are not loaded when autoload is false", 2, ->
   ns = @namespace
   class Store extends Batman.Model

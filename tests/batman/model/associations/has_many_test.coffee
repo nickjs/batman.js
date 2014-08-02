@@ -177,6 +177,16 @@ asyncTest "hasMany associations are loaded", 4, ->
       products.forEach (product) => ok product instanceof @Product
       deepEqual products.map((x) -> x.get('id')), [1,2,3]
 
+asyncTest "::load returns a promise that resolves with an array of records", 1, ->
+  @Store.find 1, (err, store) =>
+    throw err if err
+    products = store.get 'products'
+    products.load()
+      .then (records) ->
+        equal records.length, 3
+      .then ->
+        QUnit.start()
+
 asyncTest "AssociationSet fires loaded event and sets loaded accessor", 2, ->
   @Store.find 1, (err, store) ->
     equal store.get('products').get('loaded'), false

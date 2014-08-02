@@ -64,6 +64,15 @@ asyncTest "belongsTo associations are loaded via ID", 1, ->
       equal store.get('id'), 1
       QUnit.start()
 
+asyncTest "::load returns a promise that resolves with the record", 1, ->
+  @Product.find 1, (err, product) =>
+    throw err if err
+    product.get('store').load()
+      .then (store) ->
+        equal store.get('id'), 1
+      .then ->
+        QUnit.start()
+
 asyncTest "belongsTo associations are not loaded when autoload is off", 1, ->
   namespace = @
   class @Product extends Batman.Model
