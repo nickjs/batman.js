@@ -6,6 +6,9 @@ class Batman.DOM.EventBinding extends Batman.DOM.AbstractAttributeBinding
 
   constructor: ->
     super
+    Batman.developer.do =>
+      if @key in Batman.View.LIFECYCLE_EVENTS
+        Batman.developer.error("Event handler named '#{@key}' conflicts with a View lifecycle event of the same name! Rename the handler on <#{@node.nodeName.toLowerCase()} data-event-#{@attributeName}='#{@keyPath}' />.")
 
     callback = =>
       func = @get('filteredValue')
