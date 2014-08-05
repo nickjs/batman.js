@@ -2,12 +2,12 @@
 
 `Batman.PluralAssociation` extends `Batman.Association`. It is an abstract class extended by `Batman.HasManyAssociation` and `Batman.PolymorphicHasManyAssociation`.
 
-
 ## ::constructor(@model, @label, options[={}]) : PluralAssociation
 
-Provides default options:
+## ::provideDefaults() : Option
 
-- `namespace`: `Batman.currentApp`
+Extends default options from `Batman.Association` with:
+
 - `name`: camelized and singularized `@label`
 
 ## ::setForRecord(record) : Set
@@ -50,6 +50,13 @@ Returns `record`'s value for `@primaryKey`.
 
 Returns a `Batman.PolymorphicHasManyAssociation` if `options.as`. Otherwise, returns a new `Batman.HasManyAssociation`.
 
+## ::provideDefaults() : Object
+
+Extends defaults from `Batman.PluralAssociation` with:
+
+- `primaryKey`: `"id"`
+- `foreignKey`: `"#{Batman.helpers.underscore(@model.get('resourceName'))}_id"`
+
 ## ::apply(baseSaveError, base)
 
 Called after the `hasMany` parent is saved. It updates all foreign keys on child records and marks the `Batman.AssociationSet` as loaded.
@@ -70,11 +77,16 @@ Even if a record is not in the JSON, it won't be removed from the association se
 
 ## ::constructor(model, label, options) : PolymorphicHasManyAssociation
 
-Adds  default options:
+Assigns `options.as` to `@foreignLabel`, then deletes the option and calls super.
+
+## ::provideDefaults() : Object
+
+Extends default options from `Batman.HasManyAssociation` with:
 
 - `inverseOf`: `options.as`
 - `foreignKey`: `{options.as}_id`
 
+## ::provideDefaults() :
 ## ::apply(baseSaveError, base)
 
 Updates children's `foreignTypeKey` to `@modelType()`.

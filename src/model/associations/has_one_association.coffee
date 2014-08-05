@@ -6,11 +6,6 @@ class Batman.HasOneAssociation extends Batman.SingularAssociation
   proxyClass: Batman.HasOneProxy
   indexRelatedModelOn: 'foreignKey'
 
-  constructor: ->
-    super
-    @primaryKey = @options.primaryKey
-    @foreignKey = @options.foreignKey
-
   provideDefaults: ->
     Batman.mixin super,
       primaryKey: "id"

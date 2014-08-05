@@ -11,15 +11,12 @@ class Batman.BelongsToAssociation extends Batman.SingularAssociation
       delete options.polymorphic
       return new Batman.PolymorphicBelongsToAssociation(arguments...)
     super
-    @foreignKey = @options.foreignKey
-    @primaryKey = @options.primaryKey
+
     @model.encode @foreignKey if @options.encodeForeignKey
 
   provideDefaults: ->
     options = super
     Batman.mixin options,
-      saveInline: false
-      autoload: true
       encodeForeignKey: true
       foreignKey: "#{@label}_id"
       primaryKey: "id"

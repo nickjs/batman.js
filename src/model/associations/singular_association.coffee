@@ -5,11 +5,12 @@ class Batman.SingularAssociation extends Batman.Association
 
   constructor: (@model, @label, options = {}) ->
     super
+    @foreignKey = @options.foreignKey
+    @primaryKey = @options.primaryKey
 
   provideDefaults: ->
     Batman.mixin super,
       name: Batman.helpers.camelize(@label)
-
 
   getAccessor: (association, model, label) ->
     # Check whether the relation has already been set on this model

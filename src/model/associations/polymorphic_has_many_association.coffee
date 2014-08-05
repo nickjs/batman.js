@@ -5,7 +5,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
   isPolymorphic: true
 
   constructor: (model, label, options) ->
-    options.inverseOf = @foreignLabel = options.as
+    @foreignLabel = options.as
     delete options.as
 
     super(model, label, options)
@@ -15,6 +15,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
 
   provideDefaults: (options) ->
     Batman.mixin {}, super,
+      inverseOf: @foreignLabel
       foreignKey: "#{@foreignLabel}_id"
 
   apply: (baseSaveError, base) ->
