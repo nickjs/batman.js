@@ -24,6 +24,7 @@ class Batman.Set extends Batman.Object
       sortedBy:           -> new Batman.TerminalAccessible (key) => @sortedBy(key)
       sortedByDescending: -> new Batman.TerminalAccessible (key) => @sortedBy(key, 'desc')
       mappedTo:           -> new Batman.TerminalAccessible (key) => @mappedTo(key)
+      at:                 -> new Batman.TerminalAccessible (key) => @at(+key)
     klass.accessor(key, accessor) for key, accessor of accessors
     return
 

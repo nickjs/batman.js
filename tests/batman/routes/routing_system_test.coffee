@@ -48,6 +48,16 @@ asyncTest 'redirecting with params', ->
   @App.run()
   Batman.redirect controller: 'products', action: 'show', id: '1'
 
+asyncTest 'missing controller gives a helpful message', 2, ->
+  @App.route 'hats/:id', 'hats#show'
+  @App.run()
+  try
+    Batman.redirect controller: 'hats', action: 'show', id: '1'
+  catch err
+    ok err.message.match(/HatsController/), "it includes the missing controller name"
+    ok err.message.match(/hats#show/), "it includes the missing route signature"
+    QUnit.start()
+
 asyncTest 'redirecting to a record', 1, ->
   @App.resources 'products'
   @App.run()

@@ -138,6 +138,19 @@ setSortOnObservableSetSuite = ->
     equal @authorNameSort.toArray().length, 2
     deepEqual @authorNameSort.toArray(), expected
 
+  test "toArray causes accessor to recalculate when order changes", ->
+    @authorNameSort.accessor 'firstTwoNames', ->
+      firstTwo = @toArray().slice(0,2)
+      firstTwo.map((x) -> x.get('author.name'))
+
+    deepEqual @authorNameSort.get('firstTwoNames'), ["Fred", "Fred"], "it starts with the first two"
+    @base.remove(@byFred)
+    deepEqual @authorNameSort.get('firstTwoNames'), ["Fred", "Mary"], "Removal causes an update"
+    @base.add(Batman(author: @bobs))
+    deepEqual @authorNameSort.get('firstTwoNames'), ["Bobs", "Fred"], "Addition causes an update"
+    @byZeke.set('author.name', "Aaron")
+    deepEqual @authorNameSort.get('firstTwoNames'), ["Aaron", "Bobs"], "Modification causes an update"
+
   test "setting a new value of the sorted property on one of the items triggers an update", ->
     switchedAuthorToBobs = @anotherByFred
     switchedAuthorToBobs.set('author', @bobs)
@@ -189,6 +202,22 @@ setSortOnObservableSetSuite = ->
     ok !mapping.has('Fred')
     @base.add(@byMary)
     ok mapping.has('Mary')
+
+  test 'at(i) returns the item according to the sort', ->
+    equal @authorNameSort.at(0).get('author.name'), "Fred"
+    equal @authorNameSort.at(3).get('author.name'), "Zeke"
+    @base.add(Batman(author: @bobs))
+    equal @authorNameSort.at(0).get('author.name'), "Bobs"
+
+  test 'at accessor returns the item according to the sort', ->
+    equal @authorNameSort.get('at.0.author.name'), "Fred"
+    equal @authorNameSort.get('at.3.author.name'), "Zeke"
+    @base.add(Batman(author: @bobs))
+    equal @authorNameSort.get('at.0.author.name'), "Bobs", "Adding causes update"
+    @byMary.set('author.name', "Aaron")
+    equal @authorNameSort.get('at.0.author.name'), "Aaron", "Update causes update"
+    @base.remove(@byMary)
+    equal @authorNameSort.get('at.0.author.name'), "Bobs", "Removal causes update"
 
 fixtureSetup = ->
   @zeke = Batman name: 'Zeke'
