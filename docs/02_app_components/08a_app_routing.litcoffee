@@ -35,7 +35,10 @@ class MyApp extends Batman.App
   @route '/404', (params) -> alert("Not found!")
 ```
 
-## @route
+## @route(path : String, signature : String, options, callback)
+
+`options` may include `as`.
+
 
 `@route` defines a custom route and can be pointed to a controller action directly. For example:
 
@@ -53,6 +56,8 @@ Would result in `/comments` being added to the routing map, pointed to `PagesCon
 ## @resources(resourceName : String[, otherResourceNames... : String][, options : Object][, scopedCallback : Function])
 
 `@resources` is modeled after the Rails routing `resources` method. It automatically defines some routes and matches them to controller actions. For example,
+
+- `only` / `except`
 
 ```coffeescript
 class App extends Batman.App
@@ -103,7 +108,7 @@ Path | Controller Action
 /pages/:page_id/comments/:id/edit | App.CommentsController#edit
 
 
-## @member
+## @member(names..., options)
 
 `@member` defines a routable action you can call on a specific instance of a member of a collection resource. For example, if you have a collection of `Page` resources, and a user can post a comment on a specific page:
 
@@ -118,7 +123,7 @@ class Example.PagesController extends Batman.Controller
 
 Would result in `/pages/:id/comment` being added to the routing map, pointed to `PagesController#comment`.
 
-## @collection
+## @collection(names..., options)
 
 `@collection` is similar to `@member` in that it adds routable actions to a `@resources` set of routes. In this case the action would apply to the entire collection. For example, if you have a list of spam comments made across _all_ your `Page` resources:
 
@@ -133,7 +138,7 @@ class Example.PagesController extends Batman.Controller
 
 Would result in `/pages/spam_comments` being added to the routing map, pointed to `PagesController#spam_comments`.
 
-## @root
+## @root(signature : String, options)
 
 `@root` defines the root controller and action to be used when visiting the base application URL. For example:
 
