@@ -91,7 +91,7 @@ Creates a new instance of the current type, and adds every element for which
 
 ## ::find(func, ctx[=Batman.container])
 
-Returns the first element of the `Enumberable` where `func` is true. `func` is called on `ctx` with `(element, value, this)`.
+Returns the first element of the `Enumerable` where `func` is true. `func` is called on `ctx` with `(element, value, this)`.
 
     test "find gets the first match", ->
       hash = new Batman.Hash(wheat: true, crud: false, grain: false)
