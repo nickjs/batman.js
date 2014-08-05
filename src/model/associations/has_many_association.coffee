@@ -5,6 +5,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
   indexRelatedModelOn: 'foreignKey'
 
   constructor: (model, label, options) ->
+    options.replaceFromJSON ?= true
     if options?.as
       return new Batman.PolymorphicHasManyAssociation(arguments...)
     super
@@ -92,6 +93,10 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       # We're already sure that these records aren't in the map already, since we just checked
       relatedModel.get('loaded').addArray(recordsToMap)
 
-      children.replace(allRecords)
+      if association.options.replaceFromJSON
+        children.replace(allRecords)
+      else
+        children.addArray(allRecords)
+
       children.markAsLoaded()
       children

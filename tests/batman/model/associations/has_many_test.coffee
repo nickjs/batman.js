@@ -222,7 +222,7 @@ asyncTest "AssociationSet does not become loaded when an existing record is save
       equal store.get('products').get('loaded'), false
       QUnit.start()
 
-asyncTest "AssociationSet:mappedTo returns a SetMapping", ->
+asyncTest "AssociationSet::mappedTo returns a SetMapping", ->
   @Store.find 1, (err, store) =>
     throw err if err
     products = store.get 'products'
@@ -690,9 +690,7 @@ test "hasMany removes items that aren't in the json anymore", ->
 
   product = new @Product
   product.fromJSON({
-      name: "Product Three"
-      id: 3
-      store_id: 1
+      name: "Product Three", id: 3, store_id: 1
       productVariants: [
         {id:6, price:60, product_id:3},
         {id:5, price:50, product_id:3}
@@ -702,15 +700,31 @@ test "hasMany removes items that aren't in the json anymore", ->
   equal product.get('productVariants.length'), 2, "it starts with 2"
 
   product.fromJSON({
-      name: "Product Three"
-      id: 3
-      store_id: 1
-      productVariants: [
-        {id:6, price:60, product_id:3}
-      ]
+      name: "Product Three", id: 3, store_id: 1
+      productVariants: [{id:6, price:60, product_id:3}  ]
     })
 
   equal product.get('productVariants.length'), 1, "when it finds fewer in the json, the extras are removed"
+
+test "hasMany doesn't remove from the set if replaceFromJSON is false", ->
+  product = new @Product
+  product.reflectOnAssociation('productVariants').options.replaceFromJSON = false
+  product.fromJSON({
+      name: "Product Three", id: 3, store_id: 1
+      productVariants: [
+        {id:6, price:60, product_id:3},
+        {id:5, price:50, product_id:3}
+      ]
+    })
+
+  equal product.get('productVariants.length'), 2, "it starts with 2"
+
+  product.fromJSON({
+      name: "Product Three", id: 3, store_id: 1
+      productVariants: [{id:6, price:60, product_id:3}  ]
+    })
+
+  equal product.get('productVariants.length'), 2, "it keeps items that aren't found in the json"
 
 test "hasMany supports custom proxy classes", 1, ->
   namespace = @
