@@ -5,7 +5,6 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
   indexRelatedModelOn: 'foreignKey'
 
   constructor: (model, label, options) ->
-    options.replaceFromJSON ?= true
     if options?.as
       return new Batman.PolymorphicHasManyAssociation(arguments...)
     super
@@ -16,6 +15,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
     Batman.mixin super,
       primaryKey: "id"
       foreignKey: "#{Batman.helpers.underscore(@model.get('resourceName'))}_id"
+      replaceFromJSON: true
 
   apply: (baseSaveError, base) ->
     unless baseSaveError
