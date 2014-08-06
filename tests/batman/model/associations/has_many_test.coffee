@@ -114,6 +114,7 @@ QUnit.module "Batman.Model hasMany Associations",
 
 asyncTest "::build returns a new child with foreignKey set and attrs mixed in ", 3 , ->
   @Store.find 1, (err, store) ->
+    throw err if err?
     store.get('products')
     delay =>
       newProduct = store.get('products').build(name: "Product X")

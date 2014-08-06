@@ -5,19 +5,21 @@ class Batman.BelongsToAssociation extends Batman.SingularAssociation
   associationType: 'belongsTo'
   proxyClass: Batman.BelongsToProxy
   indexRelatedModelOn: 'primaryKey'
-  defaultOptions:
-    saveInline: false
-    autoload: true
-    encodeForeignKey: true
 
   constructor: (model, label, options) ->
     if options?.polymorphic
       delete options.polymorphic
       return new Batman.PolymorphicBelongsToAssociation(arguments...)
     super
-    @foreignKey = @options.foreignKey or "#{@label}_id"
-    @primaryKey = @options.primaryKey or "id"
+
     @model.encode @foreignKey if @options.encodeForeignKey
+
+  provideDefaults: ->
+    options = super
+    Batman.mixin options,
+      encodeForeignKey: true
+      foreignKey: "#{@label}_id"
+      primaryKey: "id"
 
   encoder: -> (val) -> val.toJSON()
   decoder: ->

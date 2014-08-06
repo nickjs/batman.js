@@ -7,13 +7,27 @@
 - `@model` is the model which defined the association
 - `@label` is the string name for the association
 
-`options` may override any of `Batman.Association::defaultOptions`. You may also pass:
+`options` may override any of the defaults from `Batman.Association::provideOptions`. You may also pass:
 
+- `options.extend` will be mixed into the new `Batman.Association`
 - `options.namespace` is where the related model will be found. Defaults to `Batman.currentApp`.
 - `options.name` is the string class name of the related model. Associations provide default based on `@label`.
-- `options.encoderKey` will be used for parsing and creating JSON
-- `options.extend` will be mixed into the new `Batman.Association`
 - Any association-specific options (see relevant association)
+
+## ::provideDefaults() : Object
+
+Returns a object with default options:
+
+- `encoderKey`: `@label`
+- `saveInline`: false
+- `autoload`: true
+- `nestUrl`: false
+- `includeInTransaction`: true
+- `encodeWithIndexes`: false
+
+## ::scope()
+
+Returns the namespace for the related model, either `options.namespace` or `Batman.currentApp`.
 
 ## ::getRelatedModel() : Model
 
@@ -59,16 +73,6 @@ Polymorphic associations set this to `true`.
 ## ::.associationType[=''] : String
 
 Used by `Batman.AssociationCurator` to store this association. Overriden by concrete association classes.
-
-## ::.defaultOptions : Object
-
-These options are passed to all associations unless overriden in the constructor. They are:
-
-- `saveInline`: false
-- `autoload`: false
-- `nestUrl`: false
-- `includeInTransaction`: true
-- `encodeWithIndexes`: false
 
 ## ::.model : Model
 

@@ -4,17 +4,21 @@
 class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
   isPolymorphic: true
   proxyClass: Batman.PolymorphicBelongsToProxy
-  defaultOptions: Batman.mixin({}, Batman.BelongsToAssociation::defaultOptions, {encodeForeignTypeKey: true})
 
   constructor: ->
     super
-    @foreignTypeKey = @options.foreignTypeKey or "#{@label}_type"
+    @foreignTypeKey = @options.foreignTypeKey
     @model.encode @foreignTypeKey if @options.encodeForeignTypeKey
     @typeIndices = {}
 
   getRelatedModel: false
   setIndex: false
   inverse: false
+
+  provideDefaults: ->
+    Batman.mixin super,
+      encodeForeignTypeKey: true
+      foreignTypeKey: "#{@label}_type"
 
   apply: (base) ->
     super
@@ -49,7 +53,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
       return "/#{root}/#{id}/#{ending}"
 
   getRelatedModelForType: (type) ->
-    scope = @options.namespace or Batman.currentApp
+    scope = @scope()
     if type
       relatedModel = scope?[type]
       relatedModel ||= scope?[Batman.helpers.camelize(type)]
@@ -79,6 +83,7 @@ class Batman.PolymorphicBelongsToAssociation extends Batman.BelongsToAssociation
       foreignTypeValue = response[association.foreignTypeKey] || childRecord.get(association.foreignTypeKey)
       relatedModel = association.getRelatedModelForType(foreignTypeValue)
       record = relatedModel.createFromJSON(data)
+
       if association.options.inverseOf
         if inverse = association.inverseForType(foreignTypeValue)
           if inverse instanceof Batman.PolymorphicHasManyAssociation

@@ -5,12 +5,12 @@ class Batman.PluralAssociation extends Batman.Association
   isSingular: false
 
   constructor: (@model, @label, options = {}) ->
-    defaultOptions =
-      namespace: Batman.currentApp
-      name: Batman.helpers.camelize(Batman.helpers.singularize(@label))
-    @options = Batman.extend defaultOptions, @defaultOptions, options
     super
     @_resetSetHashes()
+
+  provideDefaults:  ->
+    Batman.mixin super,
+      name: Batman.helpers.camelize(Batman.helpers.singularize(@label))
 
   setForRecord: (record) ->
     indexValue = @indexValueForRecord(record)
@@ -35,12 +35,12 @@ class Batman.PluralAssociation extends Batman.Association
       @_setsByRecord.get(record)
 
   setForKey: Batman.Property.wrapTrackingPrevention (indexValue) ->
-    foundSet = undefined
     # If we have a set for a record who has the value matching the one passed in, return it.
-    @_setsByRecord.forEach (record, set) =>
-      return if foundSet?
-      foundSet = set if @indexValueForRecord(record) == indexValue
-    if foundSet?
+    record = @_setsByRecord.find (record, set) =>
+      @indexValueForRecord(record) is indexValue
+
+    if record?
+      foundSet = @_setsByRecord.get(record)
       foundSet.foreignKeyValue = indexValue
       return foundSet
 

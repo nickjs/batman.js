@@ -5,14 +5,18 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
   isPolymorphic: true
 
   constructor: (model, label, options) ->
-    options.inverseOf = @foreignLabel = options.as
+    @foreignLabel = options.as
     delete options.as
-    options.foreignKey ||= "#{@foreignLabel}_id"
 
     super(model, label, options)
 
     @foreignTypeKey = options.foreignTypeKey || "#{@foreignLabel}_type"
     @model.encode @foreignTypeKey
+
+  provideDefaults: (options) ->
+    Batman.mixin {}, super,
+      inverseOf: @foreignLabel
+      foreignKey: "#{@foreignLabel}_id"
 
   apply: (baseSaveError, base) ->
     unless baseSaveError
@@ -25,7 +29,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
     new @proxyClass(indexValue, @modelType(), this)
 
   getRelatedModelForType: (type) ->
-    scope = @options.namespace or Batman.currentApp
+    scope = @scope()
 
     if type
       relatedModel = scope?[type]
@@ -66,7 +70,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
       recordsToAdd = []
 
       for jsonObject in data
-        type = jsonObject[association.options.foreignTypeKey];
+        type = jsonObject[association.options.foreignTypeKey]
 
         unless relatedModel = association.getRelatedModelForType(type)
           Batman.developer.error "Can't decode model #{association.options.name} because it hasn't been loaded yet!"
@@ -84,13 +88,13 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
             record._withoutDirtyTracking -> @fromJSON(jsonObject)
             record = relatedModel._mapIdentity(record)
           else
-            record = relatedModel._makeOrFindRecordFromData(jsonObject)
+            record = relatedModel.createFromJSON(jsonObject)
             recordsToAdd.push(record)
 
         if association.options.inverseOf
           record._withoutDirtyTracking ->
             record.set(association.options.inverseOf, parentRecord)
 
-      children.add(recordsToAdd...)
+      children.addArray(recordsToAdd)
       children.markAsLoaded()
       children

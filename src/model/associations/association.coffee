@@ -1,28 +1,24 @@
 class Batman.Association
   associationType: ''
   isPolymorphic: false
-  defaultOptions:
-    saveInline: false
-    autoload: true
-    nestUrl: false
-    includeInTransaction: true
-    encodeWithIndexes: false
 
   constructor: (@model, @label, options = {}) ->
+
+    if options.extend?
+      Batman.extend @, options.extend
+
+    @options = Batman.mixin({}, @provideDefaults(), options)
+
     if @options.nestUrl
       Batman.developer.error "You must persist the model #{Batman.functionName(@model)} to use the url helpers on an association" if !@model.urlNestsUnder?
       @model.urlNestsUnder Batman.helpers.underscore(@getRelatedModel().get('resourceName'))
-
-    if @options.extend?
-      Batman.extend @, @options.extend
 
     # Setup encoders and accessors for this association.
     encoder =
       encode: if @options.saveInline then @encoder() else false
       decode: @decoder()
 
-    encoderKey = options.encoderKey || @label
-    @model.encode encoderKey, encoder
+    @model.encode  @options.encoderKey, encoder
 
     # The accessor needs reference to this association object, so curry the association info into
     # the getAccessor, which has the model applied as the context.
@@ -34,8 +30,21 @@ class Batman.Association
       set: model.defaultAccessor.set
       unset: model.defaultAccessor.unset
 
+  provideDefaults: ->
+    {
+      encoderKey: @label
+      saveInline: false
+      autoload: true
+      nestUrl: false
+      includeInTransaction: true
+      encodeWithIndexes: false
+    }
+
+  scope: ->
+    @options.namespace || Batman.currentApp
+
   getRelatedModel: ->
-    scope = @options.namespace or Batman.currentApp
+    scope = @scope()
     className = @options.name
     relatedModel = scope?[className]
     Batman.developer.do ->

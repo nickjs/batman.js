@@ -4,9 +4,9 @@
 
 ## ::constructor(@model, @label, options={}) : SingularAssociation
 
-Adds default options:
+## ::provideDefaults() : Object
 
-- `namespace`: `Batman.currentApp`
+Extends `Batman.Association`'s defaults with:
 - `name`: camelized `@label`
 
 ## ::getAccessor(association, model, label)
@@ -33,10 +33,17 @@ Identifies the `SingularAssociation`.
 
 `Batman.BelongsToAssociation` extends `Batman.SingularAssociation` and provides backing to associations declared with `@belongsTo` in model definitions.
 
-
 ## ::constructor(model, label, options)
 
 Returns a `Batman.PolymorphicBelongsToAssociation` if `options.polymorphic` is true.
+
+## ::provideDefaults() : Object
+
+Extends options from `Batman.SingularAssociation` with:
+
+- `encodeForeignKey`: true
+- `foreignKey`: `"#{@label}_id"`
+- `primaryKey`: `"id"``
 
 ## ::encoder() : Function
 
@@ -54,12 +61,6 @@ Returns a function that loads a record by:
 ## ::apply(record)
 
 Update's `record`'s foreignKey to the associated record's primaryKey.
-
-## ::.defaultOptions
-
-- `saveInline`: false
-- `autoload`: true
-- `encodeForeignKey`: true
 
 ## ::.proxyClass[=Batman.BelongsToProxy]
 
@@ -81,8 +82,14 @@ Used to create a `Batman.UniqueAssociationSetIndex` to locate the associated rec
 
 Provides default options:
 
+
+## ::provideDefaults() : Object
+
+Extends options from `Batman.SingularAssociation` with:
+
 - `primaryKey`: "id"
 - `foreignKey`: underscored `@model.resourceName` + `_id`
+
 
 ## ::apply(baseSaveError, base)
 
@@ -115,6 +122,12 @@ Used to create a `Batman.UniqueAssociationSetIndex` to locate the associated rec
 ## ::constructor(model, label, options) : PolymorphicBelongsToAssociation
 
 Calls `super`, then encodes the `foreignTypeKey` if option `encodeForeignTypeKey` was true.
+
+## ::provideDefaults() : Object  provideDefaults: ->
+
+Extends default options from `Batman.BelongsToAssociation` with:
+- `encodeForeignTypeKey`: true
+- `foreignTypeKey`: `"#{@label}_type"`
 
 ## ::apply(base)
 
@@ -156,12 +169,6 @@ Labels this association as polymorphic.
 ## ::.proxyClass[=Batman.PolymorphicBelongsToProxy]
 
 Returned when the associated record isn't found in attributes.
-
-## ::.defaultOptions
-
-Extends `Batman.BelongsToAssociation`'s  default options and adds:
-
-- `encodeForeignTypeKey`: true
 
 ## ::.getRelatedModel[=false]
 ## ::.setIndex[=false]
