@@ -27,6 +27,16 @@ asyncTest "hasMany associations are loaded from inline json", 3, ->
     equal array[0].get('id'), 5
     QUnit.start()
 
+asyncTest "hasMany remove objects not found in new JSON", 2, ->
+  @Store.find 2, (err, store) =>
+    throw err if err
+    metafields = store.get('metafields')
+    array = metafields.toArray()
+    equal array.length, 1
+    store.fromJSON({metafields: []})
+    equal store.get('metafields.length'), 0
+    QUnit.start()
+
 asyncTest "hasMany associations loaded from inline json should not trigger an implicit fetch", 2, ->
   @Store.find 2, (err, store) =>
     throw err if err
