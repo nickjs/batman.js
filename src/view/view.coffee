@@ -3,6 +3,18 @@
 
 class Batman.View extends Batman.Object
   @store: new Batman.HTMLStore
+  @LIFECYCLE_EVENTS: [
+    "viewDidLoad"
+    "viewWillAppear"
+    "isInDOM"
+    "viewDidAppear"
+    "viewDidMoveToSuperview"
+    "ready"
+    "viewWillDisappear"
+    "viewDidDisappear"
+    "viewWillRemoveFromSuperview"
+    "destroy"
+  ]
 
   @option: (keys...) ->
     Batman.initializeObject(this)

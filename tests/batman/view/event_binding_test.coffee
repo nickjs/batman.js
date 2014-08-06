@@ -32,6 +32,15 @@ asyncTest 'it should allow events to be bound to undefined', ->
     helpers.triggerClick(node[0])
     QUnit.start()
 
+asyncTest 'it errors if naming conflict with view lifecycle', ->
+  source = '<button data-event-click="destroy | withArguments 123 "></button>'
+  Batman.developer.error = errorSpy = createSpy()
+
+  helpers.render source, {}, (node) ->
+    equal errorSpy.callCount, 1, "Developer error is called"
+    ok errorSpy.lastCallArguments[0].match(/destroy/), "The message includes the conflicting function name"
+    QUnit.start()
+
 asyncTest 'it should use native property access instead of `get` to find event handlers', 1, ->
   spy = createSpy()
   class Test extends Batman.Object
