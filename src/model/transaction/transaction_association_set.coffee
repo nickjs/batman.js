@@ -75,9 +75,8 @@ class Batman.TransactionAssociationSet extends Batman.Set
     visited.push(this)
     for transactionItem in @_storage
       transactionItem.applyChanges(visited)
-    originals = new Batman.Set(@_originalStorage)
     target.off 'itemsWereAdded', @_loader
-    target.replace(originals)
+    target.replace(@_originalStorage)
     target.set('removedItems', new Batman.Set(@_removedStorage))
     target
 

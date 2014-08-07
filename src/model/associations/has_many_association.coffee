@@ -15,6 +15,7 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
     Batman.mixin super,
       primaryKey: "id"
       foreignKey: "#{Batman.helpers.underscore(@model.get('resourceName'))}_id"
+      replaceFromJSON: true
 
   apply: (baseSaveError, base) ->
     unless baseSaveError
@@ -68,22 +69,20 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
       newChildren = children.filter((relation) -> relation.isNew()).toArray()
 
       recordsToMap = []
-      recordsToAdd = []
+      allRecords = []
 
       for i, jsonObject of data
         id = jsonObject[relatedModel.primaryKey]
         record = relatedModel._loadIdentity(id)
 
-        if record?
-          recordsToAdd.push(record)
-        else
+        if !record?
           if newChildren.length > 0
             record = newChildren.shift()
-            recordsToMap.push(record) if id?
           else
             record = new relatedModel
-            recordsToMap.push(record) if id?
-            recordsToAdd.push(record)
+          recordsToMap.push(record) if id?
+
+        allRecords.push(record)
 
         record._withoutDirtyTracking ->
           @fromJSON(jsonObject)
@@ -92,8 +91,12 @@ class Batman.HasManyAssociation extends Batman.PluralAssociation
             record.set(association.options.inverseOf, parentRecord)
 
       # We're already sure that these records aren't in the map already, since we just checked
-      relatedModel.get('loaded').add(recordsToMap...)
+      relatedModel.get('loaded').addArray(recordsToMap)
 
-      children.add(recordsToAdd...)
+      if association.options.replaceFromJSON
+        children.replace(allRecords)
+      else
+        children.addArray(allRecords)
+
       children.markAsLoaded()
       children

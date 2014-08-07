@@ -67,7 +67,7 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
       children = association.getFromAttributes(parentRecord) || association.setForRecord(parentRecord)
       newChildren = children.filter((relation) -> relation.isNew()).toArray()
 
-      recordsToAdd = []
+      allRecords = []
 
       for jsonObject in data
         type = jsonObject[association.options.foreignTypeKey]
@@ -78,10 +78,9 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
 
         id = jsonObject[relatedModel.primaryKey]
         record = relatedModel._loadIdentity(id)
-
         if record?
           record._withoutDirtyTracking -> @fromJSON(jsonObject)
-          recordsToAdd.push(record)
+          allRecords.push(record)
         else
           if newChildren.length > 0
             record = newChildren.shift()
@@ -89,12 +88,15 @@ class Batman.PolymorphicHasManyAssociation extends Batman.HasManyAssociation
             record = relatedModel._mapIdentity(record)
           else
             record = relatedModel.createFromJSON(jsonObject)
-            recordsToAdd.push(record)
+          allRecords.push(record)
 
         if association.options.inverseOf
           record._withoutDirtyTracking ->
             record.set(association.options.inverseOf, parentRecord)
 
-      children.addArray(recordsToAdd)
+      if association.options.replaceFromJSON
+        children.replace(allRecords)
+      else
+        children.addArray(allRecords)
       children.markAsLoaded()
       children

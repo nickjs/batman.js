@@ -222,7 +222,7 @@ asyncTest "AssociationSet does not become loaded when an existing record is save
       equal store.get('products').get('loaded'), false
       QUnit.start()
 
-asyncTest "AssociationSet:mappedTo returns a SetMapping", ->
+asyncTest "AssociationSet::mappedTo returns a SetMapping", ->
   @Store.find 1, (err, store) =>
     throw err if err
     products = store.get 'products'
@@ -449,6 +449,7 @@ asyncTest "unsaved hasMany models should save their associated children", 4, ->
       record.fromJSON
         id: id
         productVariants: [{
+          product_id: id
           price: 100
           id: 11
         }]
@@ -486,6 +487,7 @@ asyncTest "unsaved hasMany models should reflect their associated children after
       record.fromJSON
         id: id
         productVariants: [{
+          product_id: id
           price: 100
           id: 11
         }]
@@ -495,11 +497,9 @@ asyncTest "unsaved hasMany models should reflect their associated children after
 
   product.save (err, product) =>
     throw err if err
-    # Mock out what a realbackend would do: assign ids to the child records
-    # The TestStorageAdapter is smart enough to do this for the parent, but not the children.
-    equal product.get('productVariants.length'), 1
+    equal product.get('productVariants.length'), 1, "the product has the variant"
     ok product.get('productVariants').has(variant)
-    equal variants.get('length'), 1
+    equal variants.get('length'), 1, "the variant set has the variant"
     QUnit.start()
 
 asyncTest "saved hasMany models who's related records have been removed should serialize the association as empty to notify the backend", ->
@@ -686,6 +686,46 @@ asyncTest "hasMany supports custom foreign keys", 1, ->
     delay ->
       equal products.length, 3
 
+test "hasMany removes items that aren't in the json anymore", ->
+
+  product = new @Product
+  product.fromJSON({
+      name: "Product Three", id: 3, store_id: 1
+      productVariants: [
+        {id:6, price:60, product_id:3},
+        {id:5, price:50, product_id:3}
+      ]
+    })
+
+  equal product.get('productVariants.length'), 2, "it starts with 2"
+
+  product.fromJSON({
+      name: "Product Three", id: 3, store_id: 1
+      productVariants: [{id:6, price:60, product_id:3}  ]
+    })
+
+  equal product.get('productVariants.length'), 1, "when it finds fewer in the json, the extras are removed"
+
+test "hasMany doesn't remove from the set if replaceFromJSON is false", ->
+  product = new @Product
+  product.reflectOnAssociation('productVariants').options.replaceFromJSON = false
+  product.fromJSON({
+      name: "Product Three", id: 3, store_id: 1
+      productVariants: [
+        {id:6, price:60, product_id:3},
+        {id:5, price:50, product_id:3}
+      ]
+    })
+
+  equal product.get('productVariants.length'), 2, "it starts with 2"
+
+  product.fromJSON({
+      name: "Product Three", id: 3, store_id: 1
+      productVariants: [{id:6, price:60, product_id:3}  ]
+    })
+
+  equal product.get('productVariants.length'), 2, "it keeps items that aren't found in the json"
+
 test "hasMany supports custom proxy classes", 1, ->
   namespace = @
   class CoolAssociationSet extends Batman.AssociationSet
@@ -773,4 +813,3 @@ asyncTest "hasMany sets the foreign key on the inverse relation of children with
     throw err if err
     ok not product.get('productVariants.first.isDirty')
     QUnit.start()
-

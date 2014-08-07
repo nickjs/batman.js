@@ -56,6 +56,7 @@ Extends defaults from `Batman.PluralAssociation` with:
 
 - `primaryKey`: `"id"`
 - `foreignKey`: `"#{Batman.helpers.underscore(@model.get('resourceName'))}_id"`
+- `replaceFromJSON`: true
 
 ## ::apply(baseSaveError, base)
 
@@ -69,7 +70,7 @@ Returns a function for turning the association into JSON. if `@options.encodeWit
 
 Returns a function that decodes the association from an array. When it is loading records, it adds any new records to their respective `loaded` sets.
 
-Even if a record is not in the JSON, it won't be removed from the association set. You must do this yourself.
+If `@options.replaceFromJSON` is true, objects which aren't represented in the incoming JSON will be removed from the `AssociationSet`. You can pass `replaceFromJSON: false` in the association declaration to prevent this.
 
 # /api/App Internals/Batman.Association/Batman.PolymorphicHasManyAssociation
 
@@ -115,7 +116,7 @@ Returns a function that encodes the association into an array.
 
 Returns a function that decodes the association from an array. It also adds new records to their `loaded` sets.
 
-Even if a record _is not_ present in the JSON, it won't be removed from the association set. You must remove records yourself.
+If `@options.replaceFromJSON` is true, objects which aren't represented in the incoming JSON will be removed from the set. You can pass `replaceFromJSON: false` in the association declaration to prevent this.
 
 ## ::.proxyClass[=Batman.PolymorphicAssociationSet]
 ## ::.isPolymorphic[=true]
