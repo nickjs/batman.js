@@ -109,7 +109,7 @@ Used by `Batman.AssociationCurator` to store the association.
 
 ## ::.proxyClass[=Batman.HasOneProxy]
 
-Sometimes returned by a `hasOne` get accessor.
+Returned by a `hasOne` get accessor.
 
 ## ::.indexRelatedModelOn[='foreignKey']
 

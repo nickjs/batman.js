@@ -76,7 +76,7 @@ asyncTest "belongsTo associations are not loaded when autoload is off", 1, ->
   @Product.find 1, (err, product) =>
     store = product.get 'store'
     delay ->
-      ok !store.get('loaded')
+      ok !store.get('loaded'), "The store wasn't loaded automatically"
 
 asyncTest "belongsTo associations with autoload is off put the record at the property when loaded", 3, ->
   namespace = @
@@ -111,7 +111,7 @@ asyncTest "belongsTo association proxies index the local loaded set when autoloa
     @Store.load (err) =>
       throw err if err
       store = product.get 'store'
-      ok store instanceof @Store
+      ok store instanceof Batman.BelongsToProxy, "it returns a proxy even after loaded"
       QUnit.start()
 
 asyncTest "belongsTo associations are saved", 6, ->
