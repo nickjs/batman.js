@@ -57,3 +57,7 @@ Batman.Transaction =
         result.get('lifecycle').startTransition('saved')
 
       finish(err, result)
+
+  destroy: ->
+    base = @base()
+    base.destroy.apply(base, arguments)
