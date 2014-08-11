@@ -51,7 +51,7 @@ Set to `true` when batman.js determines that the `target` has been loaded.
 
 Returns the target by calling `fetchFromLocal`.
 
-# /api/App Internals/Batman.BelongsToProxy
+# /api/App Internals/Batman.AssociationProxy/Batman.BelongsToProxy
 
 `Batman.BelongsToProxy` extends `Batman.AssociationProxy`. It is the return value of `@belongsTo` associations' `get` accessors.
 
@@ -70,7 +70,7 @@ Loads the record from storage using:
 - `foreignValue` and the primary key
 - `@association.options.recordUrl` if it was passed
 
-# /api/App Internals/Batman.HasOneProxy
+# /api/App Internals/Batman.AssociationProxy/Batman.HasOneProxy
 
 `Batman.HasOneProxy` extends `Batman.AssociationProxy`. It is the return value of `@hasOne` associations' `get` accessors __if__ the record hasn't been loaded yet.
 
@@ -93,7 +93,7 @@ It expects the URL to return an array of records. The first one will be treated 
 
 Passes `(err, record)` to `callback`.
 
-# /api/App Internals/Batman.PolymorphicBelongsToProxy
+# /api/App Internals/Batman.AssociationProxy/Batman.PolymorphicBelongsToProxy
 
 `Batman.PolymorphicBelongsToProxy` extends `Batman.BelongsToProxy`. It is the return value of `@belongsTo as "..."` associations.
 
