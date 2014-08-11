@@ -74,9 +74,9 @@ Now, batman.js will use `MyApp.User` for the `owner` association.
 
 ## Polymorphic Associations
 
-Batman.js also supports [Rails-inspired polymorphic associations](http://guides.rubyonrails.org/association_basics.html#polymorphic-associations). In a polymorphic association, a record may belong to records of _different types_.
+Batman.js also supports [Rails-inspired polymorphic associations](http://guides.rubyonrails.org/association_basics.html#polymorphic-associations). In a polymorphic association, a record may belong to records of _different types_. Instead of specifying a related model, you specify an "interface" for the association.
 
-For example, a `Superpower` may belong to a `Hero` or a `Villain`:
+For example, a `Superpower` may belong to a `Hero` or a `Villain`. The interface is `"superpowerable"`:
 
 ```coffeescript
 class App.Superpower extends Batman.Model
@@ -129,7 +129,9 @@ App.ChildItem.find 5, (err, childItem) ->
 
 ## @hasMany(label : string [, options : Object])
 
-`hasMany` expresses a one-to-many relationship on a `Batman.Model`.
+`@hasMany` expresses a one-to-many relationship on a `Batman.Model`.
+
+`get`ting a `@hasMany` accessor returns a `Batman.AssociationSet` (or a `Batman.PolymorphicAssociationSet` of the association is polymorphic).
 
 It accepts options:
 
@@ -165,7 +167,11 @@ Option | Default | Description
 
 ## @belongsTo(label : string [, options : Object])
 
-`belongsTo` expresses a one-to-one relationship on a `Batman.Model` when this model contains the foreign key (eg, `parent_id`). If the other model contains the foreign key, use `hasOne` instead. It often expresses inverse of a `hasMany` or `hasOne` association. You can declare this with the [`inverseOf` option](/docs/api/batman.model_associations.html#inverse_associations) so that both sides of the association are loaded from JSON.
+`@belongsTo` expresses a one-to-one relationship on a `Batman.Model` when this model contains the foreign key (eg, `parent_id`). If the other model contains the foreign key, use `@hasOne` instead.
+
+`@belongsTo` often expresses inverse of a `@hasMany` or `@hasOne` association. You can declare this with the [`inverseOf` option](/docs/api/batman.model_associations.html#inverse_associations) so that both sides of the association are loaded from JSON.
+
+`get`ting a `@belongsTo` accessor returns a `Batman.BelongsToProxy` (or a `Batman.PolymorphicBelongsToProxy` if the association is polymorphic).
 
 It accepts options:
 
@@ -188,7 +194,9 @@ Option | Default | Description
 
 ## @hasOne(label : string [, options : Object])
 
-`hasOne` expresses a one-to-one relationship on a `Batman.Model` when this model contains the primary key (eg, `id`) and does not contain the foreign key. If this model contains the foreign key, use `belongsTo` instead.
+`@hasOne` expresses a one-to-one relationship on a `Batman.Model` when this model contains the primary key (eg, `id`) and does not contain the foreign key. If this model contains the foreign key, use `@belongsTo` instead.
+
+`get`ting a `@hasOne` accessor returns a `Batman.HasOneProxy`
 
 It accepts options:
 
