@@ -69,6 +69,19 @@ test 'applyChanges filters changes with except', ->
   equal @base.get('money'), undefined
   equal @base.get('banana'), "orange"
 
+test 'destroy delegates to the base', ->
+  s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (options, payload, callback) -> callback?(null, this))
+  @TestModel.get('loaded').add(@base)
+  destroySpy = createSpy()
+
+  @transaction.destroy (e, r) ->
+    throw e if e?
+    destroySpy.apply(null, arguments)
+    s.restore()
+
+  deepEqual destroySpy.lastCallArguments.length, 3
+  ok !@TestModel.get('loaded').has(@base), 'the object is removed from the loaded set'
+
 test 'save applies the changes in the transaction object and saves the object', ->
   s = sinon.stub(Batman.Model.prototype, '_doStorageOperation', (options, payload, callback) -> callback?(null, this))
   @transaction.set('banana', 'rama')
