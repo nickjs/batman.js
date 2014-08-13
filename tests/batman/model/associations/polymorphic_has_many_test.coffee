@@ -17,6 +17,15 @@ asyncTest "hasMany associations are loaded from remote", 5, ->
       equal array[1].get('key'), "Store metafield 2"
       equal array[1].get('id'), 3
 
+asyncTest "::load returns a promise that resolves with an array of records", 1, ->
+  @Store.find 1, (err, store) =>
+    throw err if err
+    store.get('metafields').load()
+      .then (records) ->
+        equal records.length, 2
+      .then ->
+        QUnit.start()
+
 asyncTest "hasMany associations are loaded from inline json", 3, ->
   @Store.find 2, (err, store) =>
     throw err if err

@@ -31,17 +31,21 @@ Delegates to `target`, if present.
 
 Delegates to `target`, if present.
 
-## ::load(callback)
+## ::load([callback]) : Promise
 
-Fetches the record, then passes `(err, record)` to `callback`.
+Fetches the record and caches it as `target`. It passes `(err, target)` to `callback`.
+
+The returned `Promise` resolves with the loaded record or rejects with any error that occured.
 
 ## ::loadFromLocal()
 
 Returns `target` if it can fetch it locally.
 
-## ::fetch(callback)
+## ::fetch([callback]) : Promise
 
 Fetches the record by trying `fetchFromLocal` then `fetchFromRemote`. Passes `(err, record)` to `callback`.
+
+The returned `Promise` resolves with the fetched record or rejects with any error that occured.
 
 ## ::%loaded : Boolean
 

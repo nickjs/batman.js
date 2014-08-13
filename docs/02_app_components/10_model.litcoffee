@@ -292,53 +292,47 @@ _Note_: The notion of "all the records" is relative only to the client. It compl
       Post.clear()
       equal Post.get('loaded.length'), 0, "After clear() the loaded set is empty"
 
-## @find(id, callback : Function) : Model
+## @find(id[, callback : Function]) : Promise
 
-`Model.find()` retrieves a record with the specified `id` from the storage adapter and calls back with an error if one occurred and the record if the operation was successful. `find` delegates to the storage adapter the `Model` has been `@persist`ed with, so it is up to the storage adapter's semantics to determine what type of errors may return and the timeline on which the callback may be called. The `callback` is a required function which should adopt the node style callback signature which accepts two arguments: an error, and the record asked for. `find` returns an "unloaded" record which, following the load completion, will be populated with the data from the storage adapter.
+Retrieves a record with the specified `id` from the storage adapter. If `callback` is provided, it is invoked with `(err, record)`.
 
-_Note_: `find` gives two results to calling code: one immediately, and one later. `find` returns a record synchronously as it is called and calls back with a record, and importantly these two records are __not__ guaranteed to be the same instance. This is because batman.js maps the identities of incoming and outgoing records such that there is only ever one canonical instance representing a record, which is useful so bindings are always bound to the same thing. In practice, this means that calling code should use the record `find` calls back with if anything is going to bind to that object, which is most of the time. The returned record however remains useful for state inspection and bookkeeping.
+It returns a `Promise` which is either resolved with the found record or rejected with any error that occurs along the way.
 
-    asyncTest '@find calls back the requested model if no error occurs', ->
+    asyncTest 'Model.find returns a promise that resolves with the record or rejects with an error', 4, ->
       class Post extends Batman.Model
         @resourceName: 'post'
         @encode 'name'
         @persist AsyncTestStorageAdapter,
-          storage:
-            'posts2': {name: "Two", id:2}
+          storage: { 'posts2': {name: "Two", id:2} }
 
-      post = Post.find 2, (err, result) ->
-        throw err if err
-        post = result
-      equal post.get('name'), undefined
-      delay ->
-        equal post.get('name'), "Two"
+      post2Promise = Post.find 2, (err, record) ->
+          equal record.get("name"), "Two", "Records are passed to a callback"
+        .then (post) ->
+          equal post.get('name'), "Two", "Found records are passed to promise handlers"
 
-_Note_: `find` must be passed a callback function. This is for two reasons: calling code must be aware that `find`'s return value is not necessarily the canonical instance, and calling code must be able to handle errors.
+      post3Promise = Post.find 3, (err, record) ->
+          ok err instanceof Error, "errors are passed to callbacks"
+        .catch (promiseErr) -> ok promiseErr instanceof Error, "errors are passed to handlers"
 
-    asyncTest '@find calls back with the error if an error occurs', ->
-      class Post extends Batman.Model
-        @resourceName: 'post'
-        @encode 'name'
-        @persist AsyncTestStorageAdapter
+      Promise.all([post2Promise, post3Promise])
+        .then -> QUnit.start()
 
-      error = false
-      post = Post.find 3, (err, result) ->
-        error = err
-      delay ->
-        ok error instanceof Error
 
-## @load(options = {}, callback : Function)
+## @load(options = {}[, callback : Function]) : Promise
 
-`Model.load()` retrieves an array of records according to the given `options` from the storage adapter and calls back with an error if one occurred and the set of records if the operation was successful. `load` delegates to the storage adapter the `Model` has been `@persist`ed with, so it is up to the storage adapter's semantics to determine what the options do, what kind of errors may arise, and the timeline on which the callback may be called. The `callback` is a required function which should adopt the node style callback signature which accepts two arguments, an error, and the array of records. `load` returns undefined.
+Retrieves records from storage based on `options`. The `loaded` set is updated by:
+
+- Adding records which weren't already present
+- Updating records which were already present
 
 For the two main `StorageAdapter`s batman.js provides, the `options` do different things:
 
-- For `Batman.LocalStorage`, `options` act as a filter. The adapter will scan all the records in `localStorage` and return only those records which match all the key/value pairs given in the options.
-- For `Batman.RestStorage`, `options` are serialized into query parameters on the `GET` request.
+- `Batman.LocalStorage`: returns records which match _all_ key-value pairs in `options`.
+- `Batman.RestStorage`: some `options` are used for special purposes (like `url`) and any others are used as request parameters.
 
-It accepts a callback with two arguments: any error that occurred, and an array of loaded records.
+If a callback is provided, it is invoked with `(err, records)` where `records` is an array of records and `err` is any error that occured during the operation. If the `load` operation didn't load any records, `records` will be an empty array.
 
-    asyncTest '@load calls back an array of records retrieved from the storage adapter', ->
+    asyncTest '@load calls back an array of records retrieved from the storage adapter', 4, ->
       class Post extends Batman.Model
         @resourceName: 'post'
         @encode 'name'
@@ -347,14 +341,13 @@ It accepts a callback with two arguments: any error that occurred, and an array 
             'posts1': {name: "One", id:1}
             'posts2': {name: "Two", id:2}
 
-      posts = false
-      Post.load (err, result) ->
-        throw err if err
-        posts = result
-
-      delay ->
-        equal posts.length, 2
-        equal posts[0].get('name'), "One"
+      Post.load (err, records) ->
+          equal records.length, 2, "Records are passed to the callback"
+          equal records[0].get('name'), "One"
+        .then (records) ->
+          equal records.length, 2, "Records are passed to promise handlers"
+          equal records[0].get('name'), "One"
+        .then -> QUnit.start()
 
     asyncTest '@load calls back with an empty array if no records are found', ->
       class Post extends Batman.Model
@@ -370,9 +363,9 @@ It accepts a callback with two arguments: any error that occurred, and an array 
       delay ->
         equal posts.length, 0
 
-## @create(attributes = {}, callback) : Model
+## @create([attributes = {},] callback) : Model
 
-`App.Model.create` is a convenience method that is essentially equivalent to
+`App.Model.create` is a convenience method that is equivalent to
 calling `(new App.Model).save()`:
 
     asyncTest "@create instantiates a new record instance and saves it", ->
@@ -381,27 +374,20 @@ calling `(new App.Model).save()`:
         @encode 'name'
         @persist TestStorageAdapter, storage: []
 
-      # Using new + save:
-      record = new Post(name: 'aName')
-      record.save()
-
-      # Using create:
       otherRecord = Post.create name: 'aName', ->
 
       delay ->
-        equal record.get('name'), otherRecord.get('name')
-        equal record.isNew(), false
+        equal otherRecord.get('name'), 'aName'
         equal otherRecord.isNew(), false
 
-_Note_ : `attributes` is an empty object `{}` by default. This means the single-argument version of `create` accepts the callback, and not the attributes object.
 
 ## @findOrCreate(attributes = {}, callback) : Model
 
 ## @createFromJSON(attributes = {}) : Model
 
-Returns an instance of the model based on `attributes`. If the `primaryKey` is present in `attributes`, the in-memory identity map will be searched for a match. If a match is found, it will be updated with `attributes` (without tracking) and returned. If the `primaryKey` isn't present, a new instance is added to the `loaded` set and returned.
+Returns an instance of the model based on `attributes`. If the `primaryKey` is present in `attributes`, the  `loaded` set will be searched for a match. If a match is found, it will be updated with `attributes` (without tracking) and returned. If the `primaryKey` isn't present, a new instance is added to the `loaded` set and returned.
 
-Since `createFromJSON` checks the identity map, it's a great way to load data without duplicating records in memory.
+Since `createFromJSON` checks the `loaded` set, it's a great way to load data without duplicating records in memory.
 
 ## @createMultipleFromJSON(attributesArray: Array) : Array
 
@@ -461,11 +447,11 @@ Returns true if the instance represents a record that hasn't yet been persisted 
 
 A bindable accessor on [`isNew`](/docs/api/batman.model.html#prototype_function_isnew).
 
-## updateAttributes(attributes) : Model
+## ::updateAttributes(attributes) : Model
 
 Mixes in `attributes` into the record (using `set`). Doesn't save the record.
 
-## toString() : string
+## ::toString() : string
 
 Returns a string representation suitable for debugging. By default this just contains the model's `resourceName` and `id`
 
@@ -522,32 +508,41 @@ This method is used by the routing system for serializing records into a URL.
 
 True when the record has a storage adapter defined.
 
-## ::load(options = {}, callback)
-`Load` tries to read the record from its storage adapter. The options object will be passed to the storage adapter when it performs the `read` operation. The callback takes three parameters: error, the loaded record, and the environment. `Load`ing a record clears all errors on that record.
+## ::load(options = {}[, callback]) : Promise
+
+Loads the record from storage. The options object will be passed to the storage adapter when it performs the `read` operation.
+
+The callback takes three parameters: error, the loaded record, and the environment. `Load`ing a record clears all errors on that record.
 
 If the read operation fails or if the record is in a state which doesn't permit `load`, (for example, calling `load` on a deleted record) the callback will be invoked with an error.
 
-## ::save(options = {}, callback)
-`Save` [validates](http://localhost:4000/docs/api/batman.model.html#prototype_function_validate) the record, and if it passes, fires the corresponding storage operation (defined by the `Batman.StorageAdapter` passed to  [`@persist`](/docs/api/batman.model.html#class_function_persist)). When the storage operation is complete, the callback is invoked with two parameters: any JavaScript error and the record.
+## ::save(options = {}[, callback]) : Promise
 
-If the record [`isNew`](/docs/api/batman.model.html#prototype_function_isnew), `save` performs a `create` operation. Otherwise, it performs a `save` operation.
+Saves the record to storage by:
 
-If the record is not valid, the [validation errors](/docs/api/batman.validationerror.html) will be passed to the first parameter of the callback function and the storage operation will not be performed.
+1. Validating it, and if it is valid:
+2. Saving it. If the record [`isNew`](/docs/api/batman.model.html#prototype_function_isnew) it will use `create`, otherwise it will `update`.
+
+If the record is not valid, it will reject with the record's `Batman.ErrorsSet` and the storage operation will not be performed.
+
+If a callback is provided, it will be invoked with `(err, record)`. `err` may be
 
 Available options include:
 - `only`: A whitelist that will submit only the specified model attributes from the storage adapter.  This is useful when you want to do partial updates of a model without sending the full model content.  e.g., `options = {only: ['name', 'bio']}`
 - `except`: A blacklist that will prevent specified model attributes from being transmitted from the storage adapter.  e.g., `options = {except: ['sensitive_data']}`
 
-## ::destroy(options = {}, callback)
+## ::destroy(options = {}[, callback]) : Promise
 
-`Destroy` fires the corresponding storage operation. The callback takes three arguments: JavaScript Error, the record, and the environment. If the operation is successful, the record is removed from its Model's [`loaded`](/docs/api/batman.model.html#class_function_loaded) set.
+Destroys the record from storage. If the operation is successful, the record is removed from its Model's [`loaded`](/docs/api/batman.model.html#class_function_loaded) set.
 
 ```coffeescript
 criminal = new Criminal name: "The penguin"
-criminal.destroy (err, record, env) ->
-  if err
+criminal.destroy()
+  .catch (err) ->
     console.log "Oh no! #{record.get('name')} is still on the loose!"
 ```
+
+If `callback` is provided, it is invoked with `(err, record, env)`.
 
 If the record's current lifecycle state doesn't allow the `destroy` action, the callback will be invoked with a `Batman.StateMachine.InvalidTransitionError`. For example, this could occur if `destroy` is called on an already-destroyed record.
 

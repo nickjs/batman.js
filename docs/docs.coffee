@@ -1,5 +1,4 @@
 #= require ../tests/batman/test_helper
-
-QUnit.module 'Batman documentation'
-
+#= require_self
 #= require_tree .
+QUnit.module 'Batman documentation'

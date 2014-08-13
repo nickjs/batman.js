@@ -1,3 +1,4 @@
+#= require ../../lib/polyfills/es6-promises
 #= require test_helper
 #= require model/model_helper
 #= require model/associations/polymorphic_association_helper

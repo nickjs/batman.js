@@ -12,7 +12,7 @@ Creates a new `Batman.Set` to be `@base` and uses `_batmanID` as `@key`.
 
 Set to `true` by `markAsLoaded`.
 
-## ::load(options, callback)
+## ::load(options[, callback]) : Promise
 
 Loads records by:
 
@@ -21,6 +21,8 @@ Loads records by:
 - mixing in `options` as the request's data
 
 Then, calls `markAsLoaded` and fires the callback with `(err, @, env)`.
+
+The returned `Promise` resolves with the `AssociationSet`.
 
 ## ::markAsLoaded()
 

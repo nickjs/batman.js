@@ -30,9 +30,11 @@ Returns the object which the `Proxy` is delegating to.
 
 Defines a whitelist of functions which the `Proxy` will delegate to its target object. Unlike accessors, functions are not automatically passed to the target. For example:
 
+```coffeescript
     class Batman.AssociationProxy
       ...
       @delegatesToTarget('save', 'validate', 'destroy')
       ...
+```
 
 passes calls to `save`, `validate`, and `destroy` made on an `AssociationProxy` to the target `Batman.Model` where those functions are defined.
