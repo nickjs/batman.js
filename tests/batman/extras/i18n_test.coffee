@@ -1,20 +1,18 @@
-I18N = Batman.I18N
-viewHelpers = window.viewHelpers
 
-oldLocales = Batman.I18N.locales
-oldRequest = Batman.Request
+preI18N = {}
 
 reset = ->
   # Hack so that the actions taken in reset don't fire observers which
   # do the implicit locale file load
-  I18N.property('translations').die()
-  I18N.property('locales.en').die()
-  I18N.property('locales.fr').die()
-  I18N.property('locales').die()
-  I18N.property('locale').die()
-  I18N.unset 'locale'
-  I18N.set('locales', oldLocales)
-  Batman.Request = oldRequest
+  Batman.I18N.property('translations').die()
+  Batman.I18N.property('locales.en').die()
+  Batman.I18N.property('locales.fr').die()
+  Batman.I18N.property('locales').die()
+  Batman.I18N.property('locale').die()
+  Batman.I18N.unset 'locale'
+  Batman.I18N.set('locales', preI18N.oldLocales)
+  Batman.Request = preI18N.oldRequest
+  Batman.I18N.disable()
 
 class MockRequest extends MockClass
   @chainedCallback 'success'
@@ -24,67 +22,72 @@ class MockRequest extends MockClass
 
 QUnit.module "Batman.I18N: locale property",
   setup: ->
+    viewHelpers = window.viewHelpers
+    # HACK: store the existing values once, keep restoring them in `reset`
+    preI18N.oldLocales ||= Batman.I18N.get('locales')
+    preI18N.oldRequest ||= Batman.Request
     MockRequest.reset()
-    I18N.set('locales', Batman {en: {grapefruit: true}, fr: {pamplemouse: true}})
+    Batman.I18N.set('locales', Batman {en: {grapefruit: true}, fr: {pamplemouse: true}})
     Batman.Request = MockRequest
 
   teardown: reset
 
 test "the default locale should be returned if no locale has been set", ->
-  I18N.unset 'locale'
-  equal I18N.get('locale'), I18N.get('defaultLocale')
+  Batman.I18N.unset 'locale'
+  equal Batman.I18N.get('locale'), Batman.I18N.get('defaultLocale')
 
 test "setting the locale should work", ->
-  I18N.set 'locale', 'fr'
-  equal I18N.get('locale'), 'fr'
+  Batman.I18N.set 'locale', 'fr'
+  equal Batman.I18N.get('locale'), 'fr'
 
 test "setting the use fallback should work", ->
-  I18N.set 'useFallback', true
-  equal I18N.get('useFallback'), true
+  Batman.I18N.set 'useFallback', true
+  equal Batman.I18N.get('useFallback'), true
 
 test "Batman.I18N.translations should reflect the locale", ->
-  I18N.set 'locale', 'en'
-  ok I18N.get('translations.grapefruit')
-  ok !I18N.get('translations.pamplemouse')
+  Batman.I18N.set 'locale', 'en'
+  ok Batman.I18N.get('translations.grapefruit')
+  ok !Batman.I18N.get('translations.pamplemouse')
 
-  I18N.set 'locale', 'fr'
-  ok !I18N.get('translations.grapefruit')
-  ok I18N.get('translations.pamplemouse')
+  Batman.I18N.set 'locale', 'fr'
+  ok !Batman.I18N.get('translations.grapefruit')
+  ok Batman.I18N.get('translations.pamplemouse')
 
 QUnit.module "Batman.I18N: locales fetching",
   setup: ->
     MockRequest.reset()
     Batman.Request = MockRequest
-    I18N.unset('locales')
-    newLocales = new I18N.LocalesStorage
-    I18N.set('locales', newLocales)
+    Batman.I18N.unset('locales')
+    newLocales = new Batman.I18N.LocalesStorage
+    Batman.I18N.set('locales', newLocales)
     @obj = {a: "b"}
 
-  teardown: reset
+  teardown: ->
+    reset.call(@)
 
 test "the locales should be settable", ->
   en = Batman()
-  I18N.set('locales.en', en)
-  equal I18N.get('locales.en'), en
+  Batman.I18N.set('locales.en', en)
+  equal Batman.I18N.get('locales.en'), en
 
 asyncTest "getting a new locale should fire observers when the new locale is fetched", ->
-  I18N.get('locales').observe 'en', spy = createSpy()
-  deepEqual I18N.get('locales.en'), {}, "should return an obj for use in the interm"
+  Batman.I18N.get('locales').observe 'en', spy = createSpy()
+  deepEqual Batman.I18N.get('locales.en'), {}, "should return an obj for use in the interm"
 
   delay =>
     MockRequest.lastInstance.fireSuccess({en: @obj})
     equal spy.lastCallArguments[0], @obj
 
 asyncTest "getting a new locale should trigger a request for that locale", ->
-  deepEqual I18N.get('locales.en'), {}, "should return an obj for use in the interm"
+  deepEqual Batman.I18N.get('locales.en'), {}, "should return an obj for use in the interm"
 
   delay =>
     MockRequest.lastInstance.fireSuccess({en: @obj})
-    equal I18N.get('locales.en'), @obj
+    equal Batman.I18N.get('locales.en'), @obj
 
 test "the locales obj should be replaceable", ->
-  I18N.set('locales', Batman {en: {a: "c"}})
-  deepEqual I18N.get('locales.en'), {a: "c"}
+  Batman.I18N.set('locales', Batman {en: {a: "c"}})
+  deepEqual Batman.I18N.get('locales.en'), {a: "c"}
 
 QUnit.module "Batman.I18N: translate filter",
   setup: ->
@@ -92,7 +95,8 @@ QUnit.module "Batman.I18N: translate filter",
       @layout: null
 
     Batman.Request = MockRequest
-    I18N.set 'locales', Batman
+    Batman.I18N.enable()
+    Batman.I18N.set 'locales', Batman
       fr:
         grapefruit: 'pamplemouse'
         kind_of_grapefruit: "pamplemouse %{kind}"
@@ -101,9 +105,7 @@ QUnit.module "Batman.I18N: translate filter",
           other: "%{count} pamplemouses"
       en:
         fallback: 'fallback string'
-
-    I18N.set 'locale', 'fr'
-
+    Batman.I18N.set 'locale', 'fr'
     App.run()
 
   teardown: reset
@@ -129,7 +131,7 @@ asyncTest "it should look up keys in the translations under t", ->
     QUnit.start()
 
 asyncTest "it should fallback string from default locale", ->
-  I18N.useFallback = true
+  Batman.I18N.useFallback = true
   viewHelpers.render '<div data-bind="\'fallback\' | translate"></div>', false, {}, (node) ->
     equal node.childNodes[0].innerHTML, "fallback string"
     QUnit.start()

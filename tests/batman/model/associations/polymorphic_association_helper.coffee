@@ -1,4 +1,4 @@
-{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter, generateSorterOnProperty} = window
+{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter} = if typeof require is 'undefined' then window else require '../model_helper'
 
 ex = window.PolymorphicAssociationHelpers = {}
 
@@ -112,3 +112,5 @@ ex.baseSetup = ->
         id: 30
         key: "SEO Handle"
       }]
+
+module.exports = PolymorphicAssociationHelpers

@@ -6,10 +6,10 @@ test "should invoke obj.get if it is a function", ->
   ok obj.get.called
   equal obj.get.lastCall.arguments[0], 'foo'
 
-test "should call Batman.Property.forBaseAndKey if obj.get is not a function", ->
+test "should call Batman.Keypath.forBaseAndKey if obj.get is not a function", ->
   obj = new Batman.Object x: 'x', get: null
 
-  spyOnDuring Batman.Property, 'forBaseAndKey', (spy) ->
+  spyOnDuring Batman.Keypath, 'forBaseAndKey', (spy) ->
     Batman.get obj, 'x'
     deepEqual spy.lastCallArguments, [obj, 'x']
 

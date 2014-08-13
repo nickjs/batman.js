@@ -6,7 +6,7 @@ if /Safari/.test(navigator.userAgent)
   if version and parseFloat(version) < 540
     SAFARI_CONTAINS_IS_BROKEN = true
 
-(window ? global).containsNode = (parent, child) ->
+window.containsNode = (parent, child) ->
   return true if parent == child
 
   if parent.contains and !SAFARI_CONTAINS_IS_BROKEN

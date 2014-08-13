@@ -769,7 +769,7 @@ asyncTest 'should render a user defined filter', 4, ->
     bar: 'baz'
   helpers.render '<div data-bind="foo | test 1, \'baz\'"></div>', ctx, (node) ->
     equal node.html(), "testValue"
-    equal Batman._functionName(spy.lastCallContext.constructor), 'View'
+    equal Batman.functionName(spy.lastCallContext.constructor), 'View'
     deepEqual spy.lastCallArguments.slice(0,3), ['bar', 1, 'baz']
     ok spy.lastCallArguments[3] instanceof Batman.DOM.AbstractBinding
     delete Batman.Filters.test

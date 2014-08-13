@@ -1,9 +1,9 @@
-#= require associations/polymorphic_association_helper
+PolymorphicAssociationHelpers = if typeof require is 'undefined' then window.PolymorphicAssociationHelpers else require './associations/polymorphic_association_helper'
 
 QUnit.module "Batman.Model::transaction",
   setup: ->
     scope = this
-    window.PolymorphicAssociationHelpers.baseSetup.apply(scope)
+    PolymorphicAssociationHelpers.baseSetup.apply(scope)
     class @TestNested extends Batman.Model
       @resourceName: 'testNested'
       @persist Batman.RestStorage
@@ -21,14 +21,15 @@ QUnit.module "Batman.Model::transaction",
       @hasMany 'apples', name: 'TestNested', namespace: scope
       @hasMany 'oranges', name: 'TestNested', namespace: scope, includeInTransaction: false
 
+
     @nested = new @TestNested(name: 'bob')
+    @base = new @TestModel(testNested: @nested)
+
     @apple1 = new @TestNested(name: 'apple1')
     @apple2 = new @TestNested(name: 'apple2')
-    @apples = new Batman.AssociationSet()
-    @apples.add(@apple1)
-    @apples.add(@apple2)
+    @apples = @base.get('apples')
+    @apples.add(@apple1, @apple2)
 
-    @base = new @TestModel(testNested: @nested, apples: @apples)
     @nested.set 'testModel', @base
     @apple1.set 'testModel', @base
     @apple2.set 'testModel', @base
@@ -197,7 +198,7 @@ test 'items loaded after `transaction()` are still in the transaction set', ->
   ok newTransaction.get('apples.first.id') == 9, 'its the right item'
 
 test 'adding nested models doesnt affect the base until applyChanges', ->
-  @transaction.get('apples').add(new @TestModel(name: 'apple3'))
+  @transaction.get('apples').build(name: 'apple3')
   ok @base.get('apples.length') == 2
   ok @transaction.get('apples.length') == 3
 

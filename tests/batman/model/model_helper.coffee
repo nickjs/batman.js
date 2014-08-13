@@ -101,6 +101,13 @@ generateSorterOnProperty = (property) ->
       else
         0
 
+module.exports = {
+  TestStorageAdapter
+  AsyncTestStorageAdapter
+  createStorageAdapter
+  generateSorterOnProperty
+}
+
 window.TestStorageAdapter = TestStorageAdapter
 window.AsyncTestStorageAdapter = AsyncTestStorageAdapter
 window.createStorageAdapter = createStorageAdapter

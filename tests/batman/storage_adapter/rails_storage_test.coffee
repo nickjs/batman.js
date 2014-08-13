@@ -1,13 +1,12 @@
 helpers = window.restStorageHelpers
 
-oldRequest = Batman.Request
-oldExpectedForUrl = helpers.MockRequest.getExpectedForUrl
-
 QUnit.module "Batman.RailsStorage",
   setup: ->
+    @oldRequest = Batman.Request
+
+    @oldExpectedForUrl = helpers.MockRequest.getExpectedForUrl
     helpers.MockRequest.getExpectedForUrl = (url) ->
       @expects[url.slice(0,-5)] || [] # cut off the .json so the fixtures from the test suite work fine
-
     Batman.Request = helpers.MockRequest
     helpers.MockRequest.reset()
 
@@ -24,8 +23,8 @@ QUnit.module "Batman.RailsStorage",
     @adapter = @productAdapter # for restStorageHelpers
 
   teardown: ->
-    Batman.Request = oldRequest
-    helpers.MockRequest.getExpectedForUrl = oldExpectedForUrl
+    Batman.Request = @oldRequest
+    helpers.MockRequest.getExpectedForUrl = @oldExpectedForUrl
 
 helpers.testOptionsGeneration('.json')
 helpers.run()

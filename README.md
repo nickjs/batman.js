@@ -26,6 +26,7 @@ git clone git@github.com:batmanjs/batman.git
 
 ```bash
 npm install
+npm install -g gulp
 ```
 
 If you don't already have Node.js, the installation instructions are [here](https://github.com/joyent/node/wiki/Installation).
@@ -37,7 +38,7 @@ batman.js uses [karma](http://karma-runner.github.io) and [QUnit](http://docs.jq
 To run the tests, run the following command from the project root:
 
 ```bash
-cake test
+gulp # starts webpack & karma
 ```
 
 Assuming you have Chrome installed, it should automatically open and start running the tests. The test outcome will appear in your terminal.
@@ -67,14 +68,15 @@ If it's good code that fits with the goals of the project, we'll merge it in!
 
 ## Compiling the library
 
-To generate the JavaScript representation of batman.js, cake tasks are provided for compiling the CoffeeScript sources.
-After an `npm install`, the following tasks are available:
-
-- `cake build`: compile the library to `/build/`
-- `cake build:dist`: compile the library to `/build/dist/`, remove calls to `Batman.developer`, and minify the output
-- `cake --dist build`: perform both of the previous tasks
+Task | Does...
+---- | ----
+`gulp` | Does it all: starts Karma and watches for changes, running `finalize` on any change
+`gulp build` | compiles files into `/dist`
+`gulp finalize` | runs `build` and creates minified versions
+`gulp test` | starts Karma runner
+`gulp test:travis` | `finalize`s then runs the tests once with PhantomJS
 
 ## License
 
-batman.js is copyright 2013 by [Shopify](http://www.shopify.com), released under the MIT License (see LICENSE for details).
+batman.js is copyright 2014 by [Shopify](http://www.shopify.com), released under the MIT License (see LICENSE for details).
 

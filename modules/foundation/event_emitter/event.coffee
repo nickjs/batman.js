@@ -1,0 +1,59 @@
+{hashKeyFor} =  require('../object_helpers')
+
+module.exports = class BatmanEvent
+  @forBaseAndKey: (base, key) ->
+    if base.isEventEmitter
+      base.event(key)
+    else
+      new BatmanEvent(base, key)
+  constructor: (@base, @key) ->
+    @_preventCount = 0
+  isEvent: true
+  isEqual: (other) ->
+    @constructor is other.constructor and @base is other.base and @key is other.key
+  hashKey: ->
+    @hashKey = -> key
+    key = "<Event base: #{hashKeyFor(@base)}, key: \"#{hashKeyFor(@key)}\">"
+  addHandler: (handler) ->
+    @handlers ||= []
+    @handlers.push(handler) if @handlers.indexOf(handler) == -1
+    @autofireHandler(handler) if @oneShot
+    this
+  removeHandler: (handler) ->
+    if @handlers && (index = @handlers.indexOf(handler)) != -1
+      @handlers.splice(index, 1)
+    this
+  eachHandler: (iterator) ->
+    @handlers?.slice().forEach(iterator)
+    if @base?.isEventEmitter
+      key = @key
+      for ancestor in @base._batman?.ancestors()
+        if ancestor.isEventEmitter and ancestor._batman?.events?.hasOwnProperty(key)
+          ancestor.event(key, false)?.handlers?.slice().forEach(iterator)
+    return
+  clearHandlers: -> @handlers = undefined
+  handlerContext: -> @base
+  prevent: -> ++@_preventCount
+  allow: ->
+    --@_preventCount if @_preventCount
+    @_preventCount
+  isPrevented: -> @_preventCount > 0
+  autofireHandler: (handler) ->
+    if @_oneShotFired and @_oneShotArgs?
+      handler.apply(@handlerContext(), @_oneShotArgs)
+  resetOneShot: ->
+    @_oneShotFired = false
+    @_oneShotArgs = null
+  fire: ->
+    @fireWithContext(@handlerContext(), arguments)
+  fireWithContext: (context, args) ->
+    return false if @isPrevented() or @_oneShotFired
+    if @oneShot
+      @_oneShotFired = true
+      @_oneShotArgs = args
+    @eachHandler (handler) -> handler.apply(context, args)
+  allowAndFire: ->
+    @allowAndFireWithContext(@handlerContext(), arguments)
+  allowAndFireWithContext: (context, args) ->
+    @allow()
+    @fireWithContext(context, args)

@@ -258,3 +258,4 @@ sharedStorageTestSuite = (hooks = {}) ->
       QUnit.start()
 
 window.sharedStorageTestSuite = sharedStorageTestSuite
+module.exports = {sharedStorageTestSuite}

@@ -1,44 +1,57 @@
-Snockets = require('snockets')
-glob     = require('glob')
-snockets = new Snockets()
-
-files = {}
-
-files.source   = snockets.scan('src/batman.coffee', async: false).getChain('src/batman.coffee')
-files.platform = snockets.scan('src/platform/testing.coffee', async: false).getChain('src/platform/testing.coffee')
-files.helpers  = snockets.scan('tests/batman/test_requires.coffee', async: false).getChain('tests/batman/test_requires.coffee')
-files.tests    = snockets.scan('tests/batman/tests.coffee', async: false).getChain('tests/batman/tests.coffee')
-files.docs     = snockets.scan('docs/docs.coffee', async: false).getChain('docs/docs.coffee')
-
-files.lib = [
-  'lib/polyfills/es5-shim.js'
-  'tests/lib/json2.js',
-  'tests/lib/jquery.js',
-  'tests/lib/sinon.js'
-]
-
-files.extra = [
-  'src/extras/batman.rails.coffee',
-  'src/extras/batman.paginator.coffee',
-  'src/extras/batman.i18n.coffee'
-]
-
-main = [].concat(
-  files.lib,
-  files.source,
-  files.platform,
-  files.extra,
-  files.helpers
-)
-
 module.exports = (config) ->
   config.set
     frameworks: ['qunit'],
 
-    files: do ->
-      if pattern = process.env.JS_TEST
-        return main.concat(glob.sync(pattern))
-      return main.concat(files.tests, files.docs)
+    files: [
+      # vendor
+      'tests/lib/json2.js'
+      'tests/lib/jquery.js'
+      'tests/lib/sinon.js'
+      'lib/polyfills/es5-shim.js'
+      'lib/polyfills/es6-promises.js'
+
+      # Batman & Extras
+      'dist/batman.js'
+      'dist/extras/batman.i18n.js'
+      'dist/extras/batman.rails.js'
+      'dist/extras/batman.paginator.js'
+      'dist/batman.testing.js'
+      # Batman.Request stubs
+      'platform/testing.coffee'
+
+      # test helpers
+      'tests/batman/test_helper.coffee'
+      'tests/batman/model/model_helper.coffee'
+      'tests/batman/model/associations/polymorphic_association_helper.coffee'
+      'tests/batman/storage_adapter/storage_adapter_helper.coffee'
+      'tests/batman/storage_adapter/rest_storage_helper.coffee'
+      'tests/batman/testing/test_case_helper.coffee'
+      'tests/batman/view/view_helper.coffee'
+
+      # tests
+      'tests/batman/controller/*.coffee'
+      'tests/batman/events/**/*.coffee'
+      'tests/batman/extras/**/*.coffee'
+      'tests/batman/model/**/*.coffee'
+      'tests/batman/navigator/*.coffee'
+      'tests/batman/object/**/*.coffee'
+      'tests/batman/observable/**/*.coffee'
+      'tests/batman/property/**/*.coffee'
+      'tests/batman/routes/**/*.coffee'
+      'tests/batman/set/**/*.coffee'
+      'tests/batman/storage_adapter/**/*.coffee'
+      'tests/batman/testing/**/*.coffee'
+      'tests/batman/utilities/**/*.coffee'
+      'tests/batman/view/*.coffee'
+      'tests/batman/app_test.coffee'
+      'tests/batman/data_test.coffee'
+      'tests/batman/enumerable_test.coffee'
+      'tests/batman/hash_test.coffee'
+      'tests/batman/paginator_test.coffee'
+      'tests/batman/namespace_test.coffee'
+      'docs/docs.coffee'
+      'docs/**/*.litcoffee'
+    ]
 
     reporters: ['dots']
 

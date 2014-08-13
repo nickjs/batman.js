@@ -4,7 +4,7 @@ QUnit.module "Batman.EventEmitter",
     @WeatherSystem = class WeatherSystem
       Batman.mixin @::, Batman.EventEmitter
       @::on 'rain', prototypeRainHandler
-    @ottawaWeather = new WeatherSystem
+    @ottawaWeather = new @WeatherSystem
     @rain = @ottawaWeather.event('rain')
 
 test "on attaches handlers which get called during firing", ->

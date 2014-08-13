@@ -1,4 +1,4 @@
-{generateSorterOnProperty} = window
+{generateSorterOnProperty} = if typeof require is 'undefined' then window else require "../model/model_helper"
 
 QUnit.module 'Polymorphic object access',
   setup: ->
