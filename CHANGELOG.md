@@ -1,10 +1,15 @@
 __Breaking changes:__
+
+- Batman.js depends on an implementation of `Promise` (build files include `es6-promises` polyfill)
 - Set constructor takes a single param -- an array of members https://github.com/batmanjs/batman/pull/1042
+- HasOne always returns `HasOneProxy` https://github.com/batmanjs/batman/pull/1120
+- Model storage operations return a Promise https://github.com/batmanjs/batman/pull/1099
 
 ### Batman helpers 
-- `toSentence` doesnt the array passed to it https://github.com/batmanjs/batman/pull/1055
+- `toSentence` doesnt gobble the array passed to it https://github.com/batmanjs/batman/pull/1055
 - `toSentence`, `ordinalize` and `titleize` added as view filters https://github.com/batmanjs/batman/pull/1064
 - `increment` `decrement` and `toggle` filters added https://github.com/batmanjs/batman/pull/1081 
+- `capitalize` upcases the first letter and downcases the rest (a la Rails) https://github.com/batmanjs/batman/pull/1103
 
 ### Batman.Object
 - `increment`, `decrement` and `toggle` functions for operating on properties https://github.com/batmanjs/batman/pull/1080
@@ -13,6 +18,7 @@ __Breaking changes:__
 - `Set::mappedTo` passed to `SetProxy`, too https://github.com/batmanjs/batman/pull/1052
 - Set constructor takes a single param -- an array of members https://github.com/batmanjs/batman/pull/1042
 - `Set::addArray` and `Set::removeArray` for adding and removing arrays https://github.com/batmanjs/batman/pull/1042
+- `SetSort::at` and `::toArray` are ordered and observable https://github.com/batmanjs/batman/pull/1109
 
 ### Batman.Proxy 
 - `delegatesToTarget` creates functions that delegate to the target
@@ -34,6 +40,11 @@ __Breaking changes:__
 - AssociationProxy delegates `destroy`, `save`, `transaction` and `validate` to their targets https://github.com/batmanjs/batman/pull/1078
 - `Transaction.save` and `Transaction.applyChanges` allow `only` and `except` options https://github.com/batmanjs/batman/pull/1089
 - Fix for associations like `@hasOne 'address'` which was wrongly singularized https://github.com/batmanjs/batman/pull/1090
+- `Transaction.destroy` destroys the base https://github.com/batmanjs/batman/pull/1121
+- Storage operations return a Promise https://github.com/batmanjs/batman/pull/1099
+- HasOne always returns `HasOneProxy` https://github.com/batmanjs/batman/pull/1120
+- HasMany removes items not found in JSON (configurable) https://github.com/batmanjs/batman/pull/1102
+- Fix TransactionAssociationSet supports addArray / removeArray https://github.com/batmanjs/batman/pull/1111
 
 ### Batman.Paginator 
 - ModelPaginator can get totalCount from the server response https://github.com/batmanjs/batman/pull/1067
