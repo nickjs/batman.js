@@ -11,6 +11,7 @@ class Batman.PluralAssociation extends Batman.Association
   provideDefaults:  ->
     Batman.mixin super,
       name: Batman.helpers.camelize(Batman.helpers.singularize(@label))
+      encodeWithIndexes: false
 
   setForRecord: (record) ->
     indexValue = @indexValueForRecord(record)

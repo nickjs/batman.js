@@ -37,7 +37,6 @@ class Batman.Association
       autoload: true
       nestUrl: false
       includeInTransaction: true
-      encodeWithIndexes: false
     }
 
   scope: ->
