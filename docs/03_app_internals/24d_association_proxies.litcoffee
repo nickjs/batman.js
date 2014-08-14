@@ -76,7 +76,7 @@ Loads the record from storage using:
 
 # /api/App Internals/Batman.HasOneProxy
 
-`Batman.HasOneProxy` extends `Batman.AssociationProxy`. It is the return value of `@hasOne` associations' `get` accessors __if__ the record hasn't been loaded yet.
+`Batman.HasOneProxy` extends `Batman.AssociationProxy`. It is the return value of `@hasOne` associations' `get` accessors.
 
 ## ::%primaryValue
 
