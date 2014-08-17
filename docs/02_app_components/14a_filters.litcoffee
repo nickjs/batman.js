@@ -6,7 +6,7 @@ Batman.js ships with many built-in view filters:
 
 Type | Filters
 ---|----
-__Logical Operators__ |  `and`, `or`, `not`
+__Logical Operators__ |  `and`, `or`, `not`, `conditional`
 __Comparison Operators__ | `equals`, `eq`, `neq`, `lt`, `gt`, `lteq`, `gteq`
 __General Utilities__ | `get`, `[]`, `meta`, `default`
 __Number Helpers__ | `ceil`, `floor`, `round`, `precision`, `fixed`, `delimitNumber`, `ordinalize`
@@ -172,6 +172,14 @@ Inverts the truthiness of the input value:
 
 ```html
 <span data-hideif="title | equals 'Batman Views' | not | and action | equals 'show'"></span>
+```
+
+## conditional(testValue, truthyValue, falsyValue)
+
+Returns either `truthyValue` or `falsyValue` based on the truthiness of `testValue`. For example, to show `"Create Post"` for a new `Post` but `"Edit Post"` for an already-saved one:
+
+```html
+<input type='submit' data-bind-value='post.isNew | conditional "Create Post", "Edit Post"'></input>
 ```
 
 ## matches(value, string) : boolean
@@ -395,7 +403,7 @@ Escapes HTML in the input value:
 <textarea data-bind="page.body_html | escape"></textarea>
 ```
 
-## toggle(keypath) : function 
+## toggle(keypath) : function
 
 Returns a handler for toggling `keypath`. Clicking this button will toggle `showMeMore` between `true` and `false`:
 
