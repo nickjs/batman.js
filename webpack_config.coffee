@@ -15,11 +15,11 @@ module.exports =
 
   entry:
     "batman"                    : './modules/batman'
-    # "batman.testing"            : './modules/testing'
-    # "batman.jquery"             : './platform/jquery'
-    # "extras/batman.i18n"        : "./modules/i18n"
-    # "extras/batman.rails"       : "./modules/extras/batman.rails"
-    # "extras/batman.paginator"   : "./modules/paginator"
+    "batman.testing"            : './modules/testing'
+    "batman.jquery"             : './platform/jquery'
+    "extras/batman.i18n"        : "./modules/i18n"
+    "extras/batman.rails"       : "./modules/extras/batman.rails"
+    "extras/batman.paginator"   : "./modules/paginator"
 
   output:
     path: path.join(__dirname, 'dist')
