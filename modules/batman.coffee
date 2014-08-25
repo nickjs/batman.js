@@ -62,9 +62,9 @@ Batman.config =
   protectFromCSRF: false
 
 # Solo adapter and dependencies:
-window.zest = require("../lib/polyfills/zest.js")
-window.reqwest = require("../lib/polyfills/reqwest.js")
-require("script!../lib/polyfills/contains.coffee")
+window.zest = require("../polyfills/zest.js")
+window.reqwest = require("../polyfills/reqwest.js")
+require("script!../polyfills/contains.coffee")
 require("script!../platform/solo.coffee")
 
 module.exports = Batman

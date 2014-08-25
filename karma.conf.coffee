@@ -7,8 +7,8 @@ module.exports = (config) ->
       'tests/lib/json2.js'
       'tests/lib/jquery.js'
       'tests/lib/sinon.js'
-      'lib/polyfills/es5-shim.js'
-      'lib/polyfills/es6-promises.js'
+      'polyfills/es5-shim.js'
+      'polyfills/es6-promises.js'
 
       # Batman & Extras
       'dist/batman.js'
