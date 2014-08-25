@@ -203,7 +203,7 @@ test "get('resourceName') should use the class level resourceName property", ->
   equal Product.get('resourceName'), 'foobar'
 
 test "get('resourceName') should use the prototype level resourceName property", ->
-  oldError = Batman.developer
+  oldError = Batman.developer.error
   Batman.developer.error = createSpy()
 
   class Product extends Batman.Model
@@ -215,6 +215,18 @@ test "get('resourceName') should use the prototype level resourceName property",
 test "get('resourceName') should use the function name failing all else", ->
   class Product extends Batman.Model
   equal Product.get('resourceName'), 'product'
+
+test "get('resourceName') should warn when a plural resourceName is used", ->
+  oldWarn = Batman.developer.warn
+  Batman.developer.warn = warn = createSpy()
+
+  class Product extends Batman.Model
+    @resourceName: 'foobars'
+
+  Product.get('resourceName')
+  ok warn.called
+
+  Batman.developer.warn = oldWarn
 
 QUnit.module "Batman.Model class clearing",
   setup: ->
