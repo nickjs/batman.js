@@ -1,5 +1,4 @@
-{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter, generateSorterOnProperty} = window
-helpers = window.viewHelpers
+{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter} = if typeof require is 'undefined' then window else require '../model_helper'
 {baseSetup} = if typeof require is 'undefined' then window.PolymorphicAssociationHelpers else require './polymorphic_association_helper'
 
 QUnit.module "Batman.Model polymorphic belongsTo associations",

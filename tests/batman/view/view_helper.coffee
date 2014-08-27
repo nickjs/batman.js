@@ -121,3 +121,5 @@ exports.render = (html, jqueryize = true, context = {}, callback = ->) ->
 QUnit.testDone ->
   Batman.DOM.destroyNode(node) for node in outstandingNodes
   outstandingNodes = []
+
+module.exports = viewHelpers

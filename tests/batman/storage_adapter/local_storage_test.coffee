@@ -1,7 +1,4 @@
-if typeof require isnt 'undefined'
-  {sharedStorageTestSuite} = require('./storage_adapter_helper')
-else
-  {sharedStorageTestSuite} = window
+{sharedStorageTestSuite} = if typeof require is 'undefined' then window else require('./storage_adapter_helper')
 
 if typeof window.localStorage isnt 'undefined'
   QUnit.module "Batman.LocalStorage",

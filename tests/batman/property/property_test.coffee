@@ -149,7 +149,7 @@ QUnit.module 'Batman.Property',
     name = ->
       @registerAsMutableSource()
       @_name
-    @mutableSomething = $mixin({name: name, _name: 'Jim'}, Batman.EventEmitter)
+    @mutableSomething = Batman.mixin({name: name, _name: 'Jim'}, Batman.EventEmitter)
 
     @baseWithNestedAccessors = new ObjectWithNestedAccessors
     @baseWithNestedAccessors.set('baz', @mutableSomething)

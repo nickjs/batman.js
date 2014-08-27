@@ -18,6 +18,7 @@ QUnit.moduleStart ->
 
 # set Batman.config:
 QUnit.testStart ->
+  Batman.config ?= {}
   Batman.config.pathToApp = originalPathname
   Batman.config.usePushState = true
 

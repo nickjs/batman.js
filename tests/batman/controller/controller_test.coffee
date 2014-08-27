@@ -14,6 +14,7 @@ QUnit.module 'Batman.Controller',
     Batman.View.store.set('test/show', "<div>show</div>")
     Batman.View.store.set('products/show', "<div>show</div>")
     Batman.View.store.set('admin/products/show', "<div>show</div>")
+    Batman.View.store.set('override/source', "<div>show</div>")
 
     Batman.config.cacheViews = true
     @controller = new TestController

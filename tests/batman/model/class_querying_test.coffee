@@ -1,4 +1,4 @@
-{TestStorageAdapter, AsyncTestStorageAdapter} = window
+{createStorageAdapter, TestStorageAdapter, AsyncTestStorageAdapter} = if typeof require is 'undefined' then window else require './model_helper'
 
 QUnit.module "Batman.Model class finding",
   setup: ->
@@ -17,6 +17,7 @@ asyncTest "returns a promise that resolves with the record", ->
   promise.then (record) ->
       equal record.get('name'), "One"
       QUnit.start()
+    .catch (e) -> console.log(e)
 
 asyncTest "models will find an instance in the store", ->
   @Product.find 1, (err, product, env) ->

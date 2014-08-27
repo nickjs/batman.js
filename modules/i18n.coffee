@@ -1,0 +1,1 @@
+Batman.I18N = require './extras/batman.i18n'

@@ -61,13 +61,13 @@ Returns the `Batman.ControllerDirectory` for application. `Batman.Controller` in
       class Alfred extends Batman.App
       class Alfred.TodosController extends Batman.Controller
       controller = Alfred.get('controllers.todos')
-      equal Batman._functionName(controller.constructor), "TodosController"
+      equal Batman.functionName(controller.constructor), "TodosController"
 
     test "Multi-word controller names have a lowercase first letter", ->
       class Alfred extends Batman.App
       class Alfred.ReminderEmailsController extends Batman.Controller
       controller = Alfred.get('controllers.reminderEmails')
-      equal Batman._functionName(controller.constructor), "ReminderEmailsController"
+      equal Batman.functionName(controller.constructor), "ReminderEmailsController"
 
 _Note:_ `@controllers` should not be observed, but it is very useful for debugging.
 
