@@ -185,7 +185,7 @@ class Model extends BatmanObject
     @_makeOrFindRecordsFromData(array)
 
   @_loadIdentity: (id) ->
-    if @coerceIntegerPrimaryKey
+    if @::coerceIntegerPrimaryKey
       id = helpers.coerceInteger(id)
     @get('loaded.indexedByUnique.id').get(id)
 
