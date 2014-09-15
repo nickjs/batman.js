@@ -200,7 +200,7 @@ module.exports = Filters =
       falsyVal
 
 do ->
-  for k in ['capitalize', 'titlelize', 'singularize', 'underscore', 'camelize', 'toSentence', 'ordinalize']
+  for k in ['capitalize', 'titleize', 'singularize', 'underscore', 'camelize', 'toSentence', 'ordinalize']
     Filters[k] = buntUndefined(helpers[k])
 
 
