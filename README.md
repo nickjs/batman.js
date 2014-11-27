@@ -1,6 +1,6 @@
 # Shhh... Batman is sleeping.
 
-Batman.js is [no longer in production at Shopify](www.shopify.com/technology/15646068-rebuilding-the-shopify-admin-improving-developer-productivity-by-deleting-28-000-lines-of-javascript) and is not actively developed. :(
+Batman.js is [no longer in production at Shopify](http://www.shopify.com/technology/15646068-rebuilding-the-shopify-admin-improving-developer-productivity-by-deleting-28-000-lines-of-javascript) and is not actively developed. :(
 
 # batman.js
 
